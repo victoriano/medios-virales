@@ -1,0 +1,2059 @@
+{
+ "generado": "2026-09-20",
+ "ventana": {
+  "desde": "2026-08-31",
+  "hasta": "2026-09-19"
+ },
+ "fuente": "Apify, actor apidojo/twitter-scraper-lite, consultas from:<medio> min_retweets:100 por ventana mensual",
+ "clasificador": "TypeSafe Jev (jev-latest), gate + partido + direccion + ironia",
+ "totales": {
+  "virales": 20404,
+  "medios": 53,
+  "medios_lista": 62,
+  "clasificados": 12520,
+  "gate_si": 10741,
+  "gate_dudoso": 1779,
+  "gate_no": 7884,
+  "por_partido": {
+   "PSOE": 4718,
+   "PP": 2973,
+   "ninguno": 2891,
+   "varios": 1200,
+   "Vox": 446,
+   "Sumar": 292
+  },
+  "por_direccion": {
+   "perjudica": 8884,
+   "neutro": 2028,
+   "beneficia": 1608
+  },
+  "cruce": {
+   "Sumar / perjudica": 160,
+   "ninguno / perjudica": 1603,
+   "ninguno / neutro": 1168,
+   "PP / perjudica": 2678,
+   "PSOE / perjudica": 3282,
+   "PP / neutro": 120,
+   "PSOE / neutro": 559,
+   "varios / perjudica": 824,
+   "PSOE / beneficia": 877,
+   "Sumar / beneficia": 81,
+   "Sumar / neutro": 51,
+   "varios / beneficia": 283,
+   "PP / beneficia": 175,
+   "Vox / perjudica": 337,
+   "varios / neutro": 93,
+   "ninguno / beneficia": 120,
+   "Vox / neutro": 37,
+   "Vox / beneficia": 72
+  },
+  "ironia_media": 0.187,
+  "coste_censo_usd": 21.41
+ },
+ "meses": {
+  "2025-09": 923,
+  "2025-10": 1736,
+  "2025-11": 1590,
+  "2025-12": 1629,
+  "2026-01": 1627,
+  "2026-02": 1830,
+  "2026-03": 1963,
+  "2026-04": 1725,
+  "2026-05": 1750,
+  "2026-06": 1593,
+  "2026-07": 1342,
+  "2026-08": 1375,
+  "2026-09": 1321
+ },
+ "medios": [
+  {
+   "handle": "@telediario_tve",
+   "nombre": "Telediarios de TVE",
+   "seguidores": 292556,
+   "descripcion": "La actualidad informativa en @rtve, desde cualquier parte del mundo | Para seguir la última hora: @rtvenoticias",
+   "virales": 169,
+   "politicos": 42,
+   "izq": 14,
+   "der": 1,
+   "neutro": 27,
+   "indice": -0.867,
+   "partidos": {
+    "ninguno": 20,
+    "PP": 10,
+    "PSOE": 6,
+    "Vox": 3,
+    "Sumar": 2,
+    "varios": 1
+   },
+   "direccion": {
+    "neutro": 20,
+    "perjudica": 19,
+    "beneficia": 3
+   },
+   "meses": {
+    "2025-10": 1,
+    "2025-11": 3,
+    "2025-12": 5,
+    "2026-01": 5,
+    "2026-02": 6,
+    "2026-03": 7,
+    "2026-04": 5,
+    "2026-05": 5,
+    "2026-06": 4,
+    "2026-09": 1
+   },
+   "rt_mediana": 185,
+   "rt_max": 2088,
+   "archivo": "medios/telediario_tve.json"
+  },
+  {
+   "handle": "@_infoLibre",
+   "nombre": "infoLibre",
+   "seguidores": 369389,
+   "descripcion": "Somos resistencia. Apuesta por el periodismo de calidad. ¡Hazte socia y actúa! 👉 https://t.co/c6unIkhWNC",
+   "virales": 238,
+   "politicos": 186,
+   "izq": 92,
+   "der": 9,
+   "neutro": 85,
+   "indice": -0.822,
+   "partidos": {
+    "PP": 74,
+    "ninguno": 65,
+    "PSOE": 25,
+    "varios": 12,
+    "Vox": 9,
+    "Sumar": 1
+   },
+   "direccion": {
+    "perjudica": 143,
+    "neutro": 28,
+    "beneficia": 15
+   },
+   "meses": {
+    "2025-09": 6,
+    "2025-10": 8,
+    "2025-11": 33,
+    "2025-12": 34,
+    "2026-01": 18,
+    "2026-02": 24,
+    "2026-03": 24,
+    "2026-04": 7,
+    "2026-05": 1,
+    "2026-06": 5,
+    "2026-07": 9,
+    "2026-08": 11,
+    "2026-09": 6
+   },
+   "rt_mediana": 205,
+   "rt_max": 1712,
+   "archivo": "medios/_infolibre.json"
+  },
+  {
+   "handle": "@ctxt_es",
+   "nombre": "CTXT.es",
+   "seguidores": 215267,
+   "descripcion": "Periodismo de servicio público. Puedes donar y desgravarte hasta un 80 % en https://t.co/6UhKSanvc8\n\nhttps://t.co/TYj6r5qGpw",
+   "virales": 72,
+   "politicos": 41,
+   "izq": 19,
+   "der": 2,
+   "neutro": 20,
+   "indice": -0.81,
+   "partidos": {
+    "ninguno": 16,
+    "PP": 15,
+    "PSOE": 4,
+    "Vox": 4,
+    "Sumar": 2
+   },
+   "direccion": {
+    "perjudica": 28,
+    "neutro": 10,
+    "beneficia": 3
+   },
+   "meses": {
+    "2026-02": 1,
+    "2026-03": 1,
+    "2026-04": 3,
+    "2026-05": 10,
+    "2026-06": 6,
+    "2026-07": 7,
+    "2026-08": 10,
+    "2026-09": 3
+   },
+   "rt_mediana": 223,
+   "rt_max": 3400,
+   "archivo": "medios/ctxt_es.json"
+  },
+  {
+   "handle": "@publico_es",
+   "nombre": "Público",
+   "seguidores": 1122077,
+   "descripcion": "🔴 Periodismo crítico para un público exigente\n👉¡Hazte socio/a! Súmate a nuestra comunidad",
+   "virales": 574,
+   "politicos": 391,
+   "izq": 206,
+   "der": 24,
+   "neutro": 161,
+   "indice": -0.791,
+   "partidos": {
+    "PP": 151,
+    "ninguno": 85,
+    "PSOE": 76,
+    "varios": 46,
+    "Vox": 19,
+    "Sumar": 14
+   },
+   "direccion": {
+    "perjudica": 254,
+    "beneficia": 71,
+    "neutro": 66
+   },
+   "meses": {
+    "2025-09": 21,
+    "2025-10": 40,
+    "2025-11": 52,
+    "2025-12": 46,
+    "2026-01": 22,
+    "2026-02": 21,
+    "2026-03": 22,
+    "2026-04": 26,
+    "2026-05": 38,
+    "2026-06": 32,
+    "2026-07": 25,
+    "2026-08": 30,
+    "2026-09": 16
+   },
+   "rt_mediana": 235,
+   "rt_max": 11376,
+   "archivo": "medios/publico_es.json"
+  },
+  {
+   "handle": "@El_Plural",
+   "nombre": "El Plural",
+   "seguidores": 124502,
+   "descripcion": "📲Únete a nuestra comunidad y mantente informado de toda la actualidad: https://t.co/pYuQ6snlln",
+   "virales": 1282,
+   "politicos": 1101,
+   "izq": 693,
+   "der": 90,
+   "neutro": 318,
+   "indice": -0.77,
+   "partidos": {
+    "PP": 579,
+    "ninguno": 187,
+    "PSOE": 181,
+    "varios": 98,
+    "Vox": 45,
+    "Sumar": 11
+   },
+   "direccion": {
+    "perjudica": 890,
+    "beneficia": 121,
+    "neutro": 90
+   },
+   "meses": {
+    "2025-09": 63,
+    "2025-10": 100,
+    "2025-11": 82,
+    "2025-12": 88,
+    "2026-01": 87,
+    "2026-02": 81,
+    "2026-03": 79,
+    "2026-04": 99,
+    "2026-05": 80,
+    "2026-06": 83,
+    "2026-07": 84,
+    "2026-08": 91,
+    "2026-09": 84
+   },
+   "rt_mediana": 290,
+   "rt_max": 3562,
+   "archivo": "medios/el_plural.json"
+  },
+  {
+   "handle": "@eldiarioes",
+   "nombre": "elDiario.es",
+   "seguidores": 1540111,
+   "descripcion": "Periodismo a pesar de todo. Hazte socio, hazte socia https://t.co/XRWo5gk4HC",
+   "virales": 2219,
+   "politicos": 1567,
+   "izq": 827,
+   "der": 139,
+   "neutro": 601,
+   "indice": -0.712,
+   "partidos": {
+    "PP": 647,
+    "ninguno": 307,
+    "PSOE": 285,
+    "varios": 195,
+    "Vox": 91,
+    "Sumar": 42
+   },
+   "direccion": {
+    "perjudica": 1142,
+    "neutro": 229,
+    "beneficia": 196
+   },
+   "meses": {
+    "2025-09": 101,
+    "2025-10": 151,
+    "2025-11": 142,
+    "2025-12": 113,
+    "2026-01": 95,
+    "2026-02": 120,
+    "2026-03": 135,
+    "2026-04": 125,
+    "2026-05": 123,
+    "2026-06": 132,
+    "2026-07": 118,
+    "2026-08": 96,
+    "2026-09": 116
+   },
+   "rt_mediana": 449,
+   "rt_max": 6991,
+   "archivo": "medios/eldiarioes.json"
+  },
+  {
+   "handle": "@ElHuffPost",
+   "nombre": "El HuffPost",
+   "seguidores": 570226,
+   "descripcion": "En este medio, las personas son lo primero.\nPolítica de privacidad: https://t.co/hKM1EHg3nS",
+   "virales": 381,
+   "politicos": 275,
+   "izq": 155,
+   "der": 28,
+   "neutro": 92,
+   "indice": -0.694,
+   "partidos": {
+    "PP": 91,
+    "PSOE": 87,
+    "varios": 41,
+    "ninguno": 37,
+    "Vox": 15,
+    "Sumar": 4
+   },
+   "direccion": {
+    "perjudica": 171,
+    "beneficia": 73,
+    "neutro": 31
+   },
+   "meses": {
+    "2025-09": 17,
+    "2025-10": 43,
+    "2025-11": 32,
+    "2025-12": 14,
+    "2026-01": 6,
+    "2026-02": 31,
+    "2026-03": 28,
+    "2026-04": 13,
+    "2026-05": 13,
+    "2026-06": 13,
+    "2026-07": 8,
+    "2026-08": 32,
+    "2026-09": 25
+   },
+   "rt_mediana": 212,
+   "rt_max": 3970,
+   "archivo": "medios/elhuffpost.json"
+  },
+  {
+   "handle": "@La_SER",
+   "nombre": "Cadena SER",
+   "seguidores": 1442756,
+   "descripcion": "👋 La radio más escuchada de España 📻 El sonido de la vida \n\nPolítica de privacidad: https://t.co/nyLmEr3b0M",
+   "virales": 1237,
+   "politicos": 758,
+   "izq": 343,
+   "der": 67,
+   "neutro": 348,
+   "indice": -0.673,
+   "partidos": {
+    "PSOE": 232,
+    "PP": 227,
+    "ninguno": 172,
+    "varios": 90,
+    "Vox": 26,
+    "Sumar": 11
+   },
+   "direccion": {
+    "perjudica": 433,
+    "neutro": 179,
+    "beneficia": 146
+   },
+   "meses": {
+    "2025-09": 36,
+    "2025-10": 74,
+    "2025-11": 70,
+    "2025-12": 63,
+    "2026-01": 43,
+    "2026-02": 59,
+    "2026-03": 51,
+    "2026-04": 65,
+    "2026-05": 66,
+    "2026-06": 68,
+    "2026-07": 53,
+    "2026-08": 59,
+    "2026-09": 51
+   },
+   "rt_mediana": 277,
+   "rt_max": 9583,
+   "archivo": "medios/la_ser.json"
+  },
+  {
+   "handle": "@HoyPorHoy",
+   "nombre": "Hoy por Hoy",
+   "seguidores": 251809,
+   "descripcion": "Programa líder de la radio española, de lunes a viernes de 6:00 a 12:20 horas con @AimarBretos\n\n📞 638 31 34 66\n\n🌐 Otras RRSS: https://t.co/avRd59M8vn",
+   "virales": 403,
+   "politicos": 313,
+   "izq": 158,
+   "der": 35,
+   "neutro": 120,
+   "indice": -0.637,
+   "partidos": {
+    "PP": 123,
+    "ninguno": 72,
+    "PSOE": 65,
+    "varios": 42,
+    "Vox": 10,
+    "Sumar": 1
+   },
+   "direccion": {
+    "perjudica": 247,
+    "beneficia": 42,
+    "neutro": 24
+   },
+   "meses": {
+    "2025-09": 9,
+    "2025-10": 34,
+    "2025-11": 39,
+    "2025-12": 22,
+    "2026-01": 21,
+    "2026-02": 29,
+    "2026-03": 22,
+    "2026-04": 24,
+    "2026-05": 34,
+    "2026-06": 36,
+    "2026-07": 19,
+    "2026-08": 13,
+    "2026-09": 11
+   },
+   "rt_mediana": 222,
+   "rt_max": 6171,
+   "archivo": "medios/hoyporhoy.json"
+  },
+  {
+   "handle": "@Hora25",
+   "nombre": "Hora 25",
+   "seguidores": 200490,
+   "descripcion": "De lunes a viernes, de 20:00 a 23:30 en @La_SER con @jl_sastre\n\n🎧 Escúchanos aquí https://t.co/TQsvS4YSyk",
+   "virales": 429,
+   "politicos": 321,
+   "izq": 147,
+   "der": 38,
+   "neutro": 136,
+   "indice": -0.589,
+   "partidos": {
+    "PP": 128,
+    "ninguno": 98,
+    "PSOE": 50,
+    "varios": 31,
+    "Vox": 10,
+    "Sumar": 4
+   },
+   "direccion": {
+    "perjudica": 263,
+    "beneficia": 30,
+    "neutro": 28
+   },
+   "meses": {
+    "2025-09": 14,
+    "2025-10": 42,
+    "2025-11": 35,
+    "2025-12": 32,
+    "2026-01": 24,
+    "2026-02": 28,
+    "2026-03": 26,
+    "2026-04": 22,
+    "2026-05": 24,
+    "2026-06": 20,
+    "2026-07": 24,
+    "2026-08": 8,
+    "2026-09": 22
+   },
+   "rt_mediana": 252,
+   "rt_max": 3453,
+   "archivo": "medios/hora25.json"
+  },
+  {
+   "handle": "@laventana",
+   "nombre": "La Ventana",
+   "seguidores": 209561,
+   "descripcion": "De lunes a viernes de 16:00 a 20:00 en @La_SER con Carles Francino",
+   "virales": 72,
+   "politicos": 34,
+   "izq": 11,
+   "der": 3,
+   "neutro": 20,
+   "indice": -0.571,
+   "partidos": {
+    "ninguno": 17,
+    "PP": 8,
+    "PSOE": 7,
+    "Vox": 1,
+    "Sumar": 1
+   },
+   "direccion": {
+    "perjudica": 24,
+    "neutro": 8,
+    "beneficia": 2
+   },
+   "meses": {
+    "2025-10": 2,
+    "2025-11": 5,
+    "2025-12": 8,
+    "2026-01": 1,
+    "2026-02": 2,
+    "2026-03": 2,
+    "2026-04": 3,
+    "2026-05": 4,
+    "2026-06": 5,
+    "2026-09": 2
+   },
+   "rt_mediana": 294,
+   "rt_max": 2544,
+   "archivo": "medios/laventana.json"
+  },
+  {
+   "handle": "@el_pais",
+   "nombre": "EL PAÍS",
+   "seguidores": 8395424,
+   "descripcion": "La mejor información en español. Con nuestra mirada puesta en España, Europa y América. Aquí tienes nuestra política de privacidad https://t.co/1J0jyff6Da",
+   "virales": 1373,
+   "politicos": 617,
+   "izq": 280,
+   "der": 78,
+   "neutro": 259,
+   "indice": -0.564,
+   "partidos": {
+    "PSOE": 209,
+    "PP": 163,
+    "ninguno": 120,
+    "varios": 81,
+    "Vox": 27,
+    "Sumar": 17
+   },
+   "direccion": {
+    "perjudica": 324,
+    "beneficia": 160,
+    "neutro": 133
+   },
+   "meses": {
+    "2025-09": 28,
+    "2025-10": 59,
+    "2025-11": 60,
+    "2025-12": 71,
+    "2026-01": 32,
+    "2026-02": 61,
+    "2026-03": 58,
+    "2026-04": 33,
+    "2026-05": 48,
+    "2026-06": 47,
+    "2026-07": 40,
+    "2026-08": 30,
+    "2026-09": 50
+   },
+   "rt_mediana": 322,
+   "rt_max": 11210,
+   "archivo": "medios/el_pais.json"
+  },
+  {
+   "handle": "@europapress",
+   "nombre": "Europa Press",
+   "seguidores": 1561520,
+   "descripcion": "Perfil oficial de la agencia de noticias privada líder en España\n\nEncuéntranos en nuestras redes sociales: https://t.co/55XfZ6AfIr",
+   "virales": 1160,
+   "politicos": 805,
+   "izq": 350,
+   "der": 109,
+   "neutro": 346,
+   "indice": -0.525,
+   "partidos": {
+    "PSOE": 295,
+    "PP": 186,
+    "ninguno": 150,
+    "varios": 121,
+    "Vox": 32,
+    "Sumar": 21
+   },
+   "direccion": {
+    "perjudica": 374,
+    "beneficia": 261,
+    "neutro": 170
+   },
+   "meses": {
+    "2025-09": 44,
+    "2025-10": 84,
+    "2025-11": 81,
+    "2025-12": 69,
+    "2026-01": 63,
+    "2026-02": 59,
+    "2026-03": 42,
+    "2026-04": 66,
+    "2026-05": 70,
+    "2026-06": 73,
+    "2026-07": 53,
+    "2026-08": 43,
+    "2026-09": 58
+   },
+   "rt_mediana": 217,
+   "rt_max": 7432,
+   "archivo": "medios/europapress.json"
+  },
+  {
+   "handle": "@rtvenoticias",
+   "nombre": "RTVE Noticias",
+   "seguidores": 1503107,
+   "descripcion": "La actualidad, al minuto, en RTVE.\n- IG: https://t.co/bZr5drFxHx\n- Tiktok: https://t.co/Izs5yHIajD",
+   "virales": 799,
+   "politicos": 426,
+   "izq": 158,
+   "der": 53,
+   "neutro": 215,
+   "indice": -0.498,
+   "partidos": {
+    "PSOE": 170,
+    "ninguno": 90,
+    "PP": 76,
+    "varios": 56,
+    "Sumar": 17,
+    "Vox": 17
+   },
+   "direccion": {
+    "perjudica": 182,
+    "neutro": 132,
+    "beneficia": 112
+   },
+   "meses": {
+    "2025-09": 13,
+    "2025-10": 27,
+    "2025-11": 47,
+    "2025-12": 34,
+    "2026-01": 27,
+    "2026-02": 37,
+    "2026-03": 25,
+    "2026-04": 31,
+    "2026-05": 49,
+    "2026-06": 43,
+    "2026-07": 32,
+    "2026-08": 23,
+    "2026-09": 38
+   },
+   "rt_mediana": 212,
+   "rt_max": 5310,
+   "archivo": "medios/rtvenoticias.json"
+  },
+  {
+   "handle": "@laSextaTV",
+   "nombre": "laSexta",
+   "seguidores": 1062777,
+   "descripcion": "Todo el contenido de laSexta en nuestro perfil y en https://t.co/CzEDHYkY2Y  \nSigue a laSexta en Google aquí: https://t.co/FmrUhYl3WY",
+   "virales": 141,
+   "politicos": 90,
+   "izq": 46,
+   "der": 17,
+   "neutro": 27,
+   "indice": -0.46,
+   "partidos": {
+    "PP": 39,
+    "PSOE": 20,
+    "ninguno": 19,
+    "Vox": 6,
+    "varios": 5,
+    "Sumar": 1
+   },
+   "direccion": {
+    "perjudica": 74,
+    "beneficia": 8,
+    "neutro": 8
+   },
+   "meses": {
+    "2025-09": 2,
+    "2025-10": 7,
+    "2025-11": 13,
+    "2025-12": 9,
+    "2026-01": 9,
+    "2026-02": 10,
+    "2026-03": 4,
+    "2026-04": 4,
+    "2026-05": 16,
+    "2026-06": 7,
+    "2026-07": 1,
+    "2026-08": 6,
+    "2026-09": 2
+   },
+   "rt_mediana": 201,
+   "rt_max": 2282,
+   "archivo": "medios/lasextatv.json"
+  },
+  {
+   "handle": "@elperiodico",
+   "nombre": "El Periódico",
+   "seguidores": 687990,
+   "descripcion": "Entender +",
+   "virales": 119,
+   "politicos": 36,
+   "izq": 7,
+   "der": 3,
+   "neutro": 26,
+   "indice": -0.4,
+   "partidos": {
+    "ninguno": 17,
+    "PSOE": 10,
+    "PP": 6,
+    "varios": 2,
+    "Vox": 1
+   },
+   "direccion": {
+    "perjudica": 20,
+    "neutro": 15,
+    "beneficia": 1
+   },
+   "meses": {
+    "2025-12": 1,
+    "2026-01": 1,
+    "2026-02": 6,
+    "2026-03": 9,
+    "2026-04": 7,
+    "2026-05": 6,
+    "2026-06": 3,
+    "2026-07": 1,
+    "2026-08": 1,
+    "2026-09": 1
+   },
+   "rt_mediana": 202,
+   "rt_max": 1182,
+   "archivo": "medios/elperiodico.json"
+  },
+  {
+   "handle": "@sextaNoticias",
+   "nombre": "laSexta Noticias",
+   "seguidores": 1268026,
+   "descripcion": "Todas las noticias de laSexta. Te contamos lo que ocurre en el momento que ocurre.\nSíguenos también en el canal de WhatsApp: https://t.co/ObeuntRkhF",
+   "virales": 65,
+   "politicos": 41,
+   "izq": 15,
+   "der": 11,
+   "neutro": 15,
+   "indice": -0.154,
+   "partidos": {
+    "PP": 13,
+    "PSOE": 12,
+    "ninguno": 7,
+    "varios": 6,
+    "Vox": 3
+   },
+   "direccion": {
+    "perjudica": 33,
+    "neutro": 6,
+    "beneficia": 2
+   },
+   "meses": {
+    "2025-09": 2,
+    "2025-10": 3,
+    "2025-11": 3,
+    "2025-12": 3,
+    "2026-01": 5,
+    "2026-02": 1,
+    "2026-03": 3,
+    "2026-04": 2,
+    "2026-05": 4,
+    "2026-06": 6,
+    "2026-08": 6,
+    "2026-09": 3
+   },
+   "rt_mediana": 205,
+   "rt_max": 3360,
+   "archivo": "medios/sextanoticias.json"
+  },
+  {
+   "handle": "@rtve",
+   "nombre": "RTVE",
+   "seguidores": 1228647,
+   "descripcion": "Canal oficial en X de RTVE, Radio Televisión Española",
+   "virales": 58,
+   "politicos": 3,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "ninguno": 3
+   },
+   "direccion": {
+    "neutro": 3
+   },
+   "meses": {
+    "2026-02": 1,
+    "2026-04": 1,
+    "2026-07": 1
+   },
+   "rt_mediana": 182,
+   "rt_max": 6378,
+   "archivo": "medios/rtve.json"
+  },
+  {
+   "handle": "@EFEnoticias",
+   "nombre": "EFE Noticias",
+   "seguidores": 2220185,
+   "descripcion": "Agencia EFE, la primera agencia de noticias en español | #EFEsiempreestá | Síguenos en otras redes:  https://t.co/EdurkE3UrS",
+   "virales": 869,
+   "politicos": 119,
+   "izq": 19,
+   "der": 19,
+   "neutro": 81,
+   "indice": 0.0,
+   "partidos": {
+    "ninguno": 50,
+    "PSOE": 42,
+    "PP": 10,
+    "varios": 8,
+    "Vox": 7,
+    "Sumar": 2
+   },
+   "direccion": {
+    "neutro": 66,
+    "perjudica": 42,
+    "beneficia": 11
+   },
+   "meses": {
+    "2025-09": 11,
+    "2025-10": 9,
+    "2025-11": 7,
+    "2025-12": 7,
+    "2026-01": 5,
+    "2026-02": 8,
+    "2026-03": 6,
+    "2026-04": 9,
+    "2026-05": 15,
+    "2026-06": 11,
+    "2026-07": 15,
+    "2026-08": 7,
+    "2026-09": 9
+   },
+   "rt_mediana": 233,
+   "rt_max": 4743,
+   "archivo": "medios/efenoticias.json"
+  },
+  {
+   "handle": "@noticias_cuatro",
+   "nombre": "Noticias Cuatro",
+   "seguidores": 915093,
+   "descripcion": "La redacción de noticias de @cuatro te cuenta la última hora y todas las novedades del día\n\nSigue nuestro canal de WhatsApp ➡️ https://t.co/sQnPVn1cei",
+   "virales": 19,
+   "politicos": 4,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "PSOE": 3,
+    "ninguno": 1
+   },
+   "direccion": {
+    "perjudica": 2,
+    "beneficia": 2
+   },
+   "meses": {
+    "2026-03": 2,
+    "2026-05": 1,
+    "2026-09": 1
+   },
+   "rt_mediana": 219,
+   "rt_max": 4566,
+   "archivo": "medios/noticias_cuatro.json"
+  },
+  {
+   "handle": "@telecincoes",
+   "nombre": "Telecinco",
+   "seguidores": 1627358,
+   "descripcion": "Entretenimiento y noticias. Aquí podrás estar al día de lo último sobre programas y series y recibirás las noticias más interesantes y curiosas",
+   "virales": 50,
+   "politicos": 3,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "PSOE": 2,
+    "Vox": 1
+   },
+   "direccion": {
+    "perjudica": 2,
+    "neutro": 1
+   },
+   "meses": {
+    "2026-02": 2,
+    "2026-04": 1
+   },
+   "rt_mediana": 168,
+   "rt_max": 2366,
+   "archivo": "medios/telecincoes.json"
+  },
+  {
+   "handle": "@la2_tve",
+   "nombre": "La 2",
+   "seguidores": 422055,
+   "descripcion": "Bienvenido a la cuenta oficial de La 2 de TVE. La cadena de televisión de @rtve con cultura, ficción y entretenimiento de calidad.",
+   "virales": 56,
+   "politicos": 7,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "ninguno": 6,
+    "PP": 1
+   },
+   "direccion": {
+    "perjudica": 5,
+    "neutro": 2
+   },
+   "meses": {
+    "2025-10": 3,
+    "2026-04": 1,
+    "2026-05": 3
+   },
+   "rt_mediana": 173,
+   "rt_max": 2135,
+   "archivo": "medios/la2_tve.json"
+  },
+  {
+   "handle": "@La1_tve",
+   "nombre": "La 1",
+   "seguidores": 690847,
+   "descripcion": "Bienvenido a la cuenta oficial de La 1 de TVE. La cadena de televisión de @rtve con información, ficción y entretenimiento de calidad.",
+   "virales": 178,
+   "politicos": 7,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "ninguno": 5,
+    "PSOE": 2
+   },
+   "direccion": {
+    "neutro": 4,
+    "perjudica": 2,
+    "beneficia": 1
+   },
+   "meses": {
+    "2026-01": 1,
+    "2026-03": 2,
+    "2026-04": 3,
+    "2026-07": 1
+   },
+   "rt_mediana": 195,
+   "rt_max": 1962,
+   "archivo": "medios/la1_tve.json"
+  },
+  {
+   "handle": "@EspejoPublico",
+   "nombre": "Espejo Público",
+   "seguidores": 293822,
+   "descripcion": "Cuenta oficial de ‘Espejo Público’, el magacín matinal de @antena3com presentado por @SusannaGriso. Con #MásEspejo que nunca. 🧡📺",
+   "virales": 13,
+   "politicos": 11,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "PSOE": 7,
+    "ninguno": 4
+   },
+   "direccion": {
+    "perjudica": 9,
+    "neutro": 1,
+    "beneficia": 1
+   },
+   "meses": {
+    "2025-10": 1,
+    "2026-01": 1,
+    "2026-04": 1,
+    "2026-07": 2,
+    "2026-08": 6
+   },
+   "rt_mediana": 200,
+   "rt_max": 1548,
+   "archivo": "medios/espejopublico.json"
+  },
+  {
+   "handle": "@prnoticias",
+   "nombre": "prnoticias",
+   "seguidores": 72848,
+   "descripcion": "💻 Medio online especializado en #Comunicación #Marketing #Periodismo y #Medios\n📲 Síguenos también en https://t.co/dzCNmPzphx y en https://t.co/TUjKinEPjo",
+   "virales": 4,
+   "politicos": 1,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "PSOE": 1
+   },
+   "direccion": {
+    "perjudica": 1
+   },
+   "meses": {
+    "2026-06": 1
+   },
+   "rt_mediana": 1247,
+   "rt_max": 1337,
+   "archivo": "medios/prnoticias.json"
+  },
+  {
+   "handle": "@cuatro",
+   "nombre": "Cuatro",
+   "seguidores": 1143058,
+   "descripcion": "Perfil oficial de Cuatro desde donde te contamos toda la actualidad de nuestros programas y series. https://t.co/vgNzddnBAd",
+   "virales": 16,
+   "politicos": 7,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "PSOE": 5,
+    "ninguno": 2
+   },
+   "direccion": {
+    "perjudica": 5,
+    "neutro": 2
+   },
+   "meses": {
+    "2026-02": 4,
+    "2026-04": 1,
+    "2026-05": 1,
+    "2026-09": 1
+   },
+   "rt_mediana": 361,
+   "rt_max": 1217,
+   "archivo": "medios/cuatro.json"
+  },
+  {
+   "handle": "@Newtral",
+   "nombre": "Newtral",
+   "seguidores": 182537,
+   "descripcion": "Combatimos la desinformación. Con vosotros. Únete a los hechos.\n📩 Suscríbete: https://t.co/zTYbO4szZX",
+   "virales": 4,
+   "politicos": 4,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "ninguno": 3,
+    "PSOE": 1
+   },
+   "direccion": {
+    "perjudica": 2,
+    "neutro": 1,
+    "beneficia": 1
+   },
+   "meses": {
+    "2025-11": 1,
+    "2026-03": 2,
+    "2026-05": 1
+   },
+   "rt_mediana": 227,
+   "rt_max": 934,
+   "archivo": "medios/newtral.json"
+  },
+  {
+   "handle": "@expansioncom",
+   "nombre": "expansioncom",
+   "seguidores": 696888,
+   "descripcion": "Líder en información económica. Suscríbete https://t.co/jUGXvFvblN   Síguenos en Whatsapp:  https://t.co/o9iUOIy5Pn",
+   "virales": 22,
+   "politicos": 10,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "PSOE": 5,
+    "ninguno": 3,
+    "PP": 2
+   },
+   "direccion": {
+    "perjudica": 7,
+    "beneficia": 2,
+    "neutro": 1
+   },
+   "meses": {
+    "2025-10": 2,
+    "2025-11": 2,
+    "2025-12": 1,
+    "2026-01": 1,
+    "2026-03": 1,
+    "2026-04": 3
+   },
+   "rt_mediana": 295,
+   "rt_max": 898,
+   "archivo": "medios/expansioncom.json"
+  },
+  {
+   "handle": "@rtveplay",
+   "nombre": "RTVE Play",
+   "seguidores": 646452,
+   "descripcion": "Plataforma de streaming de @rtve. Disfruta de tus programas, series, películas y documentales favoritos gratis y sin suscripción.",
+   "virales": 31,
+   "politicos": 1,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "ninguno": 1
+   },
+   "direccion": {
+    "neutro": 1
+   },
+   "meses": {
+    "2026-04": 1
+   },
+   "rt_mediana": 172,
+   "rt_max": 838,
+   "archivo": "medios/rtveplay.json"
+  },
+  {
+   "handle": "@antena3com",
+   "nombre": "Antena 3",
+   "seguidores": 1347700,
+   "descripcion": "Toda la información y programación de Antena 3. Cuenta oficial. 📲 Síguenos en https://t.co/tfaHlnoQlV🎂",
+   "virales": 18,
+   "politicos": 2,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "PP": 1,
+    "PSOE": 1
+   },
+   "direccion": {
+    "perjudica": 2
+   },
+   "meses": {
+    "2026-03": 1,
+    "2026-06": 1
+   },
+   "rt_mediana": 168,
+   "rt_max": 406,
+   "archivo": "medios/antena3com.json"
+  },
+  {
+   "handle": "@DiarioSabemos",
+   "nombre": "DiarioSabemos",
+   "seguidores": 31835,
+   "descripcion": "De la fusión de Diario16plus y Sabemos, nace  la nueva cabecera Diario Sabemos. \nInformación veraz, rabiosamente independiente y comprometida.",
+   "virales": 4,
+   "politicos": 3,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "PSOE": 2,
+    "PP": 1
+   },
+   "direccion": {
+    "beneficia": 2,
+    "perjudica": 1
+   },
+   "meses": {
+    "2026-01": 3
+   },
+   "rt_mediana": 166,
+   "rt_max": 201,
+   "archivo": "medios/diariosabemos.json"
+  },
+  {
+   "handle": "@rne",
+   "nombre": "Radio Nacional",
+   "seguidores": 336288,
+   "descripcion": "Cuenta oficial de X de Radio Nacional de España\n\nTambién en https://t.co/CoAL2iREzp, en https://t.co/1rTZw7OhvB y en https://t.co/mkMN8k0Ah2",
+   "virales": 3,
+   "politicos": 0,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {},
+   "direccion": {},
+   "meses": {},
+   "rt_mediana": 113,
+   "rt_max": 161,
+   "archivo": "medios/rne.json"
+  },
+  {
+   "handle": "@ecd_",
+   "nombre": "Confidencial Digital",
+   "seguidores": 111293,
+   "descripcion": "El twitter de las personas informadas que desean estar más informadas. \n@ReligionConf_ \n@Monarquia_Confi\n@ConfiAutonomico\n@confijudicial",
+   "virales": 1,
+   "politicos": 1,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "PSOE": 1
+   },
+   "direccion": {
+    "perjudica": 1
+   },
+   "meses": {
+    "2026-06": 1
+   },
+   "rt_mediana": 119,
+   "rt_max": 119,
+   "archivo": "medios/ecd_.json"
+  },
+  {
+   "handle": "@20m",
+   "nombre": "20minutos.es",
+   "seguidores": 1434683,
+   "descripcion": "Cuenta del periódico 20minutos, el medio social y ciudadano. Contacto con el lector 24hrs. Toda la información en: https://t.co/izNgLrdMJx",
+   "virales": 337,
+   "politicos": 94,
+   "izq": 9,
+   "der": 25,
+   "neutro": 60,
+   "indice": 0.471,
+   "partidos": {
+    "ninguno": 48,
+    "PSOE": 30,
+    "Sumar": 7,
+    "PP": 5,
+    "varios": 4
+   },
+   "direccion": {
+    "perjudica": 54,
+    "neutro": 34,
+    "beneficia": 6
+   },
+   "meses": {
+    "2025-10": 7,
+    "2025-11": 2,
+    "2025-12": 2,
+    "2026-01": 8,
+    "2026-02": 13,
+    "2026-03": 8,
+    "2026-04": 6,
+    "2026-05": 7,
+    "2026-06": 13,
+    "2026-07": 3,
+    "2026-08": 15,
+    "2026-09": 10
+   },
+   "rt_mediana": 205,
+   "rt_max": 4196,
+   "archivo": "medios/20m.json"
+  },
+  {
+   "handle": "@elindepcom",
+   "nombre": "El Independiente",
+   "seguidores": 110989,
+   "descripcion": "📱🗞️ Medio ideado, creado y controlado por periodistas | Dirige @garcia_abadillo #SomosIndependientes\n\nSíguenos en WhatsApp➡️ https://t.co/NjrST1JsUb",
+   "virales": 144,
+   "politicos": 124,
+   "izq": 17,
+   "der": 52,
+   "neutro": 55,
+   "indice": 0.507,
+   "partidos": {
+    "PSOE": 58,
+    "ninguno": 41,
+    "PP": 16,
+    "varios": 5,
+    "Sumar": 3,
+    "Vox": 1
+   },
+   "direccion": {
+    "perjudica": 103,
+    "neutro": 17,
+    "beneficia": 4
+   },
+   "meses": {
+    "2025-09": 4,
+    "2025-10": 9,
+    "2025-11": 20,
+    "2025-12": 15,
+    "2026-01": 1,
+    "2026-03": 9,
+    "2026-04": 10,
+    "2026-05": 7,
+    "2026-06": 20,
+    "2026-07": 18,
+    "2026-08": 2,
+    "2026-09": 9
+   },
+   "rt_mediana": 204,
+   "rt_max": 1300,
+   "archivo": "medios/elindepcom.json"
+  },
+  {
+   "handle": "@OndaCero_es",
+   "nombre": "Onda Cero",
+   "seguidores": 583255,
+   "descripcion": "Onda Cero, 24 horas de información y entretenimiento. Te mereces esta radio. Tu #radio",
+   "virales": 322,
+   "politicos": 254,
+   "izq": 29,
+   "der": 134,
+   "neutro": 91,
+   "indice": 0.644,
+   "partidos": {
+    "PSOE": 140,
+    "ninguno": 58,
+    "varios": 27,
+    "PP": 23,
+    "Sumar": 3,
+    "Vox": 3
+   },
+   "direccion": {
+    "perjudica": 211,
+    "neutro": 27,
+    "beneficia": 16
+   },
+   "meses": {
+    "2025-09": 15,
+    "2025-10": 26,
+    "2025-11": 34,
+    "2025-12": 27,
+    "2026-01": 15,
+    "2026-02": 31,
+    "2026-03": 26,
+    "2026-04": 21,
+    "2026-05": 15,
+    "2026-06": 11,
+    "2026-07": 10,
+    "2026-08": 6,
+    "2026-09": 17
+   },
+   "rt_mediana": 188,
+   "rt_max": 2562,
+   "archivo": "medios/ondacero_es.json"
+  },
+  {
+   "handle": "@elmundoes",
+   "nombre": "EL MUNDO",
+   "seguidores": 4963427,
+   "descripcion": "Cuenta oficial del periódico EL MUNDO",
+   "virales": 1180,
+   "politicos": 615,
+   "izq": 54,
+   "der": 265,
+   "neutro": 296,
+   "indice": 0.661,
+   "partidos": {
+    "PSOE": 276,
+    "ninguno": 218,
+    "PP": 58,
+    "varios": 30,
+    "Sumar": 20,
+    "Vox": 13
+   },
+   "direccion": {
+    "perjudica": 425,
+    "neutro": 157,
+    "beneficia": 33
+   },
+   "meses": {
+    "2025-09": 40,
+    "2025-10": 43,
+    "2025-11": 53,
+    "2025-12": 53,
+    "2026-01": 24,
+    "2026-02": 53,
+    "2026-03": 44,
+    "2026-04": 55,
+    "2026-05": 58,
+    "2026-06": 41,
+    "2026-07": 44,
+    "2026-08": 60,
+    "2026-09": 47
+   },
+   "rt_mediana": 367,
+   "rt_max": 5991,
+   "archivo": "medios/elmundoes.json"
+  },
+  {
+   "handle": "@elconfidencial",
+   "nombre": "El Confidencial",
+   "seguidores": 1031958,
+   "descripcion": "25 años de periodismo para lectores influyentes.  https://t.co/UNVi7FVZpe #SoyConfi",
+   "virales": 482,
+   "politicos": 383,
+   "izq": 42,
+   "der": 217,
+   "neutro": 124,
+   "indice": 0.676,
+   "partidos": {
+    "PSOE": 219,
+    "ninguno": 104,
+    "PP": 43,
+    "varios": 10,
+    "Vox": 4,
+    "Sumar": 3
+   },
+   "direccion": {
+    "perjudica": 326,
+    "neutro": 50,
+    "beneficia": 7
+   },
+   "meses": {
+    "2025-09": 23,
+    "2025-10": 53,
+    "2025-11": 33,
+    "2025-12": 22,
+    "2026-01": 19,
+    "2026-02": 28,
+    "2026-03": 25,
+    "2026-04": 47,
+    "2026-05": 34,
+    "2026-06": 31,
+    "2026-07": 35,
+    "2026-08": 17,
+    "2026-09": 16
+   },
+   "rt_mediana": 250,
+   "rt_max": 5485,
+   "archivo": "medios/elconfidencial.json"
+  },
+  {
+   "handle": "@informativost5",
+   "nombre": "Informativos Telecinco",
+   "seguidores": 878605,
+   "descripcion": "Perfil oficial de Informativos Telecinco\n\nSigue nuestro canal de WhatsApp ➡️ https://t.co/VKTq7bdHzi",
+   "virales": 226,
+   "politicos": 30,
+   "izq": 2,
+   "der": 12,
+   "neutro": 16,
+   "indice": 0.714,
+   "partidos": {
+    "PSOE": 14,
+    "ninguno": 13,
+    "PP": 1,
+    "varios": 1,
+    "Vox": 1
+   },
+   "direccion": {
+    "perjudica": 19,
+    "neutro": 9,
+    "beneficia": 2
+   },
+   "meses": {
+    "2025-12": 1,
+    "2026-01": 1,
+    "2026-02": 10,
+    "2026-03": 5,
+    "2026-04": 2,
+    "2026-05": 5,
+    "2026-06": 4,
+    "2026-08": 2
+   },
+   "rt_mediana": 222,
+   "rt_max": 3858,
+   "archivo": "medios/informativost5.json"
+  },
+  {
+   "handle": "@esRadio",
+   "nombre": "esRadio",
+   "seguidores": 271910,
+   "descripcion": "esRadio es la emisora nacida en 2009 de la mano de Federico Jiménez Losantos y Luis Herrero.",
+   "virales": 52,
+   "politicos": 36,
+   "izq": 3,
+   "der": 18,
+   "neutro": 15,
+   "indice": 0.714,
+   "partidos": {
+    "PSOE": 21,
+    "ninguno": 8,
+    "varios": 3,
+    "PP": 3,
+    "Vox": 1
+   },
+   "direccion": {
+    "perjudica": 26,
+    "neutro": 8,
+    "beneficia": 2
+   },
+   "meses": {
+    "2025-09": 1,
+    "2025-11": 1,
+    "2026-01": 3,
+    "2026-02": 5,
+    "2026-03": 5,
+    "2026-04": 3,
+    "2026-05": 4,
+    "2026-06": 5,
+    "2026-07": 1,
+    "2026-08": 3,
+    "2026-09": 5
+   },
+   "rt_mediana": 194,
+   "rt_max": 1150,
+   "archivo": "medios/esradio.json"
+  },
+  {
+   "handle": "@larazon_es",
+   "nombre": "La Razón",
+   "seguidores": 649270,
+   "descripcion": "Noticias de actualidad, información de calidad, últimas horas y exclusivas  🗞️  Síguenos en nuestro canal de WhatsApp ➡️ https://t.co/SFHBWFyqul",
+   "virales": 465,
+   "politicos": 349,
+   "izq": 30,
+   "der": 188,
+   "neutro": 131,
+   "indice": 0.725,
+   "partidos": {
+    "PSOE": 185,
+    "ninguno": 97,
+    "PP": 32,
+    "varios": 21,
+    "Sumar": 7,
+    "Vox": 7
+   },
+   "direccion": {
+    "perjudica": 279,
+    "neutro": 50,
+    "beneficia": 20
+   },
+   "meses": {
+    "2025-09": 6,
+    "2025-10": 31,
+    "2025-11": 26,
+    "2025-12": 31,
+    "2026-01": 20,
+    "2026-02": 23,
+    "2026-03": 24,
+    "2026-04": 40,
+    "2026-05": 26,
+    "2026-06": 31,
+    "2026-07": 33,
+    "2026-08": 32,
+    "2026-09": 26
+   },
+   "rt_mediana": 236,
+   "rt_max": 4482,
+   "archivo": "medios/larazon_es.json"
+  },
+  {
+   "handle": "@elespanolcom",
+   "nombre": "EL ESPAÑOL",
+   "seguidores": 613416,
+   "descripcion": "Diario digital, plural, libre, indomable, tuyo.",
+   "virales": 1065,
+   "politicos": 602,
+   "izq": 54,
+   "der": 340,
+   "neutro": 208,
+   "indice": 0.726,
+   "partidos": {
+    "PSOE": 332,
+    "ninguno": 113,
+    "varios": 73,
+    "PP": 55,
+    "Sumar": 19,
+    "Vox": 10
+   },
+   "direccion": {
+    "perjudica": 454,
+    "neutro": 78,
+    "beneficia": 70
+   },
+   "meses": {
+    "2025-09": 38,
+    "2025-10": 41,
+    "2025-11": 52,
+    "2025-12": 29,
+    "2026-01": 31,
+    "2026-02": 51,
+    "2026-03": 39,
+    "2026-04": 39,
+    "2026-05": 66,
+    "2026-06": 55,
+    "2026-07": 48,
+    "2026-08": 59,
+    "2026-09": 54
+   },
+   "rt_mediana": 432,
+   "rt_max": 6163,
+   "archivo": "medios/elespanolcom.json"
+  },
+  {
+   "handle": "@voz_populi",
+   "nombre": "Vozpópuli",
+   "seguidores": 180482,
+   "descripcion": "Periódico digital en español.\n\nInformación de calidad, grandes exclusivas y el mejor plantel de columnistas. \n\nWhatsapp: https://t.co/lTLrOeQCb9",
+   "virales": 696,
+   "politicos": 556,
+   "izq": 41,
+   "der": 329,
+   "neutro": 186,
+   "indice": 0.778,
+   "partidos": {
+    "PSOE": 326,
+    "ninguno": 117,
+    "PP": 41,
+    "varios": 41,
+    "Vox": 18,
+    "Sumar": 13
+   },
+   "direccion": {
+    "perjudica": 446,
+    "neutro": 74,
+    "beneficia": 36
+   },
+   "meses": {
+    "2025-09": 27,
+    "2025-10": 48,
+    "2025-11": 53,
+    "2025-12": 45,
+    "2026-01": 38,
+    "2026-02": 51,
+    "2026-03": 39,
+    "2026-04": 51,
+    "2026-05": 64,
+    "2026-06": 53,
+    "2026-07": 26,
+    "2026-08": 29,
+    "2026-09": 32
+   },
+   "rt_mediana": 328,
+   "rt_max": 4074,
+   "archivo": "medios/voz_populi.json"
+  },
+  {
+   "handle": "@abc_es",
+   "nombre": "ABC.es",
+   "seguidores": 2326392,
+   "descripcion": "Somos ABC, tu periódico 📰 📸 https://t.co/2H5Ak44RKJ ⬛ https://t.co/vTJ1807Y7U ➡ LinkedIn https://t.co/JPIRPSN0bi",
+   "virales": 739,
+   "politicos": 366,
+   "izq": 24,
+   "der": 195,
+   "neutro": 147,
+   "indice": 0.781,
+   "partidos": {
+    "PSOE": 193,
+    "ninguno": 103,
+    "PP": 33,
+    "varios": 23,
+    "Vox": 9,
+    "Sumar": 5
+   },
+   "direccion": {
+    "perjudica": 275,
+    "neutro": 71,
+    "beneficia": 20
+   },
+   "meses": {
+    "2025-09": 22,
+    "2025-10": 51,
+    "2025-11": 24,
+    "2025-12": 43,
+    "2026-01": 20,
+    "2026-02": 24,
+    "2026-03": 18,
+    "2026-04": 31,
+    "2026-05": 32,
+    "2026-06": 24,
+    "2026-07": 11,
+    "2026-08": 28,
+    "2026-09": 38
+   },
+   "rt_mediana": 336,
+   "rt_max": 5135,
+   "archivo": "medios/abc_es.json"
+  },
+  {
+   "handle": "@okdiario",
+   "nombre": "okdiario.com",
+   "seguidores": 457884,
+   "descripcion": "El sitio de los inconformistas. Dirigido por @eduardoinda 📱▶️ \n\nSíguenos en GOOGLE 🖥️ aquí 👉🏻 https://t.co/4I59WgwTVI",
+   "virales": 887,
+   "politicos": 672,
+   "izq": 51,
+   "der": 431,
+   "neutro": 190,
+   "indice": 0.788,
+   "partidos": {
+    "PSOE": 385,
+    "ninguno": 104,
+    "varios": 67,
+    "Sumar": 43,
+    "PP": 42,
+    "Vox": 31
+   },
+   "direccion": {
+    "perjudica": 551,
+    "beneficia": 84,
+    "neutro": 37
+   },
+   "meses": {
+    "2025-09": 28,
+    "2025-10": 58,
+    "2025-11": 67,
+    "2025-12": 62,
+    "2026-01": 61,
+    "2026-02": 41,
+    "2026-03": 59,
+    "2026-04": 59,
+    "2026-05": 42,
+    "2026-06": 59,
+    "2026-07": 43,
+    "2026-08": 43,
+    "2026-09": 50
+   },
+   "rt_mediana": 491,
+   "rt_max": 7399,
+   "archivo": "medios/okdiario.json"
+  },
+  {
+   "handle": "@libertaddigital",
+   "nombre": "Libertad Digital",
+   "seguidores": 361290,
+   "descripcion": "Noticias y opinión en la red. Escúchanos en @esRadio y léenos también en @libre_mercado @ChicRevista @LoDeCultura",
+   "virales": 508,
+   "politicos": 424,
+   "izq": 31,
+   "der": 278,
+   "neutro": 115,
+   "indice": 0.799,
+   "partidos": {
+    "PSOE": 280,
+    "ninguno": 77,
+    "PP": 36,
+    "varios": 23,
+    "Sumar": 5,
+    "Vox": 3
+   },
+   "direccion": {
+    "perjudica": 375,
+    "neutro": 36,
+    "beneficia": 13
+   },
+   "meses": {
+    "2025-09": 19,
+    "2025-10": 50,
+    "2025-11": 40,
+    "2025-12": 36,
+    "2026-01": 26,
+    "2026-02": 36,
+    "2026-03": 26,
+    "2026-04": 42,
+    "2026-05": 47,
+    "2026-06": 36,
+    "2026-07": 31,
+    "2026-08": 17,
+    "2026-09": 18
+   },
+   "rt_mediana": 250,
+   "rt_max": 6343,
+   "archivo": "medios/libertaddigital.json"
+  },
+  {
+   "handle": "@elEconomistaes",
+   "nombre": "elEconomista.es",
+   "seguidores": 676580,
+   "descripcion": "🔶 Medio líder en España en información de economía, empresas, finanzas, bolsa y mercados.\n\nPonte al día de toda la actualidad económica 📲",
+   "virales": 278,
+   "politicos": 134,
+   "izq": 3,
+   "der": 28,
+   "neutro": 103,
+   "indice": 0.806,
+   "partidos": {
+    "ninguno": 85,
+    "PSOE": 40,
+    "PP": 4,
+    "Vox": 2,
+    "Sumar": 2,
+    "varios": 1
+   },
+   "direccion": {
+    "neutro": 69,
+    "perjudica": 64,
+    "beneficia": 1
+   },
+   "meses": {
+    "2025-09": 1,
+    "2025-10": 7,
+    "2025-11": 4,
+    "2025-12": 9,
+    "2026-01": 9,
+    "2026-02": 16,
+    "2026-03": 15,
+    "2026-04": 14,
+    "2026-05": 20,
+    "2026-06": 9,
+    "2026-07": 4,
+    "2026-08": 17,
+    "2026-09": 9
+   },
+   "rt_mediana": 241,
+   "rt_max": 10846,
+   "archivo": "medios/eleconomistaes.json"
+  },
+  {
+   "handle": "@TRECE_es",
+   "nombre": "TRECE",
+   "seguidores": 85764,
+   "descripcion": "📺 Perfil oficial del canal de televisión TRECE\n💬 Siempre contigo\n📡 Sintonízanos",
+   "virales": 51,
+   "politicos": 34,
+   "izq": 2,
+   "der": 20,
+   "neutro": 12,
+   "indice": 0.818,
+   "partidos": {
+    "PSOE": 17,
+    "ninguno": 12,
+    "Sumar": 3,
+    "PP": 2
+   },
+   "direccion": {
+    "perjudica": 32,
+    "neutro": 2
+   },
+   "meses": {
+    "2025-09": 1,
+    "2025-12": 5,
+    "2026-02": 9,
+    "2026-03": 4,
+    "2026-05": 7,
+    "2026-06": 2,
+    "2026-07": 1,
+    "2026-08": 5
+   },
+   "rt_mediana": 182,
+   "rt_max": 2312,
+   "archivo": "medios/trece_es.json"
+  },
+  {
+   "handle": "@A3Noticias",
+   "nombre": "Antena 3 Noticias",
+   "seguidores": 2070615,
+   "descripcion": "📲 Toda la información en https://t.co/0oZQERXCC0 | Sigue la actualidad en nuestro canal de WhatsApp ➡️https://t.co/rDT50gpbwU",
+   "virales": 175,
+   "politicos": 79,
+   "izq": 4,
+   "der": 41,
+   "neutro": 34,
+   "indice": 0.822,
+   "partidos": {
+    "PSOE": 44,
+    "ninguno": 30,
+    "PP": 3,
+    "Vox": 1,
+    "varios": 1
+   },
+   "direccion": {
+    "perjudica": 66,
+    "neutro": 11,
+    "beneficia": 2
+   },
+   "meses": {
+    "2025-09": 2,
+    "2025-10": 4,
+    "2025-11": 3,
+    "2025-12": 7,
+    "2026-01": 3,
+    "2026-02": 10,
+    "2026-03": 4,
+    "2026-04": 3,
+    "2026-05": 8,
+    "2026-06": 10,
+    "2026-07": 3,
+    "2026-08": 9,
+    "2026-09": 13
+   },
+   "rt_mediana": 205,
+   "rt_max": 2700,
+   "archivo": "medios/a3noticias.json"
+  },
+  {
+   "handle": "@COPE",
+   "nombre": "COPE",
+   "seguidores": 594324,
+   "descripcion": "Perfil oficial de la Cadena #COPE\n📻 Lideramos el crecimiento de la radio, por algo será\n\n👇🏽Accede a nuestros contenidos\nhttps://t.co/ebidfLDGSm",
+   "virales": 316,
+   "politicos": 207,
+   "izq": 11,
+   "der": 131,
+   "neutro": 65,
+   "indice": 0.845,
+   "partidos": {
+    "PSOE": 127,
+    "ninguno": 52,
+    "PP": 11,
+    "varios": 10,
+    "Sumar": 6,
+    "Vox": 1
+   },
+   "direccion": {
+    "perjudica": 179,
+    "neutro": 22,
+    "beneficia": 6
+   },
+   "meses": {
+    "2025-09": 6,
+    "2025-10": 18,
+    "2025-11": 7,
+    "2025-12": 16,
+    "2026-01": 17,
+    "2026-02": 29,
+    "2026-03": 24,
+    "2026-04": 14,
+    "2026-05": 17,
+    "2026-06": 13,
+    "2026-07": 15,
+    "2026-08": 20,
+    "2026-09": 11
+   },
+   "rt_mediana": 217,
+   "rt_max": 6004,
+   "archivo": "medios/cope.json"
+  },
+  {
+   "handle": "@eltorotv",
+   "nombre": "El Toro TV",
+   "seguidores": 176312,
+   "descripcion": "Twitter Oficial de El Toro TV.\nSíguenos para toda la actualidad y TV en directo en https://t.co/H621vo0Yuq",
+   "virales": 209,
+   "politicos": 165,
+   "izq": 7,
+   "der": 98,
+   "neutro": 60,
+   "indice": 0.867,
+   "partidos": {
+    "PSOE": 88,
+    "ninguno": 39,
+    "varios": 20,
+    "Vox": 11,
+    "PP": 5,
+    "Sumar": 2
+   },
+   "direccion": {
+    "perjudica": 138,
+    "neutro": 15,
+    "beneficia": 12
+   },
+   "meses": {
+    "2025-09": 1,
+    "2025-10": 23,
+    "2025-11": 5,
+    "2025-12": 11,
+    "2026-01": 22,
+    "2026-02": 15,
+    "2026-03": 32,
+    "2026-04": 19,
+    "2026-05": 9,
+    "2026-06": 7,
+    "2026-07": 13,
+    "2026-08": 4,
+    "2026-09": 4
+   },
+   "rt_mediana": 197,
+   "rt_max": 5220,
+   "archivo": "medios/eltorotv.json"
+  },
+  {
+   "handle": "@ESdiario_com",
+   "nombre": "ESdiario",
+   "seguidores": 41093,
+   "descripcion": "📲 Te contamos la información para que tú decidas.\n📰 Periódico online independiente.\n▶️ Dirigido por @benjalh1971\n📺 https://t.co/FJ0ZIvERKI",
+   "virales": 85,
+   "politicos": 75,
+   "izq": 4,
+   "der": 59,
+   "neutro": 12,
+   "indice": 0.873,
+   "partidos": {
+    "PSOE": 60,
+    "ninguno": 8,
+    "PP": 4,
+    "varios": 3
+   },
+   "direccion": {
+    "perjudica": 72,
+    "neutro": 2,
+    "beneficia": 1
+   },
+   "meses": {
+    "2025-12": 1,
+    "2026-01": 1,
+    "2026-02": 12,
+    "2026-03": 18,
+    "2026-04": 13,
+    "2026-05": 12,
+    "2026-06": 4,
+    "2026-07": 4,
+    "2026-08": 7,
+    "2026-09": 3
+   },
+   "rt_mediana": 223,
+   "rt_max": 2094,
+   "archivo": "medios/esdiario_com.json"
+  },
+  {
+   "handle": "@periodistadigit",
+   "nombre": "Periodista Digital",
+   "seguidores": 77230,
+   "descripcion": "🫵🏻 El digital que influye en quienes influyen 🎬 El medio de @alfonsorojoPD 📲 Síguenos en Google y en redes y descubre 👉🏻https://t.co/uNcXURUhTk",
+   "virales": 108,
+   "politicos": 94,
+   "izq": 2,
+   "der": 83,
+   "neutro": 9,
+   "indice": 0.953,
+   "partidos": {
+    "PSOE": 77,
+    "ninguno": 7,
+    "PP": 5,
+    "Vox": 3,
+    "varios": 2
+   },
+   "direccion": {
+    "perjudica": 87,
+    "beneficia": 7
+   },
+   "meses": {
+    "2025-10": 1,
+    "2025-11": 2,
+    "2025-12": 16,
+    "2026-01": 5,
+    "2026-02": 16,
+    "2026-03": 30,
+    "2026-04": 6,
+    "2026-05": 8,
+    "2026-06": 2,
+    "2026-07": 2,
+    "2026-08": 1,
+    "2026-09": 5
+   },
+   "rt_mediana": 213,
+   "rt_max": 2562,
+   "archivo": "medios/periodistadigit.json"
+  }
+ ]
+}

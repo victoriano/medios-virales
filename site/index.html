@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sesgo y viralidad de los medios españoles · victoriano.me</title>
+<meta name="description" content="Clasificación de los 20.404 tuits con más de 100 retuits de los medios generalistas españoles: qué partido beneficia o perjudica cada medio.">
+<meta property="og:title" content="Qué partido beneficia cada medio">
+<meta property="og:description" content="20.404 tuits con más de 100 retuits de 53 medios españoles, clasificados por partido y dirección.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <p class="kicker">victoriano.me · análisis</p>
+    <h1>Qué partido beneficia cada medio</h1>
+    <p class="lede">Los <strong id="n-virales">20.404</strong> tuits con más de 100 retuits de <strong id="n-medios">53</strong> medios generalistas españoles entre septiembre de 2025 y septiembre de 2026, clasificados uno a uno por el partido al que afectan y en qué dirección.</p>
+    <nav class="tabs" role="tablist">
+      <button class="tab is-on" data-view="ranking" role="tab">Ranking</button>
+      <button class="tab" data-view="top" role="tab">Los más virales</button>
+      <button class="tab" data-view="metodo" role="tab">Método</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ RANKING ============ -->
+  <section id="view-ranking" class="view">
+    <div class="cards" id="stats"></div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Ranking de medios</h2>
+        <input type="search" id="q" placeholder="Buscar medio…" autocomplete="off" aria-label="Buscar medio">
+      </div>
+      <p class="hint">
+        El <strong>índice</strong> resume a quién favorece lo que se comparte de cada medio: <span class="neg">−1</span> es todo a la izquierda (beneficia a PSOE o Sumar, o perjudica a PP o Vox) y <span class="pos">+1</span> todo a la derecha. Pulsa una fila para leer sus tuits.
+      </p>
+      <div class="table-scroll">
+        <table class="rank" id="tabla-ranking">
+          <thead><tr>
+            <th class="c-medio">Medio</th>
+            <th data-sort="indice" class="num c-idx">Índice <span class="arrow"></span></th>
+            <th class="c-bar"></th>
+            <th data-sort="virales" class="num">Virales <span class="arrow"></span></th>
+            <th data-sort="politicos" class="num">Políticos <span class="arrow"></span></th>
+            <th data-sort="izq" class="num c-izq">Izq. <span class="arrow"></span></th>
+            <th data-sort="der" class="num c-der">Der. <span class="arrow"></span></th>
+            <th data-sort="rt_mediana" class="num c-rt">RT mediana <span class="arrow"></span></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="foot-note" id="rank-note"></p>
+    </div>
+  </section>
+
+  <!-- ============ MEDIO ============ -->
+  <section id="view-medio" class="view" hidden>
+    <button class="back" id="back">← Volver al ranking</button>
+    <div class="panel" id="medio-panel"></div>
+  </section>
+
+  <!-- ============ TOP ============ -->
+  <section id="view-top" class="view" hidden>
+    <div class="panel">
+      <h2>Los 300 tuits virales con lectura política</h2>
+      <p class="hint">Ordenados por retuits. Cada tarjeta lleva el partido al que afecta y la dirección.</p>
+      <div class="filters" id="top-filtros"></div>
+      <div id="top-list" class="cards-list"></div>
+      <button class="more" id="top-more" hidden>Cargar más</button>
+    </div>
+  </section>
+
+  <!-- ============ MÉTODO ============ -->
+  <section id="view-metodo" class="view" hidden>
+    <div class="panel prose">
+      <h2>Cómo se ha hecho</h2>
+
+      <h3>Qué se mide</h3>
+      <p>No la línea editorial en abstracto, sino <strong>qué contenido se comparte</strong>. Se toman los tuits que superaron los 100 retuits y se pregunta por cada uno a qué partido afecta y si lo favorece o lo perjudica. Un medio puede salir centrado o escorado según qué le explota ese mes, así que conviene leer el índice como el retrato de la conversación que genera, no como una etiqueta de su redacción.</p>
+
+      <h3>Obtención de los tuits</h3>
+      <ul>
+        <li>Universo: los 62 medios de la lista <em>Spanish Generalist Media</em> de X. 53 tuvieron algún tuit por encima de 100 retuits.</li>
+        <li>Fuente: Apify, actor <code>apidojo/twitter-scraper-lite</code>. La API oficial de X ya no admite el filtro de retuits y cobra por publicación leída, así que el censo habría costado unos 5.900 dólares. Con Apify costó 21,41 dólares.</li>
+        <li>Consulta, por medio y por mes: <code>from:&lt;medio&gt; min_retweets:100 -filter:retweets since:inicio until:fin</code>.</li>
+        <li>El operador de lista no funciona en el actor y una consulta no alcanza más de cuatro o cinco meses hacia atrás, de ahí el troceado mensual medio a medio.</li>
+      </ul>
+
+      <h3>Clasificación</h3>
+      <p>Con TypeSafe (modelo Jev) en dos pasos. Primero un filtro: ¿este tuit puede afectar a un partido español? Después, solo para los que pasan, tres preguntas en una misma llamada: a qué partido afecta, en qué dirección y si hay ironía. El modelo devuelve etiqueta, probabilidades y confianza para cada fila.</p>
+      <ul>
+        <li><strong>Filtro:</strong> <span id="m-gate"></span></li>
+        <li><strong>Partido:</strong> <span id="m-partido"></span></li>
+        <li><strong>Dirección:</strong> <span id="m-dir"></span></li>
+      </ul>
+
+      <h3>Cómo se calcula el índice</h3>
+      <p>Para cada medio se cuentan los tuits con partido concreto y dirección clara. Suman a la izquierda los que benefician a PSOE o Sumar y los que perjudican a PP o Vox. Suman a la derecha los que benefician a PP o Vox y los que perjudican a PSOE o Sumar. El índice es derecha menos izquierda partido por el total con dirección clara, así que va de −1 a +1.</p>
+
+      <h3>Límites</h3>
+      <ul>
+        <li>Solo se analiza el texto del tuit. Los enlaces y las imágenes no se abren, y eso baja la confianza en los tuits que son solo un titular con enlace.</li>
+        <li>El filtro y la dirección son juicios de un modelo, no una verdad. Cada fila lleva su confianza y el umbral de duda está marcado.</li>
+        <li>Los retuits se miden como métrica pública del tuit, no como alcance real.</li>
+      </ul>
+      <p class="foot-note">Datos, scripts y este sitio: <a id="repo-link" href="#" target="_blank" rel="noopener">repositorio público en GitHub</a>. Censo generado el <span id="m-fecha"></span>.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <p>Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
