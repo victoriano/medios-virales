@@ -90,6 +90,25 @@ uv run --with playwright python3 scripts/check_site.py
 
 Los scripts están pensados para reanudarse: lo que ya está descargado o clasificado no se repite.
 
+## Despliegue
+
+El sitio está publicado en **https://medios.victoriano.me** como estático desde el VPS, con Caddy y certificado automático, a partir de un clon de este repositorio en `/srv/medios`. Para actualizarlo después de un `push`:
+
+```bash
+cd /srv/medios && git pull
+```
+
+El bloque que lo sirve en `/etc/caddy/Caddyfile` es:
+
+```text
+medios.victoriano.me {
+	bind 23.88.60.130
+	root * /srv/medios/site
+	encode gzip
+	file_server
+}
+```
+
 ## Límites
 
 - Solo se analiza el **texto** del tuit. Los enlaces y las imágenes no se abren, y eso baja la confianza en los tuits que son solo un titular con enlace.
