@@ -9,23 +9,23 @@ El resultado se puede explorar en **https://medios.victoriano.me**.
 | Carpeta | Contenido |
 | --- | --- |
 | `site/` | La web estática: HTML, CSS, JavaScript sin dependencias y los datos en JSON troceados por medio. |
-| `data/virales_clasificados.csv` | El censo completo: 20.404 filas con medio, fecha, texto, métricas y clasificación (partido, dirección, ironía y confianzas). |
+| `data/virales_clasificados.csv` | El censo completo: 21.489 filas con medio, fecha, texto, métricas y clasificación (partido, dirección, ironía y confianzas). |
 | `data/contexto_entidades.json` | La ficha de contexto de cada tuit: las personas, empresas y casos que menciona y a qué partido o caso están ligados. |
 | `data/cambios_v2.csv` | El antes y el después del partido en los 12.520 tuits políticos, para auditar la reclasificación de septiembre de 2026. |
 | `data/cambios_direccion.csv` | Lo mismo con la dirección: el antes, el después, la confianza y quién habla en cada tuit. |
 | `data/cambios_v5.csv` | La pasada definitiva: partido y dirección antes y después, con la confianza y el motivo de cada cambio. |
-| `data/raw/` | La descarga original de Apify, 62 ficheros JSON comprimidos, tal cual salió del actor. |
+| `data/raw/` | La descarga original de Apify, los ficheros JSON comprimidos tal cual salieron del actor. |
 | `scripts/` | Todo el proceso, desde la descarga hasta la web. |
 
 ## Resultados principales
 
-- De los 62 medios de la lista, 50 aparecen en la web. Se dejan fuera tres cuentas de programa de cadena (**La Ventana**, **Hora 25** y **Hoy por Hoy**) porque no son cabeceras con línea editorial propia y duplicaban a la SER. El CSV del censo sí las incluye.
-- 12.520 de los 20.404 tuits virales tienen lectura política clara. Los otros 7.884 son deportes, sucesos, cultura o política extranjera. La web publica 19.500 tuits y 11.852 políticos después de quitar los tres programas.
-- El **PSOE** es el partido más señalado: 6.362 tuits, el 54 % de los políticos. Le siguen el **PP** con 3.077 (26 %), **Vox** con 478 y **Sumar** con 274. En 1.156 no se identifica un partido concreto y en 505 aparecen varios a la vez.
-- El **70 %** de esos tuits son críticos (`perjudica`), el 14 % neutros y el 15 % favorables.
+- La lista de seguimiento tiene 66 cuentas. La web publica las 57 que tuvieron algún tuit por encima de 100 retuits en la ventana, incluidas las cuentas de programa: **La Ventana**, **Hora 25** y **Hoy por Hoy** de la SER, y **Mañaneros 360**, **Malas lenguas**, **Al Rojo Vivo** y **laSexta Columna**. Sus tuits cuentan por separado de los de su cadena, así que hay solapamiento entre programa y canal.
+- 13.412 de los 21.489 tuits virales tienen lectura política clara. Los otros 8.077 son deportes, sucesos, cultura o política extranjera.
+- El **PSOE** es el partido más señalado: 6.729 tuits, el 50 % de los políticos. Le siguen el **PP** con 3.903 (29 %), **Vox** con 572 y **Sumar** con 285. En 1.342 no se identifica un partido concreto y en 581 aparecen varios a la vez.
+- El **70 %** de esos tuits son críticos (`perjudica`), el 14 % neutros y el 16 % favorables.
 - Índice de cada medio entre −1 (todo a la izquierda) y +1 (todo a la derecha). En los extremos: El Plural −0,96, infoLibre −0,94, Público −0,93, El HuffPost −0,90, elDiario.es −0,86, frente a esRadio +1,00, ESdiario +1,00, TRECE +1,00, Periodista Digital +1,00, Libertad Digital +0,99, okdiario +0,98.
-- El índice es **más extremo que en la primera versión**, y conviene leerlo sabiendo por qué: al exigir que el tuit señale a un partido, los que no lo hacen salen del índice (los `ninguno` pasan de 736 a 1.156 y los neutros de 928 a 1.711), así que la ratio se queda solo con la señal clara. Los medios con pocos tuits pueden llegar a ±1 con muestras pequeñas, y por eso la web publica siempre el `n`.
-- Los 62 medios de la lista publicaron 1,27 millones de tuits en el año. Este censo mira solo los que superaron los 100 retuits: 20.404, el 1,6 % del total.
+- El índice es **más extremo que en la primera versión**, y conviene leerlo sabiendo por qué: al exigir que el tuit señale a un partido, los que no lo hacen salen del índice (los `ninguno` pasan de 736 a 1.342 y los neutros de 928 a 1.926), así que la ratio se queda solo con la señal clara. Los medios con pocos tuits pueden llegar a ±1 con muestras pequeñas, y por eso la web publica siempre el `n`. Con menos de 15 tuits políticos no se dibuja la burbuja en el mapa y el índice no significa nada, como le pasa a laSexta Columna este año.
+- Los 62 medios de la lista original publicaron 1,27 millones de tuits en el año. Este censo mira solo los que superaron los 100 retuits: 21.489, el 1,7 % del total.
 
 ## Cómo se obtuvieron los tuits
 
@@ -73,6 +73,8 @@ Esta es la **segunda vuelta** de clasificación (septiembre de 2026), en tres pa
 - **Dirección.** Al reescribir la pregunta para mirar quién habla, **1.359 cambiaron de dirección** (el 10,9 %), 701 de ellos de `perjudica` a `beneficia`. Detalle en `cambios_direccion.csv`.
 - **Partido y dirección a la vez.** Con el criterio del partido ya cerrado (el partido al que el tuit critica o del que sale en su defensa), los dos juicios los hace Gemini en una sola llamada: **3.296 tuits cambian** de partido, de dirección o de los dos. Costó 13,24 $, con 213 búsquedas. Detalle en `cambios_v5.csv`.
 
+Los cuatro programas añadidos después (Mañaneros 360, Malas lenguas, Al Rojo Vivo y laSexta Columna) se descargaron y clasificaron aparte con el mismo método, sin repetir el censo ya hecho: 1.085 tuits y **1,05 $** de Apify. Lo hace `add_medios.py`, que lee `members.json`, pasa la puerta con Jev y resuelve partido y dirección con Gemini.
+
 ### El índice por medio
 
 Para cada medio se cuentan los tuits con partido concreto y dirección clara. Suman a la izquierda los que benefician a PSOE o Sumar y los que perjudican a PP o Vox. Suman a la derecha los que benefician a PP o Vox y los que perjudican a PSOE o Sumar. El índice es derecha menos izquierda partido por el total con dirección clara, y va de −1 a +1. Los tuits neutros no entran en el índice, pero sí aparecen contados en su columna.
@@ -102,6 +104,8 @@ python3 scripts/clasificar_v2.py --set politicos     # ficha de contexto + parti
 python3 scripts/clasificar_v5_partido_direccion.py   # el definitivo: partido y dirección juntos, 12.520 tuits
 python3 scripts/analyze_v2.py                        # índice nuevo y comparación con el anterior
 python3 scripts/validar_v2.py                        # estabilidad de la dirección
+# anadir medios nuevos sin repetir el censo ya clasificado (lee members.json y virales/<handle>.json)
+python3 scripts/add_medios.py                        # o --handles @a,@b
 # clasificar_v3_direccion.py y clasificar_v4_direccion_gemini.py son pasos intermedios, se conservan como registro
 
 # 4. Índice por medio y Excel de revisión

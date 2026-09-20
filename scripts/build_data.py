@@ -8,7 +8,7 @@ SITE = os.path.expanduser(os.environ.get("SITE_DIR", "~/Code/medios-virales/site
 DATA = os.path.join(SITE, "data")
 os.makedirs(os.path.join(DATA, "medios"), exist_ok=True)
 
-EXCLUIR = {"@laventana", "@Hora25", "@HoyPorHoy"}   # programas de cadena, no cabeceras con linea editorial propia
+EXCLUIR = set()   # vacio a proposito: La Ventana, Hora 25 y Hoy por Hoy vuelven al ranking a peticion de Victoriano
 
 rows = [r for r in csv.DictReader(open(os.path.join(BASE, "virales_clasificados.csv")))
         if r["handle"] not in EXCLUIR]

@@ -1,69 +1,69 @@
 {
  "generado": "2026-09-20",
  "ventana": {
-  "desde": "2026-08-31",
+  "desde": "2025-10-10",
   "hasta": "2026-09-19"
  },
  "fuente": "Apify, actor apidojo/twitter-scraper-lite, consultas from:<medio> min_retweets:100 por ventana mensual",
  "clasificador": "TypeSafe Jev (jev-latest) con ficha de contexto de Gemini 3.7 Flash y busqueda de Google: gate + partido + direccion + ironia",
  "totales": {
-  "virales": 19500,
-  "medios": 50,
-  "medios_lista": 62,
-  "clasificados": 11852,
-  "gate_si": 10172,
-  "gate_dudoso": 1680,
-  "gate_no": 7648,
+  "virales": 21489,
+  "medios": 57,
+  "medios_lista": 66,
+  "clasificados": 13412,
+  "gate_si": 11526,
+  "gate_dudoso": 1886,
+  "gate_no": 8077,
   "por_partido": {
-   "PSOE": 6362,
-   "PP": 3077,
-   "ninguno": 1156,
-   "varios": 505,
-   "Vox": 478,
-   "Sumar": 274
+   "PSOE": 6729,
+   "PP": 3903,
+   "ninguno": 1342,
+   "varios": 581,
+   "Vox": 572,
+   "Sumar": 285
   },
   "por_direccion": {
-   "perjudica": 8312,
-   "beneficia": 1829,
-   "neutro": 1711
+   "perjudica": 9354,
+   "beneficia": 2132,
+   "neutro": 1926
   },
   "cruce": {
-   "PSOE / perjudica": 4563,
-   "PP / perjudica": 2854,
-   "PSOE / beneficia": 1479,
-   "ninguno / neutro": 1150,
-   "Vox / perjudica": 368,
-   "varios / perjudica": 356,
-   "PSOE / neutro": 320,
-   "Sumar / perjudica": 165,
-   "PP / beneficia": 156,
-   "varios / neutro": 128,
-   "Sumar / beneficia": 92,
+   "PSOE / perjudica": 4628,
+   "PP / perjudica": 3677,
+   "PSOE / beneficia": 1768,
+   "ninguno / neutro": 1336,
+   "Vox / perjudica": 462,
+   "varios / perjudica": 415,
+   "PSOE / neutro": 333,
+   "Sumar / perjudica": 166,
+   "PP / beneficia": 158,
+   "varios / neutro": 141,
+   "Sumar / beneficia": 100,
    "Vox / beneficia": 81,
-   "PP / neutro": 67,
+   "PP / neutro": 68,
    "Vox / neutro": 29,
-   "varios / beneficia": 21,
-   "Sumar / neutro": 17,
+   "varios / beneficia": 25,
+   "Sumar / neutro": 19,
    "ninguno / perjudica": 6
   },
-  "ironia_media": 0.2,
+  "ironia_media": 0.207,
   "coste_censo_usd": 21.41,
   "coste_clasificacion_usd": 10.02
  },
  "meses": {
-  "2025-09": 891,
-  "2025-10": 1636,
-  "2025-11": 1491,
-  "2025-12": 1549,
-  "2026-01": 1546,
-  "2026-02": 1751,
-  "2026-03": 1882,
-  "2026-04": 1652,
-  "2026-05": 1669,
-  "2026-06": 1526,
-  "2026-07": 1285,
-  "2026-08": 1346,
-  "2026-09": 1276
+  "2025-09": 976,
+  "2025-10": 1842,
+  "2025-11": 1700,
+  "2025-12": 1734,
+  "2026-01": 1714,
+  "2026-02": 1915,
+  "2026-03": 2051,
+  "2026-04": 1816,
+  "2026-05": 1824,
+  "2026-06": 1665,
+  "2026-07": 1390,
+  "2026-08": 1457,
+  "2026-09": 1405
  },
  "medios": [
   {
@@ -110,6 +110,48 @@
    "rt_max": 3562,
    "logo": "logos/el_plural.png",
    "archivo": "medios/el_plural.json"
+  },
+  {
+   "handle": "@MananerosTVE",
+   "nombre": "Mañaneros 360",
+   "seguidores": 26422,
+   "descripcion": "Magazine de actualidad social de las mañanas de @La1_TVE. Presentado por @addelagonzalez, @JesusCintora y @MiriamMoreno_tv  ⏰ L-V a las 10:35",
+   "virales": 292,
+   "politicos": 235,
+   "izq": 193,
+   "der": 6,
+   "neutro": 36,
+   "indice": -0.94,
+   "partidos": {
+    "PP": 149,
+    "PSOE": 39,
+    "ninguno": 22,
+    "Vox": 15,
+    "varios": 10
+   },
+   "direccion": {
+    "perjudica": 173,
+    "neutro": 32,
+    "beneficia": 30
+   },
+   "meses": {
+    "2025-09": 17,
+    "2025-10": 37,
+    "2025-11": 28,
+    "2025-12": 32,
+    "2026-01": 19,
+    "2026-02": 13,
+    "2026-03": 12,
+    "2026-04": 13,
+    "2026-05": 2,
+    "2026-08": 28,
+    "2026-09": 34
+   },
+   "rt_mediana": 181,
+   "rt_media": 285,
+   "rt_max": 3097,
+   "logo": "logos/mananerostve.png",
+   "archivo": "medios/mananerostve.json"
   },
   {
    "handle": "@_infoLibre",
@@ -200,6 +242,141 @@
    "rt_max": 11376,
    "logo": "logos/publico_es.png",
    "archivo": "medios/publico_es.json"
+  },
+  {
+   "handle": "@MalasLenguas_Tv",
+   "nombre": "Malas Lenguas",
+   "seguidores": 46328,
+   "descripcion": "Actualidad y verificación con Gonzalo Miró, Esther Palomera y Ana Hinestrosa.\n\n▶️ L-V: 17:45h (La2) / 19:45h (La1)\n▶️ Sábados: 21:30h (La2), con Jesús Cintora",
+   "virales": 670,
+   "politicos": 545,
+   "izq": 440,
+   "der": 17,
+   "neutro": 88,
+   "indice": -0.926,
+   "partidos": {
+    "PP": 312,
+    "PSOE": 95,
+    "ninguno": 55,
+    "Vox": 51,
+    "varios": 27,
+    "Sumar": 5
+   },
+   "direccion": {
+    "perjudica": 404,
+    "beneficia": 78,
+    "neutro": 63
+   },
+   "meses": {
+    "2025-09": 18,
+    "2025-10": 51,
+    "2025-11": 48,
+    "2025-12": 56,
+    "2026-01": 43,
+    "2026-02": 45,
+    "2026-03": 47,
+    "2026-04": 46,
+    "2026-05": 43,
+    "2026-06": 49,
+    "2026-07": 31,
+    "2026-08": 34,
+    "2026-09": 34
+   },
+   "rt_mediana": 246,
+   "rt_media": 417,
+   "rt_max": 8917,
+   "logo": "logos/malaslenguas_tv.png",
+   "archivo": "medios/malaslenguas_tv.json"
+  },
+  {
+   "handle": "@HoyPorHoy",
+   "nombre": "Hoy por Hoy",
+   "seguidores": 251809,
+   "descripcion": "Programa líder de la radio española, de lunes a viernes de 6:00 a 12:20 horas con @AimarBretos\n\n📞 638 31 34 66\n\n🌐 Otras RRSS: https://t.co/avRd59M8vn",
+   "virales": 403,
+   "politicos": 313,
+   "izq": 233,
+   "der": 10,
+   "neutro": 70,
+   "indice": -0.918,
+   "partidos": {
+    "PP": 148,
+    "PSOE": 91,
+    "ninguno": 41,
+    "varios": 26,
+    "Vox": 6,
+    "Sumar": 1
+   },
+   "direccion": {
+    "perjudica": 184,
+    "beneficia": 83,
+    "neutro": 46
+   },
+   "meses": {
+    "2025-09": 9,
+    "2025-10": 34,
+    "2025-11": 39,
+    "2025-12": 22,
+    "2026-01": 21,
+    "2026-02": 29,
+    "2026-03": 22,
+    "2026-04": 24,
+    "2026-05": 34,
+    "2026-06": 36,
+    "2026-07": 19,
+    "2026-08": 13,
+    "2026-09": 11
+   },
+   "rt_mediana": 222,
+   "rt_media": 418,
+   "rt_max": 6171,
+   "logo": "logos/hoyporhoy.png",
+   "archivo": "medios/hoyporhoy.json"
+  },
+  {
+   "handle": "@Hora25",
+   "nombre": "Hora 25",
+   "seguidores": 200490,
+   "descripcion": "De lunes a viernes, de 20:00 a 23:30 en @La_SER con @jl_sastre\n\n🎧 Escúchanos aquí https://t.co/TQsvS4YSyk",
+   "virales": 429,
+   "politicos": 321,
+   "izq": 242,
+   "der": 12,
+   "neutro": 67,
+   "indice": -0.906,
+   "partidos": {
+    "PP": 164,
+    "PSOE": 79,
+    "ninguno": 53,
+    "varios": 11,
+    "Vox": 11,
+    "Sumar": 3
+   },
+   "direccion": {
+    "perjudica": 195,
+    "beneficia": 68,
+    "neutro": 58
+   },
+   "meses": {
+    "2025-09": 14,
+    "2025-10": 42,
+    "2025-11": 35,
+    "2025-12": 32,
+    "2026-01": 24,
+    "2026-02": 28,
+    "2026-03": 26,
+    "2026-04": 22,
+    "2026-05": 24,
+    "2026-06": 20,
+    "2026-07": 24,
+    "2026-08": 8,
+    "2026-09": 22
+   },
+   "rt_mediana": 252,
+   "rt_media": 419,
+   "rt_max": 3453,
+   "logo": "logos/hora25.png",
+   "archivo": "medios/hora25.json"
   },
   {
    "handle": "@ElHuffPost",
@@ -376,6 +553,48 @@
    "archivo": "medios/ctxt_es.json"
   },
   {
+   "handle": "@laventana",
+   "nombre": "La Ventana",
+   "seguidores": 209561,
+   "descripcion": "De lunes a viernes de 16:00 a 20:00 en @La_SER con Carles Francino",
+   "virales": 72,
+   "politicos": 34,
+   "izq": 22,
+   "der": 3,
+   "neutro": 9,
+   "indice": -0.76,
+   "partidos": {
+    "PSOE": 13,
+    "PP": 8,
+    "ninguno": 8,
+    "Vox": 3,
+    "varios": 1,
+    "Sumar": 1
+   },
+   "direccion": {
+    "perjudica": 15,
+    "beneficia": 11,
+    "neutro": 8
+   },
+   "meses": {
+    "2025-10": 2,
+    "2025-11": 5,
+    "2025-12": 8,
+    "2026-01": 1,
+    "2026-02": 2,
+    "2026-03": 2,
+    "2026-04": 3,
+    "2026-05": 4,
+    "2026-06": 5,
+    "2026-09": 2
+   },
+   "rt_mediana": 294,
+   "rt_media": 400,
+   "rt_max": 2544,
+   "logo": "logos/laventana.png",
+   "archivo": "medios/laventana.json"
+  },
+  {
    "handle": "@telediario_tve",
    "nombre": "Telediarios de TVE",
    "seguidores": 292556,
@@ -459,6 +678,51 @@
    "rt_max": 11210,
    "logo": "logos/el_pais.png",
    "archivo": "medios/el_pais.json"
+  },
+  {
+   "handle": "@DebatAlRojoVivo",
+   "nombre": "AlRojoVivo",
+   "seguidores": 518351,
+   "descripcion": "Un debate plural donde caben las opiniones y sugerencias de todos. De lunes a viernes, a las 11 horas, en @laSextaTV",
+   "virales": 120,
+   "politicos": 110,
+   "izq": 82,
+   "der": 20,
+   "neutro": 8,
+   "indice": -0.608,
+   "partidos": {
+    "PSOE": 50,
+    "PP": 43,
+    "Vox": 8,
+    "ninguno": 7,
+    "varios": 1,
+    "Sumar": 1
+   },
+   "direccion": {
+    "perjudica": 69,
+    "beneficia": 33,
+    "neutro": 8
+   },
+   "meses": {
+    "2025-09": 6,
+    "2025-10": 7,
+    "2025-11": 16,
+    "2025-12": 12,
+    "2026-01": 7,
+    "2026-02": 6,
+    "2026-03": 5,
+    "2026-04": 10,
+    "2026-05": 12,
+    "2026-06": 14,
+    "2026-07": 6,
+    "2026-08": 5,
+    "2026-09": 4
+   },
+   "rt_mediana": 184,
+   "rt_media": 243,
+   "rt_max": 1152,
+   "logo": "logos/debatalrojovivo.png",
+   "archivo": "medios/debatalrojovivo.json"
   },
   {
    "handle": "@rtvenoticias",
@@ -1153,6 +1417,33 @@
    "rt_max": 119,
    "logo": "logos/ecd_.png",
    "archivo": "medios/ecd_.json"
+  },
+  {
+   "handle": "@laSextaColumna",
+   "nombre": "laSexta Columna",
+   "seguidores": 70133,
+   "descripcion": "Periodismo salvaje. \nLos viernes a las 21:30 en @laSextaTV. \nLa culpa de la música es de @musica6columna.",
+   "virales": 3,
+   "politicos": 2,
+   "izq": 0,
+   "der": 0,
+   "neutro": 0,
+   "indice": 0,
+   "partidos": {
+    "PP": 2
+   },
+   "direccion": {
+    "perjudica": 2
+   },
+   "meses": {
+    "2025-10": 1,
+    "2026-04": 1
+   },
+   "rt_mediana": 199,
+   "rt_media": 276,
+   "rt_max": 416,
+   "logo": "logos/lasextacolumna.png",
+   "archivo": "medios/lasextacolumna.json"
   },
   {
    "handle": "@informativost5",
