@@ -51,7 +51,9 @@ for h, rs in por_medio.items():
         "direccion": dict(Counter(r["direccion"] for r in pol if r["direccion"]).most_common()),
         "meses": dict(sorted(meses.items())),
         "rt_mediana": int(sorted(int(r["retweets"]) for r in rs)[len(rs) // 2]) if rs else 0,
+        "rt_media": int(round(sum(int(r["retweets"]) for r in pol) / len(pol))) if pol else 0,
         "rt_max": max((int(r["retweets"]) for r in rs), default=0),
+        "logo": f"logos/{slug(h)}.png",
         "archivo": f"medios/{slug(h)}.json",
     }
     indice_medios.append(pub)

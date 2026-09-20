@@ -17,7 +17,7 @@ const compact = n => { n = n || 0; if (n >= 1e6) return (n / 1e6).toFixed(1).rep
 let INDEX = null;
 
 /* ---------- navegación ---------- */
-const VIEWS = ['ranking', 'medio', 'top', 'metodo'];
+const VIEWS = ['ranking', 'mapa', 'medio', 'top', 'metodo'];
 function show(v) {
   VIEWS.forEach(x => { $('#view-' + x).hidden = x !== v; });
   $$('.tab').forEach(t => t.classList.toggle('is-on', t.dataset.view === v));
@@ -30,6 +30,7 @@ window.addEventListener('hashchange', route);
 function route() {
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
   if (h.startsWith('medio/')) { openMedio(h.slice(6)); return; }
+  if (h === 'mapa') { show('mapa'); renderMapa(); return; }
   if (h === 'top') { show('top'); return; }
   if (h === 'metodo') { show('metodo'); return; }
   show('ranking');
@@ -255,12 +256,102 @@ function pintarTop() {
   m.textContent = `Cargar más (${nf(ts.length - topShown)} restantes)`;
 }
 
+/* ---------- mapa de dispersión ---------- */
+const ARO = i => i < -0.05 ? 'var(--izq)' : i > 0.05 ? 'var(--der)' : 'var(--neu)';
+let mapaFiltro = 25;
+const RADIO = v => Math.max(9, 0.85 * Math.sqrt(Math.max(v, 120)));
+
+function renderMapa() {
+  const svg = $('#mapa');
+  const todos = INDEX.medios.filter(m => m.politicos > 0);
+  const datos = todos.filter(m => m.politicos >= mapaFiltro);
+  const fuera = todos.length - datos.length;
+
+  const W = 1000, H = 620, M = { t: 30, r: 26, b: 66, l: 74 };
+  const TICKS = [0, 100, 400, 900, 1600, 2500];
+  const maxPol = Math.max(1, ...datos.map(m => m.politicos));
+  const top = TICKS.find(t => t >= maxPol) || 2500;
+  const lista = TICKS.filter(t => t <= top);
+  const yMax = Math.sqrt(top);
+  const px = v => M.l + (v + 1) / 2 * (W - M.l - M.r);
+  const py = v => H - M.b - Math.sqrt(Math.max(v, 0)) / yMax * (H - M.t - M.b);
+  const izq = px(0);
+
+  let g = '';
+  g += `<rect class="banda" x="${M.l}" y="${M.t}" width="${izq - M.l}" height="${H - M.b - M.t}"></rect>`;
+  g += `<rect x="${izq}" y="${M.t}" width="${W - M.r - izq}" height="${H - M.b - M.t}" fill="#fdf7f2"></rect>`;
+  lista.forEach(t => {
+    g += `<line x1="${M.l}" x2="${W - M.r}" y1="${py(t).toFixed(1)}" y2="${py(t).toFixed(1)}"></line>`;
+    g += `<text x="${M.l - 11}" y="${(py(t) + 4).toFixed(1)}" text-anchor="end">${nf(t)}</text>`;
+  });
+  [-1, -0.5, 0, 0.5, 1].forEach(v => {
+    g += `<line class="${v === 0 ? 'cero' : ''}" x1="${px(v).toFixed(1)}" x2="${px(v).toFixed(1)}" y1="${M.t}" y2="${H - M.b}"></line>`;
+    g += `<text x="${px(v).toFixed(1)}" y="${H - M.b + 21}" text-anchor="middle">${v === 0 ? '0' : (v > 0 ? '+' : '−') + Math.abs(v).toFixed(1)}</text>`;
+  });
+  g += `<text class="tit" x="${M.l}" y="${M.t - 11}">Tuits políticos clasificados</text>`;
+  g += `<text class="tit" x="${M.l}" y="${H - M.b + 46}">◀ izquierda</text>`;
+  g += `<text class="tit" x="${W - M.r}" y="${H - M.b + 46}" text-anchor="end">derecha ▶</text>`;
+  g += `<text class="tit" x="${(W - M.r + M.l) / 2}" y="${H - M.b + 46}" text-anchor="middle">Índice de sesgo</text>`;
+
+  const orden = datos.slice().sort((a, b) => RADIO(b.rt_media) - RADIO(a.rt_media));
+  const b = orden.map(m => {
+    const r = RADIO(m.rt_media), cx = px(m.indice), cy = py(m.politicos);
+    const d = (r * 1.74).toFixed(1), off = (-r * 0.87).toFixed(1);
+    return `<g class="burbuja" data-h="${esc(m.handle)}" transform="translate(${cx.toFixed(1)},${cy.toFixed(1)})">
+      <circle class="aro" r="${r.toFixed(1)}" stroke="${ARO(m.indice)}"></circle>
+      <image href="${esc(m.logo)}" x="${off}" y="${off}" width="${d}" height="${d}"></image>
+    </g>`;
+  }).join('');
+
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.innerHTML = `<g class="grid">${g}</g>${b}`;
+
+  svg.querySelectorAll('.burbuja').forEach(el => {
+    const m = INDEX.medios.find(x => x.handle === el.dataset.h);
+    if (!m) return;
+    el.addEventListener('mouseenter', e => {
+      el.parentNode.appendChild(el);
+      tipMapa(m, e);
+    });
+    el.addEventListener('mousemove', e => tipMapa(m, e));
+    el.addEventListener('mouseleave', () => { $('#mapa-tip').hidden = true; });
+    el.addEventListener('click', () => { location.hash = '#/medio/' + m.handle.replace('@', ''); });
+  });
+
+  const bola = v => `<span class="bola" style="width:${(2 * RADIO(v)).toFixed(0)}px;height:${(2 * RADIO(v)).toFixed(0)}px"></span> ${nf(v)} RT`;
+  $('#mapa-pie').innerHTML = `
+    <div class="blq"><strong>Tamaño</strong> ${bola(200)} ${bola(500)} ${bola(1000)}</div>
+    <div class="blq"><strong>Aro</strong> <span class="aro" style="border-color:var(--izq)"></span> izquierda
+      <span class="aro" style="border-color:var(--der);margin-left:10px"></span> derecha</div>
+    <div class="blq">El eje vertical usa raíz cuadrada para que los medios pequeños no queden aplastados.</div>
+    ${fuera ? `<div class="blq">${fuera} ${fuera === 1 ? 'medio queda fuera' : 'medios quedan fuera'} con este filtro.</div>` : ''}`;
+}
+
+function tipMapa(m, ev) {
+  const tip = $('#mapa-tip'), wrap = $('.chart-wrap');
+  const lado = m.indice < -0.05 ? 'izquierda' : m.indice > 0.05 ? 'derecha' : 'centro';
+  tip.innerHTML = `<div class="tt">${esc(m.nombre)}</div>
+    <div class="tv tm">${esc(m.handle)}</div>
+    <div class="tv">Índice <b>${m.indice > 0 ? '+' : m.indice < 0 ? '−' : ''}${Math.abs(m.indice).toFixed(2)}</b> · ${lado}</div>
+    <div class="tv">${nf(m.politicos)} tuits políticos de ${nf(m.virales)} virales</div>
+    <div class="tv">${nf(m.rt_media)} retuits de media</div>`;
+  tip.hidden = false;
+  const r = wrap.getBoundingClientRect();
+  let x = ev.clientX - r.left + 16, y = ev.clientY - r.top + 14;
+  if (x + tip.offsetWidth > r.width - 4) x = ev.clientX - r.left - tip.offsetWidth - 16;
+  if (y + tip.offsetHeight > r.height - 4) y = Math.max(4, r.height - tip.offsetHeight - 4);
+  tip.style.left = x + 'px';
+  tip.style.top = y + 'px';
+}
+
 /* ---------- arranque ---------- */
 (async function init() {
   INDEX = await (await fetch('data/index.json')).json();
   pintarTotales();
   pintarStats();
   pintarRanking();
+  $('#mapa-filtro').value = String(mapaFiltro);
+  $('#mapa-filtro').addEventListener('change', e => { mapaFiltro = Number(e.target.value) || 0; renderMapa(); });
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
   if (h === 'top') { await cargarTop(); }
   route();

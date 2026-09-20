@@ -19,6 +19,11 @@ async def main():
         pg.on("pageerror", lambda e: errores.append(f"[pageerror] {e}"))
         pg.on("requestfailed", lambda r: fallos.append(f"{r.url} :: {r.failure}"))
 
+        def mirar(resp):
+            if resp.status >= 400:
+                fallos.append(f"HTTP {resp.status} {resp.url}")
+        pg.on("response", mirar)
+
         await pg.goto(URL, wait_until="networkidle")
         await pg.wait_for_timeout(600)
         filas = await pg.locator("#tabla-ranking tbody tr").count()
@@ -55,6 +60,22 @@ async def main():
             await pg.click("#mmore")
             await pg.wait_for_timeout(500)
             print("tarjetas tras cargar más:", await pg.locator("#mlist article.tweet").count())
+
+        # mapa
+        await pg.goto(URL + "#/mapa", wait_until="networkidle")
+        await pg.wait_for_timeout(1200)
+        print("burbujas en el mapa:", await pg.locator("#mapa .burbuja").count())
+        logos = await pg.evaluate("Array.from(document.querySelectorAll('#mapa image')).filter(i => i.getBoundingClientRect().width > 0).length")
+        print("logos cargados:", logos)
+        await pg.hover('#mapa .burbuja[data-h="@eldiarioes"]')
+        await pg.wait_for_timeout(350)
+        print("tooltip:", " ".join((await pg.locator("#mapa-tip").inner_text()).split())[:120])
+        await pg.screenshot(path=f"{OUT}/8-mapa.png", full_page=True)
+        await pg.select_option("#mapa-filtro", "100")
+        await pg.wait_for_timeout(500)
+        print("burbujas con el filtro de 100:", await pg.locator("#mapa .burbuja").count())
+        await pg.select_option("#mapa-filtro", "0")
+        await pg.wait_for_timeout(300)
 
         # top
         await pg.goto(URL + "#/top", wait_until="networkidle")

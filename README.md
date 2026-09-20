@@ -64,9 +64,12 @@ Para cada medio se cuentan los tuits con partido concreto y dirección clara. Su
 
 Estática y sin dependencias: se abre sin construir nada. Empieza por el ranking para no soltar 20.404 tuits de golpe, y cada medio se carga solo cuando se pulsa. Dentro de cada medio se puede ordenar por retuits, me gusta, vistas o fecha, filtrar por partido, por dirección o por texto, y se pagina de 25 en 25.
 
+La pestaña **Mapa** dibuja cada medio como una burbuja con su logo: en horizontal su índice de sesgo, en vertical cuántos tuits políticos tiene (escala de raíz cuadrada, para que los pequeños no queden aplastados) y el tamaño según sus retuits medios. Los logos salen de la foto de perfil de cada medio en X, descargados y recortados en círculo por `scripts/fetch_logos.py`.
+
 - `site/data/index.json`: agregados por medio y totales globales.
 - `site/data/medios/<medio>.json`: todos los tuits de ese medio.
 - `site/data/top.json`: los 300 tuits virales con lectura política.
+- `site/logos/`: los 53 logos circulares.
 
 ## Reproducir
 
@@ -81,10 +84,13 @@ python3 scripts/classify_virales.py
 python3 scripts/analyze_virales.py
 uv run --with openpyxl python3 scripts/build_xlsx_virales.py
 
-# 4. Datos de la web
+# 4. Logos de los medios, desde el volcado de Apify
+uv run --with pillow python3 scripts/fetch_logos.py
+
+# 5. Datos de la web
 python3 scripts/build_data.py
 
-# 5. Comprobar la web en un navegador real
+# 6. Comprobar la web en un navegador real
 uv run --with playwright python3 scripts/check_site.py
 ```
 

@@ -105,6 +105,29 @@ th.sel .arrow{opacity:1}
 .kpi .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .kpi .v{font-size:19px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums}
 
+/* mapa de dispersion */
+.chart-wrap{position:relative;overflow-x:auto;margin:0 -4px 4px}
+#mapa{display:block;width:100%;min-width:780px;height:auto;overflow:visible}
+#mapa .burbuja{cursor:pointer;transition:filter .12s}
+#mapa .burbuja:hover{filter:drop-shadow(0 3px 7px rgba(0,0,0,.28))}
+#mapa .burbuja image{pointer-events:none}
+#mapa .burbuja .aro{fill:#fff;stroke-width:2.5}
+#mapa .burbuja:hover .aro,.burbuja.is-foco .aro{stroke-width:4}
+#mapa .grid line{stroke:#ece8e1;stroke-width:1}
+#mapa .grid line.cero{stroke:#c9c4bb;stroke-width:1.5}
+#mapa text{font-size:11.5px;fill:var(--muted);font-family:inherit}
+#mapa text.tit{font-size:12.5px}
+#mapa .banda{fill:#f6f3ee}
+.tip{position:absolute;z-index:6;pointer-events:none;background:#16181d;color:#fff;border-radius:10px;
+  padding:9px 12px;font-size:12.5px;line-height:1.45;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:270px}
+.tip .tt{font-weight:700;font-size:13.5px;margin-bottom:3px}
+.tip .tv{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tip .tm{color:#c9cbd2}
+.mapa-pie{display:flex;gap:20px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted);margin-top:12px}
+.mapa-pie .blq{display:flex;align-items:center;gap:8px}
+.mapa-pie .bola{display:inline-block;border:1.5px solid #b9b3a8;border-radius:50%;background:#f4f1ec}
+.mapa-pie .aro{display:inline-block;width:11px;height:11px;border-radius:50%;border:2.5px solid}
+
 .prose h3{margin:22px 0 6px;font-size:16px}
 .prose p,.prose li{color:#3c414b;max-width:78ch}
 .prose ul{padding-left:20px}

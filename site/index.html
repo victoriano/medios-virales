@@ -20,6 +20,7 @@
     <p class="lede">Los <strong id="n-virales">20.404</strong> tuits con más de 100 retuits de <strong id="n-medios">53</strong> medios generalistas españoles entre septiembre de 2025 y septiembre de 2026, clasificados uno a uno por el partido al que afectan y en qué dirección.</p>
     <nav class="tabs" role="tablist">
       <button class="tab is-on" data-view="ranking" role="tab">Ranking</button>
+      <button class="tab" data-view="mapa" role="tab">Mapa</button>
       <button class="tab" data-view="top" role="tab">Los más virales</button>
       <button class="tab" data-view="metodo" role="tab">Método</button>
     </nav>
@@ -56,6 +57,28 @@
         </table>
       </div>
       <p class="foot-note" id="rank-note"></p>
+    </div>
+  </section>
+
+  <!-- ============ MAPA ============ -->
+  <section id="view-mapa" class="view" hidden>
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Mapa de sesgo, volumen y alcance</h2>
+        <select id="mapa-filtro" aria-label="Filtrar por volumen">
+          <option value="25" selected>Con 25 o más tuits políticos</option>
+          <option value="0">Todos los medios</option>
+          <option value="100">Con 100 o más tuits políticos</option>
+        </select>
+      </div>
+      <p class="hint">
+        Cada medio es un punto. En horizontal, a la izquierda o a la derecha según a quién favorecen sus tuits virales. En vertical, cuantos más tuits políticos tenga, más arriba. Y el tamaño del punto es su media de retuits. Pasa el ratón para ver los números y pulsa para abrir sus tuits.
+      </p>
+      <div class="chart-wrap">
+        <svg id="mapa" role="img" aria-label="Dispersión de medios por índice de sesgo, número de tuits políticos y retuits medios"></svg>
+        <div class="tip" id="mapa-tip" hidden></div>
+      </div>
+      <div class="mapa-pie" id="mapa-pie"></div>
     </div>
   </section>
 
