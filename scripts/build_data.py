@@ -81,7 +81,7 @@ index = {
     "generado": "2026-09-20",
     "ventana": {"desde": rows[-1]["fecha"][:10] if rows else "", "hasta": "2026-09-19"},
     "fuente": "Apify, actor apidojo/twitter-scraper-lite, consultas from:<medio> min_retweets:100 por ventana mensual",
-    "clasificador": "TypeSafe Jev (jev-latest), gate + partido + direccion + ironia",
+    "clasificador": "TypeSafe Jev (jev-latest) con ficha de contexto de Gemini 3.7 Flash y busqueda de Google: gate + partido + direccion + ironia",
     "totales": {
         "virales": tot_virales,
         "medios": len(indice_medios),
@@ -93,6 +93,7 @@ index = {
         "cruce": resumen["cruce"],
         "ironia_media": resumen["ironia_media"],
         "coste_censo_usd": 21.41,
+        "coste_clasificacion_usd": 10.02,
     },
     "meses": dict(sorted(Counter(r["fecha"][:7] for r in rows).items())),
     "medios": indice_medios,
