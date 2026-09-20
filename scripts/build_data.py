@@ -8,10 +8,25 @@ SITE = os.path.expanduser(os.environ.get("SITE_DIR", "~/Code/medios-virales/site
 DATA = os.path.join(SITE, "data")
 os.makedirs(os.path.join(DATA, "medios"), exist_ok=True)
 
-rows = list(csv.DictReader(open(os.path.join(BASE, "virales_clasificados.csv"))))
+EXCLUIR = {"@laventana", "@Hora25", "@HoyPorHoy"}   # programas de cadena, no cabeceras con linea editorial propia
+
+rows = [r for r in csv.DictReader(open(os.path.join(BASE, "virales_clasificados.csv")))
+        if r["handle"] not in EXCLUIR]
 members = {m["handle"]: m for m in json.load(open(os.path.join(BASE, "members.json")))}
 sesgo = json.load(open(os.path.join(BASE, "sesgo_medios.json")))["por_medio"]
-resumen = json.load(open(os.path.join(BASE, "virales_resumen.json")))
+
+# el resumen global se recalcula sobre las filas que se publican, ya sin los medios excluidos
+_rel = [r for r in rows if r["partido"]]
+resumen = {
+    "gate_si": sum(1 for r in rows if r["relevante"] == "si"),
+    "gate_dudoso": sum(1 for r in rows if r["relevante"] == "dudoso"),
+    "gate_no": sum(1 for r in rows if r["relevante"] == "no"),
+    "clasificados": len(_rel),
+    "por_partido": dict(Counter(r["partido"] for r in _rel).most_common()),
+    "por_direccion": dict(Counter(r["direccion"] for r in _rel if r["direccion"]).most_common()),
+    "cruce": dict(Counter(f"{r['partido']} / {r['direccion']}" for r in _rel).most_common()),
+    "ironia_media": round(sum(float(r["ironia_p"] or 0) for r in _rel) / len(_rel), 3) if _rel else None,
+}
 
 
 def num(v, cast=float, default=0):
@@ -29,6 +44,13 @@ def slug(h):
 por_medio = defaultdict(list)
 for r in rows:
     por_medio[r["handle"]].append(r)
+
+# borra del sitio los JSON de los medios que ya no se publican
+publicados = {slug(h) for h in por_medio}
+for f in os.listdir(os.path.join(DATA, "medios")):
+    if f.endswith(".json") and f[:-5] not in publicados:
+        os.remove(os.path.join(DATA, "medios", f))
+        print("quitado del sitio:", f)
 
 indice_medios = []
 for h, rs in por_medio.items():

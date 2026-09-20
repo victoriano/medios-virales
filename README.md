@@ -11,17 +11,18 @@ El resultado se puede explorar en **https://medios.victoriano.me**.
 | `site/` | La web estática: HTML, CSS, JavaScript sin dependencias y los datos en JSON troceados por medio. |
 | `data/virales_clasificados.csv` | El censo completo: 20.404 filas con medio, fecha, texto, métricas y clasificación (partido, dirección, ironía y confianzas). |
 | `data/contexto_entidades.json` | La ficha de contexto de cada tuit: las personas, empresas y casos que menciona y a qué partido o caso están ligados. |
-| `data/cambios_v2.csv` | El antes y el después de los 12.520 tuits políticos, para auditar la reclasificación de septiembre de 2026. |
+| `data/cambios_v2.csv` | El antes y el después del partido en los 12.520 tuits políticos, para auditar la reclasificación de septiembre de 2026. |
+| `data/cambios_direccion.csv` | Lo mismo con la dirección: el antes, el después, la confianza y quién habla en cada tuit. |
 | `data/raw/` | La descarga original de Apify, 62 ficheros JSON comprimidos, tal cual salió del actor. |
 | `scripts/` | Todo el proceso, desde la descarga hasta la web. |
 
 ## Resultados principales
 
-- De los 62 medios de la lista, 53 tuvieron algún tuit por encima de 100 retuits.
-- 12.520 de los 20.404 tuits virales tienen lectura política clara. Los otros 7.884 son deportes, sucesos, cultura o política extranjera.
-- El **PSOE** es el partido más señalado: 6.559 tuits, el 52 % de los políticos. Le siguen el **PP** con 3.368 (27 %), **Vox** con 520 y **Sumar** con 450. En 736 no se identifica un partido concreto y en 887 aparecen varios a la vez.
-- El **76 %** de esos tuits son críticos (`perjudica`), el 7 % neutros y el 16 % favorables. Lo viral premia el conflicto.
-- Índice de cada medio entre −1 (todo a la izquierda) y +1 (todo a la derecha). En los extremos: CTXT −0,85, Telediarios de TVE −0,78, Público −0,68, El Plural −0,68, elDiario.es −0,60, frente a TRECE +1,00, Periodista Digital +0,96, ESdiario +0,94, Libertad Digital +0,93, COPE +0,88.
+- De los 62 medios de la lista, 50 aparecen en la web. Se dejan fuera tres cuentas de programa de cadena (**La Ventana**, **Hora 25** y **Hoy por Hoy**) porque no son cabeceras con línea editorial propia y duplicaban a la SER. El CSV del censo sí las incluye.
+- 12.520 de los 20.404 tuits virales tienen lectura política clara. Los otros 7.884 son deportes, sucesos, cultura o política extranjera. La web publica 19.500 tuits y 11.852 políticos después de quitar los tres programas.
+- El **PSOE** es el partido más señalado: 6.329 tuits, el 53 % de los políticos. Le siguen el **PP** con 3.070 (26 %), **Vox** con 498 y **Sumar** con 432. En 681 no se identifica un partido concreto y en 842 aparecen varios a la vez.
+- El **71 %** de esos tuits son críticos (`perjudica`), el 7 % neutros y el 22 % favorables.
+- Índice de cada medio entre −1 (todo a la izquierda) y +1 (todo a la derecha). En los extremos: El HuffPost −0,79, El Plural −0,76, Público −0,75, elDiario.es −0,73, CTXT −0,72, frente a esRadio +1,00, TRECE +1,00, Periodista Digital +0,98, ESdiario +0,97, Libertad Digital +0,96.
 - Los 62 medios de la lista publicaron 1,27 millones de tuits en el año. Este censo mira solo los que superaron los 100 retuits: 20.404, el 1,6 % del total.
 
 ## Cómo se obtuvieron los tuits
@@ -56,12 +57,16 @@ Con **TypeSafe** (modelo Jev, `jev-latest`) en dos pasos. A cada tuit se le pasa
 **Paso 2, solo para los que pasan.** Tres preguntas en una sola llamada por tuit:
 
 - `objetivo` (elección): PP, PSOE, Vox, Sumar, varios o ninguno, con probabilidades y confianza. La pregunta es **de qué partido trata el tuit**, no a quién beneficia, y los criterios llevan los nombres de los cargos conocidos para que un escándalo del Gobierno no se lea como una noticia sobre quien sale ganando.
-- `direccion` (elección): beneficia, perjudica o neutro.
+- `direccion` (elección): beneficia, perjudica o neutro. La instrucción mira **quién habla**: si el tuit recoge declaraciones de un cargo del partido o un ataque suyo a los rivales cuenta como favorable, y solo cuenta como dañino cuando la crítica viene de fuera o denuncia algo negativo del partido. Sin ese criterio, cualquier tuit con tono de conflicto salía como perjudicial, incluidos los ministros respondiendo a la oposición.
+- `voz` (elección): cargo del partido, rival, tercero o sin voz. Sirve para auditar la dirección.
 - `ironia` (sí o no): si el tuit usa ironía o sarcasmo, para no confundir un ataque burlón con un apoyo.
 
 Resultado: 10.741 tuits con lectura política clara, 1.779 dudosos y 7.884 descartados. Ironía media detectada: 0,20, así que los pocos tuits marcados como favorables lo son de verdad y no por sarcasmo.
 
-Esta es la **segunda pasada** de clasificación (septiembre de 2026). La primera se hizo sin ficha de contexto y con la pregunta anterior: al volver a clasificar los 12.520 tuits políticos, **3.816 cambiaron de partido** (el 30,5 %) y 1.648 de dirección. Casi todo el movimiento es `ninguno` y `varios` pasando a un partido concreto cuando la ficha aclara de qué va el tuit, y casos del Gobierno que antes se atribuían al PP. Los cambios se pueden auditar fila a fila en `cambios_v2.csv`.
+Esta es la **segunda vuelta** de clasificación (septiembre de 2026), en dos pasadas auditables:
+
+- **Partido.** Al añadir la ficha de contexto y cambiar la pregunta, **3.816 de los 12.520 tuits políticos cambiaron de partido** (el 30,5 %). Casi todo el movimiento es `ninguno` y `varios` pasando a un partido concreto cuando la ficha aclara de qué va el tuit, y casos del Gobierno que antes se atribuían al PP. Detalle en `cambios_v2.csv`.
+- **Dirección.** Al reescribir la pregunta para mirar quién habla, **1.359 cambiaron de dirección** (el 10,9 %), 701 de ellos de `perjudica` a `beneficia`. Es la corrección de las declaraciones propias. Detalle en `cambios_direccion.csv`.
 
 ### El índice por medio
 
@@ -69,14 +74,14 @@ Para cada medio se cuentan los tuits con partido concreto y dirección clara. Su
 
 ## La web
 
-Estática y sin dependencias: se abre sin construir nada. Empieza por el ranking para no soltar 20.404 tuits de golpe, y cada medio se carga solo cuando se pulsa. Dentro de cada medio se puede ordenar por retuits, me gusta, vistas o fecha, filtrar por partido, por dirección o por texto, y se pagina de 25 en 25.
+Estática y sin dependencias: se abre sin construir nada. Empieza por el ranking para no soltar 19.500 tuits de golpe, y cada medio se carga solo cuando se pulsa. Dentro de cada medio se puede ordenar por retuits, me gusta, vistas o fecha, filtrar por partido, por dirección o por texto, y se pagina de 25 en 25.
 
 La pestaña **Mapa** dibuja cada medio como una burbuja con su logo: en horizontal su índice de sesgo, en vertical cuántos tuits políticos tiene (escala de raíz cuadrada, para que los pequeños no queden aplastados) y el tamaño según sus retuits medios. Los logos salen de la foto de perfil de cada medio en X, descargados y recortados en círculo por `scripts/fetch_logos.py`.
 
 - `site/data/index.json`: agregados por medio y totales globales.
 - `site/data/medios/<medio>.json`: todos los tuits de ese medio.
 - `site/data/top.json`: los 300 tuits virales con lectura política.
-- `site/logos/`: los 53 logos circulares.
+- `site/logos/`: los 50 logos circulares. `scripts/build_data.py` lleva la lista `EXCLUIR` con las cuentas que no se publican y borra del sitio los JSON que sobren.
 
 ## Reproducir
 
@@ -89,6 +94,7 @@ python3 scripts/classify_virales.py
 
 # 3. Reclasificación con ficha de contexto de Gemini (necesita además la clave de Gemini en ~/.config/gemini/api_key)
 python3 scripts/clasificar_v2.py --set politicos     # también --set dudosos o --set captura
+python3 scripts/clasificar_v3_direccion.py           # rehace la dirección mirando quién habla
 python3 scripts/analyze_v2.py                        # índice nuevo y comparación con el anterior
 python3 scripts/validar_v2.py                        # estabilidad de la dirección y variante estricta
 
