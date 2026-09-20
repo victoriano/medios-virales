@@ -61,6 +61,47 @@ async def main():
             await pg.wait_for_timeout(500)
             print("tarjetas tras cargar más:", await pg.locator("#mlist article.tweet").count())
 
+        # los indicadores y los recuentos de los desplegables tienen que seguir a los filtros
+        limpio = lambda v: [x.strip() for x in v]
+        await pg.select_option("#mp", "")
+        await pg.select_option("#md", "")
+        await pg.wait_for_timeout(300)
+        kpis_limpio = limpio(await pg.eval_on_selector_all("#mkpis .kpi .v", "e => e.map(x => x.textContent)"))
+        dirs_limpio = limpio(await pg.eval_on_selector_all("#md option", "e => e.map(x => x.textContent)"))
+        print("kpis sin filtros:", kpis_limpio, "| nota visible:", await pg.locator("#mkpinota").is_visible())
+
+        await pg.select_option("#md", "perjudica")
+        await pg.wait_for_timeout(350)
+        kpis_dir = limpio(await pg.eval_on_selector_all("#mkpis .kpi .v", "e => e.map(x => x.textContent)"))
+        nota = await pg.locator("#mkpinota").is_visible()
+        suma = sum(int(x) for x in kpis_dir[1:4])
+        print("kpis con dirección=perjudica:", kpis_dir, "| nota visible:", nota)
+        bien_dir = str(suma) == kpis_dir[0] and nota and kpis_dir != kpis_limpio
+        if not bien_dir:
+            errores.append(f"[check] con dirección=perjudica los indicadores no cuadran: {kpis_dir}")
+
+        dirs_con_dir = limpio(await pg.eval_on_selector_all("#md option", "e => e.map(x => x.textContent)"))
+        await pg.select_option("#mp", index=1)
+        await pg.wait_for_timeout(350)
+        dirs_con_party = limpio(await pg.eval_on_selector_all("#md option", "e => e.map(x => x.textContent)"))
+        kpis_party_dir = limpio(await pg.eval_on_selector_all("#mkpis .kpi .v", "e => e.map(x => x.textContent)"))
+        print("recuentos de dirección al filtrar por partido:", dirs_con_party)
+        print("kpis con partido + dirección:", kpis_party_dir)
+        if dirs_limpio == dirs_con_party:
+            errores.append(f"[check] los recuentos de dirección no responden al filtro de partido: {dirs_con_party}")
+        if sum(int(x) for x in kpis_party_dir[1:4]) != int(kpis_party_dir[0]):
+            errores.append(f"[check] izquierda+derecha+neutro no suma lo político: {kpis_party_dir}")
+        await pg.screenshot(path=f"{OUT}/9-filtros-kpis.png", full_page=True)
+
+        # al limpiar los filtros los indicadores vuelven a los del medio entero
+        await pg.select_option("#mp", "")
+        await pg.select_option("#md", "")
+        await pg.wait_for_timeout(350)
+        kpis_vuelta = limpio(await pg.eval_on_selector_all("#mkpis .kpi .v", "e => e.map(x => x.textContent)"))
+        print("kpis al limpiar los filtros:", kpis_vuelta, "| coinciden con los iniciales:", kpis_vuelta == kpis_limpio)
+        if kpis_vuelta != kpis_limpio:
+            errores.append(f"[check] los indicadores no vuelven al quitar los filtros: {kpis_vuelta} != {kpis_limpio}")
+
         # mapa
         await pg.goto(URL + "#/mapa", wait_until="networkidle")
         await pg.wait_for_timeout(1200)

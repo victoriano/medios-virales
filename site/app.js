@@ -154,18 +154,12 @@ function pintarMedio(meta) {
       </div>
       <div><span class="idx-pill ${cls}" style="font-size:16px;padding:7px 14px">${txt}</span></div>
     </div>
-    <div class="kpis">
-      <div class="kpi"><div class="k">Con lectura política</div><div class="v">${nf(meta.politicos)}</div></div>
-      <div class="kpi"><div class="k">A la izquierda</div><div class="v" style="color:var(--izq)">${nf(meta.izq)}</div></div>
-      <div class="kpi"><div class="k">A la derecha</div><div class="v" style="color:var(--der)">${nf(meta.der)}</div></div>
-      <div class="kpi"><div class="k">Neutro</div><div class="v" style="color:var(--neu)">${nf(meta.neutro)}</div></div>
-      <div class="kpi"><div class="k">RT mediana</div><div class="v">${nf(meta.rt_mediana)}</div></div>
-      <div class="kpi"><div class="k">RT máxima</div><div class="v">${nf(meta.rt_max)}</div></div>
-    </div>
+    <div class="kpis" id="mkpis"></div>
+    <p class="foot-note" id="mkpinota" hidden></p>
     <div class="filters">
       <input type="search" id="mt" placeholder="Buscar en sus tuits…" autocomplete="off">
-      <select id="mp"><option value="">Todo partido</option>${PARTIDOS.filter(p => meta.partidos[p]).map(p => `<option value="${p}">${p} (${nf(meta.partidos[p])})</option>`).join('')}</select>
-      <select id="md"><option value="">Toda dirección</option>${['beneficia', 'perjudica', 'neutro'].filter(d => meta.direccion[d]).map(d => `<option value="${d}">${DIRTXT[d]} (${nf(meta.direccion[d])})</option>`).join('')}</select>
+      <select id="mp"></select>
+      <select id="md"></select>
       <select id="ms">
         <option value="rt">Ordenar por retuits</option>
         <option value="lk">Ordenar por me gusta</option>
@@ -198,6 +192,7 @@ function filtrarTuits() {
 }
 function pintarListaMedio() {
   const ts = filtrarTuits();
+  pintarMedioCifras(ts);
   const total = ts.length;
   $('#mlist').innerHTML = total
     ? ts.slice(0, mShown).map(t => tarjeta(t, MEDIO.handle, MEDIO.nombre)).join('')
@@ -205,6 +200,59 @@ function pintarListaMedio() {
   const more = $('#mmore');
   more.hidden = total <= mShown;
   more.textContent = `Cargar más (${nf(total - mShown)} restantes)`;
+}
+/* Los indicadores y los recuentos de los desplegables se recalculan sobre lo que dejan los filtros.
+   Cada desplegable cuenta con los DEMAS filtros aplicados, no consigo mismo. */
+function pintarMedioCifras(ts) {
+  const IZQ = { PSOE: 1, Sumar: 1 }, DER = { PP: 1, Vox: 1 };
+  let izq = 0, der = 0, neu = 0, pol = 0;
+  for (const t of ts) {
+    if (!t.p) continue;
+    pol++;
+    if (t.d === 'beneficia' && IZQ[t.p]) izq++;
+    else if (t.d === 'beneficia' && DER[t.p]) der++;
+    else if (t.d === 'perjudica' && DER[t.p]) izq++;
+    else if (t.d === 'perjudica' && IZQ[t.p]) der++;
+    else neu++;
+  }
+  const rts = ts.map(t => t.rt).sort((a, b) => a - b);
+  const med = rts.length ? rts[Math.floor(rts.length / 2)] : 0;
+  const max = rts.length ? rts[rts.length - 1] : 0;
+  $('#mkpis').innerHTML = `
+      <div class="kpi"><div class="k">Con lectura política</div><div class="v">${nf(pol)}</div></div>
+      <div class="kpi"><div class="k">A la izquierda</div><div class="v" style="color:var(--izq)">${nf(izq)}</div></div>
+      <div class="kpi"><div class="k">A la derecha</div><div class="v" style="color:var(--der)">${nf(der)}</div></div>
+      <div class="kpi"><div class="k">Neutro</div><div class="v" style="color:var(--neu)">${nf(neu)}</div></div>
+      <div class="kpi"><div class="k">RT mediana</div><div class="v">${nf(med)}</div></div>
+      <div class="kpi"><div class="k">RT máxima</div><div class="v">${nf(max)}</div></div>`;
+
+  const filtrando = !!(mParty || mDir || mText.trim() || ($('#mo') || {}).value === 'pol');
+  const nota = $('#mkpinota');
+  nota.hidden = !filtrando;
+  nota.textContent = filtrando
+    ? `Cifras calculadas sobre los ${nf(ts.length)} ${ts.length === 1 ? 'tuit' : 'tuits'} que cumplen los filtros, no sobre el medio entero.`
+    : '';
+
+  // recuentos por faceta: cada uno con los demas filtros aplicados
+  const q = mText.trim().toLowerCase();
+  const soloPol = ($('#mo') || {}).value === 'pol';
+  const base = MEDIO.tweets.filter(t => (!soloPol || t.p) && (!q || t.t.toLowerCase().includes(q)));
+  const cPart = {}, cDir = {};
+  for (const t of base) {
+    if (t.p && (!mDir || t.d === mDir)) cPart[t.p] = (cPart[t.p] || 0) + 1;
+    if (t.d && (!mParty || t.p === mParty)) cDir[t.d] = (cDir[t.d] || 0) + 1;
+  }
+  const mp = $('#mp'), md = $('#md');
+  if (mp) {
+    mp.innerHTML = '<option value="">Todo partido</option>' +
+      PARTIDOS.filter(p => cPart[p] || p === mParty).map(p => `<option value="${p}">${p} (${nf(cPart[p] || 0)})</option>`).join('');
+    mp.value = mParty;
+  }
+  if (md) {
+    md.innerHTML = '<option value="">Toda dirección</option>' +
+      ['beneficia', 'perjudica', 'neutro'].filter(d => cDir[d] || d === mDir).map(d => `<option value="${d}">${DIRTXT[d]} (${nf(cDir[d] || 0)})</option>`).join('');
+    md.value = mDir;
+  }
 }
 
 /* ---------- tarjeta de tuit ---------- */
