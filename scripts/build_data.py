@@ -2,6 +2,9 @@
 """Genera los datos JSON del sitio a partir de virales_clasificados.csv."""
 import csv, json, os, re
 from collections import Counter, defaultdict
+from datetime import datetime, timezone
+
+VER = os.environ.get("SITE_VER") or datetime.now(timezone.utc).strftime("%Y%m%d%H%M")
 
 BASE = os.path.expanduser(os.environ.get("MEDIOS_DIR", "~/typesafe-lab/politica/medios"))
 SITE = os.path.expanduser(os.environ.get("SITE_DIR", "~/Code/medios-virales/site"))
@@ -75,7 +78,7 @@ for h, rs in por_medio.items():
         "rt_mediana": int(sorted(int(r["retweets"]) for r in rs)[len(rs) // 2]) if rs else 0,
         "rt_media": int(round(sum(int(r["retweets"]) for r in pol) / len(pol))) if pol else 0,
         "rt_max": max((int(r["retweets"]) for r in rs), default=0),
-        "logo": f"logos/{slug(h)}.png",
+        "logo": f"logos/{slug(h)}.webp",
         "archivo": f"medios/{slug(h)}.json",
     }
     indice_medios.append(pub)
@@ -90,7 +93,6 @@ for h, rs in por_medio.items():
             "p": r["partido"] or "", "pc": num(r["partido_conf"]),
             "d": r["direccion"] or "", "dc": num(r["direccion_conf"]),
             "ir": num(r["ironia_p"]),
-            "g": num(r["gate_p"]),
             "u": r["url"],
         })
     json.dump({"handle": h, "nombre": pub["nombre"], "indice": pub["indice"], "tweets": tweets},
@@ -101,6 +103,7 @@ tot_virales = sum(m["virales"] for m in indice_medios)
 
 index = {
     "generado": "2026-09-20",
+    "ver": VER,
     "ventana": {"desde": rows[-1]["fecha"][:10] if rows else "", "hasta": "2026-09-19"},
     "fuente": "Apify, actor apidojo/twitter-scraper-lite, consultas from:<medio> min_retweets:100 por ventana mensual",
     "clasificador": "TypeSafe Jev (jev-latest) con ficha de contexto de Gemini 3.7 Flash y busqueda de Google: gate + partido + direccion + ironia",
@@ -132,6 +135,16 @@ json.dump([{
 
 print("medios indexados:", len(indice_medios))
 print("virales totales:", tot_virales)
+
+# el HTML lleva la version pegada al JS y al CSS: asi el navegador no sigue usando el codigo viejo
+HTML = os.path.join(SITE, "index.html")
+if os.path.exists(HTML):
+    h = open(HTML, encoding="utf-8").read()
+    h2 = re.sub(r'(app\.js|styles\.css)(\?v=[0-9A-Za-z.\-]*)?', lambda m: f"{m.group(1)}?v={VER}", h)
+    if h2 != h:
+        open(HTML, "w", encoding="utf-8").write(h2)
+    print("version del sitio:", VER)
+
 sizes = sorted(((os.path.getsize(os.path.join(DATA, "medios", f)), f) for f in os.listdir(os.path.join(DATA, "medios"))), reverse=True)
 print("ficheros:", len(sizes), "| mayor:", sizes[0][1], round(sizes[0][0] / 1024), "KB")
 print("peso total data:", round(sum(s[0] for s in sizes) / 1024 / 1024, 1), "MB")

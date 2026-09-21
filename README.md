@@ -81,9 +81,9 @@ Para cada medio se cuentan los tuits con partido concreto y dirección clara. Su
 
 ## La web
 
-Estática y sin dependencias: se abre sin construir nada. Empieza por el ranking para no soltar 19.500 tuits de golpe, y cada medio se carga solo cuando se pulsa. Dentro de cada medio se puede ordenar por retuits, me gusta, vistas o fecha, filtrar por partido, por dirección o por texto, y se pagina de 25 en 25.
+Estática y sin dependencias: se abre sin construir nada. Arranca en el **mapa** y cada medio se carga solo cuando se pulsa (y se adelanta al pasar el ratón por encima). Dentro de cada medio se puede ordenar por retuits, me gusta, vistas o fecha, filtrar por partido, por dirección o por texto, y se pagina de 25 en 25.
 
-La pestaña **Mapa** dibuja cada medio como una burbuja con su logo: en horizontal su índice de sesgo, en vertical cuántos tuits políticos tiene (escala de raíz cuadrada, para que los pequeños no queden aplastados) y el tamaño según sus retuits medios. Los logos salen de la foto de perfil de cada medio en X, descargados y recortados en círculo por `scripts/fetch_logos.py`.
+La pestaña **Mapa** dibuja cada medio como una burbuja con su logo: en horizontal su índice de sesgo, en vertical cuántos tuits políticos tiene (escala de raíz cuadrada, para que los pequeños no queden aplastados) y el tamaño según sus retuits medios. Es la vista por defecto. Los logos salen de la foto de perfil de cada medio en X, descargados, recortados en círculo y guardados en WebP por `scripts/fetch_logos.py`.
 
 - `site/data/index.json`: agregados por medio y totales globales.
 - `site/data/medios/<medio>.json`: todos los tuits de ese medio.

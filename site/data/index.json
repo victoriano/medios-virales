@@ -1,5 +1,6 @@
 {
  "generado": "2026-09-20",
+ "ver": "202609210730",
  "ventana": {
   "desde": "2025-10-10",
   "hasta": "2026-09-19"
@@ -108,7 +109,7 @@
    "rt_mediana": 290,
    "rt_media": 436,
    "rt_max": 3562,
-   "logo": "logos/el_plural.png",
+   "logo": "logos/el_plural.webp",
    "archivo": "medios/el_plural.json"
   },
   {
@@ -150,7 +151,7 @@
    "rt_mediana": 181,
    "rt_media": 285,
    "rt_max": 3097,
-   "logo": "logos/mananerostve.png",
+   "logo": "logos/mananerostve.webp",
    "archivo": "medios/mananerostve.json"
   },
   {
@@ -195,7 +196,7 @@
    "rt_mediana": 205,
    "rt_media": 289,
    "rt_max": 1712,
-   "logo": "logos/_infolibre.png",
+   "logo": "logos/_infolibre.webp",
    "archivo": "medios/_infolibre.json"
   },
   {
@@ -240,7 +241,7 @@
    "rt_mediana": 235,
    "rt_media": 410,
    "rt_max": 11376,
-   "logo": "logos/publico_es.png",
+   "logo": "logos/publico_es.webp",
    "archivo": "medios/publico_es.json"
   },
   {
@@ -285,7 +286,7 @@
    "rt_mediana": 246,
    "rt_media": 417,
    "rt_max": 8917,
-   "logo": "logos/malaslenguas_tv.png",
+   "logo": "logos/malaslenguas_tv.webp",
    "archivo": "medios/malaslenguas_tv.json"
   },
   {
@@ -330,7 +331,7 @@
    "rt_mediana": 222,
    "rt_media": 418,
    "rt_max": 6171,
-   "logo": "logos/hoyporhoy.png",
+   "logo": "logos/hoyporhoy.webp",
    "archivo": "medios/hoyporhoy.json"
   },
   {
@@ -375,7 +376,7 @@
    "rt_mediana": 252,
    "rt_media": 419,
    "rt_max": 3453,
-   "logo": "logos/hora25.png",
+   "logo": "logos/hora25.webp",
    "archivo": "medios/hora25.json"
   },
   {
@@ -420,7 +421,7 @@
    "rt_mediana": 212,
    "rt_media": 326,
    "rt_max": 3970,
-   "logo": "logos/elhuffpost.png",
+   "logo": "logos/elhuffpost.webp",
    "archivo": "medios/elhuffpost.json"
   },
   {
@@ -465,7 +466,7 @@
    "rt_mediana": 449,
    "rt_media": 664,
    "rt_max": 6991,
-   "logo": "logos/eldiarioes.png",
+   "logo": "logos/eldiarioes.webp",
    "archivo": "medios/eldiarioes.json"
   },
   {
@@ -510,7 +511,7 @@
    "rt_mediana": 277,
    "rt_media": 525,
    "rt_max": 9583,
-   "logo": "logos/la_ser.png",
+   "logo": "logos/la_ser.webp",
    "archivo": "medios/la_ser.json"
   },
   {
@@ -549,7 +550,7 @@
    "rt_mediana": 223,
    "rt_media": 468,
    "rt_max": 3400,
-   "logo": "logos/ctxt_es.png",
+   "logo": "logos/ctxt_es.webp",
    "archivo": "medios/ctxt_es.json"
   },
   {
@@ -591,7 +592,7 @@
    "rt_mediana": 294,
    "rt_media": 400,
    "rt_max": 2544,
-   "logo": "logos/laventana.png",
+   "logo": "logos/laventana.webp",
    "archivo": "medios/laventana.json"
   },
   {
@@ -631,7 +632,7 @@
    "rt_mediana": 185,
    "rt_media": 303,
    "rt_max": 2088,
-   "logo": "logos/telediario_tve.png",
+   "logo": "logos/telediario_tve.webp",
    "archivo": "medios/telediario_tve.json"
   },
   {
@@ -676,7 +677,7 @@
    "rt_mediana": 322,
    "rt_media": 518,
    "rt_max": 11210,
-   "logo": "logos/el_pais.png",
+   "logo": "logos/el_pais.webp",
    "archivo": "medios/el_pais.json"
   },
   {
@@ -721,7 +722,7 @@
    "rt_mediana": 184,
    "rt_media": 243,
    "rt_max": 1152,
-   "logo": "logos/debatalrojovivo.png",
+   "logo": "logos/debatalrojovivo.webp",
    "archivo": "medios/debatalrojovivo.json"
   },
   {
@@ -766,7 +767,7 @@
    "rt_mediana": 212,
    "rt_media": 395,
    "rt_max": 5310,
-   "logo": "logos/rtvenoticias.png",
+   "logo": "logos/rtvenoticias.webp",
    "archivo": "medios/rtvenoticias.json"
   },
   {
@@ -811,7 +812,7 @@
    "rt_mediana": 217,
    "rt_media": 345,
    "rt_max": 7432,
-   "logo": "logos/europapress.png",
+   "logo": "logos/europapress.webp",
    "archivo": "medios/europapress.json"
   },
   {
@@ -856,7 +857,7 @@
    "rt_mediana": 201,
    "rt_media": 315,
    "rt_max": 2282,
-   "logo": "logos/lasextatv.png",
+   "logo": "logos/lasextatv.webp",
    "archivo": "medios/lasextatv.json"
   },
   {
@@ -897,7 +898,7 @@
    "rt_mediana": 202,
    "rt_media": 341,
    "rt_max": 1182,
-   "logo": "logos/elperiodico.png",
+   "logo": "logos/elperiodico.webp",
    "archivo": "medios/elperiodico.json"
   },
   {
@@ -940,7 +941,7 @@
    "rt_mediana": 205,
    "rt_media": 311,
    "rt_max": 3360,
-   "logo": "logos/sextanoticias.png",
+   "logo": "logos/sextanoticias.webp",
    "archivo": "medios/sextanoticias.json"
   },
   {
@@ -985,7 +986,7 @@
    "rt_mediana": 233,
    "rt_media": 381,
    "rt_max": 4743,
-   "logo": "logos/efenoticias.png",
+   "logo": "logos/efenoticias.webp",
    "archivo": "medios/efenoticias.json"
   },
   {
@@ -1015,7 +1016,7 @@
    "rt_mediana": 182,
    "rt_media": 206,
    "rt_max": 6378,
-   "logo": "logos/rtve.png",
+   "logo": "logos/rtve.webp",
    "archivo": "medios/rtve.json"
   },
   {
@@ -1044,7 +1045,7 @@
    "rt_mediana": 219,
    "rt_media": 518,
    "rt_max": 4566,
-   "logo": "logos/noticias_cuatro.png",
+   "logo": "logos/noticias_cuatro.webp",
    "archivo": "medios/noticias_cuatro.json"
   },
   {
@@ -1073,7 +1074,7 @@
    "rt_mediana": 168,
    "rt_media": 392,
    "rt_max": 2366,
-   "logo": "logos/telecincoes.png",
+   "logo": "logos/telecincoes.webp",
    "archivo": "medios/telecincoes.json"
   },
   {
@@ -1103,7 +1104,7 @@
    "rt_mediana": 173,
    "rt_media": 490,
    "rt_max": 2135,
-   "logo": "logos/la2_tve.png",
+   "logo": "logos/la2_tve.webp",
    "archivo": "medios/la2_tve.json"
   },
   {
@@ -1134,7 +1135,7 @@
    "rt_mediana": 195,
    "rt_media": 212,
    "rt_max": 1962,
-   "logo": "logos/la1_tve.png",
+   "logo": "logos/la1_tve.webp",
    "archivo": "medios/la1_tve.json"
   },
   {
@@ -1164,7 +1165,7 @@
    "rt_mediana": 200,
    "rt_media": 315,
    "rt_max": 1548,
-   "logo": "logos/espejopublico.png",
+   "logo": "logos/espejopublico.webp",
    "archivo": "medios/espejopublico.json"
   },
   {
@@ -1190,7 +1191,7 @@
    "rt_mediana": 1247,
    "rt_media": 1247,
    "rt_max": 1337,
-   "logo": "logos/prnoticias.png",
+   "logo": "logos/prnoticias.webp",
    "archivo": "medios/prnoticias.json"
   },
   {
@@ -1223,7 +1224,7 @@
    "rt_mediana": 361,
    "rt_media": 342,
    "rt_max": 1217,
-   "logo": "logos/cuatro.png",
+   "logo": "logos/cuatro.webp",
    "archivo": "medios/cuatro.json"
   },
   {
@@ -1254,7 +1255,7 @@
    "rt_mediana": 227,
    "rt_media": 369,
    "rt_max": 934,
-   "logo": "logos/newtral.png",
+   "logo": "logos/newtral.webp",
    "archivo": "medios/newtral.json"
   },
   {
@@ -1288,7 +1289,7 @@
    "rt_mediana": 295,
    "rt_media": 344,
    "rt_max": 898,
-   "logo": "logos/expansioncom.png",
+   "logo": "logos/expansioncom.webp",
    "archivo": "medios/expansioncom.json"
   },
   {
@@ -1314,7 +1315,7 @@
    "rt_mediana": 172,
    "rt_media": 224,
    "rt_max": 838,
-   "logo": "logos/rtveplay.png",
+   "logo": "logos/rtveplay.webp",
    "archivo": "medios/rtveplay.json"
   },
   {
@@ -1341,7 +1342,7 @@
    "rt_mediana": 168,
    "rt_media": 154,
    "rt_max": 406,
-   "logo": "logos/antena3com.png",
+   "logo": "logos/antena3com.webp",
    "archivo": "medios/antena3com.json"
   },
   {
@@ -1369,7 +1370,7 @@
    "rt_mediana": 166,
    "rt_media": 160,
    "rt_max": 201,
-   "logo": "logos/diariosabemos.png",
+   "logo": "logos/diariosabemos.webp",
    "archivo": "medios/diariosabemos.json"
   },
   {
@@ -1389,7 +1390,7 @@
    "rt_mediana": 113,
    "rt_media": 0,
    "rt_max": 161,
-   "logo": "logos/rne.png",
+   "logo": "logos/rne.webp",
    "archivo": "medios/rne.json"
   },
   {
@@ -1415,7 +1416,7 @@
    "rt_mediana": 119,
    "rt_media": 119,
    "rt_max": 119,
-   "logo": "logos/ecd_.png",
+   "logo": "logos/ecd_.webp",
    "archivo": "medios/ecd_.json"
   },
   {
@@ -1442,7 +1443,7 @@
    "rt_mediana": 199,
    "rt_media": 276,
    "rt_max": 416,
-   "logo": "logos/lasextacolumna.png",
+   "logo": "logos/lasextacolumna.webp",
    "archivo": "medios/lasextacolumna.json"
   },
   {
@@ -1482,7 +1483,7 @@
    "rt_mediana": 222,
    "rt_media": 433,
    "rt_max": 3858,
-   "logo": "logos/informativost5.png",
+   "logo": "logos/informativost5.webp",
    "archivo": "medios/informativost5.json"
   },
   {
@@ -1525,7 +1526,7 @@
    "rt_mediana": 205,
    "rt_media": 413,
    "rt_max": 4196,
-   "logo": "logos/20m.png",
+   "logo": "logos/20m.webp",
    "archivo": "medios/20m.json"
   },
   {
@@ -1570,7 +1571,7 @@
    "rt_mediana": 241,
    "rt_media": 348,
    "rt_max": 10846,
-   "logo": "logos/eleconomistaes.png",
+   "logo": "logos/eleconomistaes.webp",
    "archivo": "medios/eleconomistaes.json"
   },
   {
@@ -1615,7 +1616,7 @@
    "rt_mediana": 188,
    "rt_media": 305,
    "rt_max": 2562,
-   "logo": "logos/ondacero_es.png",
+   "logo": "logos/ondacero_es.webp",
    "archivo": "medios/ondacero_es.json"
   },
   {
@@ -1660,7 +1661,7 @@
    "rt_mediana": 367,
    "rt_media": 761,
    "rt_max": 5991,
-   "logo": "logos/elmundoes.png",
+   "logo": "logos/elmundoes.webp",
    "archivo": "medios/elmundoes.json"
   },
   {
@@ -1705,7 +1706,7 @@
    "rt_mediana": 197,
    "rt_media": 347,
    "rt_max": 5220,
-   "logo": "logos/eltorotv.png",
+   "logo": "logos/eltorotv.webp",
    "archivo": "medios/eltorotv.json"
   },
   {
@@ -1750,7 +1751,7 @@
    "rt_mediana": 328,
    "rt_media": 501,
    "rt_max": 4074,
-   "logo": "logos/voz_populi.png",
+   "logo": "logos/voz_populi.webp",
    "archivo": "medios/voz_populi.json"
   },
   {
@@ -1794,7 +1795,7 @@
    "rt_mediana": 205,
    "rt_media": 384,
    "rt_max": 2700,
-   "logo": "logos/a3noticias.png",
+   "logo": "logos/a3noticias.webp",
    "archivo": "medios/a3noticias.json"
   },
   {
@@ -1839,7 +1840,7 @@
    "rt_mediana": 250,
    "rt_media": 434,
    "rt_max": 5485,
-   "logo": "logos/elconfidencial.png",
+   "logo": "logos/elconfidencial.webp",
    "archivo": "medios/elconfidencial.json"
   },
   {
@@ -1883,7 +1884,7 @@
    "rt_mediana": 204,
    "rt_media": 294,
    "rt_max": 1300,
-   "logo": "logos/elindepcom.png",
+   "logo": "logos/elindepcom.webp",
    "archivo": "medios/elindepcom.json"
   },
   {
@@ -1928,7 +1929,7 @@
    "rt_mediana": 432,
    "rt_media": 747,
    "rt_max": 6163,
-   "logo": "logos/elespanolcom.png",
+   "logo": "logos/elespanolcom.webp",
    "archivo": "medios/elespanolcom.json"
   },
   {
@@ -1973,7 +1974,7 @@
    "rt_mediana": 336,
    "rt_media": 617,
    "rt_max": 5135,
-   "logo": "logos/abc_es.png",
+   "logo": "logos/abc_es.webp",
    "archivo": "medios/abc_es.json"
   },
   {
@@ -2018,7 +2019,7 @@
    "rt_mediana": 217,
    "rt_media": 380,
    "rt_max": 6004,
-   "logo": "logos/cope.png",
+   "logo": "logos/cope.webp",
    "archivo": "medios/cope.json"
   },
   {
@@ -2063,7 +2064,7 @@
    "rt_mediana": 236,
    "rt_media": 430,
    "rt_max": 4482,
-   "logo": "logos/larazon_es.png",
+   "logo": "logos/larazon_es.webp",
    "archivo": "medios/larazon_es.json"
   },
   {
@@ -2108,7 +2109,7 @@
    "rt_mediana": 491,
    "rt_media": 754,
    "rt_max": 7399,
-   "logo": "logos/okdiario.png",
+   "logo": "logos/okdiario.webp",
    "archivo": "medios/okdiario.json"
   },
   {
@@ -2153,7 +2154,7 @@
    "rt_mediana": 250,
    "rt_media": 434,
    "rt_max": 6343,
-   "logo": "logos/libertaddigital.png",
+   "logo": "logos/libertaddigital.webp",
    "archivo": "medios/libertaddigital.json"
   },
   {
@@ -2195,7 +2196,7 @@
    "rt_mediana": 213,
    "rt_media": 408,
    "rt_max": 2562,
-   "logo": "logos/periodistadigit.png",
+   "logo": "logos/periodistadigit.webp",
    "archivo": "medios/periodistadigit.json"
   },
   {
@@ -2231,7 +2232,7 @@
    "rt_mediana": 182,
    "rt_media": 306,
    "rt_max": 2312,
-   "logo": "logos/trece_es.png",
+   "logo": "logos/trece_es.webp",
    "archivo": "medios/trece_es.json"
   },
   {
@@ -2269,7 +2270,7 @@
    "rt_mediana": 223,
    "rt_media": 480,
    "rt_max": 2094,
-   "logo": "logos/esdiario_com.png",
+   "logo": "logos/esdiario_com.webp",
    "archivo": "medios/esdiario_com.json"
   },
   {
@@ -2311,7 +2312,7 @@
    "rt_mediana": 194,
    "rt_media": 231,
    "rt_max": 1150,
-   "logo": "logos/esradio.png",
+   "logo": "logos/esradio.webp",
    "archivo": "medios/esradio.json"
   }
  ]

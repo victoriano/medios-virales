@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=202609210730">
 </head>
 <body>
 <header class="top">
@@ -19,8 +19,8 @@
     <h1>Qué partido beneficia cada medio</h1>
     <p class="lede">Los <strong id="n-virales">20.404</strong> tuits con más de 100 retuits de <strong id="n-medios">53</strong> medios generalistas españoles entre septiembre de 2025 y septiembre de 2026, clasificados uno a uno por el partido al que afectan y en qué dirección.</p>
     <nav class="tabs" role="tablist">
-      <button class="tab is-on" data-view="ranking" role="tab">Ranking</button>
-      <button class="tab" data-view="mapa" role="tab">Mapa</button>
+      <button class="tab is-on" data-view="mapa" role="tab">Mapa</button>
+      <button class="tab" data-view="ranking" role="tab">Ranking</button>
       <button class="tab" data-view="top" role="tab">Los más virales</button>
       <button class="tab" data-view="metodo" role="tab">Método</button>
     </nav>
@@ -30,7 +30,7 @@
 <main class="wrap">
 
   <!-- ============ RANKING ============ -->
-  <section id="view-ranking" class="view">
+  <section id="view-ranking" class="view" hidden>
     <div class="cards" id="stats"></div>
 
     <div class="panel">
@@ -61,7 +61,7 @@
   </section>
 
   <!-- ============ MAPA ============ -->
-  <section id="view-mapa" class="view" hidden>
+  <section id="view-mapa" class="view">
     <div class="panel">
       <div class="panel-head">
         <h2>Mapa de sesgo, volumen y alcance</h2>
@@ -141,6 +141,6 @@
   <p>Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.</p>
 </footer>
 
-<script src="app.js"></script>
+<script src="app.js?v=202609210730"></script>
 </body>
 </html>

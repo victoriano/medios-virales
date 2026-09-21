@@ -15,6 +15,28 @@ const fecha = f => { if (!f) return ''; const [y, m, d] = f.split('-'); return `
 const compact = n => { n = n || 0; if (n >= 1e6) return (n / 1e6).toFixed(1).replace('.', ',') + ' M'; if (n >= 1e3) return (n / 1e3).toFixed(n >= 1e4 ? 0 : 1).replace('.', ',') + ' mil'; return nf(n); };
 
 let INDEX = null;
+let VER = '';                     // sello de la build para cachear los datos del medio
+const CACHE = new Map();          // url -> promesa, para no pedir dos veces lo mismo
+
+/* ---------- carga de datos ---------- */
+function pedirJSON(url) {
+  if (!CACHE.has(url)) {
+    const p = fetch(url).then(r => {
+      if (!r.ok) throw new Error(r.status + ' ' + url);
+      return r.json();
+    });
+    p.catch(() => CACHE.delete(url));   // si falla, que se pueda reintentar
+    CACHE.set(url, p);
+  }
+  return CACHE.get(url);
+}
+const metaDe = h => INDEX.medios.find(m => m.handle.replace('@', '').toLowerCase() === String(h).replace('@', '').toLowerCase());
+// adelanta la descarga del medio al pasar el raton por encima: al pulsar ya esta en memoria
+function prefetchMedio(meta) {
+  if (!meta || !meta.archivo) return;
+  if (navigator.connection && navigator.connection.saveData) return;
+  pedirJSON('data/' + meta.archivo + VER).catch(() => {});
+}
 
 /* ---------- navegación ---------- */
 const VIEWS = ['ranking', 'mapa', 'medio', 'top', 'metodo'];
@@ -30,10 +52,10 @@ window.addEventListener('hashchange', route);
 function route() {
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
   if (h.startsWith('medio/')) { openMedio(h.slice(6)); return; }
-  if (h === 'mapa') { show('mapa'); renderMapa(); return; }
+  if (h === 'ranking') { show('ranking'); return; }
   if (h === 'top') { show('top'); return; }
   if (h === 'metodo') { show('metodo'); return; }
-  show('ranking');
+  show('mapa'); renderMapa();   // el mapa es la vista por defecto
 }
 
 /* ---------- cabecera / método ---------- */
@@ -124,6 +146,11 @@ $('#tabla-ranking tbody').addEventListener('click', e => {
   const tr = e.target.closest('tr[data-h]');
   if (tr) location.hash = '#/medio/' + tr.dataset.h.replace('@', '');
 });
+// al pasar por encima de una fila se adelanta su descarga
+$('#tabla-ranking tbody').addEventListener('mouseover', e => {
+  const tr = e.target.closest('tr[data-h]');
+  if (tr) prefetchMedio(metaDe(tr.dataset.h));
+});
 $('#q').addEventListener('input', e => { query = e.target.value; pintarRanking(); });
 
 /* ---------- ficha de un medio ---------- */
@@ -136,7 +163,12 @@ async function openMedio(handle) {
   show('medio');
   $('#medio-panel').innerHTML = '<p class="empty">Cargando tuits…</p>';
   if (!MEDIO || MEDIO.handle !== meta.handle) {
-    MEDIO = await (await fetch('data/' + meta.archivo)).json();
+    try {
+      MEDIO = await pedirJSON('data/' + meta.archivo + VER);
+    } catch (err) {
+      $('#medio-panel').innerHTML = '<p class="empty">No se han podido cargar sus tuits. Prueba otra vez.</p>';
+      return;
+    }
   }
   mSort = 'rt'; mParty = ''; mDir = ''; mText = ''; mShown = PAGE;
   pintarMedio(meta);
@@ -284,7 +316,7 @@ function tarjeta(t, handle, nombre) {
 let TOP = null, topShown = PAGE, topParty = '', topDir = '';
 async function cargarTop() {
   if (TOP) return;
-  TOP = await (await fetch('data/top.json')).json();
+  TOP = await pedirJSON('data/top.json' + VER);
   const cnt = {};
   TOP.forEach(t => { cnt[t.p] = (cnt[t.p] || 0) + 1; });
   $('#top-filtros').innerHTML = `
@@ -358,11 +390,16 @@ function renderMapa() {
     const m = INDEX.medios.find(x => x.handle === el.dataset.h);
     if (!m) return;
     el.addEventListener('mouseenter', e => {
-      el.parentNode.appendChild(el);
+      // solo se reordena si hace falta: si no, el propio reorden cambia el DOM bajo el
+      // cursor, vuelve a disparar mouseenter y entra en un bucle infinito de repintado
+      if (el !== el.parentNode.lastElementChild) el.parentNode.appendChild(el);
+      prefetchMedio(m);
       tipMapa(m, e);
     });
     el.addEventListener('mousemove', e => tipMapa(m, e));
     el.addEventListener('mouseleave', () => { $('#mapa-tip').hidden = true; });
+    el.addEventListener('touchstart', () => prefetchMedio(m), { passive: true });
+    el.addEventListener('pointerdown', () => prefetchMedio(m));
     el.addEventListener('click', () => { location.hash = '#/medio/' + m.handle.replace('@', ''); });
   });
 
@@ -394,7 +431,8 @@ function tipMapa(m, ev) {
 
 /* ---------- arranque ---------- */
 (async function init() {
-  INDEX = await (await fetch('data/index.json')).json();
+  INDEX = await pedirJSON('data/index.json');
+  VER = INDEX.ver ? '?v=' + INDEX.ver : '';
   pintarTotales();
   pintarStats();
   pintarRanking();

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Comprueba el sitio en un navegador real: consola, carga de datos y capturas."""
-import asyncio, sys
+"""Comprueba el sitio en un navegador real: consola, carga de datos, vista por defecto y capturas."""
+import asyncio, sys, time
 from playwright.async_api import async_playwright
 
 URL = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8099/"
@@ -25,7 +25,30 @@ async def main():
         pg.on("response", mirar)
 
         await pg.goto(URL, wait_until="networkidle")
-        await pg.wait_for_timeout(600)
+        await pg.wait_for_timeout(900)
+        # el mapa es la vista por defecto
+        burbujas = await pg.locator("#mapa .burbuja").count()
+        ranking_oculto = await pg.locator("#view-ranking").is_hidden()
+        print("vista por defecto: burbujas en el mapa:", burbujas, "| ranking oculto:", ranking_oculto)
+        if not burbujas or not ranking_oculto:
+            errores.append(f"[check] la vista por defecto no es el mapa: {burbujas} burbujas, ranking oculto={ranking_oculto}")
+
+        # clic en una burbuja del mapa: tiene que abrir el medio (regresion del bucle de mouseenter)
+        t0 = time.perf_counter()
+        await pg.click('#mapa .burbuja[data-h="@eldiarioes"]')
+        await pg.wait_for_selector("#mlist article.tweet", state="visible", timeout=15000)
+        ms = round((time.perf_counter() - t0) * 1000)
+        titulo_mapa = await pg.locator("#medio-panel h2").inner_text()
+        print(f"clic en la burbuja de eldiarioes -> {titulo_mapa} en {ms} ms")
+        if "elDiario" not in titulo_mapa:
+            errores.append(f"[check] la burbuja del mapa abrio otro medio: {titulo_mapa}")
+        await pg.screenshot(path=f"{OUT}/0-mapa-clic-medio.png", full_page=True)
+
+        # ranking
+        await pg.goto(URL + "#/ranking", wait_until="networkidle")
+        await pg.click('button[data-view="ranking"]') if await pg.locator("#view-ranking").is_hidden() else None
+        await pg.wait_for_selector("#tabla-ranking tbody tr", state="visible")
+        await pg.wait_for_timeout(300)
         filas = await pg.locator("#tabla-ranking tbody tr").count()
         print("filas en el ranking:", filas)
         await pg.screenshot(path=f"{OUT}/1-ranking.png", full_page=True)

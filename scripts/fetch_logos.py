@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Descarga los logos de los medios desde el volcado de Apify y los deja circulares."""
+"""Descarga los logos de los medios desde el volcado de Apify, los deja circulares y los guarda en WebP."""
 import glob, io, json, os, urllib.request
 from collections import defaultdict
 
@@ -20,9 +20,9 @@ from PIL import Image, ImageDraw
 ok, fail = {}, []
 for handle, url in sorted(fotos.items()):
     slug = handle.lstrip("@").lower()
-    dest = os.path.join(OUT, slug + ".png")
+    dest = os.path.join(OUT, slug + ".webp")
     if os.path.exists(dest):
-        ok[handle] = f"logos/{slug}.png"
+        ok[handle] = f"logos/{slug}.webp"
         continue
     alt = url
     for a, b in (("_normal.", "_400x400."), ("_normal.", "_200x200."), ("_normal.", "_bigger."), ("_normal.", "")):
@@ -37,8 +37,8 @@ for handle, url in sorted(fotos.items()):
             ImageDraw.Draw(mascara).ellipse((0, 0, SIZE * 4 - 1, SIZE * 4 - 1), fill=255)
             mascara = mascara.resize((SIZE, SIZE), Image.LANCZOS)
             img.putalpha(mascara)
-            img.save(dest, "PNG", optimize=True)
-            ok[handle] = f"logos/{slug}.png"
+            img.save(dest, "WEBP", quality=92, method=6)
+            ok[handle] = f"logos/{slug}.webp"
             break
         except Exception as e:
             last = e
@@ -47,7 +47,7 @@ for handle, url in sorted(fotos.items()):
         fail.append((handle, str(last)[:60]))
 
 json.dump(ok, open(os.path.join(OUT, "index.json"), "w"), ensure_ascii=False, indent=1)
-tot = sum(os.path.getsize(os.path.join(OUT, f)) for f in os.listdir(OUT) if f.endswith(".png"))
+tot = sum(os.path.getsize(os.path.join(OUT, f)) for f in os.listdir(OUT) if f.endswith(".webp"))
 print(f"logos descargados: {len(ok)} | fallos: {len(fail)} | peso: {tot/1024:.0f} KB")
 for h, e in fail[:10]:
     print("  fallo:", h, e)
