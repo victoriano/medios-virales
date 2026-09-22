@@ -52,7 +52,7 @@ input[type=search]{min-width:210px}
 
 /* tabla ranking */
 .table-scroll{overflow-x:auto;margin:0 -4px}
-table.rank{width:100%;border-collapse:collapse;font-size:14.5px;min-width:720px}
+table.rank{width:100%;border-collapse:collapse;font-size:14.5px;min-width:840px}
 table.rank th,table.rank td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
 table.rank thead th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer;user-select:none;white-space:nowrap}
 table.rank thead th.num{text-align:right}
@@ -70,6 +70,19 @@ th.sel .arrow{opacity:1}
 .idx-pill.p{color:var(--der);background:#fbeee5}
 .mini{display:flex;height:8px;border-radius:99px;overflow:hidden;background:#eee;min-width:110px}
 .mini i{display:block}
+
+/* columna «de cada 10 con lado claro» */
+th.c-dec{white-space:normal;max-width:210px}
+td.c-dec{min-width:200px}
+.dec{display:block}
+.dec-top{font-size:14px;margin-bottom:5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dec-top strong{font-weight:700}
+.dec-top .dec-sin{color:var(--muted);font-size:12.5px;font-weight:400}
+.dec-sub,.dec-n{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.5}
+.dec .mini{margin:4px 0 3px;min-width:150px}
+.star{color:#b7791f;font-weight:700;cursor:help}
+/* el índice sigue siendo la clave de orden, pero pasa a dato técnico pequeño */
+.idx-pill.idx-tech{min-width:46px;padding:2px 7px;font-size:11.5px;font-weight:600;opacity:.72}
 
 /* tarjetas de tuit */
 .cards-list{display:grid;gap:12px}
@@ -114,14 +127,26 @@ th.sel .arrow{opacity:1}
 #mapa .burbuja .aro{fill:#fff;stroke-width:2.5}
 #mapa .burbuja:hover .aro,.burbuja.is-foco .aro{stroke-width:4}
 #mapa .grid line{stroke:#ece8e1;stroke-width:1}
-#mapa .grid line.cero{stroke:#c9c4bb;stroke-width:1.5}
+#mapa .grid line.mitad{stroke:#a8a29a;stroke-width:1.6}
 #mapa text{font-size:11.5px;fill:var(--muted);font-family:inherit}
 #mapa text.tit{font-size:12.5px}
-#mapa .banda{fill:#f6f3ee}
+#mapa .grid text.mitad{fill:#6b7280;font-weight:600}
+/* bandas de fondo por zonas de reparto */
+#mapa .grid rect.zona{border:none;stroke:none}
+#mapa .zona.z-mdr{fill:#fdf2e9}
+#mapa .zona.z-dr{fill:#fdf8f3}
+#mapa .zona.z-eq{fill:#f7f6f3}
+#mapa .zona.z-iz{fill:#f3f7fb}
+#mapa .zona.z-miz{fill:#ebf1f9}
+/* los nombres de las zonas van encima de las burbujas, con halo para que se lean */
+#mapa .etiquetas{pointer-events:none}
+#mapa .etiquetas text{font-size:11px;fill:#a9a196;letter-spacing:.06em;text-transform:uppercase;
+  paint-order:stroke;stroke:#fff;stroke-width:3.5px;stroke-linejoin:round}
 .tip{position:absolute;z-index:6;pointer-events:none;background:#16181d;color:#fff;border-radius:10px;
-  padding:9px 12px;font-size:12.5px;line-height:1.45;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:270px}
+  padding:9px 12px;font-size:12.5px;line-height:1.45;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:330px}
 .tip .tt{font-weight:700;font-size:13.5px;margin-bottom:3px}
 .tip .tv{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tip .tv.frase{white-space:normal}
 .tip .tm{color:#c9cbd2}
 .mapa-pie{display:flex;gap:20px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted);margin-top:12px}
 .mapa-pie .blq{display:flex;align-items:center;gap:8px}
@@ -141,7 +166,10 @@ th.sel .arrow{opacity:1}
   .panel{padding:15px}
   .cards{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
   table.rank{min-width:0}
-  table.rank .c-bar,table.rank .c-izq,table.rank .c-der,table.rank .c-rt{display:none}
+  table.rank .c-izq,table.rank .c-der,table.rank .c-rt{display:none}
+  table.rank .dec-sub,table.rank .dec-n{display:none}
+  td.c-dec{min-width:0}
+  .dec .mini{min-width:96px}
   table.rank th,table.rank td{padding:9px 5px}
   .medio-cell .h{font-size:11.5px}
 }

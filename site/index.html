@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=202609210730">
+<link rel="stylesheet" href="styles.css?v=202609220900">
 </head>
 <body>
 <header class="top">
@@ -39,14 +39,14 @@
         <input type="search" id="q" placeholder="Buscar medio…" autocomplete="off" aria-label="Buscar medio">
       </div>
       <p class="hint">
-        El <strong>índice</strong> resume a quién favorece lo que se comparte de cada medio: <span class="neg">−1</span> es todo a la izquierda (beneficia a PSOE o Sumar, o perjudica a PP o Vox) y <span class="pos">+1</span> todo a la derecha. Pulsa una fila para leer sus tuits.
+        <strong>De cada 10 con lado claro</strong> es la lectura fácil: de cada diez tuits que señalan a un partido, cuántos van a la izquierda y cuántos a la derecha, con la barra azul y naranja debajo. En la línea gris va el segundo denominador, sobre <em>todos</em> los tuits políticos: el porcentaje restante hasta cien son los que informan sin tomar partido. El <strong>índice</strong> de <span class="neg">−1</span> a <span class="pos">+1</span> es esa misma cifra con signo y sigue ordenando la tabla por defecto. Pulsa una fila para leer sus tuits.
       </p>
       <div class="table-scroll">
         <table class="rank" id="tabla-ranking">
           <thead><tr>
             <th class="c-medio">Medio</th>
+            <th class="c-dec">De cada 10 con lado claro</th>
             <th data-sort="indice" class="num c-idx">Índice <span class="arrow"></span></th>
-            <th class="c-bar"></th>
             <th data-sort="virales" class="num">Virales <span class="arrow"></span></th>
             <th data-sort="politicos" class="num">Políticos <span class="arrow"></span></th>
             <th data-sort="izq" class="num c-izq">Izq. <span class="arrow"></span></th>
@@ -56,6 +56,7 @@
           <tbody></tbody>
         </table>
       </div>
+      <p class="foot-note" id="rank-aviso">Solo se cuentan los tuits que señalan a un partido. La parte gris son los que informan sin tomar partido y quedan fuera del cálculo. El índice de −1 a +1 es esa misma cifra con signo.</p>
       <p class="foot-note" id="rank-note"></p>
     </div>
   </section>
@@ -72,10 +73,10 @@
         </select>
       </div>
       <p class="hint">
-        Cada medio es un punto. En horizontal, a la izquierda o a la derecha según a quién favorecen sus tuits virales. En vertical, cuantos más tuits políticos tenga, más arriba. Y el tamaño del punto es su media de retuits. Pasa el ratón para ver los números y pulsa para abrir sus tuits.
+        Cada medio es un punto. En horizontal, el porcentaje de sus tuits con lado claro que van a la izquierda: 0 es todo a la derecha, 100 todo a la izquierda y 50 la mitad y mitad. En vertical, cuantos más tuits políticos tenga, más arriba. El tamaño del punto es su media de retuits y el aro marca su lado. Solo se dibujan los medios con 15 o más tuits con lado claro. Pasa el ratón para ver los números y pulsa para abrir sus tuits.
       </p>
       <div class="chart-wrap">
-        <svg id="mapa" role="img" aria-label="Dispersión de medios por índice de sesgo, número de tuits políticos y retuits medios"></svg>
+        <svg id="mapa" role="img" aria-label="Dispersión de medios por porcentaje de tuits que van a la izquierda, número de tuits políticos y retuits medios"></svg>
         <div class="tip" id="mapa-tip" hidden></div>
       </div>
       <div class="mapa-pie" id="mapa-pie"></div>
@@ -141,6 +142,6 @@
   <p>Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.</p>
 </footer>
 
-<script src="app.js?v=202609210730"></script>
+<script src="app.js?v=202609220900"></script>
 </body>
 </html>

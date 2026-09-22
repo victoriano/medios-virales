@@ -14,6 +14,34 @@ const esc = s => (s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;'
 const fecha = f => { if (!f) return ''; const [y, m, d] = f.split('-'); return `${d}/${m}/${y}`; };
 const compact = n => { n = n || 0; if (n >= 1e6) return (n / 1e6).toFixed(1).replace('.', ',') + ' M'; if (n >= 1e3) return (n / 1e3).toFixed(n >= 1e4 ? 0 : 1).replace('.', ',') + ' mil'; return nf(n); };
 
+/* ---------- lecturas del reparto ----------
+   claro  = tuits que señalan a un partido con lado (izq + der): el denominador de la web.
+   politicos = todos los tuits con lectura política, incluidos los que informan sin lado. */
+const CLARO_MIN = 15;             // por debajo de esto la muestra no da para leer décimos
+
+// Décimos del lado dominante sobre los tuits con lado claro. El lado minoritario nunca baja a 0
+// si existe, para no contradecir las columnas de recuento.
+function decimos(m) {
+  const claro = (m.izq || 0) + (m.der || 0);
+  if (!claro) return { claro: 0, izqLado: true, nDom: 0, nMin: 0, lado: 'izq', texto: '' };
+  const izqLado = (m.izq || 0) >= (m.der || 0);
+  const min = Math.min(m.izq || 0, m.der || 0);
+  const nMin = min === 0 ? 0 : Math.max(1, Math.min(9, Math.round(10 * min / claro)));
+  const nDom = 10 - nMin;
+  const lado = izqLado ? 'izq' : 'der';
+  return { claro, izqLado, nDom, nMin, lado, texto: `${nDom} ${lado} · ${nMin} ${izqLado ? 'der' : 'izq'}` };
+}
+// Porcentajes sobre TODOS los tuits políticos. El "sin lado" cierra el 100 %: son los que
+// informan sin tomar partido (incluye los que no señalan a un partido concreto).
+function reparto(m) {
+  const p = m.politicos || 0;
+  const izq = p ? Math.round(100 * (m.izq || 0) / p) : 0;
+  const der = p ? Math.round(100 * (m.der || 0) / p) : 0;
+  return { izq, der, sin: Math.max(0, 100 - izq - der) };
+}
+// Posición horizontal del mapa: 0 = todo a la derecha, 100 = todo a la izquierda.
+const pctIzq = m => { const t = (m.izq || 0) + (m.der || 0); return t ? 100 * (m.izq || 0) / t : 50; };
+
 let INDEX = null;
 let VER = '';                     // sello de la build para cachear los datos del medio
 const CACHE = new Map();          // url -> promesa, para no pedir dos veces lo mismo
@@ -117,14 +145,24 @@ function pintarRanking() {
   const tb = $('#tabla-ranking tbody');
   if (!rows.length) { tb.innerHTML = `<tr><td colspan="8" class="empty">Ningún medio coincide con esa búsqueda.</td></tr>`; return; }
   tb.innerHTML = rows.map(m => {
-    const tot = m.izq + m.der;
+    const d = decimos(m), p = reparto(m);
+    const tot = d.claro;
     const w = tot ? { i: 100 * m.izq / tot, d: 100 * m.der / tot } : { i: 0, d: 0 };
     const cls = m.indice < -0.05 ? 'n' : m.indice > 0.05 ? 'p' : '';
     const txt = (m.indice > 0 ? '+' : m.indice < 0 ? '−' : '') + Math.abs(m.indice).toFixed(2);
+    const pocos = tot < CLARO_MIN;
+    const marca = pocos ? ' <span class="star" title="menos de 15 tuits con lado claro: muestra insuficiente">*</span>' : '';
     return `<tr data-h="${esc(m.handle)}">
       <td><div class="medio-cell"><div><div><strong>${esc(m.nombre)}</strong></div><div class="h">${esc(m.handle)} · ${compact(m.seguidores)} seguidores</div></div></div></td>
-      <td class="num"><span class="idx-pill ${cls}">${txt}</span></td>
-      <td><div class="mini"><i style="width:${w.i}%;background:var(--izq)"></i><i style="width:${w.d}%;background:var(--der)"></i></div></td>
+      <td class="c-dec">
+        <div class="dec">
+          <div class="dec-top">${tot ? `<strong>${d.texto}</strong>` : '<span class="dec-sin">sin tuits con lado claro</span>'}</div>
+          <div class="mini"><i style="width:${w.i}%;background:var(--izq)"></i><i style="width:${w.d}%;background:var(--der)"></i></div>
+          <div class="dec-sub">${p.izq} % izq · ${p.der} % der · ${p.sin} % sin lado</div>
+          <div class="dec-n">(${nf(tot)} con lado claro)${marca}</div>
+        </div>
+      </td>
+      <td class="num"><span class="idx-pill idx-tech ${cls}" title="índice de sesgo: de −1 (todo a la izquierda) a +1 (todo a la derecha). Ordena la tabla por defecto">${txt}</span></td>
       <td class="num">${nf(m.virales)}</td>
       <td class="num">${nf(m.politicos)}</td>
       <td class="num c-izq">${nf(m.izq)}</td>
@@ -337,54 +375,70 @@ function pintarTop() {
 }
 
 /* ---------- mapa de dispersión ---------- */
-const ARO = i => i < -0.05 ? 'var(--izq)' : i > 0.05 ? 'var(--der)' : 'var(--neu)';
+// aro por el lado del reparto: azul si va a la izquierda, naranja si a la derecha, gris si está al centro
+const ARO = p => p > 55 ? 'var(--izq)' : p < 45 ? 'var(--der)' : 'var(--neu)';
 let mapaFiltro = 25;
 const RADIO = v => Math.max(9, 0.85 * Math.sqrt(Math.max(v, 120)));
 
 function renderMapa() {
   const svg = $('#mapa');
   const todos = INDEX.medios.filter(m => m.politicos > 0);
-  const datos = todos.filter(m => m.politicos >= mapaFiltro);
+  // el eje necesita un reparto con lado claro: por debajo de CLARO_MIN el punto no se dibuja
+  const datos = todos.filter(m => m.politicos >= mapaFiltro && (m.izq + m.der) >= CLARO_MIN);
   const fuera = todos.length - datos.length;
 
-  const W = 1000, H = 620, M = { t: 30, r: 26, b: 66, l: 74 };
+  const W = 1000, H = 620, M = { t: 30, r: 54, b: 66, l: 74 };
   const TICKS = [0, 100, 400, 900, 1600, 2500];
   const maxPol = Math.max(1, ...datos.map(m => m.politicos));
   const top = TICKS.find(t => t >= maxPol) || 2500;
   const lista = TICKS.filter(t => t <= top);
   const yMax = Math.sqrt(top);
-  const px = v => M.l + (v + 1) / 2 * (W - M.l - M.r);
+  const px = v => M.l + v / 100 * (W - M.l - M.r);   // 0 = todo a la derecha · 100 = todo a la izquierda
   const py = v => H - M.b - Math.sqrt(Math.max(v, 0)) / yMax * (H - M.t - M.b);
-  const izq = px(0);
+  const mitad = px(50);
 
-  let g = '';
-  g += `<rect class="banda" x="${M.l}" y="${M.t}" width="${izq - M.l}" height="${H - M.b - M.t}"></rect>`;
-  g += `<rect x="${izq}" y="${M.t}" width="${W - M.r - izq}" height="${H - M.b - M.t}" fill="#fdf7f2"></rect>`;
+  // bandas de fondo suaves, detrás de las burbujas
+  const ZONAS = [
+    [0, 20, 'muy a la derecha', 'z-mdr'],
+    [20, 40, 'a la derecha', 'z-dr'],
+    [40, 60, 'equilibrio', 'z-eq'],
+    [60, 80, 'a la izquierda', 'z-iz'],
+    [80, 100, 'muy a la izquierda', 'z-miz'],
+  ];
+  let g = '', etiquetas = '';
+  ZONAS.forEach(([a, z, txt, cls]) => {
+    const x = px(a), w = px(z) - x;
+    g += `<rect class="zona ${cls}" x="${x.toFixed(1)}" y="${M.t}" width="${w.toFixed(1)}" height="${H - M.b - M.t}"></rect>`;
+    etiquetas += `<text x="${(x + w / 2).toFixed(1)}" y="${M.t + 15}">${txt}</text>`;
+  });
   lista.forEach(t => {
     g += `<line x1="${M.l}" x2="${W - M.r}" y1="${py(t).toFixed(1)}" y2="${py(t).toFixed(1)}"></line>`;
     g += `<text x="${M.l - 11}" y="${(py(t) + 4).toFixed(1)}" text-anchor="end">${nf(t)}</text>`;
   });
-  [-1, -0.5, 0, 0.5, 1].forEach(v => {
-    g += `<line class="${v === 0 ? 'cero' : ''}" x1="${px(v).toFixed(1)}" x2="${px(v).toFixed(1)}" y1="${M.t}" y2="${H - M.b}"></line>`;
-    g += `<text x="${px(v).toFixed(1)}" y="${H - M.b + 21}" text-anchor="middle">${v === 0 ? '0' : (v > 0 ? '+' : '−') + Math.abs(v).toFixed(1)}</text>`;
+  const EJEX = [[0, '0'], [20, '2 de cada 10'], [40, '4 de cada 10'], [50, 'mitad y mitad'],
+                [60, '6 de cada 10'], [80, '8 de cada 10'], [100, '10 de cada 10']];
+  EJEX.forEach(([v, txt]) => {
+    const x = px(v).toFixed(1), c = v === 50 ? 'mitad' : '';
+    g += `<line class="${c}" x1="${x}" x2="${x}" y1="${M.t}" y2="${H - M.b}"></line>`;
+    g += `<text class="${c}" x="${x}" y="${H - M.b + 21}" text-anchor="middle">${txt}</text>`;
   });
   g += `<text class="tit" x="${M.l}" y="${M.t - 11}">Tuits políticos clasificados</text>`;
-  g += `<text class="tit" x="${M.l}" y="${H - M.b + 46}">◀ izquierda</text>`;
-  g += `<text class="tit" x="${W - M.r}" y="${H - M.b + 46}" text-anchor="end">derecha ▶</text>`;
-  g += `<text class="tit" x="${(W - M.r + M.l) / 2}" y="${H - M.b + 46}" text-anchor="middle">Índice de sesgo</text>`;
+  g += `<text class="tit" x="${M.l}" y="${H - M.b + 46}">◀ todo a la derecha</text>`;
+  g += `<text class="tit" x="${mitad.toFixed(1)}" y="${H - M.b + 46}" text-anchor="middle">% que va a la izquierda</text>`;
+  g += `<text class="tit" x="${W - M.r}" y="${H - M.b + 46}" text-anchor="end">todo a la izquierda ▶</text>`;
 
   const orden = datos.slice().sort((a, b) => RADIO(b.rt_media) - RADIO(a.rt_media));
   const b = orden.map(m => {
-    const r = RADIO(m.rt_media), cx = px(m.indice), cy = py(m.politicos);
+    const r = RADIO(m.rt_media), x = pctIzq(m), cx = px(x), cy = py(m.politicos);
     const d = (r * 1.74).toFixed(1), off = (-r * 0.87).toFixed(1);
     return `<g class="burbuja" data-h="${esc(m.handle)}" transform="translate(${cx.toFixed(1)},${cy.toFixed(1)})">
-      <circle class="aro" r="${r.toFixed(1)}" stroke="${ARO(m.indice)}"></circle>
+      <circle class="aro" r="${r.toFixed(1)}" stroke="${ARO(x)}"></circle>
       <image href="${esc(m.logo)}" x="${off}" y="${off}" width="${d}" height="${d}"></image>
     </g>`;
   }).join('');
 
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  svg.innerHTML = `<g class="grid">${g}</g>${b}`;
+  svg.innerHTML = `<g class="grid">${g}</g>${b}<g class="etiquetas">${etiquetas}</g>`;
 
   svg.querySelectorAll('.burbuja').forEach(el => {
     const m = INDEX.medios.find(x => x.handle === el.dataset.h);
@@ -407,19 +461,22 @@ function renderMapa() {
   $('#mapa-pie').innerHTML = `
     <div class="blq"><strong>Tamaño</strong> ${bola(200)} ${bola(500)} ${bola(1000)}</div>
     <div class="blq"><strong>Aro</strong> <span class="aro" style="border-color:var(--izq)"></span> izquierda
-      <span class="aro" style="border-color:var(--der);margin-left:10px"></span> derecha</div>
+      <span class="aro" style="border-color:var(--der);margin-left:10px"></span> derecha
+      <span class="aro" style="border-color:var(--neu);margin-left:10px"></span> centro</div>
     <div class="blq">El eje vertical usa raíz cuadrada para que los medios pequeños no queden aplastados.</div>
+    <div class="blq">Solo se dibujan los medios con ${CLARO_MIN} o más tuits con lado claro, y el gris (los que informan sin tomar partido) no entra ni en el eje ni en el cálculo.</div>
     ${fuera ? `<div class="blq">${fuera} ${fuera === 1 ? 'medio queda fuera' : 'medios quedan fuera'} con este filtro.</div>` : ''}`;
 }
 
 function tipMapa(m, ev) {
   const tip = $('#mapa-tip'), wrap = $('.chart-wrap');
-  const lado = m.indice < -0.05 ? 'izquierda' : m.indice > 0.05 ? 'derecha' : 'centro';
+  const d = decimos(m), p = reparto(m), pct = pctIzq(m);
+  const frase = !d.claro ? `sin tuits con lado claro (${nf(m.politicos)} tuits políticos)`
+    : pct === 50 ? `mitad y mitad (${nf(d.claro)} claros de ${nf(m.politicos)} tuits políticos; ${p.sin} % sin lado)`
+      : `${d.nDom} de cada 10 a la ${pct > 50 ? 'izquierda' : 'derecha'} (${nf(d.claro)} claros de ${nf(m.politicos)} tuits políticos; ${p.sin} % sin lado)`;
   tip.innerHTML = `<div class="tt">${esc(m.nombre)}</div>
-    <div class="tv tm">${esc(m.handle)}</div>
-    <div class="tv">Índice <b>${m.indice > 0 ? '+' : m.indice < 0 ? '−' : ''}${Math.abs(m.indice).toFixed(2)}</b> · ${lado}</div>
-    <div class="tv">${nf(m.politicos)} tuits políticos de ${nf(m.virales)} virales</div>
-    <div class="tv">${nf(m.rt_media)} retuits de media</div>`;
+    <div class="tv frase">${esc(frase)}</div>
+    <div class="tv tm">${esc(m.handle)} · ${nf(m.rt_media)} retuits de media · índice ${m.indice > 0 ? '+' : m.indice < 0 ? '−' : ''}${Math.abs(m.indice).toFixed(2)}</div>`;
   tip.hidden = false;
   const r = wrap.getBoundingClientRect();
   let x = ev.clientX - r.left + 16, y = ev.clientY - r.top + 14;
