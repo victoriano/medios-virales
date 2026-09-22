@@ -39,10 +39,8 @@ function reparto(m) {
   const der = p ? Math.round(100 * (m.der || 0) / p) : 0;
   return { izq, der, sin: Math.max(0, 100 - izq - der) };
 }
-// Posición horizontal del mapa: 0 = todo a la derecha, 100 = todo a la izquierda.
-const pctIzq = m => { const t = (m.izq || 0) + (m.der || 0); return t ? 100 * (m.izq || 0) / t : 50; };
-
 let INDEX = null;
+let POL = null;                   // data/polarizacion.json: lo publicado frente a lo viral
 let VER = '';                     // sello de la build para cachear los datos del medio
 const CACHE = new Map();          // url -> promesa, para no pedir dos veces lo mismo
 
@@ -374,36 +372,83 @@ function pintarTop() {
   m.textContent = `Cargar más (${nf(ts.length - topShown)} restantes)`;
 }
 
-/* ---------- mapa de dispersión ---------- */
-// aro por el lado del reparto: azul si va a la izquierda, naranja si a la derecha, gris si está al centro
-const ARO = p => p > 55 ? 'var(--izq)' : p < 45 ? 'var(--der)' : 'var(--neu)';
-let mapaFiltro = 25;
+/* ---------- mapa de dispersión ----------
+   Eje horizontal: la posición del medio en la escala izquierda → derecha. El cero cae en el
+   borde izquierdo del mapa (todo a la izquierda) y el cien en el derecho (todo a la derecha),
+   porque posicion = 100 * derecha / (izquierda + derecha) — es el mismo campo que trae
+   data/polarizacion.json.
+   Colores: ROJO para los medios de izquierda, AZUL para los de derecha y gris para el centro.
+   El control de series deja ver solo lo publicado, solo lo viral o las dos posiciones. En el
+   modo de las dos, la flecha va del punto publicado al punto viral: hacia dónde se desplaza el
+   medio cuando su contenido se comparte. */
+const MAPA_COLOR = { izq: 'var(--map-izq)', der: 'var(--map-der)', neu: 'var(--map-neu)' };
+const ladoDe = p => p < 45 ? 'izq' : p > 55 ? 'der' : 'neu';
+const colorDe = p => MAPA_COLOR[ladoDe(p)];
+
+let mapaSerie = 'ambas';    // publicado | viral | ambas
+let mapaFiltro = 200;       // mínimo de tuits con lado claro en cada serie dibujada
 const RADIO = v => Math.max(9, 0.85 * Math.sqrt(Math.max(v, 120)));
+const RADIO_VIRAL = 0.84;   // el punto de lo viral se dibuja algo menor para no tapar el de lo publicado
+const YTICKS = [0, 250, 500, 1000, 2000, 4000];
+const volumen = d => d.politicos != null ? `${nf(d.politicos)} tuits políticos` : `${nf(d.juicios)} tuits con lectura`;
+const puntos = n => n.toFixed(1).replace('.', ',');
+const nombreSerie = s => s === 'publicado' ? 'publicado' : 'viral';
+
+// filas del mapa: cada nodo lleva su medio, su serie, su posición (0-100 hacia la derecha) y su volumen
+function filasMapa() {
+  const metas = new Map(INDEX.medios.map(m => [m.handle.toLowerCase(), m]));
+  const nodos = [], parejas = [];
+  for (const r of (POL && POL.medios) || []) {
+    const m = metas.get(r.handle.toLowerCase());
+    if (!m) continue;                                   // medios del censo sin muestra en polarizacion.json
+    const pub = r.publicado, vir = r.viral;
+    const okPub = !!pub && pub.posicion != null && pub.con_lado >= mapaFiltro;
+    const okVir = !!vir && vir.posicion != null && vir.con_lado >= mapaFiltro;
+    const nodoPub = { m, serie: 'publicado', p: pub ? pub.posicion : 0, y: pub ? (pub.politicos || 0) : 0, d: pub, o: vir };
+    const nodoVir = { m, serie: 'viral', p: vir ? vir.posicion : 0, y: vir ? (vir.juicios || 0) : 0, d: vir, o: pub };
+    if (mapaSerie === 'ambas') {
+      // las dos posiciones solo se dibujan para quien tiene muestra en las dos series: si no, la
+      // flecha saldria de un punto sin datos y mentiria sobre el desplazamiento
+      if (!okPub || !okVir) continue;
+      nodos.push(nodoPub, nodoVir);
+      parejas.push({ m, p1: pub.posicion, y1: pub.politicos || 0, p2: vir.posicion, y2: vir.juicios || 0, pub, vir });
+    } else if (mapaSerie === 'publicado' ? okPub : okVir) {
+      nodos.push(mapaSerie === 'publicado' ? nodoPub : nodoVir);
+    }
+  }
+  return { nodos, parejas };
+}
 
 function renderMapa() {
   const svg = $('#mapa');
-  const todos = INDEX.medios.filter(m => m.politicos > 0);
-  // el eje necesita un reparto con lado claro: por debajo de CLARO_MIN el punto no se dibuja
-  const datos = todos.filter(m => m.politicos >= mapaFiltro && (m.izq + m.der) >= CLARO_MIN);
-  const fuera = todos.length - datos.length;
+  if (!INDEX) return;
+  if (!POL) {
+    svg.innerHTML = '';
+    $('#mapa-resumen').textContent = '';
+    $('#mapa-pie').innerHTML = '<div class="blq">No se han podido cargar los datos de lo publicado frente a lo viral.</div>';
+    return;
+  }
+  const { nodos, parejas } = filasMapa();
+  const total = (POL.medios || []).length;
+  const dibujados = new Set(nodos.map(n => n.m.handle)).size;
+  const fuera = total - dibujados;
 
-  const W = 1000, H = 620, M = { t: 30, r: 54, b: 66, l: 74 };
-  const TICKS = [0, 100, 400, 900, 1600, 2500];
-  const maxPol = Math.max(1, ...datos.map(m => m.politicos));
-  const top = TICKS.find(t => t >= maxPol) || 2500;
-  const lista = TICKS.filter(t => t <= top);
+  const W = 1000, H = 620, M = { t: 30, r: 54, b: 66, l: 82 };
+  const maxY = Math.max(1, ...nodos.map(n => n.y));
+  const top = YTICKS.find(t => t >= maxY) || YTICKS[YTICKS.length - 1];
+  const lista = YTICKS.filter(t => t <= top);
   const yMax = Math.sqrt(top);
-  const px = v => M.l + v / 100 * (W - M.l - M.r);   // 0 = todo a la derecha · 100 = todo a la izquierda
+  const px = v => M.l + v / 100 * (W - M.l - M.r);   // 0 = todo a la izquierda · 100 = todo a la derecha
   const py = v => H - M.b - Math.sqrt(Math.max(v, 0)) / yMax * (H - M.t - M.b);
   const mitad = px(50);
 
-  // bandas de fondo suaves, detrás de las burbujas
+  // bandas de fondo suaves, detrás de las burbujas: de la izquierda a la derecha
   const ZONAS = [
-    [0, 20, 'muy a la derecha', 'z-mdr'],
-    [20, 40, 'a la derecha', 'z-dr'],
+    [0, 20, 'muy a la izquierda', 'z-miz'],
+    [20, 40, 'a la izquierda', 'z-iz'],
     [40, 60, 'equilibrio', 'z-eq'],
-    [60, 80, 'a la izquierda', 'z-iz'],
-    [80, 100, 'muy a la izquierda', 'z-miz'],
+    [60, 80, 'a la derecha', 'z-dr'],
+    [80, 100, 'muy a la derecha', 'z-mdr'],
   ];
   let g = '', etiquetas = '';
   ZONAS.forEach(([a, z, txt, cls]) => {
@@ -422,35 +467,76 @@ function renderMapa() {
     g += `<line class="${c}" x1="${x}" x2="${x}" y1="${M.t}" y2="${H - M.b}"></line>`;
     g += `<text class="${c}" x="${x}" y="${H - M.b + 21}" text-anchor="middle">${txt}</text>`;
   });
-  g += `<text class="tit" x="${M.l}" y="${M.t - 11}">Tuits políticos clasificados</text>`;
-  g += `<text class="tit" x="${M.l}" y="${H - M.b + 46}">◀ todo a la derecha</text>`;
-  g += `<text class="tit" x="${mitad.toFixed(1)}" y="${H - M.b + 46}" text-anchor="middle">% que va a la izquierda</text>`;
-  g += `<text class="tit" x="${W - M.r}" y="${H - M.b + 46}" text-anchor="end">todo a la izquierda ▶</text>`;
+  const tituloY = mapaSerie === 'publicado' ? 'Tuits políticos · muestra de 6 días al mes'
+    : mapaSerie === 'viral' ? 'Tuits virales con lectura · censo de más de 100 retuits'
+      : 'Tuits con lectura · lo publicado frente a lo viral';
+  g += `<text class="tit" x="${M.l}" y="${M.t - 11}">${tituloY}</text>`;
+  g += `<text class="tit" x="${M.l}" y="${H - M.b + 46}">◀ todo a la izquierda</text>`;
+  g += `<text class="tit" x="${mitad.toFixed(1)}" y="${H - M.b + 46}" text-anchor="middle">% de los tuits con lado que va a la derecha</text>`;
+  g += `<text class="tit" x="${W - M.r}" y="${H - M.b + 46}" text-anchor="end">todo a la derecha ▶</text>`;
 
-  const orden = datos.slice().sort((a, b) => RADIO(b.rt_media) - RADIO(a.rt_media));
-  const b = orden.map(m => {
-    const r = RADIO(m.rt_media), x = pctIzq(m), cx = px(x), cy = py(m.politicos);
+  // las flechas van antes que las burbujas para quedar por debajo: apuntan de lo publicado a lo viral
+  const flechas = parejas.map(f => {
+    const x1 = px(f.p1), y1 = py(f.y1), x2 = px(f.p2), y2 = py(f.y2);
+    const r1 = RADIO(f.m.rt_media), r2 = RADIO(f.m.rt_media) * RADIO_VIRAL;
+    const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy);
+    if (L < r1 + r2 + 30) return '';          // sin sitio para una flecha legible
+    const ux = dx / L, uy = dy / L;
+    const sx = x1 + ux * (r1 + 3), sy = y1 + uy * (r1 + 3);
+    const ex = x2 - ux * (r2 + 4), ey = y2 - uy * (r2 + 4);
+    const hl = 11, hw = 5.4;                  // largo y ancho de la punta
+    const bx = ex - ux * hl, by = ey - uy * hl, nx = -uy, ny = ux;
+    const c = colorDe(f.p1), delta = f.p2 - f.p1;
+    return `<g class="flecha lado-${ladoDe(f.p1)}" data-h="${esc(f.m.handle)}" data-delta="${delta.toFixed(1)}"
+        data-publicado="${f.p1.toFixed(1)}" data-viral="${f.p2.toFixed(1)}"
+        data-x1="${x1.toFixed(1)}" data-y1="${y1.toFixed(1)}" data-x2="${x2.toFixed(1)}" data-y2="${y2.toFixed(1)}">
+      <path class="rastro" d="M ${sx.toFixed(1)} ${sy.toFixed(1)} L ${bx.toFixed(1)} ${by.toFixed(1)}" stroke="${c}"></path>
+      <polygon class="punta" fill="${c}" points="${ex.toFixed(1)},${ey.toFixed(1)} ${(bx + nx * hw).toFixed(1)},${(by + ny * hw).toFixed(1)} ${(bx - nx * hw).toFixed(1)},${(by - ny * hw).toFixed(1)}"></polygon>
+    </g>`;
+  }).join('');
+
+  const orden = nodos.slice().sort((a, b) => RADIO(b.m.rt_media) - RADIO(a.m.rt_media));
+  const burbujas = orden.map((n, i) => {
+    const r = RADIO(n.m.rt_media) * (n.serie === 'viral' ? RADIO_VIRAL : 1);
+    const cx = px(n.p), cy = py(n.y);
     const d = (r * 1.74).toFixed(1), off = (-r * 0.87).toFixed(1);
-    return `<g class="burbuja" data-h="${esc(m.handle)}" transform="translate(${cx.toFixed(1)},${cy.toFixed(1)})">
-      <circle class="aro" r="${r.toFixed(1)}" stroke="${ARO(x)}"></circle>
-      <image href="${esc(m.logo)}" x="${off}" y="${off}" width="${d}" height="${d}"></image>
+    return `<g class="burbuja burbuja-${n.serie} lado-${ladoDe(n.p)}" data-h="${esc(n.m.handle)}"
+        data-serie="${n.serie}" data-posicion="${n.p.toFixed(1)}" data-i="${i}" transform="translate(${cx.toFixed(1)},${cy.toFixed(1)})">
+      <circle class="aro${n.serie === 'viral' ? ' dis' : ''}" r="${r.toFixed(1)}" stroke="${colorDe(n.p)}"></circle>
+      <image href="${esc(n.m.logo)}" x="${off}" y="${off}" width="${d}" height="${d}"></image>
     </g>`;
   }).join('');
 
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  svg.innerHTML = `<g class="grid">${g}</g>${b}<g class="etiquetas">${etiquetas}</g>`;
+  svg.innerHTML = `<g class="grid">${g}</g><g class="flechas">${flechas}</g><g class="nodos">${burbujas}</g><g class="etiquetas">${etiquetas}</g>`;
+
+  // resumen de lo que se está viendo, calculado sobre los datos dibujados
+  const res = [];
+  if (mapaSerie === 'ambas') {
+    const deltas = parejas.map(f => f.p2 - f.p1).sort((a, b) => a - b);
+    const med = deltas.length ? deltas[Math.floor(deltas.length / 2)] : 0;
+    const suLado = parejas.filter(f => f.p1 < 50 ? f.p2 < f.p1 : f.p1 > 50 ? f.p2 > f.p1 : false).length;
+    res.push(`${nf(parejas.length)} medios con muestra en las dos series.`);
+    if (parejas.length) res.push(`${suLado} de ${parejas.length} se ${suLado === 1 ? 'desplaza' : 'desplazan'} hacia su propio lado al compartirse.`);
+    res.push(med === 0 ? 'La mediana del desplazamiento es de cero puntos.'
+      : `La mediana del desplazamiento es de ${puntos(Math.abs(med))} puntos hacia la ${med < 0 ? 'izquierda' : 'derecha'}.`);
+  } else {
+    res.push(`${nf(dibujados)} medios dibujados con la muestra de lo ${nombreSerie(mapaSerie)}.`);
+  }
+  $('#mapa-resumen').textContent = res.join(' ');
 
   svg.querySelectorAll('.burbuja').forEach(el => {
-    const m = INDEX.medios.find(x => x.handle === el.dataset.h);
-    if (!m) return;
+    const n = orden[Number(el.dataset.i)];
+    if (!n) return;
+    const m = n.m;
     el.addEventListener('mouseenter', e => {
       // solo se reordena si hace falta: si no, el propio reorden cambia el DOM bajo el
       // cursor, vuelve a disparar mouseenter y entra en un bucle infinito de repintado
       if (el !== el.parentNode.lastElementChild) el.parentNode.appendChild(el);
       prefetchMedio(m);
-      tipMapa(m, e);
+      tipMapa(n, e);
     });
-    el.addEventListener('mousemove', e => tipMapa(m, e));
+    el.addEventListener('mousemove', e => tipMapa(n, e));
     el.addEventListener('mouseleave', () => { $('#mapa-tip').hidden = true; });
     el.addEventListener('touchstart', () => prefetchMedio(m), { passive: true });
     el.addEventListener('pointerdown', () => prefetchMedio(m));
@@ -458,25 +544,43 @@ function renderMapa() {
   });
 
   const bola = v => `<span class="bola" style="width:${(2 * RADIO(v)).toFixed(0)}px;height:${(2 * RADIO(v)).toFixed(0)}px"></span> ${nf(v)} RT`;
+  const notaFiltro = mapaFiltro
+    ? `Solo se dibujan los medios con ${nf(mapaFiltro)} o más tuits con lado claro en cada serie.`
+    : 'Se dibujan todos los medios con muestra en la serie elegida.';
   $('#mapa-pie').innerHTML = `
     <div class="blq"><strong>Tamaño</strong> ${bola(200)} ${bola(500)} ${bola(1000)}</div>
-    <div class="blq"><strong>Aro</strong> <span class="aro" style="border-color:var(--izq)"></span> izquierda
-      <span class="aro" style="border-color:var(--der);margin-left:10px"></span> derecha
-      <span class="aro" style="border-color:var(--neu);margin-left:10px"></span> centro</div>
+    <div class="blq"><strong>Aro</strong> <span class="aro" style="border-color:var(--map-izq)"></span> izquierda
+      <span class="aro" style="border-color:var(--map-der);margin-left:10px"></span> derecha
+      <span class="aro" style="border-color:var(--map-neu);margin-left:10px"></span> centro</div>
+    ${mapaSerie === 'ambas' ? `<div class="blq"><strong>Aro continuo</strong> lo publicado · <strong>aro discontinuo</strong> lo viral</div>
+      <div class="blq"><strong>Flecha</strong> de la posición publicada a la viral: hacia dónde se desplaza el medio al compartirse</div>` : ''}
     <div class="blq">El eje vertical usa raíz cuadrada para que los medios pequeños no queden aplastados.</div>
-    <div class="blq">Solo se dibujan los medios con ${CLARO_MIN} o más tuits con lado claro, y el gris (los que informan sin tomar partido) no entra ni en el eje ni en el cálculo.</div>
+    <div class="blq">${notaFiltro}</div>
     ${fuera ? `<div class="blq">${fuera} ${fuera === 1 ? 'medio queda fuera' : 'medios quedan fuera'} con este filtro.</div>` : ''}`;
 }
 
-function tipMapa(m, ev) {
+function tipMapa(n, ev) {
   const tip = $('#mapa-tip'), wrap = $('.chart-wrap');
-  const d = decimos(m), p = reparto(m), pct = pctIzq(m);
+  const m = n.m;
+  const pub = n.serie === 'publicado' ? n.d : n.o;
+  const vir = n.serie === 'viral' ? n.d : n.o;
+  const linea = (d, etq) => d && d.posicion != null
+    ? `<div class="tv"><b>${etq}</b>: ${puntos(d.posicion)} % a la derecha${d.con_lado < 200 ? ' (muestra corta)' : ''} · ${nf(d.con_lado)} con lado claro de ${volumen(d)}</div>`
+    : '';
+  let desplaz = '';
+  if (pub && vir && pub.posicion != null && vir.posicion != null && vir.con_lado >= 200) {
+    const delta = vir.posicion - pub.posicion;
+    desplaz = Math.abs(delta) < 0.05
+      ? '<div class="tv frase">Al compartirse se queda en el mismo sitio.</div>'
+      : `<div class="tv frase">Al compartirse se desplaza ${puntos(Math.abs(delta))} puntos hacia la ${delta < 0 ? 'izquierda' : 'derecha'}.</div>`;
+  }
+  const d = decimos(m), p = reparto(m);
   const frase = !d.claro ? `sin tuits con lado claro (${nf(m.politicos)} tuits políticos)`
-    : pct === 50 ? `mitad y mitad (${nf(d.claro)} claros de ${nf(m.politicos)} tuits políticos; ${p.sin} % sin lado)`
-      : `${d.nDom} de cada 10 a la ${pct > 50 ? 'izquierda' : 'derecha'} (${nf(d.claro)} claros de ${nf(m.politicos)} tuits políticos; ${p.sin} % sin lado)`;
+    : `${d.texto} (${nf(d.claro)} claros de ${nf(m.politicos)} tuits políticos; ${p.sin} % sin lado)`;
   tip.innerHTML = `<div class="tt">${esc(m.nombre)}</div>
     <div class="tv frase">${esc(frase)}</div>
-    <div class="tv tm">${esc(m.handle)} · ${nf(m.rt_media)} retuits de media · índice ${m.indice > 0 ? '+' : m.indice < 0 ? '−' : ''}${Math.abs(m.indice).toFixed(2)}</div>`;
+    ${linea(pub, 'Publicado')}${linea(vir, 'Viral')}${desplaz}
+    <div class="tv tm">${esc(m.handle)} · ${nf(m.rt_media)} retuits de media · índice del censo ${m.indice > 0 ? '+' : m.indice < 0 ? '−' : ''}${Math.abs(m.indice).toFixed(2)}</div>`;
   tip.hidden = false;
   const r = wrap.getBoundingClientRect();
   let x = ev.clientX - r.left + 16, y = ev.clientY - r.top + 14;
@@ -493,6 +597,12 @@ function tipMapa(m, ev) {
   pintarTotales();
   pintarStats();
   pintarRanking();
+  try {
+    POL = await pedirJSON('data/polarizacion.json' + VER);
+  } catch (err) {
+    POL = null;                      // el mapa avisa en su pie si falta el fichero
+  }
+  $('#mapa-serie').addEventListener('change', e => { mapaSerie = e.target.value; renderMapa(); });
   $('#mapa-filtro').value = String(mapaFiltro);
   $('#mapa-filtro').addEventListener('change', e => { mapaFiltro = Number(e.target.value) || 0; renderMapa(); });
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));

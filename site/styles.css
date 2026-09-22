@@ -1,6 +1,9 @@
 :root{
   --bg:#faf8f5; --panel:#fff; --ink:#16181d; --muted:#6b7280; --line:#e6e2db;
   --izq:#2b6cb0; --der:#c05621; --ben:#2f855a; --perj:#c53030; --neu:#8a94a6;
+  /* el color del mapa sigue la convención española, al revés que el resto de la web:
+     rojo para los medios de izquierda y azul para los de derecha. */
+  --map-izq:#c53030; --map-der:#1f6fb2; --map-neu:#8a94a6;
   --pp:#1f6fb2; --psoe:#cf2e2e; --vox:#4caf50; --sumar:#c2185b; --otros:#8a94a6;
   --radio:14px; --sombra:0 1px 2px rgba(16,18,22,.05),0 8px 24px rgba(16,18,22,.06);
 }
@@ -47,6 +50,9 @@ main{padding:26px 0 60px}
 .hint{margin:0 0 16px;color:var(--muted);font-size:14px;max-width:80ch}
 .neg{color:var(--izq);font-weight:700}
 .pos{color:var(--der);font-weight:700}
+.rojo{color:var(--map-izq);font-weight:700}
+.azul{color:var(--map-der);font-weight:700}
+.panel-controles{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 input[type=search],select{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 12px;font:inherit;font-size:14px;color:var(--ink)}
 input[type=search]{min-width:210px}
 
@@ -125,23 +131,30 @@ td.c-dec{min-width:200px}
 #mapa .burbuja:hover{filter:drop-shadow(0 3px 7px rgba(0,0,0,.28))}
 #mapa .burbuja image{pointer-events:none}
 #mapa .burbuja .aro{fill:#fff;stroke-width:2.5}
+#mapa .burbuja .aro.dis{stroke-dasharray:4 2.6}
 #mapa .burbuja:hover .aro,.burbuja.is-foco .aro{stroke-width:4}
+/* la flecha de lo publicado a lo viral: se dibuja debajo de las burbujas */
+#mapa .flechas{pointer-events:none}
+#mapa .flecha .rastro{fill:none;stroke-width:2.2;stroke-linecap:round;opacity:.85}
+#mapa .flecha .punta{stroke:none;opacity:.9}
 #mapa .grid line{stroke:#ece8e1;stroke-width:1}
 #mapa .grid line.mitad{stroke:#a8a29a;stroke-width:1.6}
 #mapa text{font-size:11.5px;fill:var(--muted);font-family:inherit}
 #mapa text.tit{font-size:12.5px}
 #mapa .grid text.mitad{fill:#6b7280;font-weight:600}
-/* bandas de fondo por zonas de reparto */
+/* bandas de fondo por zonas de reparto: rojizas a la izquierda, azuladas a la derecha */
 #mapa .grid rect.zona{border:none;stroke:none}
-#mapa .zona.z-mdr{fill:#fdf2e9}
-#mapa .zona.z-dr{fill:#fdf8f3}
+#mapa .zona.z-miz{fill:#fceeee}
+#mapa .zona.z-iz{fill:#fdf6f6}
 #mapa .zona.z-eq{fill:#f7f6f3}
-#mapa .zona.z-iz{fill:#f3f7fb}
-#mapa .zona.z-miz{fill:#ebf1f9}
+#mapa .zona.z-dr{fill:#f2f7fc}
+#mapa .zona.z-mdr{fill:#e8f1f9}
 /* los nombres de las zonas van encima de las burbujas, con halo para que se lean */
 #mapa .etiquetas{pointer-events:none}
 #mapa .etiquetas text{font-size:11px;fill:#a9a196;letter-spacing:.06em;text-transform:uppercase;
   paint-order:stroke;stroke:#fff;stroke-width:3.5px;stroke-linejoin:round}
+.resumen{margin:0 0 14px;padding:10px 12px;border-left:3px solid var(--line);background:#faf9f7;
+  border-radius:0 9px 9px 0;font-size:13.5px;color:#3c414b}
 .tip{position:absolute;z-index:6;pointer-events:none;background:#16181d;color:#fff;border-radius:10px;
   padding:9px 12px;font-size:12.5px;line-height:1.45;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:330px}
 .tip .tt{font-weight:700;font-size:13.5px;margin-bottom:3px}

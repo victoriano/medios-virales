@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=202609220900">
+<link rel="stylesheet" href="styles.css?v=202609221934">
 </head>
 <body>
 <header class="top">
@@ -65,18 +65,26 @@
   <section id="view-mapa" class="view">
     <div class="panel">
       <div class="panel-head">
-        <h2>Mapa de sesgo, volumen y alcance</h2>
-        <select id="mapa-filtro" aria-label="Filtrar por volumen">
-          <option value="25" selected>Con 25 o más tuits políticos</option>
-          <option value="0">Todos los medios</option>
-          <option value="100">Con 100 o más tuits políticos</option>
-        </select>
+        <h2>Mapa de sesgo: lo que se publica y lo que se comparte</h2>
+        <div class="panel-controles">
+          <select id="mapa-serie" aria-label="Qué posiciones se dibujan">
+            <option value="ambas" selected>Las dos posiciones</option>
+            <option value="publicado">Solo lo publicado</option>
+            <option value="viral">Solo lo viral</option>
+          </select>
+          <select id="mapa-filtro" aria-label="Filtrar por tamaño de muestra">
+            <option value="200" selected>Con muestra de 200 o más</option>
+            <option value="0">Todos los medios</option>
+            <option value="1000">Con muestra de 1.000 o más</option>
+          </select>
+        </div>
       </div>
       <p class="hint">
-        Cada medio es un punto. En horizontal, el porcentaje de sus tuits con lado claro que van a la izquierda: 0 es todo a la derecha, 100 todo a la izquierda y 50 la mitad y mitad. En vertical, cuantos más tuits políticos tenga, más arriba. El tamaño del punto es su media de retuits y el aro marca su lado. Solo se dibujan los medios con 15 o más tuits con lado claro. Pasa el ratón para ver los números y pulsa para abrir sus tuits.
+        Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo es que todos sus tuits con lado claro van a la izquierda, 100 en el derecho es que van todos a la derecha, y 50 la mitad y mitad. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. En vertical, cuantos más tuits con lectura política, más arriba. El tamaño del punto es su media de retuits. Con el control de arriba se ve <strong>solo lo publicado</strong> (la muestra de seis días al mes), <strong>solo lo viral</strong> (el censo de tuits con más de 100 retuits) o <strong>las dos posiciones</strong>: en ese caso el aro continuo es lo publicado, el discontinuo lo viral y la flecha va del punto publicado al viral, o sea, hacia dónde se desplaza el medio cuando su contenido se comparte. Pasa el ratón para ver los números y pulsa para abrir sus tuits.
       </p>
+      <p class="resumen" id="mapa-resumen"></p>
       <div class="chart-wrap">
-        <svg id="mapa" role="img" aria-label="Dispersión de medios por porcentaje de tuits que van a la izquierda, número de tuits políticos y retuits medios"></svg>
+        <svg id="mapa" role="img" aria-label="Dispersión de medios por posición en la escala izquierda-derecha, con lo publicado y lo viral y una flecha hacia donde se desplaza cada medio al compartirse"></svg>
         <div class="tip" id="mapa-tip" hidden></div>
       </div>
       <div class="mapa-pie" id="mapa-pie"></div>
@@ -142,6 +150,6 @@
   <p>Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.</p>
 </footer>
 
-<script src="app.js?v=202609220900"></script>
+<script src="app.js?v=202609221934"></script>
 </body>
 </html>

@@ -83,8 +83,11 @@ Para cada medio se cuentan los tuits con partido concreto y dirección clara. Su
 
 Estática y sin dependencias: se abre sin construir nada. Arranca en el **mapa** y cada medio se carga solo cuando se pulsa (y se adelanta al pasar el ratón por encima). Dentro de cada medio se puede ordenar por retuits, me gusta, vistas o fecha, filtrar por partido, por dirección o por texto, y se pagina de 25 en 25.
 
-La pestaña **Mapa** dibuja cada medio como una burbuja con su logo: en horizontal su índice de sesgo, en vertical cuántos tuits políticos tiene (escala de raíz cuadrada, para que los pequeños no queden aplastados) y el tamaño según sus retuits medios. Es la vista por defecto. Los logos salen de la foto de perfil de cada medio en X, descargados, recortados en círculo y guardados en WebP por `scripts/fetch_logos.py`.
+La pestaña **Mapa** dibuja cada medio como una burbuja con su logo: en horizontal su posición en la escala izquierda → derecha, en vertical cuántos tuits con lectura política tiene (escala de raíz cuadrada, para que los pequeños no queden aplastados) y el tamaño según sus retuits medios. Es la vista por defecto. El eje va de izquierda a derecha — el cero cae en el borde izquierdo del mapa y el cien en el derecho, porque `posicion = 100 × derecha / (izquierda + derecha)` es el campo que trae `site/data/polarizacion.json` — y los colores siguen la convención española, **rojo para los medios de izquierda y azul para los de derecha** (con gris para el centro). Los logos salen de la foto de perfil de cada medio en X, descargados, recortados en círculo y guardados en WebP por `scripts/fetch_logos.py`.
 
+El control de series del mapa tiene tres posiciones: **solo lo publicado** (la muestra de seis días al mes clasificada), **solo lo viral** (el censo de tuits con más de 100 retuits, el mismo que ordena el ranking) y **las dos posiciones**, que es la vista por defecto. En el modo de las dos, cada medio lleva dos puntos — aro continuo el publicado, discontinuo el viral — y una **flecha que va del punto publicado al viral**, es decir, hacia dónde se desplaza el medio cuando su contenido se comparte. Solo se dibujan los medios con muestra suficiente en las dos series (200 o más tuits con lado claro en cada una, 20 de los 55), porque una flecha que saliera de una muestra corta mentiría sobre el desplazamiento.
+
+- `site/data/polarizacion.json`: lo publicado y lo viral de cada medio, con la posición de las dos series, la brecha entre ellas y el desglose por meses.
 - `site/data/index.json`: agregados por medio y totales globales.
 - `site/data/medios/<medio>.json`: todos los tuits de ese medio.
 - `site/data/top.json`: los 300 tuits virales con lectura política.
@@ -118,7 +121,7 @@ uv run --with pillow python3 scripts/fetch_logos.py
 # 6. Datos de la web
 python3 scripts/build_data.py
 
-# 7. Comprobar la web en un navegador real
+# 7. Comprobar la web en un navegador real (contra el sitio publicado, con la URL delante)
 uv run --with playwright python3 scripts/check_site.py
 ```
 

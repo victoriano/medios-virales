@@ -5,8 +5,10 @@ from playwright.async_api import async_playwright
 
 URL = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8099/"
 OUT = "/tmp/medios-site"
+MAPOUT = "/tmp/polarizacion-maptest"      # capturas de los tres modos del mapa
 import os
 os.makedirs(OUT, exist_ok=True)
+os.makedirs(MAPOUT, exist_ok=True)
 
 
 # --- invariantes de la lectura en decimos (no caducan si cambian los datos) ---
@@ -52,14 +54,18 @@ async def main():
             errores.append(f"[check] la vista por defecto no es el mapa: {burbujas} burbujas, ranking oculto={ranking_oculto}")
 
         # clic en una burbuja del mapa: tiene que abrir el medio (regresion del bucle de mouseenter)
+        # y hacerlo en menos de un segundo, en el modo por defecto (las dos posiciones)
+        nodos_eldiario = await pg.locator('#mapa .burbuja[data-h="@eldiarioes"]').count()
         t0 = time.perf_counter()
-        await pg.click('#mapa .burbuja[data-h="@eldiarioes"]')
+        await pg.locator('#mapa .burbuja[data-serie="publicado"][data-h="@eldiarioes"]').first.click()
         await pg.wait_for_selector("#mlist article.tweet", state="visible", timeout=15000)
         ms = round((time.perf_counter() - t0) * 1000)
         titulo_mapa = await pg.locator("#medio-panel h2").inner_text()
-        print(f"clic en la burbuja de eldiarioes -> {titulo_mapa} en {ms} ms")
+        print(f"nodos de eldiarioes en el mapa: {nodos_eldiario} | clic en el publicado -> {titulo_mapa} en {ms} ms")
         if "elDiario" not in titulo_mapa:
             errores.append(f"[check] la burbuja del mapa abrio otro medio: {titulo_mapa}")
+        if ms >= 1000:
+            errores.append(f"[check] el clic en la burbuja tarda {ms} ms, mas de un segundo")
         await pg.screenshot(path=f"{OUT}/0-mapa-clic-medio.png", full_page=True)
 
         # ranking
@@ -175,62 +181,187 @@ async def main():
         if kpis_vuelta != kpis_limpio:
             errores.append(f"[check] los indicadores no vuelven al quitar los filtros: {kpis_vuelta} != {kpis_limpio}")
 
-        # mapa
+        # ---------- mapa: eje izquierda→derecha, rojo/azul, control de series y flechas ----------
         await pg.goto(URL + "#/mapa", wait_until="networkidle")
         await pg.wait_for_timeout(1200)
-        print("burbujas en el mapa:", await pg.locator("#mapa .burbuja").count())
-        logos = await pg.evaluate("Array.from(document.querySelectorAll('#mapa image')).filter(i => i.getBoundingClientRect().width > 0).length")
-        print("logos cargados:", logos)
-        await pg.hover('#mapa .burbuja[data-h="@eldiarioes"]')
-        await pg.wait_for_timeout(350)
-        print("tooltip:", " ".join((await pg.locator("#mapa-tip").inner_text()).split())[:120])
-        await pg.screenshot(path=f"{OUT}/8-mapa.png", full_page=True)
-        await pg.select_option("#mapa-filtro", "100")
-        await pg.wait_for_timeout(500)
-        print("burbujas con el filtro de 100:", await pg.locator("#mapa .burbuja").count())
-        await pg.select_option("#mapa-filtro", "0")
-        await pg.wait_for_timeout(300)
+        pol = await pg.evaluate("fetch('data/polarizacion.json').then(r => r.json())")
 
-        # el eje X va de 0 a 100 con los tics leidos en decimos y las bandas de zona
-        tics = await pg.eval_on_selector_all(
-            "#mapa .grid text",
-            "e => e.map(x => [Number(x.getAttribute('x')), x.textContent, Number(x.getAttribute('y'))])")
-        eje_x = [(t[0], t[1]) for t in tics if abs(t[2] - (620 - 66 + 21)) < 1]   # solo la fila de tics del eje X
-        fila_tics = [txt for _, txt in eje_x]
+        col = await pg.evaluate("""() => { const cs = getComputedStyle(document.documentElement);
+            return {izq: cs.getPropertyValue('--map-izq').trim(), der: cs.getPropertyValue('--map-der').trim(),
+                    neu: cs.getPropertyValue('--map-neu').trim()}; }""")
+        print("variables de color del mapa:", col)
+        if col["izq"].lower() != "#c53030" or col["der"].lower() != "#1f6fb2" or col["neu"].lower() != "#8a94a6":
+            errores.append(f"[check] las variables de color del mapa no son rojo/azul/gris: {col}")
+
+        # rgb equivalente a cada variable, para comprobar el color ya pintado en el SVG
+        RGB = {"izq": "rgb(197, 48, 48)", "der": "rgb(31, 111, 178)", "neu": "rgb(138, 148, 166)"}
+        lado = lambda p: "izq" if p < 45 else "der" if p > 55 else "neu"
+
+        async def leer_mapa():
+            return await pg.evaluate(r"""() => {
+              const svg = document.querySelector('#mapa');
+              const ytics = 620 - 66 + 21;
+              const tics = [...svg.querySelectorAll('.grid text')]
+                .filter(t => Math.abs(+t.getAttribute('y') - ytics) < 1)
+                .map(t => [+t.getAttribute('x'), t.textContent]);
+              const nodos = [...svg.querySelectorAll('.burbuja')].map(el => {
+                const c = el.querySelector('circle');
+                const t = el.getAttribute('transform').match(/translate\(([-0-9.]+),\s*([-0-9.]+)\)/);
+                return {h: el.dataset.h, serie: el.dataset.serie, pos: +el.dataset.posicion,
+                        attr: c.getAttribute('stroke'), comp: getComputedStyle(c).stroke,
+                        dash: getComputedStyle(c).strokeDasharray, x: +t[1], y: +t[2], r: +c.getAttribute('r')};
+              });
+              const flechas = [...svg.querySelectorAll('.flecha')].map(g => {
+                const p = g.querySelector('polygon.punta');
+                const pts = p.getAttribute('points').trim().split(/\s+/).map(s => s.split(',').map(Number));
+                const cen = pts.reduce((a, q) => [a[0] + q[0] / 3, a[1] + q[1] / 3], [0, 0]);
+                return {h: g.dataset.h, delta: +g.dataset.delta, pub: +g.dataset.publicado, vir: +g.dataset.viral,
+                        x1: +g.dataset.x1, y1: +g.dataset.y1, x2: +g.dataset.x2, y2: +g.dataset.y2,
+                        punta: pts[0], cen, color: p.getAttribute('fill'), comp: getComputedStyle(p).fill};
+              });
+              return {tics, nodos, flechas,
+                      zonas: [...svg.querySelectorAll('.etiquetas text')].map(t => t.textContent),
+                      titulos: [...svg.querySelectorAll('.grid text.tit')].map(t => t.textContent),
+                      resumen: document.querySelector('#mapa-resumen').textContent,
+                      pie: document.querySelector('#mapa-pie').textContent.replace(/\s+/g, ' ')};
+            }""")
+
+        est = await leer_mapa()
+        # (1) el eje va de izquierda (borde izquierdo) a derecha (borde derecho)
         esperados_tics = ["0", "2 de cada 10", "4 de cada 10", "mitad y mitad",
                           "6 de cada 10", "8 de cada 10", "10 de cada 10"]
-        print("tics del eje X:", " · ".join(fila_tics))
+        fila_tics = [t for _, t in sorted(est["tics"])]
+        print("tics del eje X, de izquierda a derecha:", " · ".join(fila_tics))
         if fila_tics != esperados_tics:
             errores.append(f"[check] los tics del eje X no son los pedidos: {fila_tics}")
+        x0 = next(x for x, t in est["tics"] if t == "0")          # 0 % a la derecha: todo a la izquierda
+        x100 = next(x for x, t in est["tics"] if t == "10 de cada 10")  # 100 % a la derecha: todo a la derecha
+        print(f"x de 'todo a la izquierda' (0) = {x0} · x de 'todo a la derecha' (100) = {x100}")
+        if not x0 < x100:
+            errores.append(f"[check] el eje no va de izquierda a derecha: x(0)={x0}, x(100)={x100}")
+        for trozo in ["◀ todo a la izquierda", "% de los tuits con lado que va a la derecha", "todo a la derecha ▶"]:
+            if not any(trozo in t for t in est["titulos"]):
+                errores.append(f"[check] falta la etiqueta del eje: {trozo} ({est['titulos']})")
         zonas = await pg.eval_on_selector_all("#mapa .grid rect.zona", "e => e.length")
-        nombres = await pg.eval_on_selector_all("#mapa .etiquetas text", "e => e.map(x => x.textContent)")
+        nombres = est["zonas"]
         print("bandas de zona:", zonas, "| nombres:", " · ".join(nombres))
-        if zonas != 5 or nombres != ["muy a la derecha", "a la derecha", "equilibrio", "a la izquierda", "muy a la izquierda"]:
-            errores.append(f"[check] las bandas de zona no son las pedidas: {zonas} {nombres}")
-        lineas_mitad = await pg.evaluate(
-            "Array.from(document.querySelectorAll('#mapa .grid line.mitad')).length")
-        if lineas_mitad != 1:
-            errores.append(f"[check] no hay una sola linea solida en el 50: {lineas_mitad}")
+        if zonas != 5 or nombres != ["muy a la izquierda", "a la izquierda", "equilibrio", "a la derecha", "muy a la derecha"]:
+            errores.append(f"[check] las bandas de zona no van de izquierda a derecha: {zonas} {nombres}")
+        if await pg.evaluate("Array.from(document.querySelectorAll('#mapa .grid line.mitad')).length") != 1:
+            errores.append("[check] no hay una sola linea solida en el 50")
 
-        # la X de cada burbuja es 100 * izq / (izq + der), y por debajo de 15 tuits con lado claro no se dibuja
-        x0 = next(x for x, txt in eje_x if txt == "0")
-        x100 = next(x for x, txt in eje_x if txt == "10 de cada 10")
-        medida = await pg.evaluate("""async ([x0, x100]) => {
-            const d = await (await fetch('data/index.json')).json();
-            const enMapa = new Set([...document.querySelectorAll('#mapa .burbuja')].map(e => e.dataset.h));
-            let peor = 0;
-            for (const el of document.querySelectorAll('#mapa .burbuja')) {
-              const m = d.medios.find(x => x.handle === el.dataset.h);
-              const x = x0 + (100 * m.izq / (m.izq + m.der)) / 100 * (x100 - x0);
-              peor = Math.max(peor, Math.abs(parseFloat(el.getAttribute('transform').split('(')[1]) - x));
-            }
-            const sinMuestra = d.medios.filter(m => m.politicos > 0 && (m.izq + m.der) < 15 && enMapa.has(m.handle));
-            return {peor, sinMuestra: sinMuestra.length, dibujados: enMapa.size};
-        }""", [x0, x100])
-        print(f"X de las burbujas frente a 100*izq/(izq+der): desviacion maxima {medida['peor']:.3f} px | "
-              f"dibujados {medida['dibujados']} | dibujados sin muestra: {medida['sinMuestra']}")
-        if medida["peor"] > 0.3 or medida["sinMuestra"]:
-            errores.append(f"[check] el eje X no cuadra: {medida}")
+        # (2) la X de cada nodo es la posicion de polarizacion.json y el color, rojo a la izquierda y azul a la derecha
+        por_handle = {m["handle"]: m for m in pol["medios"]}
+        peor_x, mal_color, rojos, azules, grises = 0.0, [], 0, 0, 0
+        for n in est["nodos"]:
+            r = por_handle.get(n["h"])
+            d = (r or {}).get(n["serie"]) or {}
+            if d.get("posicion") is None:
+                errores.append(f"[check] nodo sin datos en polarizacion.json: {n['h']} {n['serie']}")
+                continue
+            peor_x = max(peor_x, abs(n["x"] - (x0 + d["posicion"] / 100 * (x100 - x0))))
+            esp = lado(d["posicion"])
+            if n["attr"] != f"var(--map-{esp})" or n["comp"] != RGB[esp]:
+                mal_color.append(f"{n['h']}/{n['serie']} posicion {d['posicion']} -> {n['attr']} / {n['comp']}")
+            elif esp == "izq":
+                rojos += 1
+            elif esp == "der":
+                azules += 1
+            else:
+                grises += 1
+        print(f"X de los nodos frente a posicion = 100*der/(izq+der): desviacion maxima {peor_x:.3f} px")
+        print(f"nodos por color: rojo (izquierda) {rojos} · azul (derecha) {azules} · gris (centro) {grises} | mal pintados: {len(mal_color)}")
+        if peor_x > 0.3:
+            errores.append(f"[check] el eje X no cuadra con la posicion: {peor_x:.3f} px")
+        if mal_color or not rojos or not azules:
+            errores.append(f"[check] colores por lado: {len(mal_color)} mal, {rojos} rojos, {azules} azules :: " + "; ".join(mal_color[:4]))
+        arriba = [n for n in est["nodos"] if n["serie"] == "publicado"]
+        if not arriba or not all(n["dash"] == "none" for n in arriba):
+            errores.append("[check] lo publicado deberia llevar el aro continuo")
+
+        # (3) la flecha va de la posicion publicada a la viral
+        fl = est["flechas"]
+        esperadas = [m for m in pol["medios"]
+                     if m["publicado"]["con_lado"] >= 200 and m["viral"]["con_lado"] >= 200]
+        print(f"flechas en el modo por defecto (las dos posiciones): {len(fl)} · medios con muestra en las dos series: {len(esperadas)}")
+        if len(fl) < 6:
+            errores.append(f"[check] el modo de las dos posiciones dibuja {len(fl)} flechas, menos de 6")
+        if len(fl) != len(esperadas):
+            errores.append(f"[check] flechas {len(fl)} != medios comparables {len(esperadas)}")
+        mal_fl = []
+        for f in fl:
+            r = por_handle.get(f["h"]) or {}
+            pub, vir = r.get("publicado") or {}, r.get("viral") or {}
+            ex1 = x0 + pub.get("posicion", 0) / 100 * (x100 - x0)
+            ex2 = x0 + vir.get("posicion", 0) / 100 * (x100 - x0)
+            d_pub = ((f["punta"][0] - f["x1"]) ** 2 + (f["punta"][1] - f["y1"]) ** 2) ** 0.5
+            d_vir = ((f["punta"][0] - f["x2"]) ** 2 + (f["punta"][1] - f["y2"]) ** 2) ** 0.5
+            if (abs(f["x1"] - ex1) > 0.3 or abs(f["x2"] - ex2) > 0.3
+                    or abs(f["delta"] - (vir.get("posicion", 0) - pub.get("posicion", 0))) > 0.15
+                    or d_vir >= d_pub or f["comp"] != RGB[lado(pub.get("posicion", 50))]):
+                mal_fl.append(f"{f['h']}: x1 {f['x1']:.1f}/{ex1:.1f} x2 {f['x2']:.1f}/{ex2:.1f} "
+                              f"delta {f['delta']} punta a {d_pub:.1f} px del publicado y {d_vir:.1f} del viral, {f['comp']}")
+        print("flechas mal formadas:", len(mal_fl))
+        if mal_fl:
+            errores.append("[check] flechas que no van de lo publicado a lo viral: " + "; ".join(mal_fl[:4]))
+        desplazan = sum(1 for f in fl if (f["delta"] < 0) == (f["pub"] < 50) and f["delta"] != 0)
+        print(f"flechas que apuntan hacia el lado propio del medio: {desplazan} de {len(fl)}")
+        print("resumen en pantalla:", est["resumen"])
+
+        # capturas de los tres modos, en la carpeta pedida
+        for i, (valor, nombre) in enumerate([("publicado", "solo-publicado"), ("viral", "solo-viral"), ("ambas", "las-dos")], start=1):
+            await pg.select_option("#mapa-serie", valor)
+            await pg.wait_for_timeout(600)
+            await pg.screenshot(path=f"{MAPOUT}/{i}-{nombre}.png", full_page=True)
+            await pg.locator("#view-mapa .panel").screenshot(path=f"{MAPOUT}/panel-{nombre}.png")
+        estados = {}
+        for valor in ["publicado", "viral", "ambas"]:
+            await pg.select_option("#mapa-serie", valor)
+            await pg.wait_for_timeout(500)
+            estados[valor] = await leer_mapa()
+            print(f"modo {valor}: {len(estados[valor]['nodos'])} nodos · {len(estados[valor]['flechas'])} flechas")
+        esp_pub = sum(1 for m in pol["medios"] if m["publicado"]["con_lado"] >= 200)
+        esp_vir = sum(1 for m in pol["medios"] if m["viral"]["con_lado"] >= 200)
+        opciones = await pg.eval_on_selector_all("#mapa-serie option", "e => e.map(o => o.value)")
+        print("opciones del control de series:", opciones, f"| esperados {esp_pub} publicados, {esp_vir} virales, {len(esperadas)} comparables")
+        if opciones != ["ambas", "publicado", "viral"]:
+            errores.append(f"[check] el control de series no tiene las tres opciones: {opciones}")
+        if len(estados["publicado"]["nodos"]) != esp_pub or estados["publicado"]["flechas"]:
+            errores.append(f"[check] solo lo publicado: {len(estados['publicado']['nodos'])} nodos (esperados {esp_pub}) y {len(estados['publicado']['flechas'])} flechas")
+        if len(estados["viral"]["nodos"]) != esp_vir or estados["viral"]["flechas"]:
+            errores.append(f"[check] solo lo viral: {len(estados['viral']['nodos'])} nodos (esperados {esp_vir}) y {len(estados['viral']['flechas'])} flechas")
+        if len(estados["ambas"]["nodos"]) != 2 * len(esperadas) or len(estados["ambas"]["flechas"]) != len(esperadas):
+            errores.append(f"[check] las dos posiciones: {len(estados['ambas']['nodos'])} nodos y {len(estados['ambas']['flechas'])} flechas")
+        virales = [n for n in estados["ambas"]["nodos"] if n["serie"] == "viral"]
+        if not virales or not all(n["dash"] != "none" for n in virales):
+            errores.append("[check] lo viral deberia llevar el aro discontinuo")
+        if "aro discontinuo" not in estados["ambas"]["pie"] or "Flecha" not in estados["ambas"]["pie"]:
+            errores.append(f"[check] falta la leyenda de las flechas: {estados['ambas']['pie'][:200]}")
+
+        # el filtro de muestra sigue moviendo el numero de nodos
+        await pg.select_option("#mapa-serie", "ambas")
+        await pg.select_option("#mapa-filtro", "1000")
+        await pg.wait_for_timeout(500)
+        pocos = await pg.locator("#mapa .burbuja").count()
+        await pg.select_option("#mapa-filtro", "0")
+        await pg.wait_for_timeout(500)
+        todos = await pg.locator("#mapa .burbuja").count()
+        print(f"nodos con el filtro de 1.000: {pocos} · con todos los medios: {todos}")
+        if not pocos < todos:
+            errores.append(f"[check] el filtro de muestra no cambia nada: {pocos} vs {todos}")
+        await pg.select_option("#mapa-filtro", "200")
+        await pg.wait_for_timeout(400)
+
+        # la herramienta de un nodo cuenta las dos series y el desplazamiento
+        await pg.locator('#mapa .burbuja[data-h="@eldiarioes"]').first.hover()
+        await pg.wait_for_timeout(350)
+        tip = " ".join((await pg.locator("#mapa-tip").inner_text()).split())
+        print("tooltip:", tip[:220])
+        if "Publicado" not in tip or "Viral" not in tip or "se desplaza" not in tip:
+            errores.append(f"[check] el tooltip no cuenta las dos posiciones: {tip[:200]}")
+        logos = await pg.evaluate("Array.from(document.querySelectorAll('#mapa image')).filter(i => i.getBoundingClientRect().width > 0).length")
+        print("logos cargados:", logos, "de", await pg.locator("#mapa image").count())
+        await pg.screenshot(path=f"{OUT}/8-mapa.png", full_page=True)
 
         # top
         await pg.goto(URL + "#/top", wait_until="networkidle")
