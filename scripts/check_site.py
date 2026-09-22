@@ -9,6 +9,24 @@ import os
 os.makedirs(OUT, exist_ok=True)
 
 
+# --- invariantes de la lectura en decimos (no caducan si cambian los datos) ---
+def decimos_js(m):
+    """Misma lectura que app.js: decimos del lado dominante sobre izq+der."""
+    claro = m["izq"] + m["der"]
+    if not claro:
+        return None
+    izq_lado = m["izq"] >= m["der"]
+    menor = min(m["izq"], m["der"])
+    n_menor = 0 if menor == 0 else max(1, min(9, int(10 * menor / claro + 0.5)))
+    n_mayor = 10 - n_menor
+    return f"{n_mayor} {'izq' if izq_lado else 'der'} · {n_menor} {'der' if izq_lado else 'izq'}"
+
+
+def num_es(n):
+    """Como Intl.NumberFormat('es-ES'): sin separador de millar por debajo de 10.000."""
+    return f"{n:,}".replace(",", ".") if n >= 10000 else str(n)
+
+
 async def main():
     errores, fallos = [], []
     async with async_playwright() as p:
@@ -52,6 +70,38 @@ async def main():
         filas = await pg.locator("#tabla-ranking tbody tr").count()
         print("filas en el ranking:", filas)
         await pg.screenshot(path=f"{OUT}/1-ranking.png", full_page=True)
+
+        # la columna «de cada 10 con lado claro» tiene que decir lo mismo que index.json, fila a fila
+        idx = await pg.evaluate("fetch('data/index.json').then(r => r.json())")
+        texto_filas = await pg.eval_on_selector_all(
+            "#tabla-ranking tbody tr",
+            "e => e.map(r => [r.dataset.h, r.children[1].innerText.replace(/\\s+/g, ' ').trim()])")
+        problemas = []
+        for h, celda in texto_filas:
+            m = next(x for x in idx["medios"] if x["handle"] == h)
+            claro = m["izq"] + m["der"]
+            p_izq = round(100 * m["izq"] / m["politicos"]) if m["politicos"] else 0
+            p_der = round(100 * m["der"] / m["politicos"]) if m["politicos"] else 0
+            trozos = [decimos_js(m) or "sin tuits con lado claro",
+                      f"{p_izq} % izq · {p_der} % der · {max(0, 100 - p_izq - p_der)} % sin lado",
+                      f"({num_es(claro)} con lado claro)"]
+            if not all(t in celda for t in trozos) or celda.rstrip().endswith("*") != (claro < 15):
+                problemas.append(f"{h}: {celda!r} no cuadra con {trozos}")
+        print(f"columna de decimos: {len(texto_filas)} filas cotejadas con index.json | problemas: {len(problemas)}")
+        if problemas:
+            errores.append("[check] la columna de decimos no cuadra: " + "; ".join(problemas[:3]))
+        estrellas = await pg.evaluate("document.querySelectorAll('#tabla-ranking tbody .star').length")
+        esperadas_estrellas = sum(1 for m in idx["medios"] if (m["izq"] + m["der"]) < 15)
+        print(f"marcas de muestra corta (menos de 15 con lado claro): {estrellas} (esperadas {esperadas_estrellas})")
+        if estrellas != esperadas_estrellas:
+            errores.append(f"[check] marcas de muestra corta: {estrellas} != {esperadas_estrellas}")
+        aviso = " ".join((await pg.locator("#rank-aviso").inner_text()).split())
+        for trozo in ["Solo se cuentan los tuits que señalan a un partido",
+                      "La parte gris son los que informan sin tomar partido y quedan fuera del cálculo",
+                      "El índice de −1 a +1 es esa misma cifra con signo"]:
+            if trozo not in aviso:
+                errores.append("[check] falta en la nota del ranking: " + trozo)
+        print("nota al pie del ranking:", "completa" if not errores else "revisar")
 
         # ordenar por virales
         await pg.click('#tabla-ranking thead th[data-sort="virales"]')
@@ -140,6 +190,47 @@ async def main():
         print("burbujas con el filtro de 100:", await pg.locator("#mapa .burbuja").count())
         await pg.select_option("#mapa-filtro", "0")
         await pg.wait_for_timeout(300)
+
+        # el eje X va de 0 a 100 con los tics leidos en decimos y las bandas de zona
+        tics = await pg.eval_on_selector_all(
+            "#mapa .grid text",
+            "e => e.map(x => [Number(x.getAttribute('x')), x.textContent, Number(x.getAttribute('y'))])")
+        eje_x = [(t[0], t[1]) for t in tics if abs(t[2] - (620 - 66 + 21)) < 1]   # solo la fila de tics del eje X
+        fila_tics = [txt for _, txt in eje_x]
+        esperados_tics = ["0", "2 de cada 10", "4 de cada 10", "mitad y mitad",
+                          "6 de cada 10", "8 de cada 10", "10 de cada 10"]
+        print("tics del eje X:", " · ".join(fila_tics))
+        if fila_tics != esperados_tics:
+            errores.append(f"[check] los tics del eje X no son los pedidos: {fila_tics}")
+        zonas = await pg.eval_on_selector_all("#mapa .grid rect.zona", "e => e.length")
+        nombres = await pg.eval_on_selector_all("#mapa .etiquetas text", "e => e.map(x => x.textContent)")
+        print("bandas de zona:", zonas, "| nombres:", " · ".join(nombres))
+        if zonas != 5 or nombres != ["muy a la derecha", "a la derecha", "equilibrio", "a la izquierda", "muy a la izquierda"]:
+            errores.append(f"[check] las bandas de zona no son las pedidas: {zonas} {nombres}")
+        lineas_mitad = await pg.evaluate(
+            "Array.from(document.querySelectorAll('#mapa .grid line.mitad')).length")
+        if lineas_mitad != 1:
+            errores.append(f"[check] no hay una sola linea solida en el 50: {lineas_mitad}")
+
+        # la X de cada burbuja es 100 * izq / (izq + der), y por debajo de 15 tuits con lado claro no se dibuja
+        x0 = next(x for x, txt in eje_x if txt == "0")
+        x100 = next(x for x, txt in eje_x if txt == "10 de cada 10")
+        medida = await pg.evaluate("""async ([x0, x100]) => {
+            const d = await (await fetch('data/index.json')).json();
+            const enMapa = new Set([...document.querySelectorAll('#mapa .burbuja')].map(e => e.dataset.h));
+            let peor = 0;
+            for (const el of document.querySelectorAll('#mapa .burbuja')) {
+              const m = d.medios.find(x => x.handle === el.dataset.h);
+              const x = x0 + (100 * m.izq / (m.izq + m.der)) / 100 * (x100 - x0);
+              peor = Math.max(peor, Math.abs(parseFloat(el.getAttribute('transform').split('(')[1]) - x));
+            }
+            const sinMuestra = d.medios.filter(m => m.politicos > 0 && (m.izq + m.der) < 15 && enMapa.has(m.handle));
+            return {peor, sinMuestra: sinMuestra.length, dibujados: enMapa.size};
+        }""", [x0, x100])
+        print(f"X de las burbujas frente a 100*izq/(izq+der): desviacion maxima {medida['peor']:.3f} px | "
+              f"dibujados {medida['dibujados']} | dibujados sin muestra: {medida['sinMuestra']}")
+        if medida["peor"] > 0.3 or medida["sinMuestra"]:
+            errores.append(f"[check] el eje X no cuadra: {medida}")
 
         # top
         await pg.goto(URL + "#/top", wait_until="networkidle")
