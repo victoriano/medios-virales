@@ -433,13 +433,15 @@ function renderMapa() {
   const dibujados = new Set(nodos.map(n => n.m.handle)).size;
   const fuera = total - dibujados;
 
-  const W = 1000, H = 620, M = { t: 30, r: 54, b: 66, l: 82 };
+  const W = 1000, H = 620, M = { t: 46, r: 54, b: 66, l: 82 };
   const maxY = Math.max(1, ...nodos.map(n => n.y));
   const top = YTICKS.find(t => t >= maxY) || YTICKS[YTICKS.length - 1];
   const lista = YTICKS.filter(t => t <= top);
   const yMax = Math.sqrt(top);
   const px = v => M.l + v / 100 * (W - M.l - M.r);   // 0 = todo a la izquierda · 100 = todo a la derecha
-  const py = v => H - M.b - Math.sqrt(Math.max(v, 0)) / yMax * (H - M.t - M.b);
+  // PAD reserva aire arriba para que la burbuja mas alta no invada las etiquetas de zona
+  const PAD = 32;
+  const py = v => H - M.b - Math.sqrt(Math.max(v, 0)) / yMax * (H - M.t - M.b - PAD);
   const mitad = px(50);
 
   // bandas de fondo suaves, detrás de las burbujas: de la izquierda a la derecha
@@ -454,7 +456,7 @@ function renderMapa() {
   ZONAS.forEach(([a, z, txt, cls]) => {
     const x = px(a), w = px(z) - x;
     g += `<rect class="zona ${cls}" x="${x.toFixed(1)}" y="${M.t}" width="${w.toFixed(1)}" height="${H - M.b - M.t}"></rect>`;
-    etiquetas += `<text x="${(x + w / 2).toFixed(1)}" y="${M.t + 15}">${txt}</text>`;
+    etiquetas += `<text x="${(x + w / 2).toFixed(1)}" y="${M.t - 8}">${txt}</text>`;
   });
   lista.forEach(t => {
     g += `<line x1="${M.l}" x2="${W - M.r}" y1="${py(t).toFixed(1)}" y2="${py(t).toFixed(1)}"></line>`;
@@ -470,7 +472,7 @@ function renderMapa() {
   const tituloY = mapaSerie === 'publicado' ? 'Tuits políticos · muestra de 6 días al mes'
     : mapaSerie === 'viral' ? 'Tuits virales con lectura · censo de más de 100 retuits'
       : 'Tuits con lectura · lo publicado frente a lo viral';
-  g += `<text class="tit" x="${M.l}" y="${M.t - 11}">${tituloY}</text>`;
+  g += `<text class="tit" x="${M.l - 4}" y="${M.t - 8}" text-anchor="end">${tituloY}</text>`;
   g += `<text class="tit" x="${M.l}" y="${H - M.b + 46}">◀ todo a la izquierda</text>`;
   g += `<text class="tit" x="${mitad.toFixed(1)}" y="${H - M.b + 46}" text-anchor="middle">% de los tuits con lado que va a la derecha</text>`;
   g += `<text class="tit" x="${W - M.r}" y="${H - M.b + 46}" text-anchor="end">todo a la derecha ▶</text>`;
