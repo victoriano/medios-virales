@@ -472,7 +472,7 @@ function renderMapa() {
   const tituloY = mapaSerie === 'publicado' ? 'Tuits políticos · muestra de 6 días al mes'
     : mapaSerie === 'viral' ? 'Tuits virales con lectura · censo de más de 100 retuits'
       : 'Tuits con lectura · lo publicado frente a lo viral';
-  g += `<text class="tit" x="${M.l - 4}" y="${M.t - 8}" text-anchor="end">${tituloY}</text>`;
+  g += `<text class="tit" x="${M.l}" y="18">${tituloY}</text>`;
   g += `<text class="tit" x="${M.l}" y="${H - M.b + 46}">◀ todo a la izquierda</text>`;
   g += `<text class="tit" x="${mitad.toFixed(1)}" y="${H - M.b + 46}" text-anchor="middle">% de los tuits con lado que va a la derecha</text>`;
   g += `<text class="tit" x="${W - M.r}" y="${H - M.b + 46}" text-anchor="end">todo a la derecha ▶</text>`;
