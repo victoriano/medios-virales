@@ -18,6 +18,7 @@ const compact = n => { n = n || 0; if (n >= 1e6) return (n / 1e6).toFixed(1).rep
    claro  = tuits que señalan a un partido con lado (izq + der): el denominador de la web.
    politicos = todos los tuits con lectura política, incluidos los que informan sin lado. */
 const CLARO_MIN = 15;             // por debajo de esto la muestra no da para leer décimos
+const SIGNIFICADOS_MIN = 50;      // solo medios con izq + der > 50 en toda la muestra
 
 // Décimos del lado dominante sobre los tuits con lado claro. El lado minoritario nunca baja a 0
 // si existe, para no contradecir las columnas de recuento.
@@ -105,7 +106,7 @@ function route() {
     if (sel) sel.value = mapaPeriodo;
   }
   if (ruta.startsWith('medio/')) { openMedio(ruta.slice(6)); return; }
-  if (ruta === 'ranking') { show('ranking'); return; }
+  if (ruta === 'ranking') { show('ranking'); pintarRanking(); return; }
   if (ruta === 'top') { show('top'); return; }
   if (ruta === 'metodo') { show('metodo'); return; }
   show('mapa'); renderMapa();   // el mapa es la vista por defecto
@@ -121,8 +122,8 @@ function pintarTotales() {
   $('#m-dir').textContent = Object.entries(t.por_direccion).map(([k, v]) => `${DIRTXT[k] || k} ${nf(v)}`).join(' · ');
   $('#m-fecha').textContent = INDEX.generado;
   $('#repo-link').href = REPO;
-  const activos = INDEX.medios.filter(m => (m.muestreados || 0) > 0).length;
-  $('#rank-note').textContent = `${activos} medios con muestra, de los ${t.medios_lista} de la lista. Periodo del ${INDEX.ventana.desde} al ${INDEX.ventana.hasta}.`;
+  const incluidos = INDEX.medios.filter(m => (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN).length;
+  $('#rank-note').textContent = `${incluidos} medios incluidos: cada uno se ha significado a favor o en contra más de 50 veces en toda la muestra. Periodo del ${INDEX.ventana.desde} al ${INDEX.ventana.hasta}.`;
 }
 
 function pintarStats() {
@@ -162,7 +163,10 @@ let sortKey = 'indice', sortDir = 1, query = '';
 
 function pintarRanking() {
   const q = query.trim().toLowerCase();
-  let rows = INDEX.medios.filter(m => !q || m.nombre.toLowerCase().includes(q) || m.handle.toLowerCase().includes(q));
+  let rows = INDEX.medios
+    .filter(m => (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN)
+    .map(m => ({ ...m, pct_politicos: m.muestreados ? 100 * m.politicos / m.muestreados : 0 }))
+    .filter(m => !q || m.nombre.toLowerCase().includes(q) || m.handle.toLowerCase().includes(q));
   rows = rows.slice().sort((a, b) => {
     const x = a[sortKey], y = b[sortKey];
     if (typeof x === 'string') return sortDir * x.localeCompare(y);
@@ -193,7 +197,7 @@ function pintarRanking() {
       <td class="num">${nf(m.politicos)}</td>
       <td class="num c-izq">${nf(m.izq)}</td>
       <td class="num c-der">${nf(m.der)}</td>
-      <td class="num c-rt">${nf(m.rt_mediana)}</td>
+      <td class="num c-pct">${m.pct_politicos.toFixed(1).replace('.', ',')} %</td>
     </tr>`;
   }).join('');
   $$('#tabla-ranking thead th[data-sort]').forEach(th => {
@@ -443,6 +447,7 @@ function filasMapa() {
   for (const r of mediosPeriodo()) {
     const m = metas.get(r.handle.toLowerCase());
     if (!m) continue;                                   // medios del censo sin muestra en polarizacion.json
+    if ((m.izq || 0) + (m.der || 0) <= SIGNIFICADOS_MIN) continue;
     const pub = r.publicado, vir = r.viral;
     const okPub = !!pub && pub.posicion != null && pub.con_lado >= mapaFiltro;
     const okVir = !!vir && vir.posicion != null && vir.con_lado >= mapaFiltro;
@@ -471,9 +476,14 @@ function renderMapa() {
     return;
   }
   const { nodos, parejas } = filasMapa();
-  const total = mediosPeriodo().length;
+  const totalUniverso = mediosPeriodo().length;
+  const admitidos = new Set(INDEX.medios
+    .filter(m => (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN)
+    .map(m => m.handle.toLowerCase()));
+  const total = mediosPeriodo().filter(r => admitidos.has(r.handle.toLowerCase())).length;
   const dibujados = new Set(nodos.map(n => n.m.handle)).size;
   const fuera = total - dibujados;
+  const fueraCorte = totalUniverso - total;
   const sinDatos = total === 0;
   const conFallback = !!POL.periodos && !(POL.periodos[mapaPeriodo] && Array.isArray(POL.periodos[mapaPeriodo].medios));
 
@@ -602,8 +612,10 @@ function renderMapa() {
     ${mapaSerie === 'ambas' ? `<div class="blq"><strong>Aro continuo</strong> lo publicado · <strong>aro discontinuo</strong> lo viral</div>
       <div class="blq"><strong>Flecha</strong> de la posición publicada a la viral: hacia dónde se desplaza el medio al compartirse</div>` : ''}
     <div class="blq">El eje vertical usa raíz cuadrada para que los medios pequeños no queden aplastados.</div>
+    <div class="blq"><strong>Corte de inclusión</strong> más de 50 tuits significados a favor o en contra en toda la muestra.</div>
     <div class="blq">${notaFiltro}</div>
-    ${fuera ? `<div class="blq">${fuera} ${fuera === 1 ? 'medio queda fuera' : 'medios quedan fuera'} con este filtro.</div>` : ''}`;
+    ${fueraCorte ? `<div class="blq">${fueraCorte} ${fueraCorte === 1 ? 'medio queda fuera' : 'medios quedan fuera'} por no superar el corte de inclusión.</div>` : ''}
+    ${fuera ? `<div class="blq">${fuera} ${fuera === 1 ? 'medio incluido queda fuera' : 'medios incluidos quedan fuera'} con este filtro de visualización.</div>` : ''}`;
 }
 
 function tipMapa(n, ev) {

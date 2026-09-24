@@ -79,6 +79,9 @@ async def main():
 
         # la columna «de cada 10 con lado claro» tiene que decir lo mismo que index.json, fila a fila
         idx = await pg.evaluate("fetch('data/index.json').then(r => r.json())")
+        admitidos = {m["handle"].lower() for m in idx["medios"] if m["izq"] + m["der"] > 50}
+        if filas != len(admitidos):
+            errores.append(f"[check] ranking: {filas} filas != {len(admitidos)} medios con más de 50 tuits significados")
         texto_filas = await pg.eval_on_selector_all(
             "#tabla-ranking tbody tr",
             "e => e.map(r => [r.dataset.h, r.children[1].innerText.replace(/\\s+/g, ' ').trim()])")
@@ -98,16 +101,24 @@ async def main():
         if problemas:
             errores.append("[check] la columna de decimos no cuadra: " + "; ".join(problemas[:3]))
         estrellas = await pg.evaluate("document.querySelectorAll('#tabla-ranking tbody .star').length")
-        esperadas_estrellas = sum(1 for m in idx["medios"] if (m["izq"] + m["der"]) < 15)
+        esperadas_estrellas = sum(1 for m in idx["medios"] if m["handle"].lower() in admitidos and (m["izq"] + m["der"]) < 15)
         print(f"marcas de muestra corta (menos de 15 con lado claro): {estrellas} (esperadas {esperadas_estrellas})")
         if estrellas != esperadas_estrellas:
             errores.append(f"[check] marcas de muestra corta: {estrellas} != {esperadas_estrellas}")
         aviso = " ".join((await pg.locator("#rank-aviso").inner_text()).split())
-        for trozo in ["Solo se cuentan los tuits que señalan a un partido",
-                      "La parte gris son los que informan sin tomar partido y quedan fuera del cálculo",
-                      "El índice de −1 a +1 es esa misma cifra con signo"]:
+        for trozo in ["El corte de inclusión usa únicamente los tuits con lado claro",
+                      "izquierda más derecha debe superar 50",
+                      "El porcentaje político usa todos los tuits clasificados como políticos"]:
             if trozo not in aviso:
                 errores.append("[check] falta en la nota del ranking: " + trozo)
+        porcentajes = await pg.eval_on_selector_all(
+            "#tabla-ranking tbody tr",
+            "e => e.map(r => [r.dataset.h, r.children[7].textContent.trim()])")
+        for h, mostrado in porcentajes:
+            m = next(x for x in idx["medios"] if x["handle"] == h)
+            esperado = f"{100 * m['politicos'] / m['muestreados']:.1f} %".replace('.', ',')
+            if mostrado != esperado:
+                errores.append(f"[check] porcentaje político de {h}: {mostrado!r} != {esperado!r}")
         print("nota al pie del ranking:", "completa" if not errores else "revisar")
 
         # ordenar por virales
@@ -181,6 +192,16 @@ async def main():
         print("kpis al limpiar los filtros:", kpis_vuelta, "| coinciden con los iniciales:", kpis_vuelta == kpis_limpio)
         if kpis_vuelta != kpis_limpio:
             errores.append(f"[check] los indicadores no vuelven al quitar los filtros: {kpis_vuelta} != {kpis_limpio}")
+
+        # Regresión: el filtro de Onda Cero debe reconocer los cuatro partidos aunque
+        # el clasificador haya devuelto Psoe/Pp con otra capitalización.
+        await pg.goto(URL + "#/medio/OndaCero_es", wait_until="networkidle")
+        await pg.wait_for_selector("#mp option", state="attached")
+        partidos_onda = await pg.eval_on_selector_all("#mp option", "e => e.map(o => o.value).filter(Boolean)")
+        print("partidos disponibles en Onda Cero:", partidos_onda)
+        for partido in ["PSOE", "PP", "Vox", "Sumar"]:
+            if partido not in partidos_onda:
+                errores.append(f"[check] falta {partido} en el filtro de Onda Cero: {partidos_onda}")
 
         # ---------- mapa: eje izquierda→derecha, rojo/azul, control de series y flechas ----------
         await pg.goto(URL + "#/mapa", wait_until="networkidle")
@@ -283,7 +304,8 @@ async def main():
         # (3) la flecha va de la posicion publicada a la viral
         fl = est["flechas"]
         esperadas = [m for m in pol["medios"]
-                     if m["publicado"]["con_lado"] >= 5 and m["viral"]["con_lado"] >= 5]
+                     if m["handle"].lower() in admitidos
+                     and m["publicado"]["con_lado"] >= 5 and m["viral"]["con_lado"] >= 5]
         print(f"flechas en el modo por defecto (las dos posiciones): {len(fl)} · medios con muestra en las dos series: {len(esperadas)}")
         if len(fl) < 6:
             errores.append(f"[check] el modo de las dos posiciones dibuja {len(fl)} flechas, menos de 6")
@@ -322,8 +344,8 @@ async def main():
             await pg.wait_for_timeout(500)
             estados[valor] = await leer_mapa()
             print(f"modo {valor}: {len(estados[valor]['nodos'])} nodos · {len(estados[valor]['flechas'])} flechas")
-        esp_pub = sum(1 for m in pol["medios"] if (m.get("publicado") or {}).get("posicion") is not None and m["publicado"]["con_lado"] >= 5)
-        esp_vir = sum(1 for m in pol["medios"] if (m.get("viral") or {}).get("posicion") is not None and m["viral"]["con_lado"] >= 5)
+        esp_pub = sum(1 for m in pol["medios"] if m["handle"].lower() in admitidos and (m.get("publicado") or {}).get("posicion") is not None and m["publicado"]["con_lado"] >= 5)
+        esp_vir = sum(1 for m in pol["medios"] if m["handle"].lower() in admitidos and (m.get("viral") or {}).get("posicion") is not None and m["viral"]["con_lado"] >= 5)
         opciones = await pg.eval_on_selector_all("#mapa-serie option", "e => e.map(o => o.value)")
         print("opciones del control de series:", opciones, f"| esperados {esp_pub} publicados, {esp_vir} virales, {len(esperadas)} comparables")
         if opciones != ["ambas", "publicado", "viral"]:
@@ -406,7 +428,8 @@ async def main():
             esperados = medios_del_periodo(clave)
             comparables = sum(
                 1 for m in esperados
-                if (m.get("publicado") or {}).get("con_lado", 0) >= 5
+                if m["handle"].lower() in admitidos
+                and (m.get("publicado") or {}).get("con_lado", 0) >= 5
                 and (m.get("viral") or {}).get("con_lado", 0) >= 5
             )
             # en modo "ambas" se dibujan dos burbujas por medio comparable
@@ -442,7 +465,8 @@ async def main():
         fallback_burb = await pg.locator("#mapa .burbuja").count()
         esp_completo = 2 * sum(
             1 for m in (pol.get("medios") or [])
-            if (m.get("publicado") or {}).get("con_lado", 0) >= 5
+            if m["handle"].lower() in admitidos
+            and (m.get("publicado") or {}).get("con_lado", 0) >= 5
             and (m.get("viral") or {}).get("con_lado", 0) >= 5
         )
         print(f"fallback sin POL.periodos: burbujas {fallback_burb} (esperado {esp_completo}, el conjunto completo)")

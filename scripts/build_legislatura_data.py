@@ -36,6 +36,15 @@ def canonical_party(value):
     return CANON.get((value or "").strip().lower(), "")
 
 
+def detail_party(value):
+    """Nombre canónico compartido por tarjetas, filtros y agregados."""
+    canonical = canonical_party(value)
+    if canonical:
+        return canonical
+    raw = (value or "").strip().lower()
+    return raw if raw in {"varios", "ninguno"} else ""
+
+
 def side(row):
     party = canonical_party(row.get("partido"))
     direction = (row.get("direccion") or "").lower()
@@ -232,7 +241,7 @@ def main():
                 "f": row["fecha"][:10], "t": row["texto"],
                 "rt": int(row["retweets"]), "lk": int(row.get("likes") or 0),
                 "rp": int(row.get("replies") or 0), "vw": int(row.get("views") or 0),
-                "p": row.get("partido") or "", "pc": float(row.get("conf") or 0),
+                "p": detail_party(row.get("partido")), "pc": float(row.get("conf") or 0),
                 "d": row.get("direccion") or "", "dc": float(row.get("conf") or 0),
                 "ir": 0.0, "u": row["url"],
             })
@@ -268,7 +277,7 @@ def main():
     (DATA / "top.json").write_text(json.dumps([{
         "h": r["handle"], "f": r["fecha"][:10], "t": r["texto"], "rt": int(r["retweets"]),
         "lk": int(r.get("likes") or 0), "vw": int(r.get("views") or 0),
-        "p": r.get("partido") or "", "d": r.get("direccion") or "", "pc": float(r.get("conf") or 0), "u": r["url"],
+        "p": detail_party(r.get("partido")), "d": r.get("direccion") or "", "pc": float(r.get("conf") or 0), "u": r["url"],
     } for r in top], ensure_ascii=False, separators=(",", ":")))
 
     html = SITE / "index.html"

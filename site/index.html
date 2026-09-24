@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=20260924171009">
+<link rel="stylesheet" href="styles.css?v=20260924173007">
 </head>
 <body>
 <header class="top">
@@ -39,7 +39,7 @@
         <input type="search" id="q" placeholder="Buscar medio…" autocomplete="off" aria-label="Buscar medio">
       </div>
       <p class="hint">
-        <strong>De cada 10 con lado claro</strong> es la lectura fácil: de cada diez tuits que señalan a un partido, cuántos van a la izquierda y cuántos a la derecha, con la barra azul y naranja debajo. En la línea gris va el segundo denominador, sobre <em>todos</em> los tuits políticos: el porcentaje restante hasta cien son los que informan sin tomar partido. El <strong>índice</strong> de <span class="neg">−1</span> a <span class="pos">+1</span> es esa misma cifra con signo y sigue ordenando la tabla por defecto. Pulsa una fila para leer sus tuits.
+        Solo aparecen medios que se han significado a favor o en contra en más de 50 tuits durante toda la muestra. <strong>De cada 10 con lado claro</strong> indica cuántos van a la izquierda y cuántos a la derecha. <strong>% políticos</strong> muestra qué parte de todos los tuits muestreados fue clasificada como política. Pulsa una fila para leer sus tuits.
       </p>
       <div class="table-scroll">
         <table class="rank" id="tabla-ranking">
@@ -51,12 +51,12 @@
             <th data-sort="politicos" class="num">Políticos <span class="arrow"></span></th>
             <th data-sort="izq" class="num c-izq">Izq. <span class="arrow"></span></th>
             <th data-sort="der" class="num c-der">Der. <span class="arrow"></span></th>
-            <th data-sort="rt_mediana" class="num c-rt">RT mediana <span class="arrow"></span></th>
+            <th data-sort="pct_politicos" class="num c-pct">% políticos <span class="arrow"></span></th>
           </tr></thead>
           <tbody></tbody>
         </table>
       </div>
-      <p class="foot-note" id="rank-aviso">Solo se cuentan los tuits que señalan a un partido. La parte gris son los que informan sin tomar partido y quedan fuera del cálculo. El índice de −1 a +1 es esa misma cifra con signo.</p>
+      <p class="foot-note" id="rank-aviso">El corte de inclusión usa únicamente los tuits con lado claro: izquierda más derecha debe superar 50. El porcentaje político usa todos los tuits clasificados como políticos, incluidos los que informan sin tomar partido.</p>
       <p class="foot-note" id="rank-note"></p>
     </div>
   </section>
@@ -141,6 +141,7 @@
         <li><strong>Filtro:</strong> <span id="m-gate"></span></li>
         <li><strong>Partido:</strong> <span id="m-partido"></span></li>
         <li><strong>Dirección:</strong> <span id="m-dir"></span></li>
+        <li><strong>Corte de inclusión:</strong> el ranking y el mapa solo muestran medios con más de 50 tuits significados a favor o en contra, sumando izquierda y derecha en toda la muestra.</li>
       </ul>
 
       <h3>Cómo se calcula el índice</h3>
@@ -161,6 +162,6 @@
   <p>Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.</p>
 </footer>
 
-<script src="app.js?v=20260924171009"></script>
+<script src="app.js?v=20260924173007"></script>
 </body>
 </html>
