@@ -435,8 +435,9 @@ function polDe(handle) {
 const PERIODO_TXT = { todo: 'toda la XV Legislatura', 2023: '2023', 2024: '2024', 2025: '2025', 2026: '2026' };
 const RADIO = v => Math.max(9, 0.85 * Math.sqrt(Math.max(v, 120)));
 const RADIO_VIRAL = 0.84;   // el punto de lo viral se dibuja algo menor para no tapar el de lo publicado
-const YTICKS = [0, 250, 500, 1000, 2000, 4000];
+const YTICKS = [0, 20, 40, 60, 80, 100];
 const volumen = d => d.politicos != null ? `${nf(d.politicos)} tuits políticos` : `${nf(d.juicios)} tuits con lectura`;
+const porcentajeConLado = d => d && d.tuits ? 100 * (d.con_lado || 0) / d.tuits : 0;
 const puntos = n => n.toFixed(1).replace('.', ',');
 const nombreSerie = s => s === 'publicado' ? 'publicado' : 'viral';
 
@@ -451,14 +452,14 @@ function filasMapa() {
     const pub = r.publicado, vir = r.viral;
     const okPub = !!pub && pub.posicion != null && pub.con_lado >= mapaFiltro;
     const okVir = !!vir && vir.posicion != null && vir.con_lado >= mapaFiltro;
-    const nodoPub = { m, serie: 'publicado', p: pub ? pub.posicion : 0, y: pub ? (pub.politicos || 0) : 0, d: pub, o: vir };
-    const nodoVir = { m, serie: 'viral', p: vir ? vir.posicion : 0, y: vir ? (vir.juicios || 0) : 0, d: vir, o: pub };
+    const nodoPub = { m, serie: 'publicado', p: pub ? pub.posicion : 0, y: porcentajeConLado(pub), d: pub, o: vir };
+    const nodoVir = { m, serie: 'viral', p: vir ? vir.posicion : 0, y: porcentajeConLado(vir), d: vir, o: pub };
     if (mapaSerie === 'ambas') {
       // las dos posiciones solo se dibujan para quien tiene muestra en las dos series: si no, la
       // flecha saldria de un punto sin datos y mentiria sobre el desplazamiento
       if (!okPub || !okVir) continue;
       nodos.push(nodoPub, nodoVir);
-      parejas.push({ m, p1: pub.posicion, y1: pub.politicos || 0, p2: vir.posicion, y2: vir.juicios || 0, pub, vir });
+      parejas.push({ m, p1: pub.posicion, y1: porcentajeConLado(pub), p2: vir.posicion, y2: porcentajeConLado(vir), pub, vir });
     } else if (mapaSerie === 'publicado' ? okPub : okVir) {
       nodos.push(mapaSerie === 'publicado' ? nodoPub : nodoVir);
     }
@@ -488,14 +489,11 @@ function renderMapa() {
   const conFallback = !!POL.periodos && !(POL.periodos[mapaPeriodo] && Array.isArray(POL.periodos[mapaPeriodo].medios));
 
   const W = 1000, H = 620, M = { t: 46, r: 54, b: 66, l: 82 };
-  const maxY = Math.max(1, ...nodos.map(n => n.y));
-  const top = YTICKS.find(t => t >= maxY) || YTICKS[YTICKS.length - 1];
-  const lista = YTICKS.filter(t => t <= top);
-  const yMax = Math.sqrt(top);
+  const lista = YTICKS;
   const px = v => M.l + v / 100 * (W - M.l - M.r);   // 0 = todo a la izquierda · 100 = todo a la derecha
   // PAD reserva aire arriba para que la burbuja mas alta no invada las etiquetas de zona
   const PAD = 32;
-  const py = v => H - M.b - Math.sqrt(Math.max(v, 0)) / yMax * (H - M.t - M.b - PAD);
+  const py = v => H - M.b - Math.max(0, Math.min(100, v)) / 100 * (H - M.t - M.b - PAD);
   const mitad = px(50);
 
   // bandas de fondo suaves, detrás de las burbujas: de la izquierda a la derecha
@@ -514,7 +512,7 @@ function renderMapa() {
   });
   lista.forEach(t => {
     g += `<line x1="${M.l}" x2="${W - M.r}" y1="${py(t).toFixed(1)}" y2="${py(t).toFixed(1)}"></line>`;
-    g += `<text x="${M.l - 11}" y="${(py(t) + 4).toFixed(1)}" text-anchor="end">${nf(t)}</text>`;
+    g += `<text x="${M.l - 11}" y="${(py(t) + 4).toFixed(1)}" text-anchor="end">${nf(t)} %</text>`;
   });
   const EJEX = [[0, '0'], [20, '2 de cada 10'], [40, '4 de cada 10'], [50, 'mitad y mitad'],
                 [60, '6 de cada 10'], [80, '8 de cada 10'], [100, '10 de cada 10']];
@@ -524,9 +522,7 @@ function renderMapa() {
     g += `<text class="${c}" x="${x}" y="${H - M.b + 21}" text-anchor="middle">${txt}</text>`;
   });
   const tituloPeriodo = mapaPeriodo === 'todo' ? 'toda la XV Legislatura' : mapaPeriodo;
-  const tituloY = mapaSerie === 'publicado' ? `Tuits políticos · hasta 100 Latest por medio y mes de ${tituloPeriodo}`
-    : mapaSerie === 'viral' ? `Tuits virales con lectura · subconjunto con más de 100 retuits de ${tituloPeriodo}`
-      : `Tuits con lectura · lo publicado frente a lo viral · ${tituloPeriodo}`;
+  const tituloY = `% de los tuits con posición clara · lo publicado frente a lo viral · ${tituloPeriodo}`;
   g += `<text class="tit" x="${M.l}" y="18">${tituloY}</text>`;
   g += `<text class="tit" x="${M.l}" y="${H - M.b + 46}">◀ todo a la izquierda</text>`;
   g += `<text class="tit" x="${mitad.toFixed(1)}" y="${H - M.b + 46}" text-anchor="middle">% de los tuits con lado que va a la derecha</text>`;
@@ -611,7 +607,7 @@ function renderMapa() {
       <span class="aro" style="border-color:var(--map-neu);margin-left:10px"></span> centro</div>
     ${mapaSerie === 'ambas' ? `<div class="blq"><strong>Aro continuo</strong> lo publicado · <strong>aro discontinuo</strong> lo viral</div>
       <div class="blq"><strong>Flecha</strong> de la posición publicada a la viral: hacia dónde se desplaza el medio al compartirse</div>` : ''}
-    <div class="blq">El eje vertical usa raíz cuadrada para que los medios pequeños no queden aplastados.</div>
+    <div class="blq"><strong>Altura</strong> porcentaje de tuits de cada serie que benefician o perjudican claramente a un partido.</div>
     <div class="blq"><strong>Corte de inclusión</strong> más de 50 tuits significados a favor o en contra en toda la muestra.</div>
     <div class="blq">${notaFiltro}</div>
     ${fueraCorte ? `<div class="blq">${fueraCorte} ${fueraCorte === 1 ? 'medio queda fuera' : 'medios quedan fuera'} por no superar el corte de inclusión.</div>` : ''}
@@ -624,7 +620,7 @@ function tipMapa(n, ev) {
   const pub = n.serie === 'publicado' ? n.d : n.o;
   const vir = n.serie === 'viral' ? n.d : n.o;
   const linea = (d, etq) => d && d.posicion != null
-    ? `<div class="tv"><b>${etq}</b>: ${puntos(d.posicion)} % a la derecha${d.con_lado < 15 ? ' (muestra corta)' : ''} · ${nf(d.con_lado)} con lado claro de ${volumen(d)}</div>`
+    ? `<div class="tv"><b>${etq}</b>: ${puntos(d.posicion)} % a la derecha${d.con_lado < 15 ? ' (muestra corta)' : ''} · ${puntos(porcentajeConLado(d))} % de la serie con lado claro · ${nf(d.con_lado)} de ${nf(d.tuits)} tuits</div>`
     : '';
   let desplaz = '';
   if (pub && vir && pub.posicion != null && vir.posicion != null && vir.con_lado >= 5) {

@@ -53,17 +53,19 @@ async def main():
         if not burbujas or not ranking_oculto:
             errores.append(f"[check] la vista por defecto no es el mapa: {burbujas} burbujas, ranking oculto={ranking_oculto}")
 
-        # clic en una burbuja del mapa: tiene que abrir el medio (regresion del bucle de mouseenter)
-        # y hacerlo en menos de un segundo, en el modo por defecto (las dos posiciones)
-        nodos_eldiario = await pg.locator('#mapa .burbuja[data-h="@eldiarioes"]').count()
+        # clic en una burbuja superior del mapa: tiene que abrir su medio y hacerlo
+        # en menos de un segundo. Elegimos la última del SVG porque queda por encima
+        # cuando varios medios comparten casi la misma coordenada.
+        objetivo = pg.locator('#mapa .burbuja[data-serie="publicado"]').last
+        handle_objetivo = await objetivo.get_attribute("data-h")
         t0 = time.perf_counter()
-        await pg.locator('#mapa .burbuja[data-serie="publicado"][data-h="@eldiarioes"]').first.click()
+        await objetivo.click()
         await pg.wait_for_selector("#mlist article.tweet", state="visible", timeout=15000)
         ms = round((time.perf_counter() - t0) * 1000)
         titulo_mapa = await pg.locator("#medio-panel h2").inner_text()
-        print(f"nodos de eldiarioes en el mapa: {nodos_eldiario} | clic en el publicado -> {titulo_mapa} en {ms} ms")
-        if "elDiario" not in titulo_mapa:
-            errores.append(f"[check] la burbuja del mapa abrio otro medio: {titulo_mapa}")
+        print(f"clic en el nodo superior {handle_objetivo} -> {titulo_mapa} en {ms} ms")
+        if not handle_objetivo or handle_objetivo.lstrip('@').lower() not in pg.url.lower():
+            errores.append(f"[check] la burbuja {handle_objetivo} no abrio su ficha: {pg.url}")
         if ms >= 1000:
             errores.append(f"[check] el clic en la burbuja tarda {ms} ms, mas de un segundo")
         await pg.screenshot(path=f"{OUT}/0-mapa-clic-medio.png", full_page=True)
@@ -226,6 +228,9 @@ async def main():
               const tics = [...svg.querySelectorAll('.grid text')]
                 .filter(t => Math.abs(+t.getAttribute('y') - ytics) < 1)
                 .map(t => [+t.getAttribute('x'), t.textContent]);
+              const yticsPorcentaje = [...svg.querySelectorAll('.grid text')]
+                .filter(t => Math.abs(+t.getAttribute('x') - 71) < 1)
+                .map(t => t.textContent);
               const nodos = [...svg.querySelectorAll('.burbuja')].map(el => {
                 const c = el.querySelector('circle');
                 const t = el.getAttribute('transform').match(/translate\(([-0-9.]+),\s*([-0-9.]+)\)/);
@@ -241,7 +246,7 @@ async def main():
                         x1: +g.dataset.x1, y1: +g.dataset.y1, x2: +g.dataset.x2, y2: +g.dataset.y2,
                         punta: pts[0], cen, color: p.getAttribute('fill'), comp: getComputedStyle(p).fill};
               });
-              return {tics, nodos, flechas,
+              return {tics, yticsPorcentaje, nodos, flechas,
                       zonas: [...svg.querySelectorAll('.etiquetas text')].map(t => t.textContent),
                       titulos: [...svg.querySelectorAll('.grid text.tit')].map(t => t.textContent),
                       resumen: document.querySelector('#mapa-resumen').textContent,
@@ -274,7 +279,7 @@ async def main():
 
         # (2) la X de cada nodo es la posicion de polarizacion.json y el color, rojo a la izquierda y azul a la derecha
         por_handle = {m["handle"]: m for m in pol["medios"]}
-        peor_x, mal_color, rojos, azules, grises = 0.0, [], 0, 0, 0
+        peor_x, peor_y, mal_color, rojos, azules, grises = 0.0, 0.0, [], 0, 0, 0
         for n in est["nodos"]:
             r = por_handle.get(n["h"])
             d = (r or {}).get(n["serie"]) or {}
@@ -282,6 +287,9 @@ async def main():
                 errores.append(f"[check] nodo sin datos en polarizacion.json: {n['h']} {n['serie']}")
                 continue
             peor_x = max(peor_x, abs(n["x"] - (x0 + d["posicion"] / 100 * (x100 - x0))))
+            porcentaje = 100 * d["con_lado"] / d["tuits"] if d.get("tuits") else 0
+            y_esperada = 554 - porcentaje / 100 * 476
+            peor_y = max(peor_y, abs(n["y"] - y_esperada))
             esp = lado(d["posicion"])
             if n["attr"] != f"var(--map-{esp})" or n["comp"] != RGB[esp]:
                 mal_color.append(f"{n['h']}/{n['serie']} posicion {d['posicion']} -> {n['attr']} / {n['comp']}")
@@ -292,9 +300,15 @@ async def main():
             else:
                 grises += 1
         print(f"X de los nodos frente a posicion = 100*der/(izq+der): desviacion maxima {peor_x:.3f} px")
+        print(f"Y de los nodos frente a 100*con_lado/tuits: desviacion maxima {peor_y:.3f} px")
+        print("tics del eje Y:", " · ".join(est["yticsPorcentaje"]))
         print(f"nodos por color: rojo (izquierda) {rojos} · azul (derecha) {azules} · gris (centro) {grises} | mal pintados: {len(mal_color)}")
         if peor_x > 0.3:
             errores.append(f"[check] el eje X no cuadra con la posicion: {peor_x:.3f} px")
+        if peor_y > 0.3 or est["yticsPorcentaje"] != ["0 %", "20 %", "40 %", "60 %", "80 %", "100 %"]:
+            errores.append(f"[check] el eje Y no representa el porcentaje con lado claro: desviacion {peor_y:.3f}, tics {est['yticsPorcentaje']}")
+        if not any("% de los tuits con posición clara" in t for t in est["titulos"]):
+            errores.append(f"[check] falta el titulo porcentual del eje Y: {est['titulos']}")
         if mal_color or not rojos or not azules:
             errores.append(f"[check] colores por lado: {len(mal_color)} mal, {rojos} rojos, {azules} azules :: " + "; ".join(mal_color[:4]))
         arriba = [n for n in est["nodos"] if n["serie"] == "publicado"]
@@ -377,13 +391,13 @@ async def main():
         await pg.select_option("#mapa-filtro", "5")
         await pg.wait_for_timeout(400)
 
-        # la herramienta de un nodo cuenta las dos series y el desplazamiento
-        await pg.locator('#mapa .burbuja[data-h="@eldiarioes"]').first.hover()
+        # la herramienta de un nodo cuenta las dos series, el porcentaje y el desplazamiento
+        await pg.locator('#mapa .burbuja').last.hover()
         await pg.wait_for_timeout(350)
         tip = " ".join((await pg.locator("#mapa-tip").inner_text()).split())
         print("tooltip:", tip[:220])
-        if "Publicado" not in tip or "Viral" not in tip or "se desplaza" not in tip:
-            errores.append(f"[check] el tooltip no cuenta las dos posiciones: {tip[:200]}")
+        if "Publicado" not in tip or "Viral" not in tip or "se desplaza" not in tip or "% de la serie con lado claro" not in tip:
+            errores.append(f"[check] el tooltip no cuenta las dos posiciones y el porcentaje: {tip[:200]}")
         logos = await pg.evaluate("Array.from(document.querySelectorAll('#mapa image')).filter(i => i.getBoundingClientRect().width > 0).length")
         print("logos cargados:", logos, "de", await pg.locator("#mapa image").count())
         await pg.screenshot(path=f"{OUT}/8-mapa.png", full_page=True)
