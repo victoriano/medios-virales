@@ -117,7 +117,7 @@ function pintarTotales() {
   const t = INDEX.totales;
   $('#n-virales').textContent = nf(t.muestreados || t.virales);
   $('#n-medios').textContent = t.medios;
-  $('#m-gate').textContent = `${nf(t.gate_si)} claros, ${nf(t.gate_dudoso)} dudosos y ${nf(t.gate_no)} fuera`;
+  $('#m-gate').textContent = `${nf(t.clasificados)} tuits políticos y ${nf((t.muestreados || 0) - t.clasificados)} sin lectura política`;
   $('#m-partido').textContent = PARTIDOS.filter(p => t.por_partido[p]).map(p => `${p} ${nf(t.por_partido[p])}`).join(' · ');
   $('#m-dir').textContent = Object.entries(t.por_direccion).map(([k, v]) => `${DIRTXT[k] || k} ${nf(v)}`).join(' · ');
   $('#m-fecha').textContent = INDEX.generado;

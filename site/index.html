@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=20260924173007">
+<link rel="stylesheet" href="styles.css?v=20260924173603">
 </head>
 <body>
 <header class="top">
@@ -122,36 +122,46 @@
       <h2>Cómo se ha hecho</h2>
 
       <h3>Qué se mide</h3>
-      <p>No la línea editorial en abstracto, sino la posición política de la muestra de publicaciones y cómo cambia dentro del subconjunto que se hace viral. Se pregunta por cada tuit si tiene lectura política, a qué partido afecta y si lo favorece o lo perjudica. Un medio puede salir centrado o escorado según el periodo elegido, así que conviene leer el índice como un retrato de su actividad en X, no como una etiqueta definitiva de su redacción.</p>
+      <p>La posición política de una muestra de publicaciones en X y cómo cambia dentro del subconjunto que alcanza difusión viral. Para cada tuit se determina primero si tiene lectura política española. Cuando la tiene, se identifica el partido afectado y si el contenido lo beneficia, lo perjudica o informa sin tomar partido. El resultado describe la actividad observada en X, no la ideología definitiva de una redacción.</p>
 
-      <h3>Obtención de los tuits</h3>
+      <h3>Universo y muestra</h3>
       <ul>
-        <li>Universo: los <strong>66 medios</strong> de la lista <em>Spanish Generalist Media</em> de X.</li>
-        <li>Ventana: toda la XV Legislatura, del <strong>17 de agosto de 2023 al 24 de septiembre de 2026</strong>.</li>
-        <li>Muestra: <strong>hasta 100 tuits Latest por medio y mes</strong>, repartidos en <strong>cinco tramos temporales</strong> dentro de cada mes para no dejar días sin cubrir.</li>
-        <li>Fuente: <strong>TwitterAPI.io</strong>. Devuelve los tuits en orden Latest y respeta el troceo mensual por medio.</li>
-        <li>Sobre esa misma muestra se computa el subconjunto <strong>Viral</strong>: los tuits que superaron los <strong>100 retuits</strong>. No es un censo aparte, es la parte de la muestra que se compartió.</li>
-        <li>El selector de periodo del mapa recorta esa ventana temporal (toda la XV Legislatura o un año concreto) sobre esa misma muestra mensual.</li>
-        <li>Consulta, por medio y por tramo mensual: <code>from:&lt;medio&gt; -filter:retweets since:inicio until:fin</code>, ordenada por Latest y truncada a lo que cabe en el cupo de 100 al mes.</li>
+        <li>Universo inicial: <strong>66 medios</strong> de la lista <em>Spanish Generalist Media</em> de X.</li>
+        <li>Ventana: del <strong>17 de agosto de 2023 al 24 de septiembre de 2026</strong>, dentro de la XV Legislatura.</li>
+        <li>Muestra: <strong>218.885 tuits únicos</strong>. Se toman hasta 100 tuits por medio y mes, repartidos en cinco tramos temporales para evitar que toda la muestra proceda del final del mes.</li>
+        <li>Fuente: <strong>TwitterAPI.io</strong>, mediante consultas individuales por medio ordenadas por publicación reciente. Las fechas reales se comprueban después de descargar y cualquier resultado fuera de la ventana se descarta.</li>
+        <li>El conjunto <strong>Viral</strong> es un subconjunto de esa misma muestra: <strong>4.893 tuits con al menos 100 retuits</strong>. No es un censo independiente.</li>
       </ul>
 
       <h3>Clasificación</h3>
-      <p>Con Gemini 3.7 Flash. Para cada tuit se determina si trata de política española o puede afectar electoralmente a un partido. Cuando la respuesta es afirmativa, se identifica el partido afectado y si el contenido lo beneficia, lo perjudica o solo informa. Cada resultado conserva una puntuación de confianza.</p>
+      <p>Los 218.885 tuits fueron clasificados con Gemini 3.7 Flash. Los nombres de los partidos se normalizan a PSOE, PP, Vox y Sumar antes de calcular recuentos y filtros.</p>
       <ul>
-        <li><strong>Filtro:</strong> <span id="m-gate"></span></li>
-        <li><strong>Partido:</strong> <span id="m-partido"></span></li>
+        <li><strong>Lectura política:</strong> <span id="m-gate"></span></li>
+        <li><strong>Partido afectado:</strong> <span id="m-partido"></span></li>
         <li><strong>Dirección:</strong> <span id="m-dir"></span></li>
-        <li><strong>Corte de inclusión:</strong> el ranking y el mapa solo muestran medios con más de 50 tuits significados a favor o en contra, sumando izquierda y derecha en toda la muestra.</li>
       </ul>
 
-      <h3>Cómo se calcula el índice</h3>
-      <p>Para cada medio se cuentan los tuits con partido concreto y dirección clara. Suman a la izquierda los que benefician a PSOE o Sumar y los que perjudican a PP o Vox. Suman a la derecha los que benefician a PP o Vox y los que perjudican a PSOE o Sumar. El índice es derecha menos izquierda partido por el total con dirección clara, así que va de −1 a +1.</p>
+      <h3>Qué medios entran en el análisis</h3>
+      <p>El ranking y el mapa muestran únicamente los medios que se han significado a favor o en contra en <strong>más de 50 tuits durante toda la muestra</strong>. Para este corte se suman los tuits situados a la izquierda y a la derecha. Los tuits políticos que informan sin tomar partido no cuentan para alcanzar el umbral.</p>
+      <p>Superan el corte <strong>58 de los 66 medios</strong>. La selección se calcula una sola vez sobre toda la muestra y se mantiene al consultar cada año, para no cambiar arbitrariamente el universo comparado. En el mapa se exige además un mínimo de cinco tuits con lado claro en cada serie visible. Cuando se comparan Publicado y Viral, ambas series deben superar ese mínimo.</p>
+
+      <h3>Porcentaje de tuits políticos</h3>
+      <p>La columna <strong>% políticos</strong> del ranking se calcula como el número de tuits clasificados con lectura política dividido por todos los tuits muestreados del medio. Incluye tanto los tuits que toman partido como los que informan sobre política sin favorecer ni perjudicar a un lado.</p>
+
+      <h3>Cómo se calcula la posición</h3>
+      <p>Un tuit suma a la izquierda si beneficia a PSOE o Sumar, o si perjudica a PP o Vox. Suma a la derecha si beneficia a PP o Vox, o si perjudica a PSOE o Sumar. Los tuits políticos sin lado claro quedan fuera de este cálculo.</p>
+      <p>La posición del mapa es el porcentaje de tuits con lado claro que cae a la derecha. Cero significa que todos caen a la izquierda, cincuenta indica equilibrio y cien significa que todos caen a la derecha. El índice técnico del ranking expresa la misma relación en una escala de menos uno a más uno.</p>
+
+      <h3>Cómo leer el mapa</h3>
+      <p>El aro continuo representa lo publicado y el aro discontinuo, el subconjunto viral. La flecha parte de la posición publicada y termina en la viral. Por tanto, muestra hacia dónde se desplaza el contenido del medio cuando se comparte más. El selector temporal permite ver toda la legislatura o cada año natural, pero no altera el corte global de inclusión.</p>
 
       <h3>Límites</h3>
       <ul>
-        <li>Solo se analiza el texto del tuit. Los enlaces y las imágenes no se abren, y eso baja la confianza en los tuits que son solo un titular con enlace.</li>
-        <li>El filtro y la dirección son juicios de un modelo, no una verdad. Cada fila lleva su confianza y el umbral de duda está marcado.</li>
-        <li>Los retuits se miden como métrica pública del tuit, no como alcance real.</li>
+        <li>Es una muestra estratificada de hasta 100 tuits por medio y mes, no el historial completo de cada cuenta.</li>
+        <li>Solo se analiza el texto del tuit. No se interpretan el contenido de enlaces, imágenes o vídeos.</li>
+        <li>La clasificación política y su dirección son juicios de un modelo y pueden contener errores.</li>
+        <li>El subconjunto viral mide qué parte de la muestra recibió más retuits, no el alcance real ni la opinión completa de la audiencia.</li>
+        <li>Las cuentas sin publicaciones recuperadas permanecen en el universo inicial, aunque no puedan superar el corte de inclusión.</li>
       </ul>
       <p class="foot-note">Datos, scripts y este sitio: <a id="repo-link" href="#" target="_blank" rel="noopener">repositorio público en GitHub</a>. Muestra actualizada el <span id="m-fecha"></span>.</p>
     </div>
@@ -162,6 +172,6 @@
   <p>Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.</p>
 </footer>
 
-<script src="app.js?v=20260924173007"></script>
+<script src="app.js?v=20260924173603"></script>
 </body>
 </html>

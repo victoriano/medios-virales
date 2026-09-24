@@ -489,6 +489,14 @@ async def main():
         # metodo
         await pg.goto(URL + "#/metodo", wait_until="networkidle")
         await pg.wait_for_timeout(400)
+        metodo = " ".join((await pg.locator("#view-metodo").inner_text()).split())
+        for trozo in ["218.885 tuits únicos", "4.893 tuits con al menos 100 retuits",
+                      "58 de los 66 medios", "más de 50 tuits durante toda la muestra",
+                      "Porcentaje de tuits políticos", "Cómo leer el mapa"]:
+            if trozo not in metodo:
+                errores.append(f"[check] falta en metodología: {trozo}")
+        if "56.547 tuits políticos y 162.338 sin lectura política" not in metodo:
+            errores.append("[check] el recuento de lectura política de la metodología no cuadra")
         await pg.screenshot(path=f"{OUT}/6-metodo.png", full_page=True)
 
         # movil
