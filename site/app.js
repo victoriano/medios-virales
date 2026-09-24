@@ -66,35 +66,63 @@ function prefetchMedio(meta) {
 
 /* ---------- navegación ---------- */
 const VIEWS = ['ranking', 'mapa', 'medio', 'top', 'metodo'];
+const PERIODOS_VALIDOS = ['todo', '2023', '2024', '2025', '2026'];
 function show(v) {
   VIEWS.forEach(x => { $('#view-' + x).hidden = x !== v; });
   $$('.tab').forEach(t => t.classList.toggle('is-on', t.dataset.view === v));
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 $$('.tab').forEach(t => t.addEventListener('click', () => {
-  location.hash = '#/' + t.dataset.view;
+  // al cambiar de vista mantenemos el periodo activo del mapa en la url compartible
+  const base = '#/' + t.dataset.view;
+  location.hash = t.dataset.view === 'mapa' ? base + hashPeriodo() : base;
 }));
 window.addEventListener('hashchange', route);
+// serializa el periodo elegido en el hash: #/mapa?p=2025 (o nada si es el todo)
+function hashPeriodo() {
+  return mapaPeriodo && mapaPeriodo !== 'todo' ? '?p=' + mapaPeriodo : '';
+}
+// lee el periodo del hash o de la query para arrancar con la url del usuario
+function leePeriodoDeUrl(cadena) {
+  const partes = cadena.split('?');
+  if (partes.length > 1) {
+    const usp = new URLSearchParams(partes[1]);
+    const p = usp.get('p');
+    if (p && PERIODOS_VALIDOS.includes(p)) return p;
+  }
+  const q = new URLSearchParams(location.search);
+  const qp = q.get('p');
+  if (qp && PERIODOS_VALIDOS.includes(qp)) return qp;
+  return null;
+}
 function route() {
-  const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
-  if (h.startsWith('medio/')) { openMedio(h.slice(6)); return; }
-  if (h === 'ranking') { show('ranking'); return; }
-  if (h === 'top') { show('top'); return; }
-  if (h === 'metodo') { show('metodo'); return; }
+  const bruto = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
+  const ruta = bruto.split('?')[0];
+  const desdeUrl = leePeriodoDeUrl(bruto);
+  if (desdeUrl && desdeUrl !== mapaPeriodo) {
+    mapaPeriodo = desdeUrl;
+    const sel = $('#mapa-periodo');
+    if (sel) sel.value = mapaPeriodo;
+  }
+  if (ruta.startsWith('medio/')) { openMedio(ruta.slice(6)); return; }
+  if (ruta === 'ranking') { show('ranking'); return; }
+  if (ruta === 'top') { show('top'); return; }
+  if (ruta === 'metodo') { show('metodo'); return; }
   show('mapa'); renderMapa();   // el mapa es la vista por defecto
 }
 
 /* ---------- cabecera / método ---------- */
 function pintarTotales() {
   const t = INDEX.totales;
-  $('#n-virales').textContent = nf(t.virales);
+  $('#n-virales').textContent = nf(t.muestreados || t.virales);
   $('#n-medios').textContent = t.medios;
   $('#m-gate').textContent = `${nf(t.gate_si)} claros, ${nf(t.gate_dudoso)} dudosos y ${nf(t.gate_no)} fuera`;
   $('#m-partido').textContent = PARTIDOS.filter(p => t.por_partido[p]).map(p => `${p} ${nf(t.por_partido[p])}`).join(' · ');
   $('#m-dir').textContent = Object.entries(t.por_direccion).map(([k, v]) => `${DIRTXT[k] || k} ${nf(v)}`).join(' · ');
   $('#m-fecha').textContent = INDEX.generado;
   $('#repo-link').href = REPO;
-  $('#rank-note').textContent = `${t.medios} medios con algún tuit por encima de 100 retuits, de los ${t.medios_lista} de la lista. Censo del ${INDEX.ventana.desde} al ${INDEX.ventana.hasta}.`;
+  const activos = INDEX.medios.filter(m => (m.muestreados || 0) > 0).length;
+  $('#rank-note').textContent = `${activos} medios con muestra, de los ${t.medios_lista} de la lista. Periodo del ${INDEX.ventana.desde} al ${INDEX.ventana.hasta}.`;
 }
 
 function pintarStats() {
@@ -108,12 +136,12 @@ function pintarStats() {
 
   $('#stats').innerHTML = `
     <div class="card">
-      <p class="k">Tuits virales</p><p class="v">${nf(t.virales)}</p>
-      <p class="s">más de 100 retuits · ${t.medios} medios</p>
+      <p class="k">Tuits muestreados</p><p class="v">${nf(t.muestreados || t.virales)}</p>
+      <p class="s">${nf(t.virales)} virales · ${t.medios} medios</p>
     </div>
     <div class="card">
       <p class="k">Con lectura política</p><p class="v">${nf(t.clasificados)}</p>
-      <p class="s">${Math.round(100 * t.clasificados / t.virales)} % del total</p>
+      <p class="s">${Math.round(100 * t.clasificados / (t.muestreados || t.virales))} % del total</p>
     </div>
     <div class="card">
       <p class="k">Partido más señalado</p><p class="v">PSOE</p>
@@ -123,7 +151,7 @@ function pintarStats() {
     </div>
     <div class="card">
       <p class="k">Dirección</p><p class="v">${Math.round(100 * (t.por_direccion.perjudica || 0) / totalD)} % crítica</p>
-      <p class="s">lo viral premia el conflicto</p>
+      <p class="s">dirección de los tuits políticos</p>
       <div class="bar">${dir.map(d => `<i style="width:${100 * d.v / totalD}%;background:${cdir[d.d]}"></i>`).join('')}</div>
       <div class="leyenda">${dir.map(d => `<span><i class="dot" style="background:${cdir[d.d]}"></i>${DIRTXT[d.d]} ${nf(d.v)}</span>`).join('')}</div>
     </div>`;
@@ -218,7 +246,7 @@ function pintarMedio(meta) {
     <div class="medio-head">
       <div>
         <h2>${esc(meta.nombre)}</h2>
-        <p class="sub">${esc(meta.handle)} · ${compact(meta.seguidores)} seguidores · ${meta.virales} tuits con más de 100 retuits</p>
+        <p class="sub">${esc(meta.handle)} · ${compact(meta.seguidores)} seguidores · ${nf(meta.muestreados || meta.virales)} tuits muestreados · ${nf(meta.virales)} virales</p>
       </div>
       <div><span class="idx-pill ${cls}" style="font-size:16px;padding:7px 14px">${txt}</span></div>
     </div>
@@ -386,7 +414,21 @@ const ladoDe = p => p < 45 ? 'izq' : p > 55 ? 'der' : 'neu';
 const colorDe = p => MAPA_COLOR[ladoDe(p)];
 
 let mapaSerie = 'ambas';    // publicado | viral | ambas
-let mapaFiltro = 200;       // mínimo de tuits con lado claro en cada serie dibujada
+let mapaFiltro = 5;         // mínimo de tuits con lado claro en cada serie dibujada
+let mapaPeriodo = 'todo';   // ventana temporal: todo | 2023 | 2024 | 2025 | 2026
+
+// devuelve el array de medios del periodo activo con fallback al periodo completo
+function mediosPeriodo() {
+  if (!POL) return [];
+  const bloque = POL.periodos && POL.periodos[mapaPeriodo];
+  if (bloque && Array.isArray(bloque.medios)) return bloque.medios;
+  return POL.medios || [];   // fallback exigido: si falta el periodo, usa el completo
+}
+// para el tooltip: busca el registro del medio en el periodo actual
+function polDe(handle) {
+  return mediosPeriodo().find(r => r.handle.toLowerCase() === (handle || '').toLowerCase());
+}
+const PERIODO_TXT = { todo: 'toda la XV Legislatura', 2023: '2023', 2024: '2024', 2025: '2025', 2026: '2026' };
 const RADIO = v => Math.max(9, 0.85 * Math.sqrt(Math.max(v, 120)));
 const RADIO_VIRAL = 0.84;   // el punto de lo viral se dibuja algo menor para no tapar el de lo publicado
 const YTICKS = [0, 250, 500, 1000, 2000, 4000];
@@ -398,7 +440,7 @@ const nombreSerie = s => s === 'publicado' ? 'publicado' : 'viral';
 function filasMapa() {
   const metas = new Map(INDEX.medios.map(m => [m.handle.toLowerCase(), m]));
   const nodos = [], parejas = [];
-  for (const r of (POL && POL.medios) || []) {
+  for (const r of mediosPeriodo()) {
     const m = metas.get(r.handle.toLowerCase());
     if (!m) continue;                                   // medios del censo sin muestra en polarizacion.json
     const pub = r.publicado, vir = r.viral;
@@ -429,9 +471,11 @@ function renderMapa() {
     return;
   }
   const { nodos, parejas } = filasMapa();
-  const total = (POL.medios || []).length;
+  const total = mediosPeriodo().length;
   const dibujados = new Set(nodos.map(n => n.m.handle)).size;
   const fuera = total - dibujados;
+  const sinDatos = total === 0;
+  const conFallback = !!POL.periodos && !(POL.periodos[mapaPeriodo] && Array.isArray(POL.periodos[mapaPeriodo].medios));
 
   const W = 1000, H = 620, M = { t: 46, r: 54, b: 66, l: 82 };
   const maxY = Math.max(1, ...nodos.map(n => n.y));
@@ -469,9 +513,10 @@ function renderMapa() {
     g += `<line class="${c}" x1="${x}" x2="${x}" y1="${M.t}" y2="${H - M.b}"></line>`;
     g += `<text class="${c}" x="${x}" y="${H - M.b + 21}" text-anchor="middle">${txt}</text>`;
   });
-  const tituloY = mapaSerie === 'publicado' ? 'Tuits políticos · muestra de 6 días al mes'
-    : mapaSerie === 'viral' ? 'Tuits virales con lectura · censo de más de 100 retuits'
-      : 'Tuits con lectura · lo publicado frente a lo viral';
+  const tituloPeriodo = mapaPeriodo === 'todo' ? 'toda la XV Legislatura' : mapaPeriodo;
+  const tituloY = mapaSerie === 'publicado' ? `Tuits políticos · hasta 100 Latest por medio y mes de ${tituloPeriodo}`
+    : mapaSerie === 'viral' ? `Tuits virales con lectura · subconjunto con más de 100 retuits de ${tituloPeriodo}`
+      : `Tuits con lectura · lo publicado frente a lo viral · ${tituloPeriodo}`;
   g += `<text class="tit" x="${M.l}" y="18">${tituloY}</text>`;
   g += `<text class="tit" x="${M.l}" y="${H - M.b + 46}">◀ todo a la izquierda</text>`;
   g += `<text class="tit" x="${mitad.toFixed(1)}" y="${H - M.b + 46}" text-anchor="middle">% de los tuits con lado que va a la derecha</text>`;
@@ -567,10 +612,10 @@ function tipMapa(n, ev) {
   const pub = n.serie === 'publicado' ? n.d : n.o;
   const vir = n.serie === 'viral' ? n.d : n.o;
   const linea = (d, etq) => d && d.posicion != null
-    ? `<div class="tv"><b>${etq}</b>: ${puntos(d.posicion)} % a la derecha${d.con_lado < 200 ? ' (muestra corta)' : ''} · ${nf(d.con_lado)} con lado claro de ${volumen(d)}</div>`
+    ? `<div class="tv"><b>${etq}</b>: ${puntos(d.posicion)} % a la derecha${d.con_lado < 15 ? ' (muestra corta)' : ''} · ${nf(d.con_lado)} con lado claro de ${volumen(d)}</div>`
     : '';
   let desplaz = '';
-  if (pub && vir && pub.posicion != null && vir.posicion != null && vir.con_lado >= 200) {
+  if (pub && vir && pub.posicion != null && vir.posicion != null && vir.con_lado >= 5) {
     const delta = vir.posicion - pub.posicion;
     desplaz = Math.abs(delta) < 0.05
       ? '<div class="tv frase">Al compartirse se queda en el mismo sitio.</div>'
@@ -582,7 +627,7 @@ function tipMapa(n, ev) {
   tip.innerHTML = `<div class="tt">${esc(m.nombre)}</div>
     <div class="tv frase">${esc(frase)}</div>
     ${linea(pub, 'Publicado')}${linea(vir, 'Viral')}${desplaz}
-    <div class="tv tm">${esc(m.handle)} · ${nf(m.rt_media)} retuits de media · índice del censo ${m.indice > 0 ? '+' : m.indice < 0 ? '−' : ''}${Math.abs(m.indice).toFixed(2)}</div>`;
+    <div class="tv tm">${esc(m.handle)} · ${nf(m.rt_media)} retuits de media · índice de la muestra completa ${m.indice > 0 ? '+' : m.indice < 0 ? '−' : ''}${Math.abs(m.indice).toFixed(2)}</div>`;
   tip.hidden = false;
   const r = wrap.getBoundingClientRect();
   let x = ev.clientX - r.left + 16, y = ev.clientY - r.top + 14;
@@ -607,6 +652,21 @@ function tipMapa(n, ev) {
   $('#mapa-serie').addEventListener('change', e => { mapaSerie = e.target.value; renderMapa(); });
   $('#mapa-filtro').value = String(mapaFiltro);
   $('#mapa-filtro').addEventListener('change', e => { mapaFiltro = Number(e.target.value) || 0; renderMapa(); });
+  // al cambiar el periodo: guarda el estado, refresca el hash compartible, mantiene el modo
+  // de serie activo y redibuja el mapa con la muestra recortada de ese año.
+  const selPer = $('#mapa-periodo');
+  if (selPer) {
+    selPer.value = mapaPeriodo;
+    selPer.addEventListener('change', e => {
+      const v = e.target.value;
+      mapaPeriodo = PERIODOS_VALIDOS.includes(v) ? v : 'todo';
+      const nuevoHash = '#/mapa' + hashPeriodo();
+      if (location.hash !== nuevoHash) {
+        history.replaceState(null, '', nuevoHash);   // sin disparar hashchange para no reentrar
+      }
+      renderMapa();
+    });
+  }
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
   if (h === 'top') { await cargarTop(); }
   route();

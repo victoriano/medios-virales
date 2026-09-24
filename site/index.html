@@ -4,20 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sesgo y viralidad de los medios españoles · victoriano.me</title>
-<meta name="description" content="Clasificación de los 20.404 tuits con más de 100 retuits de los medios generalistas españoles: qué partido beneficia o perjudica cada medio.">
-<meta property="og:title" content="Qué partido beneficia cada medio">
-<meta property="og:description" content="20.404 tuits con más de 100 retuits de 53 medios españoles, clasificados por partido y dirección.">
+<meta name="description" content="Mapa anual de 218.885 tuits de 66 medios españoles durante la XV Legislatura: posición de lo publicado frente a lo viral.">
+<meta property="og:title" content="Sesgo y viralidad de los medios españoles">
+<meta property="og:description" content="218.885 tuits de 66 medios, clasificados por partido y dirección, con comparación anual entre lo publicado y lo viral.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=202609221934">
+<link rel="stylesheet" href="styles.css?v=20260924171009">
 </head>
 <body>
 <header class="top">
   <div class="wrap">
     <p class="kicker">victoriano.me · análisis</p>
-    <h1>Qué partido beneficia cada medio</h1>
-    <p class="lede">Los <strong id="n-virales">20.404</strong> tuits con más de 100 retuits de <strong id="n-medios">53</strong> medios generalistas españoles entre septiembre de 2025 y septiembre de 2026, clasificados uno a uno por el partido al que afectan y en qué dirección.</p>
+    <h1>Sesgo y viralidad de los medios españoles</h1>
+    <p class="lede"><strong id="n-virales">218.885</strong> tuits muestreados de <strong id="n-medios">66</strong> medios generalistas españoles durante la XV Legislatura, clasificados uno a uno para comparar lo que publican con lo que se hace viral.</p>
     <nav class="tabs" role="tablist">
       <button class="tab is-on" data-view="mapa" role="tab">Mapa</button>
       <button class="tab" data-view="ranking" role="tab">Ranking</button>
@@ -67,20 +67,28 @@
       <div class="panel-head">
         <h2>Mapa de sesgo: lo que se publica y lo que se comparte</h2>
         <div class="panel-controles">
+          <select id="mapa-periodo" aria-label="Periodo de la XV Legislatura">
+            <option value="todo" selected>Toda la XV Legislatura</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+          </select>
           <select id="mapa-serie" aria-label="Qué posiciones se dibujan">
             <option value="ambas" selected>Las dos posiciones</option>
             <option value="publicado">Solo lo publicado</option>
             <option value="viral">Solo lo viral</option>
           </select>
           <select id="mapa-filtro" aria-label="Filtrar por tamaño de muestra">
-            <option value="200" selected>Con muestra de 200 o más</option>
+            <option value="5" selected>Con muestra de 5 o más</option>
             <option value="0">Todos los medios</option>
-            <option value="1000">Con muestra de 1.000 o más</option>
+            <option value="15">Con muestra de 15 o más</option>
+            <option value="30">Con muestra de 30 o más</option>
           </select>
         </div>
       </div>
       <p class="hint">
-        Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo es que todos sus tuits con lado claro van a la izquierda, 100 en el derecho es que van todos a la derecha, y 50 la mitad y mitad. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. En vertical, cuantos más tuits con lectura política, más arriba. El tamaño del punto es su media de retuits. Con el control de arriba se ve <strong>solo lo publicado</strong> (la muestra de seis días al mes), <strong>solo lo viral</strong> (el censo de tuits con más de 100 retuits) o <strong>las dos posiciones</strong>: en ese caso el aro continuo es lo publicado, el discontinuo lo viral y la flecha va del punto publicado al viral, o sea, hacia dónde se desplaza el medio cuando su contenido se comparte. Pasa el ratón para ver los números y pulsa para abrir sus tuits.
+        Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo es que todos sus tuits con lado claro van a la izquierda, 100 en el derecho es que van todos a la derecha, y 50 la mitad y mitad. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. En vertical, cuantos más tuits con lectura política, más arriba. El tamaño del punto es su media de retuits. Con el <strong>selector de periodo</strong> se acota la ventana temporal (toda la XV Legislatura o un año concreto). El resto se basa en <strong>hasta 100 tuits Latest por medio y mes</strong> de esa ventana: <strong>Publicado</strong> son todos esos tuits y <strong>Viral</strong> es el subconjunto que superó los 100 retuits (no un censo aparte). En el modo <strong>las dos posiciones</strong> el aro continuo es lo publicado, el discontinuo lo viral y la flecha va del punto publicado al viral, o sea, hacia dónde se desplaza el medio cuando su contenido se comparte. Pasa el ratón para ver los números y pulsa para abrir sus tuits.
       </p>
       <p class="resumen" id="mapa-resumen"></p>
       <div class="chart-wrap">
@@ -114,18 +122,21 @@
       <h2>Cómo se ha hecho</h2>
 
       <h3>Qué se mide</h3>
-      <p>No la línea editorial en abstracto, sino <strong>qué contenido se comparte</strong>. Se toman los tuits que superaron los 100 retuits y se pregunta por cada uno a qué partido afecta y si lo favorece o lo perjudica. Un medio puede salir centrado o escorado según qué le explota ese mes, así que conviene leer el índice como el retrato de la conversación que genera, no como una etiqueta de su redacción.</p>
+      <p>No la línea editorial en abstracto, sino la posición política de la muestra de publicaciones y cómo cambia dentro del subconjunto que se hace viral. Se pregunta por cada tuit si tiene lectura política, a qué partido afecta y si lo favorece o lo perjudica. Un medio puede salir centrado o escorado según el periodo elegido, así que conviene leer el índice como un retrato de su actividad en X, no como una etiqueta definitiva de su redacción.</p>
 
       <h3>Obtención de los tuits</h3>
       <ul>
-        <li>Universo: los 62 medios de la lista <em>Spanish Generalist Media</em> de X. 53 tuvieron algún tuit por encima de 100 retuits.</li>
-        <li>Fuente: Apify, actor <code>apidojo/twitter-scraper-lite</code>. La API oficial de X ya no admite el filtro de retuits y cobra por publicación leída, así que el censo habría costado unos 5.900 dólares. Con Apify costó 21,41 dólares.</li>
-        <li>Consulta, por medio y por mes: <code>from:&lt;medio&gt; min_retweets:100 -filter:retweets since:inicio until:fin</code>.</li>
-        <li>El operador de lista no funciona en el actor y una consulta no alcanza más de cuatro o cinco meses hacia atrás, de ahí el troceado mensual medio a medio.</li>
+        <li>Universo: los <strong>66 medios</strong> de la lista <em>Spanish Generalist Media</em> de X.</li>
+        <li>Ventana: toda la XV Legislatura, del <strong>17 de agosto de 2023 al 24 de septiembre de 2026</strong>.</li>
+        <li>Muestra: <strong>hasta 100 tuits Latest por medio y mes</strong>, repartidos en <strong>cinco tramos temporales</strong> dentro de cada mes para no dejar días sin cubrir.</li>
+        <li>Fuente: <strong>TwitterAPI.io</strong>. Devuelve los tuits en orden Latest y respeta el troceo mensual por medio.</li>
+        <li>Sobre esa misma muestra se computa el subconjunto <strong>Viral</strong>: los tuits que superaron los <strong>100 retuits</strong>. No es un censo aparte, es la parte de la muestra que se compartió.</li>
+        <li>El selector de periodo del mapa recorta esa ventana temporal (toda la XV Legislatura o un año concreto) sobre esa misma muestra mensual.</li>
+        <li>Consulta, por medio y por tramo mensual: <code>from:&lt;medio&gt; -filter:retweets since:inicio until:fin</code>, ordenada por Latest y truncada a lo que cabe en el cupo de 100 al mes.</li>
       </ul>
 
       <h3>Clasificación</h3>
-      <p>Con TypeSafe (modelo Jev) en dos pasos. Primero un filtro: ¿este tuit puede afectar a un partido español? Después, solo para los que pasan, tres preguntas en una misma llamada: a qué partido afecta, en qué dirección y si hay ironía. El modelo devuelve etiqueta, probabilidades y confianza para cada fila.</p>
+      <p>Con Gemini 3.7 Flash. Para cada tuit se determina si trata de política española o puede afectar electoralmente a un partido. Cuando la respuesta es afirmativa, se identifica el partido afectado y si el contenido lo beneficia, lo perjudica o solo informa. Cada resultado conserva una puntuación de confianza.</p>
       <ul>
         <li><strong>Filtro:</strong> <span id="m-gate"></span></li>
         <li><strong>Partido:</strong> <span id="m-partido"></span></li>
@@ -141,7 +152,7 @@
         <li>El filtro y la dirección son juicios de un modelo, no una verdad. Cada fila lleva su confianza y el umbral de duda está marcado.</li>
         <li>Los retuits se miden como métrica pública del tuit, no como alcance real.</li>
       </ul>
-      <p class="foot-note">Datos, scripts y este sitio: <a id="repo-link" href="#" target="_blank" rel="noopener">repositorio público en GitHub</a>. Censo generado el <span id="m-fecha"></span>.</p>
+      <p class="foot-note">Datos, scripts y este sitio: <a id="repo-link" href="#" target="_blank" rel="noopener">repositorio público en GitHub</a>. Muestra actualizada el <span id="m-fecha"></span>.</p>
     </div>
   </section>
 </main>
@@ -150,6 +161,6 @@
   <p>Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.</p>
 </footer>
 
-<script src="app.js?v=202609221934"></script>
+<script src="app.js?v=20260924171009"></script>
 </body>
 </html>

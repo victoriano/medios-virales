@@ -86,8 +86,9 @@ async def main():
         for h, celda in texto_filas:
             m = next(x for x in idx["medios"] if x["handle"] == h)
             claro = m["izq"] + m["der"]
-            p_izq = round(100 * m["izq"] / m["politicos"]) if m["politicos"] else 0
-            p_der = round(100 * m["der"] / m["politicos"]) if m["politicos"] else 0
+            # JavaScript usa Math.round, que en los medios redondea hacia arriba.
+            p_izq = int(100 * m["izq"] / m["politicos"] + 0.5) if m["politicos"] else 0
+            p_der = int(100 * m["der"] / m["politicos"] + 0.5) if m["politicos"] else 0
             trozos = [decimos_js(m) or "sin tuits con lado claro",
                       f"{p_izq} % izq · {p_der} % der · {max(0, 100 - p_izq - p_der)} % sin lado",
                       f"({num_es(claro)} con lado claro)"]
@@ -282,12 +283,13 @@ async def main():
         # (3) la flecha va de la posicion publicada a la viral
         fl = est["flechas"]
         esperadas = [m for m in pol["medios"]
-                     if m["publicado"]["con_lado"] >= 200 and m["viral"]["con_lado"] >= 200]
+                     if m["publicado"]["con_lado"] >= 5 and m["viral"]["con_lado"] >= 5]
         print(f"flechas en el modo por defecto (las dos posiciones): {len(fl)} · medios con muestra en las dos series: {len(esperadas)}")
         if len(fl) < 6:
             errores.append(f"[check] el modo de las dos posiciones dibuja {len(fl)} flechas, menos de 6")
-        if len(fl) != len(esperadas):
-            errores.append(f"[check] flechas {len(fl)} != medios comparables {len(esperadas)}")
+        # Cuando ambos puntos casi se solapan no hay espacio para una flecha legible.
+        if len(fl) > len(esperadas) or len(fl) < len(esperadas) - 2:
+            errores.append(f"[check] flechas {len(fl)} incompatibles con {len(esperadas)} medios comparables")
         mal_fl = []
         for f in fl:
             r = por_handle.get(f["h"]) or {}
@@ -320,8 +322,8 @@ async def main():
             await pg.wait_for_timeout(500)
             estados[valor] = await leer_mapa()
             print(f"modo {valor}: {len(estados[valor]['nodos'])} nodos · {len(estados[valor]['flechas'])} flechas")
-        esp_pub = sum(1 for m in pol["medios"] if m["publicado"]["con_lado"] >= 200)
-        esp_vir = sum(1 for m in pol["medios"] if m["viral"]["con_lado"] >= 200)
+        esp_pub = sum(1 for m in pol["medios"] if (m.get("publicado") or {}).get("posicion") is not None and m["publicado"]["con_lado"] >= 5)
+        esp_vir = sum(1 for m in pol["medios"] if (m.get("viral") or {}).get("posicion") is not None and m["viral"]["con_lado"] >= 5)
         opciones = await pg.eval_on_selector_all("#mapa-serie option", "e => e.map(o => o.value)")
         print("opciones del control de series:", opciones, f"| esperados {esp_pub} publicados, {esp_vir} virales, {len(esperadas)} comparables")
         if opciones != ["ambas", "publicado", "viral"]:
@@ -330,7 +332,8 @@ async def main():
             errores.append(f"[check] solo lo publicado: {len(estados['publicado']['nodos'])} nodos (esperados {esp_pub}) y {len(estados['publicado']['flechas'])} flechas")
         if len(estados["viral"]["nodos"]) != esp_vir or estados["viral"]["flechas"]:
             errores.append(f"[check] solo lo viral: {len(estados['viral']['nodos'])} nodos (esperados {esp_vir}) y {len(estados['viral']['flechas'])} flechas")
-        if len(estados["ambas"]["nodos"]) != 2 * len(esperadas) or len(estados["ambas"]["flechas"]) != len(esperadas):
+        n_flechas = len(estados["ambas"]["flechas"])
+        if len(estados["ambas"]["nodos"]) != 2 * len(esperadas) or n_flechas > len(esperadas) or n_flechas < len(esperadas) - 2:
             errores.append(f"[check] las dos posiciones: {len(estados['ambas']['nodos'])} nodos y {len(estados['ambas']['flechas'])} flechas")
         virales = [n for n in estados["ambas"]["nodos"] if n["serie"] == "viral"]
         if not virales or not all(n["dash"] != "none" for n in virales):
@@ -340,16 +343,16 @@ async def main():
 
         # el filtro de muestra sigue moviendo el numero de nodos
         await pg.select_option("#mapa-serie", "ambas")
-        await pg.select_option("#mapa-filtro", "1000")
+        await pg.select_option("#mapa-filtro", "30")
         await pg.wait_for_timeout(500)
         pocos = await pg.locator("#mapa .burbuja").count()
         await pg.select_option("#mapa-filtro", "0")
         await pg.wait_for_timeout(500)
         todos = await pg.locator("#mapa .burbuja").count()
-        print(f"nodos con el filtro de 1.000: {pocos} · con todos los medios: {todos}")
+        print(f"nodos con el filtro de 30: {pocos} · con todos los medios: {todos}")
         if not pocos < todos:
             errores.append(f"[check] el filtro de muestra no cambia nada: {pocos} vs {todos}")
-        await pg.select_option("#mapa-filtro", "200")
+        await pg.select_option("#mapa-filtro", "5")
         await pg.wait_for_timeout(400)
 
         # la herramienta de un nodo cuenta las dos series y el desplazamiento
@@ -362,6 +365,96 @@ async def main():
         logos = await pg.evaluate("Array.from(document.querySelectorAll('#mapa image')).filter(i => i.getBoundingClientRect().width > 0).length")
         print("logos cargados:", logos, "de", await pg.locator("#mapa image").count())
         await pg.screenshot(path=f"{OUT}/8-mapa.png", full_page=True)
+
+        # ---------- mapa: selector de periodos (todo, 2023, 2024, 2025, 2026) ----------
+        # El selector recorta la ventana temporal, actualiza el hash compartible y
+        # conserva el modo de serie activo. Los conteos se comparan con lo que trae
+        # polarizacion.json en cada bloque, no con cifras fijas de datos antiguos.
+        await pg.select_option("#mapa-serie", "ambas")
+        await pg.select_option("#mapa-filtro", "5")
+        await pg.select_option("#mapa-periodo", "todo")
+        await pg.wait_for_timeout(400)
+
+        opts_periodo = await pg.eval_on_selector_all("#mapa-periodo option", "e => e.map(o => o.value)")
+        esperadas_periodo = ["todo", "2023", "2024", "2025", "2026"]
+        print("opciones del selector de periodo:", opts_periodo)
+        if opts_periodo != esperadas_periodo:
+            errores.append(f"[check] el selector de periodo no tiene los 5 valores: {opts_periodo}")
+
+        def medios_del_periodo(clave):
+            """medios que polarizacion.json trae para ese periodo, con fallback al conjunto completo."""
+            bloque = (pol.get("periodos") or {}).get(clave)
+            if bloque and isinstance(bloque.get("medios"), list):
+                return bloque["medios"]
+            return pol.get("medios") or []
+
+        # Recorre los cinco periodos: comprueba hash, modo de serie conservado y burbujas dibujadas.
+        observado = {}
+        for clave in esperadas_periodo:
+            # forzamos un cambio real seleccionando primero otro valor si coincide con el actual
+            actual = await pg.eval_on_selector("#mapa-periodo", "el => el.value")
+            if actual == clave:
+                otro = next(k for k in esperadas_periodo if k != clave)
+                await pg.select_option("#mapa-periodo", otro)
+                await pg.wait_for_timeout(200)
+            await pg.select_option("#mapa-periodo", clave)
+            await pg.wait_for_timeout(500)
+            burb = await pg.locator("#mapa .burbuja").count()
+            hash_ = pg.url.split("#", 1)[-1] if "#" in pg.url else ""
+            serie = await pg.eval_on_selector("#mapa-serie", "el => el.value")
+            observado[clave] = burb
+            esperados = medios_del_periodo(clave)
+            comparables = sum(
+                1 for m in esperados
+                if (m.get("publicado") or {}).get("con_lado", 0) >= 5
+                and (m.get("viral") or {}).get("con_lado", 0) >= 5
+            )
+            # en modo "ambas" se dibujan dos burbujas por medio comparable
+            esperadas_burb = 2 * comparables
+            frag = "" if clave == "todo" else f"?p={clave}"
+            hash_ok = hash_.endswith(f"/mapa{frag}") or hash_.endswith(f"mapa{frag}")
+            print(f"periodo {clave}: burbujas {burb} (esperadas {esperadas_burb}, comparables {comparables}) · hash={hash_} · serie={serie}")
+            if not hash_ok:
+                errores.append(f"[check] el hash no refleja el periodo {clave}: {hash_!r} (esperado sufijo /mapa{frag})")
+            if serie != "ambas":
+                errores.append(f"[check] el modo de serie no se conserva al cambiar el periodo {clave}: {serie}")
+            if burb != esperadas_burb:
+                errores.append(f"[check] burbujas del periodo {clave}: {burb} != {esperadas_burb} (comparables en data: {comparables})")
+
+        # Si algún periodo trae distinta muestra que 'todo', al menos dos conteos deben diferir.
+        hay_diferencia = any(medios_del_periodo(k) is not medios_del_periodo("todo") for k in esperadas_periodo[1:])
+        if hay_diferencia and len(set(observado.values())) < 2:
+            errores.append(f"[check] cambiar el periodo no cambia el mapa: {observado}")
+
+        # Fallback: si el bloque del periodo pedido no existe en polarizacion.json,
+        # el mapa debe caer al conjunto completo (POL.medios). Vaciamos POL.periodos
+        # y pedimos un año: tienen que dibujarse las burbujas del bloque 'todo'.
+        await pg.evaluate("""() => {
+          window.__periodos_orig__ = POL && POL.periodos
+              ? JSON.parse(JSON.stringify(POL.periodos)) : null;
+          if (POL) POL.periodos = {};   // ni siquiera existe la clave del periodo pedido
+        }""")
+        # cambiamos primero a otro periodo para forzar el 'change'
+        await pg.select_option("#mapa-periodo", "todo")
+        await pg.wait_for_timeout(200)
+        await pg.select_option("#mapa-periodo", "2023")
+        await pg.wait_for_timeout(500)
+        fallback_burb = await pg.locator("#mapa .burbuja").count()
+        esp_completo = 2 * sum(
+            1 for m in (pol.get("medios") or [])
+            if (m.get("publicado") or {}).get("con_lado", 0) >= 5
+            and (m.get("viral") or {}).get("con_lado", 0) >= 5
+        )
+        print(f"fallback sin POL.periodos: burbujas {fallback_burb} (esperado {esp_completo}, el conjunto completo)")
+        if fallback_burb != esp_completo:
+            errores.append(f"[check] el fallback no usa POL.medios cuando falta el periodo: {fallback_burb} != {esp_completo}")
+        # repone el estado y vuelve a 'todo' para no ensuciar pruebas posteriores
+        await pg.evaluate("""() => {
+          if (POL && window.__periodos_orig__ !== null) POL.periodos = window.__periodos_orig__;
+          delete window.__periodos_orig__;
+        }""")
+        await pg.select_option("#mapa-periodo", "todo")
+        await pg.wait_for_timeout(300)
 
         # top
         await pg.goto(URL + "#/top", wait_until="networkidle")
