@@ -30,22 +30,31 @@ def num_es(n):
 
 
 async def main():
-    errores, fallos = [], []
+    errores, fallos, respuestas = [], [], []
     async with async_playwright() as p:
         b = await p.chromium.launch(executable_path="/opt/google/chrome/chrome",
                                     args=["--no-sandbox", "--disable-dev-shm-usage"])
         pg = await b.new_page(viewport={"width": 1280, "height": 1000})
+        # Las pruebas históricas validan literalmente la interfaz española. Fijamos el
+        # idioma antes de cargar la página; las pruebas bilingües de abajo cambian luego
+        # a inglés y verifican detección, traducción y persistencia por separado.
+        await pg.add_init_script("if (!localStorage.getItem('mv-lang')) localStorage.setItem('mv-lang', 'es')")
         pg.on("console", lambda m: errores.append(f"[{m.type}] {m.text}") if m.type in ("error", "warning") else None)
         pg.on("pageerror", lambda e: errores.append(f"[pageerror] {e}"))
         pg.on("requestfailed", lambda r: fallos.append(f"{r.url} :: {r.failure}"))
 
         def mirar(resp):
+            respuestas.append(resp.url)
             if resp.status >= 400:
                 fallos.append(f"HTTP {resp.status} {resp.url}")
         pg.on("response", mirar)
 
         await pg.goto(URL, wait_until="networkidle")
         await pg.wait_for_timeout(900)
+        detalles_inicio = [u for u in respuestas if "/data/medios/" in u]
+        print("detalle de medios cargado al inicio:", detalles_inicio)
+        if detalles_inicio:
+            errores.append(f"[check] se cargaron detalles de medios al arrancar: {detalles_inicio[:3]}")
         # el mapa es la vista por defecto
         burbujas = await pg.locator("#mapa .burbuja").count()
         ranking_oculto = await pg.locator("#view-ranking").is_hidden()
@@ -206,7 +215,9 @@ async def main():
                 errores.append(f"[check] falta {partido} en el filtro de Onda Cero: {partidos_onda}")
 
         # ---------- mapa: eje izquierda→derecha, rojo/azul, control de series y flechas ----------
-        await pg.goto(URL + "#/mapa", wait_until="networkidle")
+        # Fuerza una recarga completa para liberar los detalles anuales de los medios
+        # abiertos en las pruebas anteriores.
+        await pg.goto(URL + "?maptest=1#/mapa", wait_until="networkidle")
         await pg.wait_for_timeout(1200)
         pol = await pg.evaluate("fetch('data/polarizacion.json').then(r => r.json())")
 
@@ -402,7 +413,7 @@ async def main():
         print("logos cargados:", logos, "de", await pg.locator("#mapa image").count())
         await pg.screenshot(path=f"{OUT}/8-mapa.png", full_page=True)
 
-        # ---------- mapa: selector de periodos (todo, 2023, 2024, 2025, 2026) ----------
+        # ---------- mapa: serie completa, XV Legislatura y años 2018–2026 ----------
         # El selector recorta la ventana temporal, actualiza el hash compartible y
         # conserva el modo de serie activo. Los conteos se comparan con lo que trae
         # polarizacion.json en cada bloque, no con cifras fijas de datos antiguos.
@@ -412,10 +423,10 @@ async def main():
         await pg.wait_for_timeout(400)
 
         opts_periodo = await pg.eval_on_selector_all("#mapa-periodo option", "e => e.map(o => o.value)")
-        esperadas_periodo = ["todo", "2023", "2024", "2025", "2026"]
+        esperadas_periodo = ["todo", "xv", *map(str, range(2018, 2027))]
         print("opciones del selector de periodo:", opts_periodo)
         if opts_periodo != esperadas_periodo:
-            errores.append(f"[check] el selector de periodo no tiene los 5 valores: {opts_periodo}")
+            errores.append(f"[check] el selector de periodo no tiene los 11 valores: {opts_periodo}")
 
         def medios_del_periodo(clave):
             """medios que polarizacion.json trae para ese periodo, con fallback al conjunto completo."""
@@ -504,14 +515,182 @@ async def main():
         await pg.goto(URL + "#/metodo", wait_until="networkidle")
         await pg.wait_for_timeout(400)
         metodo = " ".join((await pg.locator("#view-metodo").inner_text()).split())
-        for trozo in ["218.885 tuits únicos", "4.893 tuits con al menos 100 retuits",
-                      "58 de los 66 medios", "más de 50 tuits durante toda la muestra",
+        for trozo in ["602.906 tuits únicos", "del 02/05/2018 al 24/09/2026",
+                      "más de 50 tuits durante toda la muestra",
                       "Porcentaje de tuits políticos", "Cómo leer el mapa"]:
             if trozo not in metodo:
                 errores.append(f"[check] falta en metodología: {trozo}")
-        if "56.547 tuits políticos y 162.338 sin lectura política" not in metodo:
-            errores.append("[check] el recuento de lectura política de la metodología no cuadra")
+        if "155.880 tuits políticos y 447.026 sin lectura política" not in metodo:
+            errores.append("[check] el recuento combinado de lectura política de la metodología no cuadra")
+        for coste in ["81,631403", "90,87375"]:
+            if coste not in metodo:
+                errores.append(f"[check] falta el coste combinado {coste} en metodología")
         await pg.screenshot(path=f"{OUT}/6-metodo.png", full_page=True)
+
+        # ---------- idioma: ES por defecto, cambio a EN sin recargar y persistencia ----------
+        # El selector aplica traducciones a textos estáticos y dinámicos manteniendo
+        # nombres, handles y tuits. Persistencia se guarda en localStorage.
+        await pg.goto(URL, wait_until="networkidle")
+        await pg.wait_for_timeout(500)
+        html_lang = await pg.evaluate("document.documentElement.lang")
+        title_es = await pg.title()
+        tab_es = await pg.locator('.tab[data-view="mapa"]').inner_text()
+        print(f"idioma inicial: html.lang={html_lang!r} · titulo={title_es!r} · tab={tab_es!r}")
+        if html_lang != "es" or "Sesgo y viralidad" not in title_es or tab_es != "Mapa":
+            errores.append(f"[check] idioma inicial no es español: lang={html_lang!r} title={title_es!r}")
+        await pg.select_option("#lang-select", "en")
+        await pg.wait_for_timeout(500)
+        html_lang_en = await pg.evaluate("document.documentElement.lang")
+        title_en = await pg.title()
+        tab_en = await pg.locator('.tab[data-view="mapa"]').inner_text()
+        desc_en = await pg.eval_on_selector('meta[name="description"]', "el => el.content")
+        stored_lang = await pg.evaluate("localStorage.getItem('mv-lang')")
+        print(f"tras cambiar a EN: lang={html_lang_en!r} · titulo={title_en!r} · tab={tab_en!r} · storage={stored_lang!r}")
+        if html_lang_en != "en":
+            errores.append(f"[check] html.lang no cambia a en: {html_lang_en!r}")
+        if "Bias and virality" not in title_en:
+            errores.append(f"[check] titulo no traducido: {title_en!r}")
+        if tab_en != "Map":
+            errores.append(f"[check] tab no traducido: {tab_en!r}")
+        if "Historical map" not in desc_en:
+            errores.append(f"[check] meta description no traducida: {desc_en!r}")
+        if stored_lang != "en":
+            errores.append(f"[check] preferencia de idioma no persistida: {stored_lang!r}")
+        # ranking en inglés: cabeceras y aviso
+        await pg.goto(URL + "#/ranking", wait_until="networkidle")
+        await pg.wait_for_timeout(500)
+        headers_en = await pg.eval_on_selector_all(
+            "#tabla-ranking thead th", "e => e.map(x => x.innerText.trim())")
+        aviso_en = " ".join((await pg.locator("#rank-aviso").inner_text()).split())
+        print("cabeceras del ranking en EN:", headers_en)
+        for esperado in ["Outlet", "Index", "Viral", "Political", "Left", "Right"]:
+            if not any(esperado.lower() in h.lower() for h in headers_en):
+                errores.append(f"[check] cabecera traducida ausente: {esperado} en {headers_en}")
+        if "inclusion threshold" not in aviso_en.lower():
+            errores.append(f"[check] aviso del ranking no traducido: {aviso_en[:120]!r}")
+        # mapa en inglés: pie de leyenda, tics y resumen
+        await pg.goto(URL + "#/mapa", wait_until="networkidle")
+        await pg.wait_for_timeout(1000)
+        pie_en = " ".join((await pg.locator("#mapa-pie").inner_text()).split())
+        tits_en = await pg.eval_on_selector_all("#mapa .grid text.tit", "e => e.map(x => x.textContent)")
+        resumen_en = (await pg.locator("#mapa-resumen").inner_text()).strip()
+        print("pie del mapa en EN:", pie_en[:180])
+        print("titulos del mapa en EN:", tits_en)
+        print("resumen del mapa en EN:", resumen_en)
+        for esperado in ["Size", "Ring", "left", "right", "Arrow"]:
+            if esperado not in pie_en:
+                errores.append(f"[check] pie del mapa sin traducir ({esperado}): {pie_en[:200]!r}")
+        if not any("all to the left" in t for t in tits_en) or not any("all to the right" in t for t in tits_en):
+            errores.append(f"[check] titulos del mapa sin traducir: {tits_en}")
+        if "outlets" not in resumen_en and "outlet" not in resumen_en:
+            errores.append(f"[check] resumen del mapa sin traducir: {resumen_en!r}")
+        # tooltip en ingles debe hablar de Published / Viral
+        await pg.locator('#mapa .burbuja').last.hover()
+        await pg.wait_for_timeout(400)
+        tip_en = " ".join((await pg.locator("#mapa-tip").inner_text()).split())
+        print("tooltip del mapa en EN:", tip_en[:180])
+        for esperado in ["Published", "Viral"]:
+            if esperado not in tip_en:
+                errores.append(f"[check] tooltip sin traducir ({esperado}): {tip_en[:200]!r}")
+        # top: cargar y comprobar filtros y titulo
+        await pg.goto(URL + "#/top", wait_until="networkidle")
+        await pg.wait_for_timeout(900)
+        top_h2 = (await pg.locator("#view-top h2").inner_text()).strip()
+        top_all = await pg.eval_on_selector("#tp option[value='']", "el => el.textContent")
+        print("top titulo EN:", top_h2, "| all party:", top_all)
+        if "viral tweets" not in top_h2.lower():
+            errores.append(f"[check] top titulo sin traducir: {top_h2!r}")
+        if top_all != "All parties":
+            errores.append(f"[check] top filtro sin traducir: {top_all!r}")
+        # metodo en ingles
+        await pg.goto(URL + "#/metodo", wait_until="networkidle")
+        await pg.wait_for_timeout(500)
+        met_en = " ".join((await pg.locator("#view-metodo").inner_text()).split())
+        for esperado in ["How it was done", "602,906 unique tweets", "May 2, 2018", "September 24, 2026"]:
+            if esperado not in met_en:
+                errores.append(f"[check] metodo sin traducir ({esperado}): {met_en[:200]!r}")
+        # persistencia tras recargar
+        await pg.reload(wait_until="networkidle")
+        await pg.wait_for_timeout(500)
+        html_lang_reload = await pg.evaluate("document.documentElement.lang")
+        title_reload = await pg.title()
+        sel_val = await pg.eval_on_selector("#lang-select", "el => el.value")
+        print(f"tras recargar: lang={html_lang_reload!r} · titulo={title_reload!r} · select={sel_val!r}")
+        if html_lang_reload != "en" or "Bias" not in title_reload or sel_val != "en":
+            errores.append(f"[check] preferencia de idioma no persiste tras recargar: {html_lang_reload} {sel_val}")
+        # volver a ES
+        await pg.select_option("#lang-select", "es")
+        await pg.wait_for_timeout(400)
+        title_back = await pg.title()
+        if "Sesgo" not in title_back:
+            errores.append(f"[check] no vuelve al español al reelegir: {title_back!r}")
+
+        # ---------- tema: claro por defecto, cambio a oscuro y persistencia ----------
+        await pg.evaluate("localStorage.removeItem('mv-theme')")
+        await pg.goto(URL, wait_until="networkidle")
+        await pg.wait_for_timeout(400)
+        theme_ini = await pg.evaluate("document.documentElement.getAttribute('data-theme')")
+        pref_ini = await pg.evaluate("document.documentElement.getAttribute('data-theme-pref')")
+        bg_light = await pg.evaluate("getComputedStyle(document.body).backgroundColor")
+        cs_light = await pg.evaluate("getComputedStyle(document.documentElement).colorScheme")
+        print(f"tema inicial: data-theme={theme_ini!r} pref={pref_ini!r} bg={bg_light} color-scheme={cs_light}")
+        if theme_ini != "light" or pref_ini != "system":
+            errores.append(f"[check] tema inicial no es light/system: {theme_ini}/{pref_ini}")
+        # ir a modo oscuro y comprobar
+        await pg.select_option("#theme-select", "dark")
+        await pg.wait_for_timeout(400)
+        theme_dark = await pg.evaluate("document.documentElement.getAttribute('data-theme')")
+        pref_dark = await pg.evaluate("document.documentElement.getAttribute('data-theme-pref')")
+        stored_theme = await pg.evaluate("localStorage.getItem('mv-theme')")
+        bg_dark = await pg.evaluate("getComputedStyle(document.body).backgroundColor")
+        map_izq_dark = await pg.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--map-izq').trim()")
+        map_der_dark = await pg.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--map-der').trim()")
+        cs_dark = await pg.evaluate("getComputedStyle(document.documentElement).colorScheme")
+        print(f"tras cambiar a oscuro: data-theme={theme_dark!r} pref={pref_dark!r} storage={stored_theme!r} bg={bg_dark}")
+        print(f"variables oscuras del mapa: izq={map_izq_dark} der={map_der_dark} · color-scheme={cs_dark}")
+        if theme_dark != "dark" or pref_dark != "dark" or stored_theme != "dark":
+            errores.append(f"[check] preferencia oscura no aplicada/persistida: {theme_dark}/{pref_dark}/{stored_theme}")
+        if bg_dark == bg_light:
+            errores.append(f"[check] el fondo no cambia en modo oscuro: {bg_dark} == {bg_light}")
+        if not (map_izq_dark and map_der_dark and map_izq_dark != "#c53030"):
+            errores.append(f"[check] el mapa oscuro no ajusta rojo: {map_izq_dark}")
+        if "dark" not in cs_dark:
+            errores.append(f"[check] color-scheme no cambia a dark: {cs_dark!r}")
+        # meta theme-color forzado
+        forced_meta = await pg.evaluate(
+            "(() => { const m = document.querySelector('meta[name=\"theme-color\"][data-forced]'); return m ? m.content : null; })()")
+        print("meta theme-color forzado en oscuro:", forced_meta)
+        if not forced_meta or forced_meta.lower().replace(' ', '') != "#1a1613":
+            errores.append(f"[check] meta theme-color oscuro no forzado: {forced_meta!r}")
+        # el logo SVG y colores del mapa deben mantenerse (no tocamos site/data ni logos)
+        n_logos = await pg.evaluate("document.querySelectorAll('#mapa image').length")
+        if n_logos == 0:
+            errores.append("[check] los logos del mapa desaparecen en oscuro")
+
+        # persistencia del tema tras recargar
+        await pg.reload(wait_until="networkidle")
+        await pg.wait_for_timeout(400)
+        theme_reload = await pg.evaluate("document.documentElement.getAttribute('data-theme')")
+        sel_theme_reload = await pg.eval_on_selector("#theme-select", "el => el.value")
+        print(f"tras recargar: tema={theme_reload!r} · select={sel_theme_reload!r}")
+        if theme_reload != "dark" or sel_theme_reload != "dark":
+            errores.append(f"[check] tema oscuro no persiste tras recargar: {theme_reload}/{sel_theme_reload}")
+
+        # sin flash: el atributo data-theme se aplica antes de body renderer
+        no_flash = await pg.evaluate(
+            "() => document.documentElement.hasAttribute('data-theme') && document.documentElement.hasAttribute('data-theme-pref')")
+        if not no_flash:
+            errores.append("[check] no se aplican los atributos de tema antes del render")
+
+        # volver a claro
+        await pg.select_option("#theme-select", "light")
+        await pg.wait_for_timeout(300)
+        theme_light = await pg.evaluate("document.documentElement.getAttribute('data-theme')")
+        if theme_light != "light":
+            errores.append(f"[check] no vuelve a light al reelegir: {theme_light!r}")
+
+        # limpiar preferencias para no ensuciar pruebas futuras
+        await pg.evaluate("localStorage.removeItem('mv-theme'); localStorage.removeItem('mv-lang')")
 
         # movil
         await pg.set_viewport_size({"width": 390, "height": 900})

@@ -1,28 +1,66 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light" data-theme-pref="system" data-lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+(function(){
+  try {
+    var d = document.documentElement;
+    var pref = localStorage.getItem('mv-theme') || 'system';
+    if (pref !== 'light' && pref !== 'dark' && pref !== 'system') pref = 'system';
+    var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var dark = pref === 'dark' || (pref === 'system' && systemDark);
+    d.setAttribute('data-theme', dark ? 'dark' : 'light');
+    d.setAttribute('data-theme-pref', pref);
+    var lang = localStorage.getItem('mv-lang');
+    if (lang !== 'es' && lang !== 'en') {
+      var nav = (navigator.language || 'es').toLowerCase();
+      lang = nav.indexOf('en') === 0 ? 'en' : 'es';
+    }
+    d.setAttribute('lang', lang);
+    d.setAttribute('data-lang', lang);
+  } catch(e) {}
+})();
+</script>
 <title>Sesgo y viralidad de los medios españoles · victoriano.me</title>
-<meta name="description" content="Mapa anual de 218.885 tuits de 66 medios españoles durante la XV Legislatura: posición de lo publicado frente a lo viral.">
+<meta name="description" content="Mapa histórico de 602.906 tuits de 66 medios españoles entre 2018 y 2026: posición de lo publicado frente a lo viral.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#faf8f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1a1613" media="(prefers-color-scheme: dark)">
 <meta property="og:title" content="Sesgo y viralidad de los medios españoles">
-<meta property="og:description" content="218.885 tuits de 66 medios, clasificados por partido y dirección, con comparación anual entre lo publicado y lo viral.">
+<meta property="og:description" content="602.906 tuits de 66 medios entre 2018 y 2026, clasificados por partido y dirección, comparando lo publicado con lo viral.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=20260924175917">
+<link rel="stylesheet" href="styles.css?v=20260925170000">
 </head>
 <body>
 <header class="top">
   <div class="wrap">
-    <p class="kicker">victoriano.me · análisis</p>
-    <h1>Sesgo y viralidad de los medios españoles</h1>
-    <p class="lede"><strong id="n-virales">218.885</strong> tuits muestreados de <strong id="n-medios">66</strong> medios generalistas españoles durante la XV Legislatura, clasificados uno a uno para comparar lo que publican con lo que se hace viral.</p>
+    <div class="top-bar">
+      <p class="kicker" data-i18n="kicker">victoriano.me · análisis</p>
+      <div class="prefs" role="group">
+        <label class="sr-only" for="lang-select" data-i18n="ariaLang">Idioma</label>
+        <select id="lang-select" class="pref-select" data-i18n-aria="ariaLang" aria-label="Idioma">
+          <option value="es">ES</option>
+          <option value="en">EN</option>
+        </select>
+        <label class="sr-only" for="theme-select" data-i18n="ariaTheme">Tema</label>
+        <select id="theme-select" class="pref-select" data-i18n-aria="ariaTheme" aria-label="Tema">
+          <option value="light" data-i18n="themeLight">Claro</option>
+          <option value="dark" data-i18n="themeDark">Oscuro</option>
+          <option value="system" data-i18n="themeSystem">Sistema</option>
+        </select>
+      </div>
+    </div>
+    <h1 data-i18n="headline">Sesgo y viralidad de los medios españoles</h1>
+    <p class="lede" id="lede"><strong id="n-virales">602.906</strong> tuits muestreados de <strong id="n-medios">66</strong> medios generalistas españoles entre 2018 y 2026, clasificados uno a uno para comparar lo que publican con lo que se hace viral.</p>
     <nav class="tabs" role="tablist">
-      <button class="tab is-on" data-view="mapa" role="tab">Mapa</button>
-      <button class="tab" data-view="ranking" role="tab">Ranking</button>
-      <button class="tab" data-view="top" role="tab">Los más virales</button>
-      <button class="tab" data-view="metodo" role="tab">Método</button>
+      <button class="tab is-on" data-view="mapa" role="tab" data-i18n="tabMapa">Mapa</button>
+      <button class="tab" data-view="ranking" role="tab" data-i18n="tabRanking">Ranking</button>
+      <button class="tab" data-view="top" role="tab" data-i18n="tabTop">Los más virales</button>
+      <button class="tab" data-view="metodo" role="tab" data-i18n="tabMetodo">Método</button>
     </nav>
   </div>
 </header>
@@ -35,28 +73,28 @@
 
     <div class="panel">
       <div class="panel-head">
-        <h2>Ranking de medios</h2>
-        <input type="search" id="q" placeholder="Buscar medio…" autocomplete="off" aria-label="Buscar medio">
+        <h2 data-i18n="rankingTitle">Ranking de medios</h2>
+        <input type="search" id="q" data-i18n-placeholder="searchPlaceholder" data-i18n-aria="ariaSearch" placeholder="Buscar medio…" autocomplete="off" aria-label="Buscar medio">
       </div>
-      <p class="hint">
+      <p class="hint" data-i18n-html="rankingHint">
         Solo aparecen medios que se han significado a favor o en contra en más de 50 tuits durante toda la muestra. <strong>De cada 10 con lado claro</strong> indica cuántos van a la izquierda y cuántos a la derecha. <strong>% políticos</strong> muestra qué parte de todos los tuits muestreados fue clasificada como política. Pulsa una fila para leer sus tuits.
       </p>
       <div class="table-scroll">
         <table class="rank" id="tabla-ranking">
           <thead><tr>
-            <th class="c-medio">Medio</th>
-            <th class="c-dec">De cada 10 con lado claro</th>
-            <th data-sort="indice" class="num c-idx">Índice <span class="arrow"></span></th>
-            <th data-sort="virales" class="num">Virales <span class="arrow"></span></th>
-            <th data-sort="politicos" class="num">Políticos <span class="arrow"></span></th>
-            <th data-sort="izq" class="num c-izq">Izq. <span class="arrow"></span></th>
-            <th data-sort="der" class="num c-der">Der. <span class="arrow"></span></th>
-            <th data-sort="pct_politicos" class="num c-pct">% políticos <span class="arrow"></span></th>
+            <th class="c-medio" data-i18n="colMedio">Medio</th>
+            <th class="c-dec" data-i18n="colDecimos">De cada 10 con lado claro</th>
+            <th data-sort="indice" class="num c-idx"><span data-i18n="colIndice">Índice</span> <span class="arrow"></span></th>
+            <th data-sort="virales" class="num"><span data-i18n="colVirales">Virales</span> <span class="arrow"></span></th>
+            <th data-sort="politicos" class="num"><span data-i18n="colPoliticos">Políticos</span> <span class="arrow"></span></th>
+            <th data-sort="izq" class="num c-izq"><span data-i18n="colIzq">Izq.</span> <span class="arrow"></span></th>
+            <th data-sort="der" class="num c-der"><span data-i18n="colDer">Der.</span> <span class="arrow"></span></th>
+            <th data-sort="pct_politicos" class="num c-pct"><span data-i18n="colPctPol">% políticos</span> <span class="arrow"></span></th>
           </tr></thead>
           <tbody></tbody>
         </table>
       </div>
-      <p class="foot-note" id="rank-aviso">El corte de inclusión usa únicamente los tuits con lado claro: izquierda más derecha debe superar 50. El porcentaje político usa todos los tuits clasificados como políticos, incluidos los que informan sin tomar partido.</p>
+      <p class="foot-note" id="rank-aviso" data-i18n="rankAviso">El corte de inclusión usa únicamente los tuits con lado claro: izquierda más derecha debe superar 50. El porcentaje político usa todos los tuits clasificados como políticos, incluidos los que informan sin tomar partido.</p>
       <p class="foot-note" id="rank-note"></p>
     </div>
   </section>
@@ -65,34 +103,40 @@
   <section id="view-mapa" class="view">
     <div class="panel">
       <div class="panel-head">
-        <h2>Mapa de sesgo: lo que se publica y lo que se comparte</h2>
+        <h2 data-i18n="mapaTitle">Mapa de sesgo: lo que se publica y lo que se comparte</h2>
         <div class="panel-controles">
-          <select id="mapa-periodo" aria-label="Periodo de la XV Legislatura">
-            <option value="todo" selected>Toda la XV Legislatura</option>
+          <select id="mapa-periodo" data-i18n-aria="ariaPeriodo" aria-label="Periodo de la serie histórica">
+            <option value="todo" selected data-i18n="mapaPeriodoAll">Serie completa</option>
+            <option value="xv" data-i18n="mapaPeriodoXV">XV Legislatura</option>
+            <option value="2018">2018</option>
+            <option value="2019">2019</option>
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
             <option value="2023">2023</option>
             <option value="2024">2024</option>
             <option value="2025">2025</option>
             <option value="2026">2026</option>
           </select>
-          <select id="mapa-serie" aria-label="Qué posiciones se dibujan">
-            <option value="ambas" selected>Las dos posiciones</option>
-            <option value="publicado">Solo lo publicado</option>
-            <option value="viral">Solo lo viral</option>
+          <select id="mapa-serie" data-i18n-aria="ariaSerie" aria-label="Qué posiciones se dibujan">
+            <option value="ambas" selected data-i18n="mapaSerieAmbas">Las dos posiciones</option>
+            <option value="publicado" data-i18n="mapaSeriePub">Solo lo publicado</option>
+            <option value="viral" data-i18n="mapaSerieViral">Solo lo viral</option>
           </select>
-          <select id="mapa-filtro" aria-label="Filtrar por tamaño de muestra">
-            <option value="5" selected>Con muestra de 5 o más</option>
-            <option value="0">Todos los medios</option>
-            <option value="15">Con muestra de 15 o más</option>
-            <option value="30">Con muestra de 30 o más</option>
+          <select id="mapa-filtro" data-i18n-aria="ariaFiltro" aria-label="Filtrar por tamaño de muestra">
+            <option value="5" selected data-i18n="mapaFiltro5">Con muestra de 5 o más</option>
+            <option value="0" data-i18n="mapaFiltro0">Todos los medios</option>
+            <option value="15" data-i18n="mapaFiltro15">Con muestra de 15 o más</option>
+            <option value="30" data-i18n="mapaFiltro30">Con muestra de 30 o más</option>
           </select>
         </div>
       </div>
-      <p class="hint">
+      <p class="hint" data-i18n-html="mapaHint">
         Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo es que todos sus tuits con lado claro van a la izquierda, 100 en el derecho es que van todos a la derecha, y 50 la mitad y mitad. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. En vertical, cuantos más tuits con lectura política, más arriba. El tamaño del punto es su media de retuits. Con el <strong>selector de periodo</strong> se acota la ventana temporal (toda la XV Legislatura o un año concreto). El resto se basa en <strong>hasta 100 tuits Latest por medio y mes</strong> de esa ventana: <strong>Publicado</strong> son todos esos tuits y <strong>Viral</strong> es el subconjunto que superó los 100 retuits (no un censo aparte). En el modo <strong>las dos posiciones</strong> el aro continuo es lo publicado, el discontinuo lo viral y la flecha va del punto publicado al viral, o sea, hacia dónde se desplaza el medio cuando su contenido se comparte. Pasa el ratón para ver los números y pulsa para abrir sus tuits.
       </p>
       <p class="resumen" id="mapa-resumen"></p>
       <div class="chart-wrap">
-        <svg id="mapa" role="img" aria-label="Dispersión de medios por posición en la escala izquierda-derecha, con lo publicado y lo viral y una flecha hacia donde se desplaza cada medio al compartirse"></svg>
+        <svg id="mapa" role="img" data-i18n-aria="ariaMapDesc" aria-label="Dispersión de medios por posición en la escala izquierda-derecha, con lo publicado y lo viral y una flecha hacia donde se desplaza cada medio al compartirse"></svg>
         <div class="tip" id="mapa-tip" hidden></div>
       </div>
       <div class="mapa-pie" id="mapa-pie"></div>
@@ -101,77 +145,65 @@
 
   <!-- ============ MEDIO ============ -->
   <section id="view-medio" class="view" hidden>
-    <button class="back" id="back">← Volver al ranking</button>
+    <button class="back" id="back" data-i18n="backRanking">← Volver al ranking</button>
     <div class="panel" id="medio-panel"></div>
   </section>
 
   <!-- ============ TOP ============ -->
   <section id="view-top" class="view" hidden>
     <div class="panel">
-      <h2>Los 300 tuits virales con lectura política</h2>
-      <p class="hint">Ordenados por retuits. Cada tarjeta lleva el partido al que afecta y la dirección.</p>
+      <h2 data-i18n="topTitle">Los 300 tuits virales con lectura política</h2>
+      <p class="hint" data-i18n="topHint">Ordenados por retuits. Cada tarjeta lleva el partido al que afecta y la dirección.</p>
       <div class="filters" id="top-filtros"></div>
       <div id="top-list" class="cards-list"></div>
-      <button class="more" id="top-more" hidden>Cargar más</button>
+      <button class="more" id="top-more" hidden data-i18n="loadMore">Cargar más</button>
     </div>
   </section>
 
   <!-- ============ MÉTODO ============ -->
   <section id="view-metodo" class="view" hidden>
     <div class="panel prose">
-      <h2>Cómo se ha hecho</h2>
+      <h2 data-i18n="metodoTitle">Cómo se ha hecho</h2>
 
-      <h3>Qué se mide</h3>
-      <p>La posición política de una muestra de publicaciones en X y cómo cambia dentro del subconjunto que alcanza difusión viral. Para cada tuit se determina primero si tiene lectura política española. Cuando la tiene, se identifica el partido afectado y si el contenido lo beneficia, lo perjudica o informa sin tomar partido. El resultado describe la actividad observada en X, no la ideología definitiva de una redacción.</p>
+      <h3 data-i18n="metodoQueMide">Qué se mide</h3>
+      <p data-i18n="metodoQueMideP">La posición política de una muestra de publicaciones en X y cómo cambia dentro del subconjunto que alcanza difusión viral. Para cada tuit se determina primero si tiene lectura política española. Cuando la tiene, se identifica el partido afectado y si el contenido lo beneficia, lo perjudica o informa sin tomar partido. El resultado describe la actividad observada en X, no la ideología definitiva de una redacción.</p>
 
-      <h3>Universo y muestra</h3>
+      <h3 data-i18n="metodoUniverso">Universo y muestra</h3>
+      <ul id="metodo-universo"></ul>
+
+      <h3 data-i18n="metodoClasif">Clasificación</h3>
+      <p id="metodo-clasif-p"></p>
       <ul>
-        <li>Universo inicial: <strong>66 medios</strong> de la lista <em>Spanish Generalist Media</em> de X.</li>
-        <li>Ventana: del <strong>17 de agosto de 2023 al 24 de septiembre de 2026</strong>, dentro de la XV Legislatura.</li>
-        <li>Muestra: <strong>218.885 tuits únicos</strong>. Se toman hasta 100 tuits por medio y mes, repartidos en cinco tramos temporales para evitar que toda la muestra proceda del final del mes.</li>
-        <li>Fuente: <strong>TwitterAPI.io</strong>, mediante consultas individuales por medio ordenadas por publicación reciente. Las fechas reales se comprueban después de descargar y cualquier resultado fuera de la ventana se descarta.</li>
-        <li>El conjunto <strong>Viral</strong> es un subconjunto de esa misma muestra: <strong>4.893 tuits con al menos 100 retuits</strong>. No es un censo independiente.</li>
+        <li><strong data-i18n="metodoLectura">Lectura política:</strong> <span id="m-gate"></span></li>
+        <li><strong data-i18n="metodoPartido">Partido afectado:</strong> <span id="m-partido"></span></li>
+        <li><strong data-i18n="metodoDireccion">Dirección:</strong> <span id="m-dir"></span></li>
       </ul>
 
-      <h3>Clasificación</h3>
-      <p>Los 218.885 tuits fueron clasificados con Gemini 3.7 Flash. Los nombres de los partidos se normalizan a PSOE, PP, Vox y Sumar antes de calcular recuentos y filtros.</p>
-      <ul>
-        <li><strong>Lectura política:</strong> <span id="m-gate"></span></li>
-        <li><strong>Partido afectado:</strong> <span id="m-partido"></span></li>
-        <li><strong>Dirección:</strong> <span id="m-dir"></span></li>
-      </ul>
+      <h3 data-i18n="metodoQueEntran">Qué medios entran en el análisis</h3>
+      <p data-i18n-html="metodoQueEntranP1">El ranking y el mapa muestran únicamente los medios que se han significado a favor o en contra en <strong>más de 50 tuits durante toda la muestra</strong>. Para este corte se suman los tuits situados a la izquierda y a la derecha. Los tuits políticos que informan sin tomar partido no cuentan para alcanzar el umbral.</p>
+      <p id="metodo-que-entran-p2"></p>
 
-      <h3>Qué medios entran en el análisis</h3>
-      <p>El ranking y el mapa muestran únicamente los medios que se han significado a favor o en contra en <strong>más de 50 tuits durante toda la muestra</strong>. Para este corte se suman los tuits situados a la izquierda y a la derecha. Los tuits políticos que informan sin tomar partido no cuentan para alcanzar el umbral.</p>
-      <p>Superan el corte <strong>58 de los 66 medios</strong>. La selección se calcula una sola vez sobre toda la muestra y se mantiene al consultar cada año, para no cambiar arbitrariamente el universo comparado. En el mapa se exige además un mínimo de cinco tuits con lado claro en cada serie visible. Cuando se comparan Publicado y Viral, ambas series deben superar ese mínimo.</p>
+      <h3 data-i18n="metodoPct">Porcentaje de tuits políticos</h3>
+      <p data-i18n-html="metodoPctP">La columna <strong>% políticos</strong> del ranking se calcula como el número de tuits clasificados con lectura política dividido por todos los tuits muestreados del medio. Incluye tanto los tuits que toman partido como los que informan sobre política sin favorecer ni perjudicar a un lado.</p>
 
-      <h3>Porcentaje de tuits políticos</h3>
-      <p>La columna <strong>% políticos</strong> del ranking se calcula como el número de tuits clasificados con lectura política dividido por todos los tuits muestreados del medio. Incluye tanto los tuits que toman partido como los que informan sobre política sin favorecer ni perjudicar a un lado.</p>
+      <h3 data-i18n="metodoPosicion">Cómo se calcula la posición</h3>
+      <p data-i18n="metodoPosicionP1">Un tuit suma a la izquierda si beneficia a PSOE o Sumar, o si perjudica a PP o Vox. Suma a la derecha si beneficia a PP o Vox, o si perjudica a PSOE o Sumar. Los tuits políticos sin lado claro quedan fuera de este cálculo.</p>
+      <p data-i18n="metodoPosicionP2">La posición del mapa es el porcentaje de tuits con lado claro que cae a la derecha. Cero significa que todos caen a la izquierda, cincuenta indica equilibrio y cien significa que todos caen a la derecha. El índice técnico del ranking expresa la misma relación en una escala de menos uno a más uno.</p>
 
-      <h3>Cómo se calcula la posición</h3>
-      <p>Un tuit suma a la izquierda si beneficia a PSOE o Sumar, o si perjudica a PP o Vox. Suma a la derecha si beneficia a PP o Vox, o si perjudica a PSOE o Sumar. Los tuits políticos sin lado claro quedan fuera de este cálculo.</p>
-      <p>La posición del mapa es el porcentaje de tuits con lado claro que cae a la derecha. Cero significa que todos caen a la izquierda, cincuenta indica equilibrio y cien significa que todos caen a la derecha. El índice técnico del ranking expresa la misma relación en una escala de menos uno a más uno.</p>
+      <h3 data-i18n="metodoLeerMapa">Cómo leer el mapa</h3>
+      <p data-i18n="metodoLeerMapaP">El aro continuo representa lo publicado y el aro discontinuo, el subconjunto viral. La flecha parte de la posición publicada y termina en la viral. Por tanto, muestra hacia dónde se desplaza el contenido del medio cuando se comparte más. La altura indica qué porcentaje de los tuits de cada serie beneficia o perjudica claramente a un partido: tuits con lado claro divididos por todos los tuits de esa serie. El selector temporal permite ver toda la legislatura o cada año natural, pero no altera el corte global de inclusión.</p>
 
-      <h3>Cómo leer el mapa</h3>
-      <p>El aro continuo representa lo publicado y el aro discontinuo, el subconjunto viral. La flecha parte de la posición publicada y termina en la viral. Por tanto, muestra hacia dónde se desplaza el contenido del medio cuando se comparte más. La altura indica qué porcentaje de los tuits de cada serie beneficia o perjudica claramente a un partido: tuits con lado claro divididos por todos los tuits de esa serie. El selector temporal permite ver toda la legislatura o cada año natural, pero no altera el corte global de inclusión.</p>
-
-      <h3>Límites</h3>
-      <ul>
-        <li>Es una muestra estratificada de hasta 100 tuits por medio y mes, no el historial completo de cada cuenta.</li>
-        <li>Solo se analiza el texto del tuit. No se interpretan el contenido de enlaces, imágenes o vídeos.</li>
-        <li>La clasificación política y su dirección son juicios de un modelo y pueden contener errores.</li>
-        <li>El subconjunto viral mide qué parte de la muestra recibió más retuits, no el alcance real ni la opinión completa de la audiencia.</li>
-        <li>Las cuentas sin publicaciones recuperadas permanecen en el universo inicial, aunque no puedan superar el corte de inclusión.</li>
-      </ul>
-      <p class="foot-note">Datos, scripts y este sitio: <a id="repo-link" href="#" target="_blank" rel="noopener">repositorio público en GitHub</a>. Muestra actualizada el <span id="m-fecha"></span>.</p>
+      <h3 data-i18n="metodoLimites">Límites</h3>
+      <ul id="metodo-limites"></ul>
+      <p class="foot-note" id="metodo-fuente"></p>
     </div>
   </section>
 </main>
 
 <footer class="wrap foot">
-  <p>Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.</p>
+  <p data-i18n="footerText">Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.</p>
 </footer>
 
-<script src="app.js?v=20260924175917"></script>
+<script src="app.js?v=20260925170000"></script>
 </body>
 </html>
