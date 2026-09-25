@@ -55,12 +55,31 @@ async def main():
         print("detalle de medios cargado al inicio:", detalles_inicio)
         if detalles_inicio:
             errores.append(f"[check] se cargaron detalles de medios al arrancar: {detalles_inicio[:3]}")
-        # el mapa es la vista por defecto
+        # el mapa de lo publicado es la vista por defecto
         burbujas = await pg.locator("#mapa .burbuja").count()
         ranking_oculto = await pg.locator("#view-ranking").is_hidden()
-        print("vista por defecto: burbujas en el mapa:", burbujas, "| ranking oculto:", ranking_oculto)
-        if not burbujas or not ranking_oculto:
-            errores.append(f"[check] la vista por defecto no es el mapa: {burbujas} burbujas, ranking oculto={ranking_oculto}")
+        serie_inicial = await pg.locator("#mapa-serie").input_value()
+        print("vista por defecto: serie:", serie_inicial, "| burbujas:", burbujas, "| ranking oculto:", ranking_oculto)
+        if not burbujas or not ranking_oculto or serie_inicial != "publicado":
+            errores.append(f"[check] la vista por defecto no es el mapa publicado: serie={serie_inicial}, {burbujas} burbujas, ranking oculto={ranking_oculto}")
+
+        # La evolución anual empieza en 2018, avanza sola y se puede pausar.
+        await pg.click("#mapa-play")
+        await pg.wait_for_timeout(120)
+        periodo_inicio = await pg.locator("#mapa-periodo").input_value()
+        play_activo = await pg.locator("#mapa-play").get_attribute("aria-pressed")
+        animaciones = await pg.evaluate("document.querySelector('#mapa').getAnimations({subtree:true}).length")
+        await pg.wait_for_timeout(1500)
+        periodo_siguiente = await pg.locator("#mapa-periodo").input_value()
+        await pg.click("#mapa-play")
+        periodo_pausa = await pg.locator("#mapa-periodo").input_value()
+        await pg.wait_for_timeout(1550)
+        periodo_despues = await pg.locator("#mapa-periodo").input_value()
+        print("evolución anual:", periodo_inicio, "->", periodo_siguiente, "| animaciones:", animaciones, "| pausa estable:", periodo_pausa == periodo_despues)
+        if periodo_inicio != "2018" or periodo_siguiente != "2019" or play_activo != "true" or not animaciones or periodo_pausa != periodo_despues:
+            errores.append(f"[check] la evolución anual no funciona: {periodo_inicio}->{periodo_siguiente}, pressed={play_activo}, anim={animaciones}, pausa={periodo_pausa}/{periodo_despues}")
+        await pg.select_option("#mapa-periodo", "todo")
+        await pg.wait_for_timeout(1000)
 
         # clic en una burbuja superior del mapa: tiene que abrir su medio y hacerlo
         # en menos de un segundo. Elegimos la última del SVG porque queda por encima
@@ -220,6 +239,9 @@ async def main():
         await pg.goto(URL + "?maptest=1#/mapa", wait_until="networkidle")
         await pg.wait_for_timeout(1200)
         pol = await pg.evaluate("fetch('data/polarizacion.json').then(r => r.json())")
+        # Las comprobaciones geométricas siguientes necesitan ambas series y sus flechas.
+        await pg.select_option("#mapa-serie", "ambas")
+        await pg.wait_for_timeout(400)
 
         col = await pg.evaluate("""() => { const cs = getComputedStyle(document.documentElement);
             return {izq: cs.getPropertyValue('--map-izq').trim(), der: cs.getPropertyValue('--map-der').trim(),
@@ -409,6 +431,11 @@ async def main():
         print("tooltip:", tip[:220])
         if "Publicado" not in tip or "Viral" not in tip or "se desplaza" not in tip or "% de la serie con lado claro" not in tip:
             errores.append(f"[check] el tooltip no cuenta las dos posiciones y el porcentaje: {tip[:200]}")
+        tip_box = await pg.locator("#mapa-tip").bounding_box()
+        tip_scroll = await pg.locator("#mapa-tip").evaluate("el => ({w: el.clientWidth, sw: el.scrollWidth, right: el.getBoundingClientRect().right, viewport: innerWidth})")
+        print("tooltip dentro de su caja:", tip_scroll)
+        if not tip_box or tip_scroll["sw"] > tip_scroll["w"] + 1 or tip_scroll["right"] > tip_scroll["viewport"] + 1:
+            errores.append(f"[check] el tooltip desborda su caja o la pantalla: {tip_scroll}")
         logos = await pg.evaluate("Array.from(document.querySelectorAll('#mapa image')).filter(i => i.getBoundingClientRect().width > 0).length")
         print("logos cargados:", logos, "de", await pg.locator("#mapa image").count())
         await pg.screenshot(path=f"{OUT}/8-mapa.png", full_page=True)
@@ -570,6 +597,7 @@ async def main():
             errores.append(f"[check] aviso del ranking no traducido: {aviso_en[:120]!r}")
         # mapa en inglés: pie de leyenda, tics y resumen
         await pg.goto(URL + "#/mapa", wait_until="networkidle")
+        await pg.select_option("#mapa-serie", "ambas")
         await pg.wait_for_timeout(1000)
         pie_en = " ".join((await pg.locator("#mapa-pie").inner_text()).split())
         tits_en = await pg.eval_on_selector_all("#mapa .grid text.tit", "e => e.map(x => x.textContent)")

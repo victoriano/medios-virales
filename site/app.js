@@ -64,6 +64,9 @@ const I18N = {
     mapaSerieAmbas: 'Las dos posiciones',
     mapaSeriePub: 'Solo lo publicado',
     mapaSerieViral: 'Solo lo viral',
+    mapaPlay: '▶ Evolución 2018 a 2026',
+    mapaPause: (year) => `⏸ Pausar · ${year}`,
+    ariaPlay: 'Reproducir o pausar la evolución anual del mapa',
     mapaFiltro5: 'Con muestra de 5 o más',
     mapaFiltro0: 'Todos los medios',
     mapaFiltro15: 'Con muestra de 15 o más',
@@ -274,6 +277,9 @@ const I18N = {
     mapaSerieAmbas: 'Both positions',
     mapaSeriePub: 'Published only',
     mapaSerieViral: 'Viral only',
+    mapaPlay: '▶ Evolution 2018 to 2026',
+    mapaPause: (year) => `⏸ Pause · ${year}`,
+    ariaPlay: 'Play or pause the yearly evolution of the map',
     mapaFiltro5: 'With sample of 5 or more',
     mapaFiltro0: 'All outlets',
     mapaFiltro15: 'With sample of 15 or more',
@@ -513,6 +519,7 @@ const PERIODOS_VALIDOS = ['todo', 'xv', '2018', '2019', '2020', '2021', '2022', 
 let currentView = 'mapa';
 function show(v) {
   currentView = v;
+  if (v !== 'mapa') pararEvolucion();
   VIEWS.forEach(x => { $('#view-' + x).hidden = x !== v; });
   $$('.tab').forEach(el => el.classList.toggle('is-on', el.dataset.view === v));
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -894,9 +901,47 @@ const MAPA_COLOR = { izq: 'var(--map-izq)', der: 'var(--map-der)', neu: 'var(--m
 const ladoDe = p => p < 45 ? 'izq' : p > 55 ? 'der' : 'neu';
 const colorDe = p => MAPA_COLOR[ladoDe(p)];
 
-let mapaSerie = 'ambas';
+let mapaSerie = 'publicado';
 let mapaFiltro = 5;
 let mapaPeriodo = 'todo';
+const MAPA_ANOS = ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'];
+let mapaTimer = null;
+
+function actualizarPlay() {
+  const btn = $('#mapa-play');
+  if (!btn) return;
+  const activo = mapaTimer !== null;
+  btn.textContent = activo ? t('mapaPause', mapaPeriodo) : t('mapaPlay');
+  btn.setAttribute('aria-pressed', activo ? 'true' : 'false');
+}
+
+function pararEvolucion() {
+  if (mapaTimer !== null) clearInterval(mapaTimer);
+  mapaTimer = null;
+  actualizarPlay();
+}
+
+function fijarPeriodoMapa(valor, manual = false) {
+  if (manual) pararEvolucion();
+  mapaPeriodo = PERIODOS_VALIDOS.includes(valor) ? valor : 'todo';
+  const sel = $('#mapa-periodo');
+  if (sel) sel.value = mapaPeriodo;
+  const nuevoHash = '#/mapa' + hashPeriodo();
+  if (location.hash !== nuevoHash) history.replaceState(null, '', nuevoHash);
+  renderMapa();
+  actualizarPlay();
+}
+
+function reproducirEvolucion() {
+  if (mapaTimer !== null) { pararEvolucion(); return; }
+  fijarPeriodoMapa('2018');
+  mapaTimer = setInterval(() => {
+    const actual = MAPA_ANOS.indexOf(mapaPeriodo);
+    if (actual >= MAPA_ANOS.length - 1) { pararEvolucion(); return; }
+    fijarPeriodoMapa(MAPA_ANOS[actual + 1]);
+  }, 1450);
+  actualizarPlay();
+}
 
 function mediosPeriodo() {
   if (!POL) return [];
@@ -951,6 +996,9 @@ function renderMapa() {
     $('#mapa-pie').innerHTML = `<div class="blq">${t('mapaNoDatos')}</div>`;
     return;
   }
+  const posicionesAnteriores = new Map([...svg.querySelectorAll('.burbuja')].map(el => [
+    `${el.dataset.h}|${el.dataset.serie}`, el.getAttribute('transform')
+  ]));
   const { nodos, parejas } = filasMapa();
   const totalUniverso = mediosPeriodo().length;
   const admitidos = new Set(INDEX.medios
@@ -1032,6 +1080,23 @@ function renderMapa() {
 
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.innerHTML = `<g class="grid">${g}</g><g class="flechas">${flechas}</g><g class="nodos">${burbujas}</g><g class="etiquetas">${etiquetas}</g>`;
+
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const coords = valor => (valor || '').match(/translate\(([-0-9.]+),\s*([-0-9.]+)\)/);
+    svg.querySelectorAll('.burbuja').forEach(el => {
+      const anterior = posicionesAnteriores.get(`${el.dataset.h}|${el.dataset.serie}`);
+      const destino = el.getAttribute('transform');
+      const a = coords(anterior), b = coords(destino);
+      if (a && b) {
+        el.animate([
+          { transform: `translate(${a[1]}px, ${a[2]}px)` },
+          { transform: `translate(${b[1]}px, ${b[2]}px)` },
+        ], { duration: 900, easing: 'cubic-bezier(.22,.75,.25,1)' });
+      } else {
+        el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420, easing: 'ease-out' });
+      }
+    });
+  }
 
   const res = [];
   if (mapaSerie === 'ambas') {
@@ -1137,6 +1202,7 @@ function applyLang() {
   $$('[data-i18n-aria]').forEach(el => {
     el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria')));
   });
+  actualizarPlay();
 }
 function reRenderCurrent() {
   if (!INDEX) return;
@@ -1255,16 +1321,11 @@ function watchSystemTheme() {
   const selPer = $('#mapa-periodo');
   if (selPer) {
     selPer.value = mapaPeriodo;
-    selPer.addEventListener('change', e => {
-      const v = e.target.value;
-      mapaPeriodo = PERIODOS_VALIDOS.includes(v) ? v : 'todo';
-      const nuevoHash = '#/mapa' + hashPeriodo();
-      if (location.hash !== nuevoHash) {
-        history.replaceState(null, '', nuevoHash);
-      }
-      renderMapa();
-    });
+    selPer.addEventListener('change', e => fijarPeriodoMapa(e.target.value, true));
   }
+  const play = $('#mapa-play');
+  if (play) play.addEventListener('click', reproducirEvolucion);
+  actualizarPlay();
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
   if (h === 'top') { await cargarTop(); }
   route();

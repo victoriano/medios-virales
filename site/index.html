@@ -33,7 +33,7 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=20260925170000">
+<link rel="stylesheet" href="styles.css?v=20260925164448">
 </head>
 <body>
 <header class="top">
@@ -118,9 +118,10 @@
             <option value="2025">2025</option>
             <option value="2026">2026</option>
           </select>
+          <button type="button" id="mapa-play" class="mapa-play" data-i18n-aria="ariaPlay" aria-label="Reproducir evolución anual">▶ Evolución 2018 a 2026</button>
           <select id="mapa-serie" data-i18n-aria="ariaSerie" aria-label="Qué posiciones se dibujan">
-            <option value="ambas" selected data-i18n="mapaSerieAmbas">Las dos posiciones</option>
-            <option value="publicado" data-i18n="mapaSeriePub">Solo lo publicado</option>
+            <option value="ambas" data-i18n="mapaSerieAmbas">Las dos posiciones</option>
+            <option value="publicado" selected data-i18n="mapaSeriePub">Solo lo publicado</option>
             <option value="viral" data-i18n="mapaSerieViral">Solo lo viral</option>
           </select>
           <select id="mapa-filtro" data-i18n-aria="ariaFiltro" aria-label="Filtrar por tamaño de muestra">
@@ -204,6 +205,6 @@
   <p data-i18n="footerText">Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.</p>
 </footer>
 
-<script src="app.js?v=20260925170000"></script>
+<script src="app.js?v=20260925164448"></script>
 </body>
 </html>
