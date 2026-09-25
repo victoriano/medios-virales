@@ -9,8 +9,8 @@ DATA = ROOT / "site" / "data"
 EXPECTED_PERIODS = ["todo", "xv", *map(str, range(2018, 2027))]
 EXPECTED_TOTALS = {
     "muestreados": 602_906,
-    "clasificados": 155_880,
-    "gate_no": 447_026,
+    "clasificados": 155_922,
+    "gate_no": 446_984,
 }
 
 
@@ -27,9 +27,12 @@ class SiteDataTest(unittest.TestCase):
         self.assertEqual(self.index["ventana"]["desde"][:10], "2018-05-02")
         self.assertEqual(self.index["ventana"]["hasta"][:10], "2026-09-24")
         self.assertEqual(
-            totals["coste_clasificacion_usd"], 52.836766 + 28.794637
+            totals["coste_clasificacion_usd"], 52.836766 + 28.794637 + 1.16287
         )
         self.assertEqual(totals["coste_descarga_usd"], 57.85245 + 33.0213)
+        self.assertEqual(self.index["revision_contextual"]["candidatos"], 3_813)
+        self.assertEqual(self.index["revision_contextual"]["cambios"], 601)
+        self.assertEqual(self.index["revision_contextual"]["coste_usd"], 1.16287)
 
     def test_periods_cover_full_series_xv_and_each_year(self):
         self.assertEqual(list(self.polarizacion["periodos"]), EXPECTED_PERIODS)

@@ -37,6 +37,10 @@ LEFT = {"PSOE", "Sumar"}
 RIGHT = {"PP", "Vox"}
 CANON = {"psoe": "PSOE", "pp": "PP", "vox": "Vox", "sumar": "Sumar", "podemos": "Sumar"}
 DOWNLOAD_COSTS = {"historico": 57.85245, "xv": 33.0213}
+CLASSIFIED_BASENAME = os.environ.get("CLASSIFIED_BASENAME", "clasificado_contextual.jsonl")
+CONTEXT_REVIEW_COST_USD = 1.16287
+CONTEXT_REVIEW_CANDIDATES = 3813
+CONTEXT_REVIEW_CHANGES = 601
 
 
 def slug(handle):
@@ -142,7 +146,7 @@ def load_metadata():
 
 
 def load_classified(root):
-    path = root / "clasificado.jsonl"
+    path = root / CLASSIFIED_BASENAME
     if not path.exists():
         raise SystemExit(f"No existe {path}")
     latest = {}
@@ -326,7 +330,7 @@ def main():
         (medium_dir / "index.json").write_text(json.dumps(manifest, ensure_ascii=False, separators=(",", ":")))
 
     index_media.sort(key=lambda row: row["indice"])
-    class_cost = historical_stats["cost"] + xv_stats["cost"]
+    class_cost = historical_stats["cost"] + xv_stats["cost"] + CONTEXT_REVIEW_COST_USD
     download_cost = sum(DOWNLOAD_COSTS.values())
     included = sum(medium["incluido"] for medium in index_media)
     index = {
@@ -334,7 +338,13 @@ def main():
         "ver": VER,
         "ventana": {"desde": date_min, "hasta": date_max},
         "fuente": "TwitterAPI.io, hasta 100 tuits Latest por medio y mes, distribuidos en tramos temporales.",
-        "clasificador": "Gemini 3.7 Flash, política española, partido afectado y dirección.",
+        "clasificador": "Gemini 3.7 Flash, política española, partido afectado, dirección y revisión contextual selectiva.",
+        "revision_contextual": {
+            "candidatos": CONTEXT_REVIEW_CANDIDATES,
+            "cambios": CONTEXT_REVIEW_CHANGES,
+            "coste_usd": CONTEXT_REVIEW_COST_USD,
+            "palabras_clave": ["Aldama", "González", "García Page", "Page", "Alfonso Guerra"],
+        },
         "muestras": {
             "historico": {"desde": "2018-05-02", "hasta": "2023-08-16", **historical_stats,
                           "coste_descarga_usd": DOWNLOAD_COSTS["historico"]},

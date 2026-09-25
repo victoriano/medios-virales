@@ -547,9 +547,12 @@ async def main():
                       "Porcentaje de tuits políticos", "Cómo leer el mapa"]:
             if trozo not in metodo:
                 errores.append(f"[check] falta en metodología: {trozo}")
-        if "155.880 tuits políticos y 447.026 sin lectura política" not in metodo:
+        if "155.922 tuits políticos y 446.984 sin lectura política" not in metodo:
             errores.append("[check] el recuento combinado de lectura política de la metodología no cuadra")
-        for coste in ["81,631403", "90,87375"]:
+        for trozo in ["3.813 tuits", "601 correcciones"]:
+            if trozo not in metodo:
+                errores.append(f"[check] falta la revisión contextual en metodología: {trozo}")
+        for coste in ["82,794273", "90,87375"]:
             if coste not in metodo:
                 errores.append(f"[check] falta el coste combinado {coste} en metodología")
         await pg.screenshot(path=f"{OUT}/6-metodo.png", full_page=True)
