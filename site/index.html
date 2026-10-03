@@ -33,7 +33,7 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=20260925183823">
+<link rel="stylesheet" href="styles.css?v=202609260900">
 </head>
 <body>
 <header class="top">
@@ -119,10 +119,10 @@
             <option value="2026">2026</option>
           </select>
           <button type="button" id="mapa-play" class="mapa-play" data-i18n-aria="ariaPlay" aria-label="Reproducir evolución anual">▶ Evolución 2018 a 2026</button>
-          <select id="mapa-serie" data-i18n-aria="ariaSerie" aria-label="Qué posiciones se dibujan">
-            <option value="ambas" data-i18n="mapaSerieAmbas">Las dos posiciones</option>
-            <option value="publicado" selected data-i18n="mapaSeriePub">Solo lo publicado</option>
-            <option value="viral" data-i18n="mapaSerieViral">Solo lo viral</option>
+          <select id="mapa-serie" data-i18n-aria="ariaSerie" aria-label="Filtro de retuits del mapa">
+            <option value="ambas" data-i18n="mapaSerieAmbas">Comparar todos y 100 RT o más</option>
+            <option value="publicado" selected data-i18n="mapaSeriePub">Todos los tuits</option>
+            <option value="viral" data-i18n="mapaSerieViral">100 RT o más</option>
           </select>
           <select id="mapa-filtro" data-i18n-aria="ariaFiltro" aria-label="Filtrar por tamaño de muestra">
             <option value="5" selected data-i18n="mapaFiltro5">Con muestra de 5 o más</option>
@@ -133,7 +133,7 @@
         </div>
       </div>
       <p class="hint" data-i18n-html="mapaHint">
-        Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo es que todos sus tuits con lado claro van a la izquierda, 100 en el derecho es que van todos a la derecha, y 50 la mitad y mitad. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. En vertical, cuantos más tuits con lectura política, más arriba. El tamaño del punto es su media de retuits. Con el <strong>selector de periodo</strong> se acota la ventana temporal (toda la XV Legislatura o un año concreto). El resto se basa en <strong>hasta 100 tuits Latest por medio y mes</strong> de esa ventana: <strong>Publicado</strong> son todos esos tuits y <strong>Viral</strong> es el subconjunto que superó los 100 retuits (no un censo aparte). En el modo <strong>las dos posiciones</strong> el aro continuo es lo publicado, el discontinuo lo viral y la flecha va del punto publicado al viral, o sea, hacia dónde se desplaza el medio cuando su contenido se comparte. Pasa el ratón para ver los números y pulsa para abrir sus tuits.
+        Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo significa que todos sus tuits con lado claro van a la izquierda, 100 que todos van a la derecha y 50 que se reparten por igual. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. La altura es el <strong>número de tuits clasificados que benefician o perjudican a un partido</strong>. El tamaño representa la <strong>mediana de retuits de esos mismos tuits</strong>. El filtro de retuits permite mostrar todos, solo los que tienen 100 RT o más, o comparar ambos subconjuntos. El eje vertical se ajusta al periodo y conserva una escala común durante la animación anual. Pasa el ratón para ver los números y pulsa para abrir sus tuits.
       </p>
       <p class="resumen" id="mapa-resumen"></p>
       <div class="chart-wrap">
@@ -193,7 +193,7 @@
       <p data-i18n="metodoPosicionP2">La posición del mapa es el porcentaje de tuits con lado claro que cae a la derecha. Cero significa que todos caen a la izquierda, cincuenta indica equilibrio y cien significa que todos caen a la derecha. El índice técnico del ranking expresa la misma relación en una escala de menos uno a más uno.</p>
 
       <h3 data-i18n="metodoLeerMapa">Cómo leer el mapa</h3>
-      <p data-i18n="metodoLeerMapaP">El aro continuo representa lo publicado y el aro discontinuo, el subconjunto viral. La flecha parte de la posición publicada y termina en la viral. Por tanto, muestra hacia dónde se desplaza el contenido del medio cuando se comparte más. La altura indica qué porcentaje de los tuits de cada serie beneficia o perjudica claramente a un partido: tuits con lado claro divididos por todos los tuits de esa serie. El selector temporal permite ver toda la legislatura o cada año natural, pero no altera el corte global de inclusión.</p>
+      <p data-i18n="metodoLeerMapaP">El filtro de retuits permite mostrar todos los tuits, solo los que alcanzan 100 RT o más, o comparar ambos subconjuntos. El aro continuo representa todos los tuits y el discontinuo, los de 100 RT o más. La flecha parte de la posición de todos los tuits y termina en la del subconjunto de 100 RT. La altura es el número absoluto de tuits que benefician o perjudican a un partido. El tamaño de cada burbuja representa la mediana de retuits de esos mismos tuits mediante una escala de área con raíz cuadrada. El eje vertical se ajusta a la ventana seleccionada y mantiene una escala común entre 2018 y 2026 durante la animación.</p>
 
       <h3 data-i18n="metodoLimites">Límites</h3>
       <ul id="metodo-limites"></ul>
@@ -206,6 +206,6 @@
   <p data-i18n="footerText">Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.</p>
 </footer>
 
-<script src="app.js?v=20260925183823"></script>
+<script src="app.js?v=202609252106"></script>
 </body>
 </html>

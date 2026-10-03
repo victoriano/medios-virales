@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Comprueba el sitio en un navegador real: consola, carga de datos, vista por defecto y capturas."""
-import asyncio, sys, time
+import asyncio, math, sys, time
 from playwright.async_api import async_playwright
 
 URL = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8099/"
@@ -26,7 +26,41 @@ def decimos_js(m):
 
 def num_es(n):
     """Como Intl.NumberFormat('es-ES'): sin separador de millar por debajo de 10.000."""
-    return f"{n:,}".replace(",", ".") if n >= 10000 else str(n)
+    if isinstance(n, float) and n.is_integer():
+        n = int(n)
+    return f"{n:,}".replace(",", ".") if isinstance(n, int) and n >= 10000 else str(n)
+
+
+MAPA_ANOS = tuple(str(y) for y in range(2018, 2027))
+ESCALONES_Y = (1, 1.25, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10)
+
+
+def calcular_ymax(pol, admitidos, clave, serie):
+    """Réplica en Python de maxYMapa en app.js.
+
+    Cuando el periodo es un año, el máximo se calcula sobre los nueve años para
+    mantener una escala fija durante la animación."""
+    claves = MAPA_ANOS if clave in MAPA_ANOS else (clave,)
+    series = ("publicado", "viral") if serie == "ambas" else (serie,)
+    maximo = 1
+    for k in claves:
+        bloque = (pol.get("periodos") or {}).get(k) or {}
+        for medio in bloque.get("medios") or []:
+            if medio["handle"].lower() not in admitidos:
+                continue
+            for s in series:
+                val = int((medio.get(s) or {}).get("con_lado") or 0)
+                if val > maximo:
+                    maximo = val
+    potencia = 10 ** int(math.floor(math.log10(maximo)))
+    base = maximo / potencia
+    escalon = next((v for v in ESCALONES_Y if v >= base), 10)
+    return escalon * potencia
+
+
+def radio_esperado(rt_mediana):
+    """Réplica de RADIO en app.js: min(24, max(6, 0.75*sqrt(v))); área ∝ sqrt(v)."""
+    return min(24.0, max(6.0, 0.75 * math.sqrt(max(0.0, float(rt_mediana or 0)))))
 
 
 async def main():
@@ -261,13 +295,15 @@ async def main():
               const tics = [...svg.querySelectorAll('.grid text')]
                 .filter(t => Math.abs(+t.getAttribute('y') - ytics) < 1)
                 .map(t => [+t.getAttribute('x'), t.textContent]);
-              const yticsPorcentaje = [...svg.querySelectorAll('.grid text')]
+              const yticsCantidad = [...svg.querySelectorAll('.grid text')]
                 .filter(t => Math.abs(+t.getAttribute('x') - 71) < 1)
                 .map(t => t.textContent);
               const nodos = [...svg.querySelectorAll('.burbuja')].map(el => {
                 const c = el.querySelector('circle');
                 const t = el.getAttribute('transform').match(/translate\(([-0-9.]+),\s*([-0-9.]+)\)/);
                 return {h: el.dataset.h, serie: el.dataset.serie, pos: +el.dataset.posicion,
+                        conLado: +el.dataset.y, rtMediana: +el.dataset['rtMediana'],
+                        yMax: +el.dataset['yMax'],
                         attr: c.getAttribute('stroke'), comp: getComputedStyle(c).stroke,
                         dash: getComputedStyle(c).strokeDasharray, x: +t[1], y: +t[2], r: +c.getAttribute('r')};
               });
@@ -279,7 +315,7 @@ async def main():
                         x1: +g.dataset.x1, y1: +g.dataset.y1, x2: +g.dataset.x2, y2: +g.dataset.y2,
                         punta: pts[0], cen, color: p.getAttribute('fill'), comp: getComputedStyle(p).fill};
               });
-              return {tics, yticsPorcentaje, nodos, flechas,
+              return {tics, yticsCantidad, nodos, flechas,
                       zonas: [...svg.querySelectorAll('.etiquetas text')].map(t => t.textContent),
                       titulos: [...svg.querySelectorAll('.grid text.tit')].map(t => t.textContent),
                       resumen: document.querySelector('#mapa-resumen').textContent,
@@ -310,9 +346,12 @@ async def main():
         if await pg.evaluate("Array.from(document.querySelectorAll('#mapa .grid line.mitad')).length") != 1:
             errores.append("[check] no hay una sola linea solida en el 50")
 
-        # (2) la X de cada nodo es la posicion de polarizacion.json y el color, rojo a la izquierda y azul a la derecha
+        # (2) la X de cada nodo es la posicion de polarizacion.json y el color, rojo a la izquierda y azul a la derecha.
+        #     El eje Y representa el número absoluto de tuits con lado claro y su escala se calcula por periodo/serie.
+        #     El tamaño de la burbuja depende de la mediana de retuits: r = min(34, 7 + 1.08·√rt_mediana).
         por_handle = {m["handle"]: m for m in pol["medios"]}
-        peor_x, peor_y, mal_color, rojos, azules, grises = 0.0, 0.0, [], 0, 0, 0
+        yMax_todo = calcular_ymax(pol, admitidos, "todo", "ambas")
+        peor_x, peor_y, peor_r, mal_color, mal_rad, rojos, azules, grises = 0.0, 0.0, 0.0, [], [], 0, 0, 0
         for n in est["nodos"]:
             r = por_handle.get(n["h"])
             d = (r or {}).get(n["serie"]) or {}
@@ -320,9 +359,18 @@ async def main():
                 errores.append(f"[check] nodo sin datos en polarizacion.json: {n['h']} {n['serie']}")
                 continue
             peor_x = max(peor_x, abs(n["x"] - (x0 + d["posicion"] / 100 * (x100 - x0))))
-            porcentaje = 100 * d["con_lado"] / d["tuits"] if d.get("tuits") else 0
-            y_esperada = 554 - porcentaje / 100 * 476
+            y_esperada = 554 - (d["con_lado"] or 0) / yMax_todo * 476
             peor_y = max(peor_y, abs(n["y"] - y_esperada))
+            r_esperado = radio_esperado(d.get("rt_mediana") or 0)
+            peor_r = max(peor_r, abs(n["r"] - r_esperado))
+            if abs(n["r"] - r_esperado) > 0.2:
+                mal_rad.append(f"{n['h']}/{n['serie']} rt_mediana={d.get('rt_mediana')} -> r={n['r']} esperado {r_esperado:.2f}")
+            if n["yMax"] and abs(n["yMax"] - yMax_todo) > 0.001:
+                errores.append(f"[check] la burbuja {n['h']}/{n['serie']} lleva yMax={n['yMax']} pero calculado {yMax_todo}")
+            if n["conLado"] != (d["con_lado"] or 0):
+                errores.append(f"[check] data-y ({n['conLado']}) no coincide con con_lado ({d['con_lado']}) en {n['h']}/{n['serie']}")
+            if abs(n["rtMediana"] - (d.get("rt_mediana") or 0)) > 0.001:
+                errores.append(f"[check] data-rt-mediana ({n['rtMediana']}) no coincide con rt_mediana ({d.get('rt_mediana')}) en {n['h']}/{n['serie']}")
             esp = lado(d["posicion"])
             if n["attr"] != f"var(--map-{esp})" or n["comp"] != RGB[esp]:
                 mal_color.append(f"{n['h']}/{n['serie']} posicion {d['posicion']} -> {n['attr']} / {n['comp']}")
@@ -332,21 +380,31 @@ async def main():
                 azules += 1
             else:
                 grises += 1
+        tics_esperados = [num_es(yMax_todo * i / 5) for i in range(6)]
         print(f"X de los nodos frente a posicion = 100*der/(izq+der): desviacion maxima {peor_x:.3f} px")
-        print(f"Y de los nodos frente a 100*con_lado/tuits: desviacion maxima {peor_y:.3f} px")
-        print("tics del eje Y:", " · ".join(est["yticsPorcentaje"]))
+        print(f"Y de los nodos frente a con_lado / yMax ({yMax_todo}): desviacion maxima {peor_y:.3f} px")
+        print(f"radio de las burbujas por rt_mediana: desviacion maxima {peor_r:.3f} px")
+        print("tics del eje Y:", " · ".join(est["yticsCantidad"]), "| esperados:", " · ".join(tics_esperados))
         print(f"nodos por color: rojo (izquierda) {rojos} · azul (derecha) {azules} · gris (centro) {grises} | mal pintados: {len(mal_color)}")
         if peor_x > 0.3:
             errores.append(f"[check] el eje X no cuadra con la posicion: {peor_x:.3f} px")
-        if peor_y > 0.3 or est["yticsPorcentaje"] != ["0 %", "20 %", "40 %", "60 %", "80 %", "100 %"]:
-            errores.append(f"[check] el eje Y no representa el porcentaje con lado claro: desviacion {peor_y:.3f}, tics {est['yticsPorcentaje']}")
-        if not any("% de los tuits con posición clara" in t for t in est["titulos"]):
-            errores.append(f"[check] falta el titulo porcentual del eje Y: {est['titulos']}")
+        if peor_y > 0.5:
+            errores.append(f"[check] el eje Y no cuadra con con_lado / yMax (yMax={yMax_todo}): desviacion {peor_y:.3f}")
+        if est["yticsCantidad"] != tics_esperados:
+            errores.append(f"[check] los tics del eje Y no son cantidades absolutas: {est['yticsCantidad']} vs {tics_esperados}")
+        if not any("Tuits que benefician o perjudican a un partido" in t for t in est["titulos"]):
+            errores.append(f"[check] falta el titulo absoluto del eje Y: {est['titulos']}")
+        # el radio máximo (24 px) marca el techo: sin burbujas absurdamente grandes ni negativas.
+        radios = [n["r"] for n in est["nodos"] if n.get("r")]
+        if radios and (max(radios) > 24.001 or min(radios) < 6):
+            errores.append(f"[check] radios fuera de rango razonable: min={min(radios):.1f} max={max(radios):.1f}")
+        if mal_rad:
+            errores.append(f"[check] radio por rt_mediana desviado: " + "; ".join(mal_rad[:4]))
         if mal_color or not rojos or not azules:
             errores.append(f"[check] colores por lado: {len(mal_color)} mal, {rojos} rojos, {azules} azules :: " + "; ".join(mal_color[:4]))
         arriba = [n for n in est["nodos"] if n["serie"] == "publicado"]
         if not arriba or not all(n["dash"] == "none" for n in arriba):
-            errores.append("[check] lo publicado deberia llevar el aro continuo")
+            errores.append("[check] la serie de 'todos los tuits' debería llevar el aro continuo")
 
         # (3) la flecha va de la posicion publicada a la viral
         fl = est["flechas"]
@@ -409,6 +467,39 @@ async def main():
             errores.append("[check] lo viral deberia llevar el aro discontinuo")
         if "aro discontinuo" not in estados["ambas"]["pie"] or "Flecha" not in estados["ambas"]["pie"]:
             errores.append(f"[check] falta la leyenda de las flechas: {estados['ambas']['pie'][:200]}")
+        for esperado in ["mediana de retuits", "número de tuits", "100 RT o más"]:
+            if esperado not in estados["ambas"]["pie"]:
+                errores.append(f"[check] falta '{esperado}' en el pie del mapa: {estados['ambas']['pie'][:200]}")
+
+        # el eje Y se ajusta al periodo y serie: comprobamos yMax en 'todo'+ambas, 'xv'+ambas, un año+ambas y un año+viral.
+        for periodo, serie in [("todo", "ambas"), ("xv", "ambas"), ("2024", "ambas"), ("2024", "viral")]:
+            await pg.select_option("#mapa-periodo", "todo")
+            await pg.wait_for_timeout(200)
+            await pg.select_option("#mapa-serie", serie)
+            await pg.select_option("#mapa-periodo", periodo)
+            await pg.wait_for_timeout(600)
+            est_local = await leer_mapa()
+            yMax_local = calcular_ymax(pol, admitidos, periodo, serie)
+            tics_local = [num_es(yMax_local * i / 5) for i in range(6)]
+            if est_local["yticsCantidad"] != tics_local:
+                errores.append(f"[check] tics del eje Y en {periodo}/{serie}: {est_local['yticsCantidad']} vs {tics_local} (yMax={yMax_local})")
+            if not any("Tuits que benefician o perjudican a un partido" in t for t in est_local["titulos"]):
+                errores.append(f"[check] falta el título absoluto del eje Y en {periodo}/{serie}: {est_local['titulos']}")
+
+        # la escala vertical se conserva entre 2018 y 2026 durante la animación (yMax se calcula sobre los nueve años).
+        await pg.select_option("#mapa-serie", "ambas")
+        yMax_muestra = set()
+        for anio in ("2018", "2022", "2026"):
+            await pg.select_option("#mapa-periodo", "todo")
+            await pg.wait_for_timeout(200)
+            await pg.select_option("#mapa-periodo", anio)
+            await pg.wait_for_timeout(600)
+            est_a = await leer_mapa()
+            yMax_muestra.add(tuple(est_a["yticsCantidad"]))
+        if len(yMax_muestra) != 1:
+            errores.append(f"[check] la escala del eje Y cambia entre años durante la animación: {yMax_muestra}")
+        else:
+            print("escala del eje Y estable durante la animación:", list(yMax_muestra)[0])
 
         # el filtro de muestra sigue moviendo el numero de nodos
         await pg.select_option("#mapa-serie", "ambas")
@@ -424,13 +515,14 @@ async def main():
         await pg.select_option("#mapa-filtro", "5")
         await pg.wait_for_timeout(400)
 
-        # la herramienta de un nodo cuenta las dos series, el porcentaje y el desplazamiento
+        # la herramienta de un nodo cuenta las dos series, el número de tuits con lado y la mediana de retuits
         await pg.locator('#mapa .burbuja').last.hover()
         await pg.wait_for_timeout(350)
         tip = " ".join((await pg.locator("#mapa-tip").inner_text()).split())
         print("tooltip:", tip[:220])
-        if "Publicado" not in tip or "Viral" not in tip or "se desplaza" not in tip or "% de la serie con lado claro" not in tip:
-            errores.append(f"[check] el tooltip no cuenta las dos posiciones y el porcentaje: {tip[:200]}")
+        for esperado in ["Todos", "100 RT o más", "tuits con lado claro", "mediana de retuits"]:
+            if esperado not in tip:
+                errores.append(f"[check] el tooltip no incluye '{esperado}': {tip[:220]}")
         tip_box = await pg.locator("#mapa-tip").bounding_box()
         tip_scroll = await pg.locator("#mapa-tip").evaluate("el => ({w: el.clientWidth, sw: el.scrollWidth, right: el.getBoundingClientRect().right, viewport: innerWidth})")
         print("tooltip dentro de su caja:", tip_scroll)
@@ -608,21 +700,21 @@ async def main():
         print("pie del mapa en EN:", pie_en[:180])
         print("titulos del mapa en EN:", tits_en)
         print("resumen del mapa en EN:", resumen_en)
-        for esperado in ["Size", "Ring", "left", "right", "Arrow"]:
+        for esperado in ["Size", "Ring", "left", "right", "Arrow", "Height", "median retweets", "100+ RT"]:
             if esperado not in pie_en:
-                errores.append(f"[check] pie del mapa sin traducir ({esperado}): {pie_en[:200]!r}")
+                errores.append(f"[check] pie del mapa sin traducir ({esperado}): {pie_en[:220]!r}")
         if not any("all to the left" in t for t in tits_en) or not any("all to the right" in t for t in tits_en):
             errores.append(f"[check] titulos del mapa sin traducir: {tits_en}")
         if "outlets" not in resumen_en and "outlet" not in resumen_en:
             errores.append(f"[check] resumen del mapa sin traducir: {resumen_en!r}")
-        # tooltip en ingles debe hablar de Published / Viral
+        # tooltip en ingles debe hablar de All tweets / 100+ RT y la mediana de retuits
         await pg.locator('#mapa .burbuja').last.hover()
         await pg.wait_for_timeout(400)
         tip_en = " ".join((await pg.locator("#mapa-tip").inner_text()).split())
-        print("tooltip del mapa en EN:", tip_en[:180])
-        for esperado in ["Published", "Viral"]:
+        print("tooltip del mapa en EN:", tip_en[:220])
+        for esperado in ["All tweets", "100+ RT", "tweets with clear side", "median retweets"]:
             if esperado not in tip_en:
-                errores.append(f"[check] tooltip sin traducir ({esperado}): {tip_en[:200]!r}")
+                errores.append(f"[check] tooltip sin traducir ({esperado}): {tip_en[:220]!r}")
         # top: cargar y comprobar filtros y titulo
         await pg.goto(URL + "#/top", wait_until="networkidle")
         await pg.wait_for_timeout(900)

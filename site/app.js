@@ -61,9 +61,9 @@ const I18N = {
     mapaTitle: 'Mapa de sesgo: lo que se publica y lo que se comparte',
     mapaPeriodoAll: 'Serie completa',
     mapaPeriodoXV: 'XV Legislatura',
-    mapaSerieAmbas: 'Las dos posiciones',
-    mapaSeriePub: 'Solo lo publicado',
-    mapaSerieViral: 'Solo lo viral',
+    mapaSerieAmbas: 'Comparar todos y 100 RT o más',
+    mapaSeriePub: 'Todos los tuits',
+    mapaSerieViral: '100 RT o más',
     mapaPlay: '▶ Evolución 2018 a 2026',
     mapaPause: (year) => `⏸ Pausar · ${year}`,
     ariaPlay: 'Reproducir o pausar la evolución anual del mapa',
@@ -71,11 +71,11 @@ const I18N = {
     mapaFiltro0: 'Todos los medios',
     mapaFiltro15: 'Con muestra de 15 o más',
     mapaFiltro30: 'Con muestra de 30 o más',
-    mapaHint: 'Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo es que todos sus tuits con lado claro van a la izquierda, 100 en el derecho es que van todos a la derecha, y 50 la mitad y mitad. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. La altura es el porcentaje de todos los tuits de la serie que tiene lado claro. El tamaño del punto es su media de retuits. El <strong>selector de periodo</strong> permite ver la serie completa, la XV Legislatura o un año. Cada ventana se basa en <strong>hasta 100 tuits Latest por medio y mes</strong>: <strong>Publicado</strong> son todos esos tuits y <strong>Viral</strong> es el subconjunto con al menos 100 retuits. En <strong>las dos posiciones</strong>, el aro continuo es lo publicado, el discontinuo lo viral y la flecha va del punto publicado al viral. Pasa el ratón para ver los números y pulsa para abrir sus tuits.',
+    mapaHint: 'Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo significa que todos sus tuits con lado claro van a la izquierda, 100 que todos van a la derecha y 50 que se reparten por igual. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. La altura es el <strong>número de tuits clasificados que benefician o perjudican a un partido</strong>. El tamaño representa la <strong>mediana de retuits de esos mismos tuits</strong>. El filtro de retuits permite mostrar todos, solo los que tienen 100 RT o más, o comparar ambos subconjuntos. El eje vertical se ajusta al periodo y conserva una escala común durante la animación anual. Pasa el ratón para ver los números y pulsa para abrir sus tuits.',
     axisLeft: '◀ todo a la izquierda',
     axisMid: '% de los tuits con lado que va a la derecha',
     axisRight: 'todo a la derecha ▶',
-    axisYTitle: (periodo) => `% de los tuits con posición clara · lo publicado frente a lo viral · ${periodo}`,
+    axisYTitle: (periodo) => `Tuits que benefician o perjudican a un partido · ${periodo}`,
     zonaMuyIzq: 'muy a la izquierda',
     zonaIzq: 'a la izquierda',
     zonaEq: 'equilibrio',
@@ -91,13 +91,14 @@ const I18N = {
     mapaPieDer: 'derecha',
     mapaPieCentro: 'centro',
     mapaPieAroContinuo: 'Aro continuo',
-    mapaPiePublicado: 'lo publicado',
+    mapaPiePublicado: 'todos los tuits',
     mapaPieAroDiscontinuo: 'aro discontinuo',
-    mapaPieLoViral: 'lo viral',
+    mapaPieLoViral: '100 RT o más',
     mapaPieFlecha: 'Flecha',
     mapaPieFlechaDesc: 'de la posición publicada a la viral: hacia dónde se desplaza el medio al compartirse',
     mapaPieAltura: 'Altura',
-    mapaPieAlturaDesc: 'porcentaje de tuits de cada serie que benefician o perjudican claramente a un partido.',
+    mapaPieAlturaDesc: 'número de tuits clasificados que benefician o perjudican claramente a un partido.',
+    mapaPieTamDesc: 'mediana de retuits de los tuits con lado claro.',
     mapaPieCorte: 'Corte de inclusión',
     mapaPieCorteDesc: 'más de 50 tuits significados a favor o en contra en toda la muestra.',
     mapaPieFiltroN: (n) => `Solo se dibujan los medios con ${n} o más tuits con lado claro en cada serie.`,
@@ -114,20 +115,20 @@ const I18N = {
     viral: 'viral',
     izquierda: 'izquierda',
     derecha: 'derecha',
-    tipPublicado: 'Publicado',
-    tipViral: 'Viral',
+    tipPublicado: 'Todos',
+    tipViral: '100 RT o más',
     tipSinLado: 'sin tuits con lado claro',
     tipClaros: 'claros de',
     tipPoliticos: 'tuits políticos',
     tipMuestraCorta: 'muestra corta',
-    tipPctSerie: '% de la serie con lado claro',
+    tipPctSerie: 'tuits con lado claro',
     tipDe: 'de',
     tipTuits: 'tuits',
     tipADerecha: '% a la derecha',
     tipSinLadoPct: '% sin lado',
     tipDesplazaQueda: 'Al compartirse se queda en el mismo sitio.',
     tipDesplaza: (pts, dir) => `Al compartirse se desplaza ${pts} puntos hacia la ${dir}.`,
-    tipRtMedia: 'retuits de media',
+    tipRtMedia: 'mediana de retuits',
     tipIndiceMuestra: 'índice de la muestra completa',
     backRanking: '← Volver al ranking',
     medioLoading: 'Cargando tuits…',
@@ -192,7 +193,7 @@ const I18N = {
     metodoPosicionP1: 'Un tuit suma a la izquierda si beneficia a PSOE o Sumar, o si perjudica a PP o Vox. Suma a la derecha si beneficia a PP o Vox, o si perjudica a PSOE o Sumar. Los tuits políticos sin lado claro quedan fuera de este cálculo.',
     metodoPosicionP2: 'La posición del mapa es el porcentaje de tuits con lado claro que cae a la derecha. Cero significa que todos caen a la izquierda, cincuenta indica equilibrio y cien significa que todos caen a la derecha. El índice técnico del ranking expresa la misma relación en una escala de menos uno a más uno.',
     metodoLeerMapa: 'Cómo leer el mapa',
-    metodoLeerMapaP: 'El aro continuo representa lo publicado y el aro discontinuo, el subconjunto viral. La flecha parte de la posición publicada y termina en la viral. Por tanto, muestra hacia dónde se desplaza el contenido del medio cuando se comparte más. La altura indica qué porcentaje de todos los tuits de cada serie tiene lado claro. El selector temporal permite ver la serie completa, la XV Legislatura o cada año natural, pero no altera el corte global de inclusión.',
+    metodoLeerMapaP: 'El filtro de retuits permite mostrar todos los tuits, solo los que alcanzan 100 RT o más, o comparar ambos subconjuntos. El aro continuo representa todos los tuits y el discontinuo, los de 100 RT o más. La flecha parte de la posición de todos los tuits y termina en la del subconjunto de 100 RT. La altura es el número absoluto de tuits que benefician o perjudican a un partido. El tamaño de cada burbuja representa la mediana de retuits de esos mismos tuits mediante una escala de área con raíz cuadrada. El eje vertical se ajusta a la ventana seleccionada y mantiene una escala común entre 2018 y 2026 durante la animación.',
     metodoLimites: 'Límites',
     metodoLimitesItems: [
       'Es una muestra estratificada de hasta 100 tuits por medio y mes, no el historial completo de cada cuenta.',
@@ -220,7 +221,7 @@ const I18N = {
     compactM: 'M',
     decimalSep: ',',
     ariaPeriodo: 'Periodo de la serie histórica',
-    ariaSerie: 'Qué posiciones se dibujan',
+    ariaSerie: 'Filtro de retuits del mapa',
     ariaFiltro: 'Filtrar por tamaño de muestra',
     ariaSearch: 'Buscar medio',
     ariaMapDesc: 'Dispersión de medios por posición en la escala izquierda-derecha, con lo publicado y lo viral y una flecha hacia donde se desplaza cada medio al compartirse',
@@ -275,9 +276,9 @@ const I18N = {
     mapaTitle: 'Bias map: what gets published vs what gets shared',
     mapaPeriodoAll: 'Full series',
     mapaPeriodoXV: 'XV Legislature',
-    mapaSerieAmbas: 'Both positions',
-    mapaSeriePub: 'Published only',
-    mapaSerieViral: 'Viral only',
+    mapaSerieAmbas: 'Compare all and 100+ RT',
+    mapaSeriePub: 'All tweets',
+    mapaSerieViral: '100+ RT',
     mapaPlay: '▶ Evolution 2018 to 2026',
     mapaPause: (year) => `⏸ Pause · ${year}`,
     ariaPlay: 'Play or pause the yearly evolution of the map',
@@ -285,11 +286,11 @@ const I18N = {
     mapaFiltro0: 'All outlets',
     mapaFiltro15: 'With sample of 15 or more',
     mapaFiltro30: 'With sample of 30 or more',
-    mapaHint: 'Each outlet is a dot. Horizontally, its position on the <strong>left → right</strong> scale: 0 at the left edge means all its tweets with a clear side go left, 100 at the right means all go right, and 50 is half and half. Color follows Spanish convention: <span class="rojo">red</span> for left, <span class="azul">blue</span> for right, and gray for center. Height is the percentage of all tweets in the series with a clear side. Dot size is average retweets. The <strong>period selector</strong> shows the full series, the XV Legislature, or one year. Each window uses <strong>up to 100 Latest tweets per outlet per month</strong>: <strong>Published</strong> is all those tweets and <strong>Viral</strong> is the subset with at least 100 retweets. In <strong>both positions</strong> mode, the solid ring is published, the dashed ring is viral, and the arrow goes from the published point to the viral one. Hover to see numbers and click to open its tweets.',
+    mapaHint: 'Each outlet is a dot. Horizontally, 0 means all tweets with a clear side go left, 100 means all go right, and 50 is evenly split. Color follows Spanish convention: <span class="rojo">red</span> for left, <span class="azul">blue</span> for right, and gray for center. Height is the <strong>number of classified tweets that benefit or harm a party</strong>. Size represents the <strong>median retweets of those same tweets</strong>. The retweet filter shows all tweets, only tweets with 100+ RT, or compares both subsets. The vertical scale adapts to the selected period and remains fixed during the yearly animation. Hover for figures and click to open the tweets.',
     axisLeft: '◀ all to the left',
     axisMid: '% of tweets with clear side going right',
     axisRight: 'all to the right ▶',
-    axisYTitle: (periodo) => `% of tweets with clear position · published vs viral · ${periodo}`,
+    axisYTitle: (periodo) => `Tweets that benefit or harm a party · ${periodo}`,
     zonaMuyIzq: 'far left',
     zonaIzq: 'left',
     zonaEq: 'balanced',
@@ -305,13 +306,14 @@ const I18N = {
     mapaPieDer: 'right',
     mapaPieCentro: 'center',
     mapaPieAroContinuo: 'Solid ring',
-    mapaPiePublicado: 'published',
+    mapaPiePublicado: 'all tweets',
     mapaPieAroDiscontinuo: 'dashed ring',
-    mapaPieLoViral: 'viral',
+    mapaPieLoViral: '100+ RT',
     mapaPieFlecha: 'Arrow',
     mapaPieFlechaDesc: 'from published position to viral: where the outlet shifts when shared',
     mapaPieAltura: 'Height',
-    mapaPieAlturaDesc: 'percentage of tweets in each series that clearly benefit or harm a party.',
+    mapaPieAlturaDesc: 'number of classified tweets that clearly benefit or harm a party.',
+    mapaPieTamDesc: 'median retweets among tweets with a clear side.',
     mapaPieCorte: 'Inclusion threshold',
     mapaPieCorteDesc: 'more than 50 tweets taking sides in the full sample.',
     mapaPieFiltroN: (n) => `Only outlets with ${n} or more tweets with clear side in each series are drawn.`,
@@ -328,20 +330,20 @@ const I18N = {
     viral: 'viral',
     izquierda: 'left',
     derecha: 'right',
-    tipPublicado: 'Published',
-    tipViral: 'Viral',
+    tipPublicado: 'All tweets',
+    tipViral: '100+ RT',
     tipSinLado: 'no tweets with clear side',
     tipClaros: 'clear of',
     tipPoliticos: 'political tweets',
     tipMuestraCorta: 'short sample',
-    tipPctSerie: '% of series with clear side',
+    tipPctSerie: 'tweets with clear side',
     tipDe: 'of',
     tipTuits: 'tweets',
     tipADerecha: '% to the right',
     tipSinLadoPct: '% neutral',
     tipDesplazaQueda: 'Stays in the same place when shared.',
     tipDesplaza: (pts, dir) => `Shifts ${pts} points toward the ${dir} when shared.`,
-    tipRtMedia: 'average retweets',
+    tipRtMedia: 'median retweets',
     tipIndiceMuestra: 'full sample index',
     backRanking: '← Back to ranking',
     medioLoading: 'Loading tweets…',
@@ -406,7 +408,7 @@ const I18N = {
     metodoPosicionP1: 'A tweet counts as left if it benefits PSOE or Sumar, or if it harms PP or Vox. It counts as right if it benefits PP or Vox, or if it harms PSOE or Sumar. Political tweets without a clear side are excluded from this calculation.',
     metodoPosicionP2: 'The map position is the percentage of tweets with a clear side that fall to the right. Zero means all fall to the left, fifty indicates balance, and one hundred means all fall to the right. The technical index in the ranking expresses the same relationship on a scale from minus one to plus one.',
     metodoLeerMapa: 'How to read the map',
-    metodoLeerMapaP: 'The solid ring represents published and the dashed ring represents the viral subset. The arrow starts at the published position and ends at the viral position. Thus, it shows where the outlet\'s content shifts when shared more. Height indicates what percentage of all tweets in each series has a clear side. The time selector shows the full series, the XV Legislature, or each calendar year, but does not alter the global inclusion threshold.',
+    metodoLeerMapaP: 'The retweet filter shows all tweets, only those reaching 100 RT or more, or compares both subsets. The solid ring represents all tweets and the dashed ring represents those with 100+ RT. The arrow starts at the all tweets position and ends at the 100+ RT position. Height is the absolute number of tweets that benefit or harm a party. Bubble size represents the median retweets of those same tweets through a square root area scale. The vertical axis adapts to the selected window and keeps a common scale from 2018 to 2026 during the animation.',
     metodoLimites: 'Limitations',
     metodoLimitesItems: [
       'It is a stratified sample of up to 100 tweets per outlet per month, not the complete history of each account.',
@@ -436,7 +438,7 @@ const I18N = {
     compactM: 'M',
     decimalSep: '.',
     ariaPeriodo: 'Period of the historical series',
-    ariaSerie: 'Which positions to draw',
+    ariaSerie: 'Map retweet filter',
     ariaFiltro: 'Filter by sample size',
     ariaSearch: 'Search outlet',
     ariaMapDesc: 'Media scatter by left-right position, with published and viral positions and an arrow showing where each outlet shifts when shared',
@@ -959,12 +961,25 @@ const periodoTxt = () => ({
   2018: '2018', 2019: '2019', 2020: '2020', 2021: '2021', 2022: '2022',
   2023: '2023', 2024: '2024', 2025: '2025', 2026: '2026'
 });
-const RADIO = v => Math.max(9, 0.85 * Math.sqrt(Math.max(v, 120)));
-const RADIO_VIRAL = 0.84;
-const YTICKS = [0, 20, 40, 60, 80, 100];
+const RADIO = v => Math.min(24, Math.max(6, 0.75 * Math.sqrt(Math.max(0, Number(v) || 0))));
 const volumen = d => d.politicos != null ? `${nf(d.politicos)} ${t('tipPoliticos')}` : `${nf(d.juicios)} ${t('tweetsConLectura')}`;
-const porcentajeConLado = d => d && d.tuits ? 100 * (d.con_lado || 0) / d.tuits : 0;
 const nombreSerie = s => s === 'publicado' ? t('publicado') : t('viral');
+
+function maxYMapa() {
+  const claves = MAPA_ANOS.includes(mapaPeriodo) ? MAPA_ANOS : [mapaPeriodo];
+  const series = mapaSerie === 'ambas' ? ['publicado', 'viral'] : [mapaSerie];
+  let maximo = 1;
+  for (const clave of claves) {
+    const bloque = POL.periodos && POL.periodos[clave];
+    for (const medio of (bloque && bloque.medios) || []) {
+      for (const serie of series) maximo = Math.max(maximo, Number((medio[serie] || {}).con_lado) || 0);
+    }
+  }
+  const potencia = 10 ** Math.floor(Math.log10(maximo));
+  const base = maximo / potencia;
+  const escalones = [1, 1.25, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
+  return (escalones.find(v => v >= base) || 10) * potencia;
+}
 
 function filasMapa() {
   const metas = new Map(INDEX.medios.map(m => [m.handle.toLowerCase(), m]));
@@ -976,12 +991,12 @@ function filasMapa() {
     const pub = r.publicado, vir = r.viral;
     const okPub = !!pub && pub.posicion != null && pub.con_lado >= mapaFiltro;
     const okVir = !!vir && vir.posicion != null && vir.con_lado >= mapaFiltro;
-    const nodoPub = { m, serie: 'publicado', p: pub ? pub.posicion : 0, y: porcentajeConLado(pub), d: pub, o: vir };
-    const nodoVir = { m, serie: 'viral', p: vir ? vir.posicion : 0, y: porcentajeConLado(vir), d: vir, o: pub };
+    const nodoPub = { m, serie: 'publicado', p: pub ? pub.posicion : 0, y: pub ? pub.con_lado : 0, d: pub, o: vir };
+    const nodoVir = { m, serie: 'viral', p: vir ? vir.posicion : 0, y: vir ? vir.con_lado : 0, d: vir, o: pub };
     if (mapaSerie === 'ambas') {
       if (!okPub || !okVir) continue;
       nodos.push(nodoPub, nodoVir);
-      parejas.push({ m, p1: pub.posicion, y1: porcentajeConLado(pub), p2: vir.posicion, y2: porcentajeConLado(vir), pub, vir });
+      parejas.push({ m, p1: pub.posicion, y1: pub.con_lado, p2: vir.posicion, y2: vir.con_lado, pub, vir });
     } else if (mapaSerie === 'publicado' ? okPub : okVir) {
       nodos.push(mapaSerie === 'publicado' ? nodoPub : nodoVir);
     }
@@ -1012,10 +1027,11 @@ function renderMapa() {
   const fueraCorte = totalUniverso - total;
 
   const W = 1000, H = 620, M = { t: 46, r: 54, b: 66, l: 82 };
-  const lista = YTICKS;
+  const yMax = maxYMapa();
+  const lista = Array.from({ length: 6 }, (_, i) => yMax * i / 5);
   const px = v => M.l + v / 100 * (W - M.l - M.r);
   const PAD = 32;
-  const py = v => H - M.b - Math.max(0, Math.min(100, v)) / 100 * (H - M.t - M.b - PAD);
+  const py = v => H - M.b - Math.max(0, Math.min(yMax, v)) / yMax * (H - M.t - M.b - PAD);
   const mitad = px(50);
 
   const ZONAS = [
@@ -1033,7 +1049,7 @@ function renderMapa() {
   });
   lista.forEach(tick => {
     g += `<line x1="${M.l}" x2="${W - M.r}" y1="${py(tick).toFixed(1)}" y2="${py(tick).toFixed(1)}"></line>`;
-    g += `<text x="${M.l - 11}" y="${(py(tick) + 4).toFixed(1)}" text-anchor="end">${nf(tick)} %</text>`;
+    g += `<text x="${M.l - 11}" y="${(py(tick) + 4).toFixed(1)}" text-anchor="end">${nf(tick)}</text>`;
   });
   const EJEX = [[0, t('ticDerechaN', 0)], [20, t('ticDerechaN', 2)], [40, t('ticDerechaN', 4)], [50, t('ticMitad')],
                 [60, t('ticDerechaN', 6)], [80, t('ticDerechaN', 8)], [100, t('ticDerechaN', 10)]];
@@ -1051,7 +1067,7 @@ function renderMapa() {
 
   const flechas = parejas.map(f => {
     const x1 = px(f.p1), y1 = py(f.y1), x2 = px(f.p2), y2 = py(f.y2);
-    const r1 = RADIO(f.m.rt_media), r2 = RADIO(f.m.rt_media) * RADIO_VIRAL;
+    const r1 = RADIO(f.pub.rt_mediana), r2 = RADIO(f.vir.rt_mediana);
     const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy);
     if (L < r1 + r2 + 30) return '';
     const ux = dx / L, uy = dy / L;
@@ -1068,13 +1084,13 @@ function renderMapa() {
     </g>`;
   }).join('');
 
-  const orden = nodos.slice().sort((a, b) => RADIO(b.m.rt_media) - RADIO(a.m.rt_media));
+  const orden = nodos.slice().sort((a, b) => RADIO(b.d.rt_mediana) - RADIO(a.d.rt_mediana));
   const burbujas = orden.map((n, i) => {
-    const r = RADIO(n.m.rt_media) * (n.serie === 'viral' ? RADIO_VIRAL : 1);
+    const r = RADIO(n.d.rt_mediana);
     const cx = px(n.p), cy = py(n.y);
     const d = (r * 1.74).toFixed(1), off = (-r * 0.87).toFixed(1);
     return `<g class="burbuja burbuja-${n.serie} lado-${ladoDe(n.p)}" data-h="${esc(n.m.handle)}"
-        data-serie="${n.serie}" data-posicion="${n.p.toFixed(1)}" data-i="${i}" transform="translate(${cx.toFixed(1)},${cy.toFixed(1)})">
+        data-serie="${n.serie}" data-posicion="${n.p.toFixed(1)}" data-y="${n.y}" data-rt-mediana="${n.d.rt_mediana}" data-y-max="${yMax}" data-i="${i}" transform="translate(${cx.toFixed(1)},${cy.toFixed(1)})">
       <circle class="aro${n.serie === 'viral' ? ' dis' : ''}" r="${r.toFixed(1)}" stroke="${colorDe(n.p)}"></circle>
       <image href="${esc(n.m.logo)}" x="${off}" y="${off}" width="${d}" height="${d}"></image>
     </g>`;
@@ -1134,7 +1150,7 @@ function renderMapa() {
   const bola = v => `<span class="bola" style="width:${(2 * RADIO(v)).toFixed(0)}px;height:${(2 * RADIO(v)).toFixed(0)}px"></span> ${nf(v)} RT`;
   const notaFiltro = mapaFiltro ? t('mapaPieFiltroN', nf(mapaFiltro)) : t('mapaPieFiltro0');
   $('#mapa-pie').innerHTML = `
-    <div class="blq"><strong>${t('mapaPieTam')}</strong> ${bola(200)} ${bola(500)} ${bola(1000)}</div>
+    <div class="blq"><strong>${t('mapaPieTam')}</strong> ${t('mapaPieTamDesc')} ${bola(5)} ${bola(100)} ${bola(500)}</div>
     <div class="blq"><strong>${t('mapaPieAro')}</strong> <span class="aro" style="border-color:var(--map-izq)"></span> ${t('mapaPieIzq')}
       <span class="aro" style="border-color:var(--map-der);margin-left:10px"></span> ${t('mapaPieDer')}
       <span class="aro" style="border-color:var(--map-neu);margin-left:10px"></span> ${t('mapaPieCentro')}</div>
@@ -1153,7 +1169,7 @@ function tipMapa(n, ev) {
   const pub = n.serie === 'publicado' ? n.d : n.o;
   const vir = n.serie === 'viral' ? n.d : n.o;
   const linea = (dat, etq) => dat && dat.posicion != null
-    ? `<div class="tv"><b>${etq}</b>: ${decsep(dat.posicion)} ${t('tipADerecha')}${dat.con_lado < 15 ? ' (' + t('tipMuestraCorta') + ')' : ''} · ${decsep(porcentajeConLado(dat))} ${t('tipPctSerie')} · ${nf(dat.con_lado)} ${t('tipDe')} ${nf(dat.tuits)} ${t('tipTuits')}</div>`
+    ? `<div class="tv"><b>${etq}</b>: ${decsep(dat.posicion)} ${t('tipADerecha')}${dat.con_lado < 15 ? ' (' + t('tipMuestraCorta') + ')' : ''} · ${nf(dat.con_lado)} ${t('tipPctSerie')} · ${decsep(dat.rt_mediana)} RT ${t('tipRtMedia')}</div>`
     : '';
   let desplaz = '';
   if (pub && vir && pub.posicion != null && vir.posicion != null && vir.con_lado >= 5) {
@@ -1169,7 +1185,7 @@ function tipMapa(n, ev) {
   tip.innerHTML = `<div class="tt">${esc(m.nombre)}</div>
     <div class="tv frase">${esc(frase)}</div>
     ${linea(pub, t('tipPublicado'))}${linea(vir, t('tipViral'))}${desplaz}
-    <div class="tv tm">${esc(m.handle)} · ${nf(m.rt_media)} ${t('tipRtMedia')} · ${t('tipIndiceMuestra')} ${m.indice > 0 ? '+' : m.indice < 0 ? '−' : ''}${Math.abs(m.indice).toFixed(2)}</div>`;
+    <div class="tv tm">${esc(m.handle)} · ${t('tipIndiceMuestra')} ${m.indice > 0 ? '+' : m.indice < 0 ? '−' : ''}${Math.abs(m.indice).toFixed(2)}</div>`;
   tip.hidden = false;
   const r = wrap.getBoundingClientRect();
   let x = ev.clientX - r.left + 16, y = ev.clientY - r.top + 14;

@@ -178,8 +178,8 @@ td.c-dec{min-width:200px}
 #mapa .burbuja:hover .aro,.burbuja.is-foco .aro{stroke-width:4}
 /* la flecha de lo publicado a lo viral: se dibuja debajo de las burbujas */
 #mapa .flechas{pointer-events:none}
-#mapa .flecha .rastro{fill:none;stroke-width:2.2;stroke-linecap:round;opacity:.85}
-#mapa .flecha .punta{stroke:none;opacity:.9}
+#mapa .flecha .rastro{fill:none;stroke-width:1.4;stroke-linecap:round;opacity:.55}
+#mapa .flecha .punta{stroke:none;opacity:.6}
 #mapa .grid line{stroke:var(--grid-line);stroke-width:1}
 #mapa .grid line.mitad{stroke:var(--grid-mitad);stroke-width:1.6}
 #mapa text{font-size:11.5px;fill:var(--muted);font-family:inherit}

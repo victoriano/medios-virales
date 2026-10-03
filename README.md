@@ -1,8 +1,8 @@
 # Medios virales: qué partido beneficia cada medio
 
-Análisis de los **20.404 tuits con más de 100 retuits** publicados por los medios generalistas españoles entre el **19 de septiembre de 2025 y el 19 de septiembre de 2026**, clasificados uno a uno por el partido al que afectan y en qué dirección.
+Análisis de la **posición política de los medios generalistas españoles**, medida sobre sus tuits y publicada en **https://medios.victoriano.me**.
 
-El resultado se puede explorar en **https://medios.victoriano.me**.
+La primera serie es el censo de los **21.489 tuits con más de 100 retuits** publicados entre el **19 de septiembre de 2025 y el 19 de septiembre de 2026**, clasificados uno a uno por el partido al que afectan y en qué dirección.
 
 ## Qué hay aquí
 
@@ -16,6 +16,22 @@ El resultado se puede explorar en **https://medios.victoriano.me**.
 | `data/cambios_v5.csv` | La pasada definitiva: partido y dirección antes y después, con la confianza y el motivo de cada cambio. |
 | `data/raw/` | La descarga original de Apify, los ficheros JSON comprimidos tal cual salieron del actor. |
 | `scripts/` | Todo el proceso, desde la descarga hasta la web. |
+
+## Las dos series del proyecto
+
+Conviene no confundirlas: miden cosas distintas, se descargaron con proveedores distintos y no son intercambiables.
+
+| | Censo viral | Serie histórica |
+| --- | --- | --- |
+| Qué es | Todos los tuits con 100 retuits o más | Muestra de hasta 100 tuits por medio y mes |
+| Ventana | 19 sep 2025 a 19 sep 2026 | 2 may 2018 a 24 sep 2026 |
+| Filas | 21.489 | 602.906 |
+| Tuits políticos | 13.412 | 155.922 |
+| Descarga | Apify | twitterapi.io |
+
+La primera es un **censo**: está todo lo que superó el corte. La segunda es una **muestra**: sirve para comparar medios entre sí y a lo largo del tiempo, pero **no es el total publicado**. El mapa de nueve años dibuja esa muestra, no un censo de nueve años.
+
+El detalle de cada método, con los recuentos verificados en su fichero de origen y el coste real de cada etapa, está en [`docs/metodo.md`](docs/metodo.md). El estado del trabajo, los defectos conocidos y lo que queda pendiente, en [`docs/estado.md`](docs/estado.md).
 
 ## Resultados principales
 
@@ -83,11 +99,21 @@ Para cada medio se cuentan los tuits con partido concreto y dirección clara. Su
 
 Estática y sin dependencias: se abre sin construir nada. Arranca en el **mapa** y cada medio se carga solo cuando se pulsa (y se adelanta al pasar el ratón por encima). Dentro de cada medio se puede ordenar por retuits, me gusta, vistas o fecha, filtrar por partido, por dirección o por texto, y se pagina de 25 en 25.
 
-La pestaña **Mapa** dibuja cada medio como una burbuja con su logo: en horizontal su posición en la escala izquierda → derecha, en vertical cuántos tuits con lectura política tiene (escala de raíz cuadrada, para que los pequeños no queden aplastados) y el tamaño según sus retuits medios. Es la vista por defecto. El eje va de izquierda a derecha — el cero cae en el borde izquierdo del mapa y el cien en el derecho, porque `posicion = 100 × derecha / (izquierda + derecha)` es el campo que trae `site/data/polarizacion.json` — y los colores siguen la convención española, **rojo para los medios de izquierda y azul para los de derecha** (con gris para el centro). Los logos salen de la foto de perfil de cada medio en X, descargados, recortados en círculo y guardados en WebP por `scripts/fetch_logos.py`.
+La pestaña **Mapa** dibuja cada medio como una burbuja con su logo:
 
-El control de series del mapa tiene tres posiciones: **solo lo publicado** (la muestra de seis días al mes clasificada), **solo lo viral** (el censo de tuits con más de 100 retuits, el mismo que ordena el ranking) y **las dos posiciones**, que es la vista por defecto. En el modo de las dos, cada medio lleva dos puntos — aro continuo el publicado, discontinuo el viral — y una **flecha que va del punto publicado al viral**, es decir, hacia dónde se desplaza el medio cuando su contenido se comparte. Solo se dibujan los medios con muestra suficiente en las dos series (200 o más tuits con lado claro en cada una, 20 de los 55), porque una flecha que saliera de una muestra corta mentiría sobre el desplazamiento.
+- **Eje horizontal:** porcentaje de los tuits con lado claro que va a la derecha. El cero cae en el borde izquierdo (todos a la izquierda), el cien en el derecho (todos a la derecha) y el cincuenta indica equilibrio.
+- **Eje vertical:** número absoluto de tuits con lado claro (los que benefician o perjudican a un partido). La escala se adapta al periodo seleccionado y se mantiene estable durante la animación anual.
+- **Tamaño:** mediana de retuits de esos mismos tuits. El radio es proporcional a la raíz cuadrada y tiene límites visuales para que los pequeños no queden aplastados ni los grandes tapen el mapa.
 
-- `site/data/polarizacion.json`: lo publicado y lo viral de cada medio, con la posición de las dos series, la brecha entre ellas y el desglose por meses.
+Los colores siguen la convención española: **rojo para los medios de izquierda y azul para los de derecha** (gris en el centro). Los logos salen de la foto de perfil de cada medio en X, descargados, recortados en círculo y guardados en WebP por `scripts/fetch_logos.py`.
+
+El control de retuits tiene tres posiciones: **Todos los tuits**, **100 RT o más** y **Comparar ambos**. En el modo de comparación cada medio lleva dos puntos — **aro continuo** para todos los tuits, **aro discontinuo** para los de 100 RT o más — y una **flecha** que va de uno a otro, mostrando hacia dónde se desplaza el medio cuando su contenido se comparte.
+
+El selector de periodo permite ver la **serie completa**, la **XV Legislatura** o cada **año** por separado, con animación de la evolución 2018–2026.
+
+El corte global de inclusión exige **más de 50 tuits con lado claro** en toda la muestra para que un medio entre en el mapa y el ranking. Un filtro visual adicional (muestra de 5, 15 o 30) oculta los medios con menos tuits en la serie visible, sin quitarlos del universo comparado.
+
+- `site/data/polarizacion.json`: todos los tuits y el subconjunto de 100 RT o más de cada medio, con la posición de las dos series, la brecha entre ellas y el desglose por meses.
 - `site/data/index.json`: agregados por medio y totales globales.
 - `site/data/medios/<medio>.json`: todos los tuits de ese medio.
 - `site/data/top.json`: los 300 tuits virales con lectura política.
@@ -127,6 +153,15 @@ uv run --with playwright python3 scripts/check_site.py
 
 Los scripts están pensados para reanudarse: lo que ya está descargado o clasificado no se repite. `analyze_v2.py` y `validar_v2.py` comparan contra la versión anterior del censo, que no está en el repositorio; hay que pasarle la copia vieja con `--viejo`.
 
+**Importante: la serie histórica no vive en este repositorio.** El mapa de nueve años se construye leyendo dos corpus que están en el taller, fuera de git, y que ocupan unos 4,8 GB:
+
+```text
+~/typesafe-lab/politica/medios/polarizacion/historico_io_100_may2018_aug2023/clasificado_contextual.jsonl
+~/typesafe-lab/politica/medios/polarizacion/legislatura_xv_io_100/clasificado_contextual.jsonl
+```
+
+`scripts/build_legislatura_data.py` los lee por ruta absoluta. Si trabajas en otra máquina, o esos ficheros no están, o el script falla. Cómo se descargaron y clasificaron está en [`docs/metodo.md`](docs/metodo.md).
+
 ## Despliegue
 
 El sitio está publicado en **https://medios.victoriano.me** como estático desde el VPS, con Caddy y certificado automático, a partir de un clon de este repositorio en `/srv/medios`. Para actualizarlo después de un `push`:
@@ -155,6 +190,17 @@ medios.victoriano.me {
 - Mide **qué se comparte**, no la línea editorial de la redacción. Un medio puede salir centrado o escorado según qué le viraliza ese mes.
 - Los retuits son la métrica pública del tuit, no el alcance real.
 - Las fechas de la ventana son 19 sep 2025 a 19 sep 2026. La primera y la última son parciales por los extremos del rango.
+
+## Documentación
+
+Si vas a continuar este trabajo, o si eres un agente que llega sin contexto, empieza por aquí:
+
+| Documento | Para qué sirve |
+| --- | --- |
+| [`AGENTS.md`](AGENTS.md) | Punto de entrada para continuar. Qué es, dónde vive cada cosa, las reglas que no son negociables, los defectos conocidos, las trampas y lo que está pendiente. |
+| [`docs/metodo.md`](docs/metodo.md) | Cómo se construyó cada dato, con los recuentos verificados y el coste real de cada etapa. |
+| [`docs/estado.md`](docs/estado.md) | Estado actual, defectos conocidos, decisiones abiertas y pendientes por orden de prioridad. |
+| [`docs/plans/2026-09-27-validacion-clasificador.md`](docs/plans/2026-09-27-validacion-clasificador.md) | El plan completo de la siguiente pieza de trabajo, escrito y sin empezar. |
 
 ## Datos y licencia
 

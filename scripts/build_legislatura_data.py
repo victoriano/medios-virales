@@ -12,6 +12,7 @@ import json
 import os
 import re
 import shutil
+import statistics
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -74,6 +75,7 @@ def metric(rows, viral=False):
     selected = [row for row in rows if not viral or row["retweets"] >= 100]
     political = [row for row in selected if row.get("politica")]
     counts = Counter(side(row) for row in political)
+    clear_rows = [row for row in political if side(row) in {"izq", "der"}]
     clear = counts["izq"] + counts["der"]
     index = None if not clear else round((counts["der"] - counts["izq"]) / clear, 6)
     position = None if not clear else round(100 * counts["der"] / clear, 6)
@@ -82,6 +84,7 @@ def metric(rows, viral=False):
         "izq": counts["izq"],
         "der": counts["der"],
         "con_lado": clear,
+        "rt_mediana": round(statistics.median(row["retweets"] for row in clear_rows), 1) if clear_rows else 0,
         "posicion": position,
         "tuits": len(selected),
         "porcentaje_con_lado": round(100 * clear / len(selected), 6) if selected else 0,
@@ -251,7 +254,7 @@ def main():
         "generado": datetime.now(timezone.utc).date().isoformat(),
         "fuente": "TwitterAPI.io: hasta 100 tuits Latest por medio y mes, estratificados temporalmente.",
         "viral_definicion": "Subconjunto de la misma muestra con al menos 100 retuits.",
-        "metrica": "índice = (derecha − izquierda) / (derecha + izquierda); posicion = 100 × derecha / (izquierda + derecha); Y = con_lado / todos los tuits de la serie",
+        "metrica": "índice = (derecha − izquierda) / (derecha + izquierda); posicion = 100 × derecha / (izquierda + derecha); Y = número de tuits con lado claro; tamaño = mediana de retuits de esos tuits",
         "periodos": periods,
         "medios": periods["todo"]["medios"],
     }
