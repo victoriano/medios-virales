@@ -17,7 +17,7 @@ const I18N = {
     ogTitle: 'Sesgo y viralidad de los medios españoles',
     ogDescription: '602.906 tuits de 66 medios entre 2018 y 2026, clasificados por partido y dirección, con comparación entre lo publicado y lo viral.',
     kicker: 'Un análisis de datos',
-    headline: '¿Cuál es el sesgo de los medios españoles en <span class="t-mix">redes</span>?',
+    headline: '¿Cuál es el <span class="t-mix">sesgo</span> de los medios españoles en redes?',
     byline: 'Por <strong>Victoriano Izquierdo</strong> · Datos de X, 2018 a 2026',
 
     lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> tuits muestreados de <strong id="n-medios">${nMedios}</strong> medios entre 2018 y 2026, clasificados según a qué partido benefician o perjudican. Cada punto es un medio: pulsa para leer sus tuits.`,
@@ -243,7 +243,7 @@ const I18N = {
     ogTitle: 'Bias and virality of Spanish media',
     ogDescription: '602,906 tweets from 66 outlets between 2018 and 2026, classified by party and direction, comparing published and viral.',
     kicker: 'A data analysis',
-    headline: 'What is the bias of Spanish media on <span class="t-mix">social media</span>?',
+    headline: 'What is the <span class="t-mix">bias</span> of Spanish media on social media?',
     byline: 'By <strong>Victoriano Izquierdo</strong> · X data, 2018 to 2026',
 
     lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> sampled tweets from <strong id="n-medios">${nMedios}</strong> outlets between 2018 and 2026, classified by which party they help or hurt. Each dot is an outlet: click it to read its tweets.`,
