@@ -17,13 +17,10 @@ const I18N = {
     ogTitle: 'Sesgo y viralidad de los medios españoles',
     ogDescription: '602.906 tuits de 66 medios entre 2018 y 2026, clasificados por partido y dirección, con comparación entre lo publicado y lo viral.',
     kicker: 'Un análisis de datos',
-    heroTag: 'Sesgo y viralidad de los medios españoles',
-    headline: '¿Hacia qué lado se inclinan los medios españoles cuando se <span class="t-mix">comparten</span>?',
+    headline: '¿Cuál es el sesgo de los medios españoles en <span class="t-mix">redes</span>?',
     byline: 'Por <strong>Victoriano Izquierdo</strong> · Datos de X, 2018 a 2026',
-    espectroIzq: 'Izquierda',
-    espectroMitad: 'Mitad y mitad',
-    espectroDer: 'Derecha',
-    lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> tuits muestreados de <strong id="n-medios">${nMedios}</strong> medios generalistas españoles entre 2018 y 2026, clasificados uno a uno para comparar lo que publican con lo que se hace viral.`,
+
+    lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> tuits muestreados de <strong id="n-medios">${nMedios}</strong> medios entre 2018 y 2026, clasificados según a qué partido benefician o perjudican. Cada punto es un medio: pulsa para leer sus tuits.`,
     tabMapa: 'Mapa',
     tabRanking: 'Ranking',
     tabTop: 'Los más virales',
@@ -63,7 +60,10 @@ const I18N = {
     beneficia: 'beneficia',
     perjudica: 'perjudica',
     neutro: 'neutro',
-    mapaTitle: 'Mapa de sesgo: lo que se publica y lo que se comparte',
+    mapaTitle: 'Cómo leer el mapa',
+    ctlPeriodo: 'Periodo',
+    ctlTuits: 'Tuits',
+    ctlMuestra: 'Medios',
     mapaPeriodoAll: 'Serie completa',
     mapaPeriodoXV: 'XV Legislatura',
     mapaSerieAmbas: 'Comparar todos y 100 RT o más',
@@ -135,7 +135,7 @@ const I18N = {
     tipDesplaza: (pts, dir) => `Al compartirse se desplaza ${pts} puntos hacia la ${dir}.`,
     tipRtMedia: 'mediana de retuits',
     tipIndiceMuestra: 'índice de la muestra completa',
-    backRanking: '← Volver al ranking',
+    backRanking: '← Volver',
     medioLoading: 'Cargando tuits…',
     medioError: 'No se han podido cargar sus tuits. Prueba otra vez.',
     medioMuestreados: 'tuits muestreados',
@@ -243,13 +243,10 @@ const I18N = {
     ogTitle: 'Bias and virality of Spanish media',
     ogDescription: '602,906 tweets from 66 outlets between 2018 and 2026, classified by party and direction, comparing published and viral.',
     kicker: 'A data analysis',
-    heroTag: 'Bias and virality of Spanish media',
-    headline: 'Which way do Spanish media lean when they get <span class="t-mix">shared</span>?',
+    headline: 'What is the bias of Spanish media on <span class="t-mix">social media</span>?',
     byline: 'By <strong>Victoriano Izquierdo</strong> · X data, 2018 to 2026',
-    espectroIzq: 'Left',
-    espectroMitad: 'Half and half',
-    espectroDer: 'Right',
-    lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> sampled tweets from <strong id="n-medios">${nMedios}</strong> Spanish general-interest media between 2018 and 2026, classified one by one to compare what they publish with what goes viral.`,
+
+    lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> sampled tweets from <strong id="n-medios">${nMedios}</strong> outlets between 2018 and 2026, classified by which party they help or hurt. Each dot is an outlet: click it to read its tweets.`,
     tabMapa: 'Map',
     tabRanking: 'Ranking',
     tabTop: 'Most viral',
@@ -289,7 +286,10 @@ const I18N = {
     beneficia: 'benefits',
     perjudica: 'harms',
     neutro: 'neutral',
-    mapaTitle: 'Bias map: what gets published vs what gets shared',
+    mapaTitle: 'How to read the map',
+    ctlPeriodo: 'Period',
+    ctlTuits: 'Tweets',
+    ctlMuestra: 'Outlets',
     mapaPeriodoAll: 'Full series',
     mapaPeriodoXV: 'XV Legislature',
     mapaSerieAmbas: 'Compare all and 100+ RT',
@@ -361,7 +361,7 @@ const I18N = {
     tipDesplaza: (pts, dir) => `Shifts ${pts} points toward the ${dir} when shared.`,
     tipRtMedia: 'median retweets',
     tipIndiceMuestra: 'full sample index',
-    backRanking: '← Back to ranking',
+    backRanking: '← Back',
     medioLoading: 'Loading tweets…',
     medioError: 'Could not load its tweets. Please try again.',
     medioMuestreados: 'sampled tweets',
@@ -543,7 +543,9 @@ function prefetchMedio(meta) {
 const VIEWS = ['ranking', 'mapa', 'medio', 'top', 'metodo'];
 const PERIODOS_VALIDOS = ['todo', 'xv', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'];
 let currentView = 'mapa';
+let vistaPrevia = 'mapa';
 function show(v) {
+  if (v === 'medio' && currentView !== 'medio') vistaPrevia = currentView;
   currentView = v;
   document.body.dataset.view = v;
   if (v !== 'mapa') pararEvolucion();
@@ -777,7 +779,7 @@ function pintarMedio(meta) {
     </div>
     <div id="mlist" class="cards-list"></div>
     <button class="more" id="mmore" hidden>${t('loadMoreN', 0)}</button>`;
-  $('#back').onclick = () => { location.hash = '#/ranking'; };
+  $('#back').onclick = () => { location.hash = vistaPrevia === 'ranking' ? '#/ranking' : '#/mapa' + hashPeriodo(); };
   $('#mt').value = mText;
   $('#ms').value = mSort;
   $('#mt').addEventListener('input', e => { mText = e.target.value; mShown = PAGE; pintarListaMedio(); });
@@ -1370,5 +1372,8 @@ function watchSystemTheme() {
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
   if (h === 'top') { await cargarTop(); }
   route();
+  // en pantallas estrechas el mapa se desplaza en horizontal: se abre centrado en el equilibrio
+  const cw = $('.chart-wrap');
+  if (cw && cw.scrollWidth > cw.clientWidth) cw.scrollLeft = (cw.scrollWidth - cw.clientWidth) / 2;
 })();
 window.addEventListener('hashchange', () => { if (location.hash.includes('top')) cargarTop(); });

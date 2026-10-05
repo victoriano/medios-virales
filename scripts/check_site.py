@@ -442,7 +442,7 @@ async def main():
             await pg.select_option("#mapa-serie", valor)
             await pg.wait_for_timeout(600)
             await pg.screenshot(path=f"{MAPOUT}/{i}-{nombre}.png", full_page=True)
-            await pg.locator("#view-mapa .panel").screenshot(path=f"{MAPOUT}/panel-{nombre}.png")
+            await pg.locator("#view-mapa .panel-mapa").screenshot(path=f"{MAPOUT}/panel-{nombre}.png")
         estados = {}
         for valor in ["publicado", "viral", "ambas"]:
             await pg.select_option("#mapa-serie", valor)

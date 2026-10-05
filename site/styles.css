@@ -77,35 +77,19 @@ a:hover{background:var(--hl);color:var(--hl-ink)}
   font:600 12px/1 var(--f-mono);letter-spacing:.04em;cursor:pointer;box-shadow:var(--sombra-s)}
 .pref-select:hover{background:var(--hl);color:var(--hl-ink)}
 
-/* ---------- portada ---------- */
-.hero{padding:clamp(40px,7vw,96px) 0 clamp(28px,4vw,48px)}
-.hero .kicker{margin-bottom:22px}
-.hero .kicker span{display:inline-block;background:var(--ink);color:var(--bg);padding:5px 9px;border-radius:2px}
-h1{margin:0 0 26px;font-family:var(--f-display);font-weight:900;font-size:clamp(42px,8.2vw,104px);line-height:.98;
-  letter-spacing:-.022em;word-spacing:.04em;font-variation-settings:"opsz" 144,"SOFT" 50;max-width:13ch;text-wrap:balance}
-/* la palabra que se comparte, partida en rojo y azul */
+/* ---------- portada ----------
+   Compacta a propósito: quien abre el enlace tiene que ver el mapa sin hacer scroll. */
+.hero{padding:clamp(22px,3vw,36px) 0 clamp(18px,2.4vw,26px)}
+h1{margin:0 0 10px;font-family:var(--f-display);font-weight:900;font-size:clamp(28px,4.2vw,52px);line-height:1.02;
+  letter-spacing:-.022em;word-spacing:.04em;font-variation-settings:"opsz" 144,"SOFT" 50;max-width:24ch;text-wrap:balance}
+/* la palabra clave, partida en rojo y azul como el eje del mapa */
 h1 .t-mix{background:linear-gradient(90deg,var(--map-izq) 0 50%,var(--map-der) 50% 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
-.lede{margin:0 0 28px;max-width:38ch;color:var(--lede-fg);font:400 clamp(19px,2.1vw,25px)/1.45 var(--f-serif)}
+.lede{margin:0;max-width:92ch;color:var(--lede-fg);font:400 clamp(16px,1.5vw,18.5px)/1.5 var(--f-serif)}
 .lede strong{font-weight:600;background:linear-gradient(transparent 58%,var(--hl) 58%,var(--hl) 92%,transparent 92%);color:inherit;padding:0 2px}
 :root[data-theme="dark"] .lede strong{background:linear-gradient(transparent 58%,rgba(255,210,63,.38) 58%,rgba(255,210,63,.38) 92%,transparent 92%)}
-.byline{margin:0;font:500 12.5px/1.6 var(--f-mono);letter-spacing:.04em;color:var(--muted);text-transform:uppercase}
+.byline{margin:28px 0 0;font:500 12px/1.6 var(--f-mono);letter-spacing:.04em;color:var(--muted);text-transform:uppercase}
 .byline strong{color:var(--ink);font-weight:600}
-
-/* fuera del mapa la portada se queda en una cabecera compacta */
-body[data-view]:not([data-view="mapa"]) .hero{padding:28px 0 26px}
-body[data-view]:not([data-view="mapa"]) .hero h1{font-size:clamp(28px,3.6vw,40px);max-width:none;margin-bottom:0}
-body[data-view]:not([data-view="mapa"]) .hero .kicker{margin-bottom:12px}
-body[data-view]:not([data-view="mapa"]) :is(.lede,.byline,.espectro){display:none}
-
-/* la franja de espectro de la portada: el eje del mapa en miniatura */
-.espectro{margin:clamp(30px,5vw,56px) 0 0;max-width:720px}
-.espectro-barra{position:relative;height:22px;border:1.5px solid var(--rule);border-radius:2px;
-  background:linear-gradient(90deg,var(--map-izq) 0%,var(--zona-miz) 34%,var(--zona-eq) 50%,var(--zona-mdr) 66%,var(--map-der) 100%);
-  box-shadow:var(--sombra)}
-.espectro-barra::after{content:"";position:absolute;left:50%;top:-8px;bottom:-8px;width:1.5px;background:var(--rule)}
-.espectro-pie{display:flex;justify-content:space-between;margin-top:12px;font:500 11.5px/1.2 var(--f-mono);
-  letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 
 /* ---------- navegación ---------- */
 .nav{position:sticky;top:0;z-index:20;background:var(--bg);border-top:1.5px solid var(--rule);border-bottom:1.5px solid var(--rule)}
@@ -113,11 +97,13 @@ body[data-view]:not([data-view="mapa"]) :is(.lede,.byline,.espectro){display:non
 .tabs::-webkit-scrollbar{display:none}
 .tab{appearance:none;border:0;border-right:1.5px solid var(--rule);background:transparent;padding:15px 22px;
   font:600 13px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink);cursor:pointer;white-space:nowrap}
+.nav .tab{padding:12px 20px}
 .tab:first-child{border-left:1.5px solid var(--rule)}
 .tab:hover{background:var(--hl);color:var(--hl-ink)}
 .tab.is-on{background:var(--ink);color:var(--bg)}
 
-main.wrap{padding-top:clamp(36px,5vw,64px);padding-bottom:80px}
+main.wrap{padding-top:clamp(28px,4vw,48px);padding-bottom:80px}
+body[data-view="mapa"] main.wrap,body:not([data-view]) main.wrap{padding-top:20px}
 .view[hidden]{display:none}
 
 /* ---------- cifras de cabecera del ranking ---------- */
@@ -240,8 +226,15 @@ td.c-dec{min-width:210px}
 
 /* ---------- mapa de dispersión ---------- */
 #view-mapa .panel-head{margin-bottom:0}
-#view-mapa .panel-controles{margin:0 0 18px;padding:12px;background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra)}
-#view-mapa .panel-controles select{box-shadow:none}
+#view-mapa .panel-controles{margin:0 0 14px;gap:10px 22px;align-items:flex-end}
+.ctl{display:flex;flex-direction:column;gap:5px}
+.ctl-k{font:600 10.5px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ctl-v{display:flex;gap:8px;align-items:center}
+.panel-mapa .mapa-play{padding:11px 12px}
+/* debajo del mapa va la explicación, para quien quiera leerla */
+.historia{margin-top:56px;padding-top:32px;border-top:3px solid var(--rule)}
+.historia h2{font-size:clamp(24px,3vw,34px)}
+.historia .hint{font-size:18.5px}
 .chart-wrap{position:relative;overflow-x:auto;margin:0 0 4px;padding:18px 18px 8px;background:var(--panel);
   border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra)}
 #mapa{display:block;width:100%;min-width:780px;height:auto;overflow:visible}
@@ -273,8 +266,8 @@ td.c-dec{min-width:210px}
 #mapa .etiquetas text{font-size:11px;font-weight:600;fill:var(--map-label);letter-spacing:.12em;text-transform:uppercase;
   paint-order:stroke;stroke:var(--map-label-stroke);stroke-width:4px;stroke-linejoin:round}
 /* la frase que resume el mapa, como titular de la gráfica */
-.resumen{margin:0 0 22px;padding:0 0 0 18px;border-left:6px solid var(--hl);
-  font:400 clamp(19px,2vw,23px)/1.45 var(--f-serif);color:var(--ink);max-width:60ch}
+.resumen{margin:0 0 14px;padding:2px 0 2px 14px;border-left:5px solid var(--hl);
+  font:400 clamp(16px,1.6vw,19px)/1.45 var(--f-serif);color:var(--ink);max-width:60ch}
 .resumen:empty{display:none}
 .tip{position:absolute;z-index:6;pointer-events:none;background:var(--tip-bg);color:var(--tip-fg);border-radius:var(--radio);
   border:1.5px solid var(--rule);padding:11px 13px;font:400 13px/1.45 var(--f-sans);box-shadow:var(--sombra);
@@ -321,7 +314,10 @@ td.c-dec{min-width:210px}
 }
 @media (max-width:640px){
   .wrap{padding:0 16px}
-  .mast .kicker{display:none}
+  .panel-mapa .panel-controles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .panel-mapa .ctl:first-child{grid-column:1/-1}
+  .panel-mapa .ctl select{width:100%}
+  .panel-mapa .ctl-v select{width:auto;flex:1}
   .tab{padding:13px 15px;font-size:12px}
   .lede{font-size:19px}
   .hint{font-size:17px}
@@ -331,6 +327,7 @@ td.c-dec{min-width:210px}
   .card:nth-child(even){padding-right:0}
   .cards-list{grid-template-columns:1fr}
   .chart-wrap{padding:12px 10px 6px;margin:0 -4px 4px}
+  #mapa{min-width:640px}
   input[type=search]{min-width:0;width:100%}
   table.rank{min-width:0}
   table.rank .c-izq,table.rank .c-der,table.rank .c-rt{display:none}
@@ -344,3 +341,4 @@ td.c-dec{min-width:210px}
 @media (prefers-reduced-motion: reduce){
   *{transition:none !important}
 }
+.prose .byline{font:500 12px/1.6 var(--f-mono);color:var(--muted)}
