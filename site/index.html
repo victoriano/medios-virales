@@ -26,44 +26,54 @@
 <title>Sesgo y viralidad de los medios españoles · victoriano.me</title>
 <meta name="description" content="Mapa histórico de 602.906 tuits de 66 medios españoles entre 2018 y 2026: posición de lo publicado frente a lo viral.">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#faf8f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#f5efe3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1a1613" media="(prefers-color-scheme: dark)">
 <meta property="og:title" content="Sesgo y viralidad de los medios españoles">
 <meta property="og:description" content="602.906 tuits de 66 medios entre 2018 y 2026, clasificados por partido y dirección, comparando lo publicado con lo viral.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=202609260900">
+<link rel="preload" href="fonts/fraunces-normal-400-900.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="fonts.css?v=202610051200">
+<link rel="stylesheet" href="styles.css?v=202610051330">
 </head>
 <body>
-<header class="top">
-  <div class="wrap">
-    <div class="top-bar">
-      <p class="kicker" data-i18n="kicker">victoriano.me · análisis</p>
-      <div class="prefs" role="group">
-        <label class="sr-only" for="lang-select" data-i18n="ariaLang">Idioma</label>
-        <select id="lang-select" class="pref-select" data-i18n-aria="ariaLang" aria-label="Idioma">
-          <option value="es">ES</option>
-          <option value="en">EN</option>
-        </select>
-        <label class="sr-only" for="theme-select" data-i18n="ariaTheme">Tema</label>
-        <select id="theme-select" class="pref-select" data-i18n-aria="ariaTheme" aria-label="Tema">
-          <option value="light" data-i18n="themeLight">Claro</option>
-          <option value="dark" data-i18n="themeDark">Oscuro</option>
-          <option value="system" data-i18n="themeSystem">Sistema</option>
-        </select>
-      </div>
+<header class="mast">
+  <div class="wrap mast-bar">
+    <a class="marca" href="https://victoriano.me">victoriano.me</a>
+    <div class="prefs" role="group">
+      <label class="sr-only" for="lang-select" data-i18n="ariaLang">Idioma</label>
+      <select id="lang-select" class="pref-select" data-i18n-aria="ariaLang" aria-label="Idioma">
+        <option value="es">ES</option>
+        <option value="en">EN</option>
+      </select>
+      <label class="sr-only" for="theme-select" data-i18n="ariaTheme">Tema</label>
+      <select id="theme-select" class="pref-select" data-i18n-aria="ariaTheme" aria-label="Tema">
+        <option value="light" data-i18n="themeLight">Claro</option>
+        <option value="dark" data-i18n="themeDark">Oscuro</option>
+        <option value="system" data-i18n="themeSystem">Sistema</option>
+      </select>
     </div>
-    <h1 data-i18n="headline">Sesgo y viralidad de los medios españoles</h1>
-    <p class="lede" id="lede"><strong id="n-virales">602.906</strong> tuits muestreados de <strong id="n-medios">66</strong> medios generalistas españoles entre 2018 y 2026, clasificados uno a uno para comparar lo que publican con lo que se hace viral.</p>
-    <nav class="tabs" role="tablist">
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1 data-i18n-html="headline">¿Cuál es el <span class="t-mix">sesgo</span> de los medios españoles en redes?</h1>
+    <p class="lede" id="lede"><strong id="n-virales">602.906</strong> tuits muestreados de <strong id="n-medios">66</strong> medios entre 2018 y 2026, clasificados según a qué partido benefician o perjudican. Cada punto es un medio: pulsa para leer sus tuits.</p>
+  </div>
+</section>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <div class="tabs" role="tablist">
       <button class="tab is-on" data-view="mapa" role="tab" data-i18n="tabMapa">Mapa</button>
       <button class="tab" data-view="ranking" role="tab" data-i18n="tabRanking">Ranking</button>
       <button class="tab" data-view="top" role="tab" data-i18n="tabTop">Los más virales</button>
       <button class="tab" data-view="metodo" role="tab" data-i18n="tabMetodo">Método</button>
-    </nav>
+    </div>
   </div>
-</header>
+</nav>
 
 <main class="wrap">
 
@@ -101,11 +111,9 @@
 
   <!-- ============ MAPA ============ -->
   <section id="view-mapa" class="view">
-    <div class="panel">
-      <div class="panel-head">
-        <h2 data-i18n="mapaTitle">Mapa de sesgo: lo que se publica y lo que se comparte</h2>
-        <div class="panel-controles">
-          <select id="mapa-periodo" data-i18n-aria="ariaPeriodo" aria-label="Periodo de la serie histórica">
+    <div class="panel panel-mapa">
+      <div class="panel-controles">
+        <div class="ctl"><span class="ctl-k" data-i18n="ctlPeriodo">Periodo</span><div class="ctl-v"><select id="mapa-periodo" data-i18n-aria="ariaPeriodo" aria-label="Periodo de la serie histórica">
             <option value="todo" selected data-i18n="mapaPeriodoAll">Serie completa</option>
             <option value="xv" data-i18n="mapaPeriodoXV">XV Legislatura</option>
             <option value="2018">2018</option>
@@ -118,23 +126,19 @@
             <option value="2025">2025</option>
             <option value="2026">2026</option>
           </select>
-          <button type="button" id="mapa-play" class="mapa-play" data-i18n-aria="ariaPlay" aria-label="Reproducir evolución anual">▶ Evolución 2018 a 2026</button>
-          <select id="mapa-serie" data-i18n-aria="ariaSerie" aria-label="Filtro de retuits del mapa">
+        <button type="button" id="mapa-play" class="mapa-play" data-i18n-aria="ariaPlay" aria-label="Reproducir evolución anual">▶ Evolución 2018 a 2026</button></div></div>
+        <label class="ctl"><span class="ctl-k" data-i18n="ctlTuits">Tuits</span><select id="mapa-serie" data-i18n-aria="ariaSerie" aria-label="Filtro de retuits del mapa">
             <option value="ambas" data-i18n="mapaSerieAmbas">Comparar todos y 100 RT o más</option>
             <option value="publicado" selected data-i18n="mapaSeriePub">Todos los tuits</option>
             <option value="viral" data-i18n="mapaSerieViral">100 RT o más</option>
-          </select>
-          <select id="mapa-filtro" data-i18n-aria="ariaFiltro" aria-label="Filtrar por tamaño de muestra">
+          </select></label>
+        <label class="ctl"><span class="ctl-k" data-i18n="ctlMuestra">Medios</span><select id="mapa-filtro" data-i18n-aria="ariaFiltro" aria-label="Filtrar por tamaño de muestra">
             <option value="5" selected data-i18n="mapaFiltro5">Con muestra de 5 o más</option>
             <option value="0" data-i18n="mapaFiltro0">Todos los medios</option>
             <option value="15" data-i18n="mapaFiltro15">Con muestra de 15 o más</option>
             <option value="30" data-i18n="mapaFiltro30">Con muestra de 30 o más</option>
-          </select>
-        </div>
+          </select></label>
       </div>
-      <p class="hint" data-i18n-html="mapaHint">
-        Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo significa que todos sus tuits con lado claro van a la izquierda, 100 que todos van a la derecha y 50 que se reparten por igual. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. La altura es el <strong>número de tuits clasificados que benefician o perjudican a un partido</strong>. El tamaño representa la <strong>mediana de retuits de esos mismos tuits</strong>. El filtro de retuits permite mostrar todos, solo los que tienen 100 RT o más, o comparar ambos subconjuntos. El eje vertical se ajusta al periodo y conserva una escala común durante la animación anual. Pasa el ratón para ver los números y pulsa para abrir sus tuits.
-      </p>
       <p class="resumen" id="mapa-resumen"></p>
       <div class="chart-wrap">
         <svg id="mapa" role="img" data-i18n-aria="ariaMapDesc" aria-label="Dispersión de medios por posición en la escala izquierda-derecha, con lo publicado y lo viral y una flecha hacia donde se desplaza cada medio al compartirse"></svg>
@@ -142,11 +146,18 @@
       </div>
       <div class="mapa-pie" id="mapa-pie"></div>
     </div>
+    <div class="panel prose historia">
+      <h2 data-i18n="mapaTitle">Cómo leer el mapa</h2>
+      <p class="hint" data-i18n-html="mapaHint">
+        Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo significa que todos sus tuits con lado claro van a la izquierda, 100 que todos van a la derecha y 50 que se reparten por igual. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. La altura es el <strong>número de tuits clasificados que benefician o perjudican a un partido</strong>. El tamaño representa la <strong>mediana de retuits de esos mismos tuits</strong>. El filtro de retuits permite mostrar todos, solo los que tienen 100 RT o más, o comparar ambos subconjuntos. El eje vertical se ajusta al periodo y conserva una escala común durante la animación anual. Pasa el ratón para ver los números y pulsa para abrir sus tuits.
+      </p>
+      <p class="byline" data-i18n-html="byline">Por <strong>Victoriano Izquierdo</strong> · Datos de X, 2018 a 2026</p>
+    </div>
   </section>
 
   <!-- ============ MEDIO ============ -->
   <section id="view-medio" class="view" hidden>
-    <button class="back" id="back" data-i18n="backRanking">← Volver al ranking</button>
+    <button class="back" id="back" data-i18n="backRanking">← Volver</button>
     <div class="panel" id="medio-panel"></div>
   </section>
 
@@ -202,10 +213,16 @@
   </section>
 </main>
 
-<footer class="wrap foot">
-  <p data-i18n="footerText">Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.</p>
+<footer class="foot">
+  <div class="wrap">
+    <p class="foot-firma" data-i18n="footFirma">Datos abiertos y método a la vista.</p>
+    <div>
+      <p class="foot-texto" data-i18n="footerText">Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.</p>
+      <p class="foot-links"><a href="https://github.com/victoriano/medios-virales" data-i18n="footCodigo">Código y datos</a><a href="#/metodo" data-i18n="footMetodo">Método</a><a href="https://victoriano.me" data-i18n="footAutor">victoriano.me</a></p>
+    </div>
+  </div>
 </footer>
 
-<script src="app.js?v=202609252106"></script>
+<script src="app.js?v=202610051930"></script>
 </body>
 </html>

@@ -16,9 +16,11 @@ const I18N = {
     description: 'Mapa histórico de 602.906 tuits de 66 medios españoles entre 2018 y 2026: posición de lo publicado frente a lo viral.',
     ogTitle: 'Sesgo y viralidad de los medios españoles',
     ogDescription: '602.906 tuits de 66 medios entre 2018 y 2026, clasificados por partido y dirección, con comparación entre lo publicado y lo viral.',
-    kicker: 'victoriano.me · análisis',
-    headline: 'Sesgo y viralidad de los medios españoles',
-    lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> tuits muestreados de <strong id="n-medios">${nMedios}</strong> medios generalistas españoles entre 2018 y 2026, clasificados uno a uno para comparar lo que publican con lo que se hace viral.`,
+    kicker: 'Un análisis de datos',
+    headline: '¿Cuál es el <span class="t-mix">sesgo</span> de los medios españoles en redes?',
+    byline: 'Por <strong>Victoriano Izquierdo</strong> · Datos de X, 2018 a 2026',
+
+    lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> tuits muestreados de <strong id="n-medios">${nMedios}</strong> medios entre 2018 y 2026, clasificados según a qué partido benefician o perjudican. Cada punto es un medio: pulsa para leer sus tuits.`,
     tabMapa: 'Mapa',
     tabRanking: 'Ranking',
     tabTop: 'Los más virales',
@@ -58,7 +60,10 @@ const I18N = {
     beneficia: 'beneficia',
     perjudica: 'perjudica',
     neutro: 'neutro',
-    mapaTitle: 'Mapa de sesgo: lo que se publica y lo que se comparte',
+    mapaTitle: 'Cómo leer el mapa',
+    ctlPeriodo: 'Periodo',
+    ctlTuits: 'Tuits',
+    ctlMuestra: 'Medios',
     mapaPeriodoAll: 'Serie completa',
     mapaPeriodoXV: 'XV Legislatura',
     mapaSerieAmbas: 'Comparar todos y 100 RT o más',
@@ -130,7 +135,7 @@ const I18N = {
     tipDesplaza: (pts, dir) => `Al compartirse se desplaza ${pts} puntos hacia la ${dir}.`,
     tipRtMedia: 'mediana de retuits',
     tipIndiceMuestra: 'índice de la muestra completa',
-    backRanking: '← Volver al ranking',
+    backRanking: '← Volver',
     medioLoading: 'Cargando tuits…',
     medioError: 'No se han podido cargar sus tuits. Prueba otra vez.',
     medioMuestreados: 'tuits muestreados',
@@ -207,6 +212,12 @@ const I18N = {
     metodoDatosScripts: 'Datos, scripts y este sitio:',
     metodoFuente: (fecha) => `Datos, scripts y este sitio: <a id="repo-link" href="${REPO}" target="_blank" rel="noopener">repositorio público en GitHub</a>. Muestra actualizada el ${fecha}.`,
     footerText: 'Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.',
+    footFirma: 'Datos abiertos y método a la vista.',
+    footCodigo: 'Código y datos',
+    footMetodo: 'Método',
+    footAutor: 'victoriano.me',
+    tweetRespuestas: 'respuestas',
+    tweetVistas: 'vistas',
     decimosTxtIzq: 'izq',
     decimosTxtDer: 'der',
     decimosSinLado: 'sin tuits con lado claro',
@@ -231,9 +242,11 @@ const I18N = {
     description: 'Historical map of 602,906 tweets from 66 Spanish media outlets between 2018 and 2026: published position vs viral position.',
     ogTitle: 'Bias and virality of Spanish media',
     ogDescription: '602,906 tweets from 66 outlets between 2018 and 2026, classified by party and direction, comparing published and viral.',
-    kicker: 'victoriano.me · analysis',
-    headline: 'Bias and virality of Spanish media',
-    lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> sampled tweets from <strong id="n-medios">${nMedios}</strong> Spanish general-interest media between 2018 and 2026, classified one by one to compare what they publish with what goes viral.`,
+    kicker: 'A data analysis',
+    headline: 'What is the <span class="t-mix">bias</span> of Spanish media on social media?',
+    byline: 'By <strong>Victoriano Izquierdo</strong> · X data, 2018 to 2026',
+
+    lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> sampled tweets from <strong id="n-medios">${nMedios}</strong> outlets between 2018 and 2026, classified by which party they help or hurt. Each dot is an outlet: click it to read its tweets.`,
     tabMapa: 'Map',
     tabRanking: 'Ranking',
     tabTop: 'Most viral',
@@ -273,7 +286,10 @@ const I18N = {
     beneficia: 'benefits',
     perjudica: 'harms',
     neutro: 'neutral',
-    mapaTitle: 'Bias map: what gets published vs what gets shared',
+    mapaTitle: 'How to read the map',
+    ctlPeriodo: 'Period',
+    ctlTuits: 'Tweets',
+    ctlMuestra: 'Outlets',
     mapaPeriodoAll: 'Full series',
     mapaPeriodoXV: 'XV Legislature',
     mapaSerieAmbas: 'Compare all and 100+ RT',
@@ -345,7 +361,7 @@ const I18N = {
     tipDesplaza: (pts, dir) => `Shifts ${pts} points toward the ${dir} when shared.`,
     tipRtMedia: 'median retweets',
     tipIndiceMuestra: 'full sample index',
-    backRanking: '← Back to ranking',
+    backRanking: '← Back',
     medioLoading: 'Loading tweets…',
     medioError: 'Could not load its tweets. Please try again.',
     medioMuestreados: 'sampled tweets',
@@ -422,6 +438,12 @@ const I18N = {
     metodoDatosScripts: 'Data, scripts and this site:',
     metodoFuente: (fecha) => `Data, scripts and this site: <a id="repo-link" href="${REPO}" target="_blank" rel="noopener">public repository on GitHub</a>. Sample updated on ${fecha}.`,
     footerText: 'Reproducible analysis on public X data. Made for review, not for judgment.',
+    footFirma: 'Open data, method in plain sight.',
+    footCodigo: 'Code and data',
+    footMetodo: 'Method',
+    footAutor: 'victoriano.me',
+    tweetRespuestas: 'replies',
+    tweetVistas: 'views',
     decimosTxtIzq: 'left',
     decimosTxtDer: 'right',
     decimosSinLado: 'no tweets with clear side',
@@ -521,8 +543,11 @@ function prefetchMedio(meta) {
 const VIEWS = ['ranking', 'mapa', 'medio', 'top', 'metodo'];
 const PERIODOS_VALIDOS = ['todo', 'xv', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'];
 let currentView = 'mapa';
+let vistaPrevia = 'mapa';
 function show(v) {
+  if (v === 'medio' && currentView !== 'medio') vistaPrevia = currentView;
   currentView = v;
+  document.body.dataset.view = v;
   if (v !== 'mapa') pararEvolucion();
   VIEWS.forEach(x => { $('#view-' + x).hidden = x !== v; });
   $$('.tab').forEach(el => el.classList.toggle('is-on', el.dataset.view === v));
@@ -736,7 +761,7 @@ function pintarMedio(meta) {
         <h2>${esc(meta.nombre)}</h2>
         <p class="sub">${esc(meta.handle)} · ${compact(meta.seguidores)} ${t('seguidores')} · ${nf(meta.muestreados || meta.virales)} ${t('medioMuestreados')} · ${nf(meta.virales)} ${t('medioVirales')}</p>
       </div>
-      <div><span class="idx-pill ${cls}" style="font-size:16px;padding:7px 14px">${txt}</span></div>
+      <div><span class="idx-pill ${cls}">${txt}</span></div>
     </div>
     <div class="kpis" id="mkpis"></div>
     <p class="foot-note" id="mkpinota" hidden></p>
@@ -754,7 +779,7 @@ function pintarMedio(meta) {
     </div>
     <div id="mlist" class="cards-list"></div>
     <button class="more" id="mmore" hidden>${t('loadMoreN', 0)}</button>`;
-  $('#back').onclick = () => { location.hash = '#/ranking'; };
+  $('#back').onclick = () => { location.hash = vistaPrevia === 'ranking' ? '#/ranking' : '#/mapa' + hashPeriodo(); };
   $('#mt').value = mText;
   $('#ms').value = mSort;
   $('#mt').addEventListener('input', e => { mText = e.target.value; mShown = PAGE; pintarListaMedio(); });
@@ -855,10 +880,10 @@ function tarjeta(tw, handle, nombre) {
     </div>
     <p>${esc(tw.t)}</p>
     <div class="metrics">
-      <span>🔁 <b>${nf(tw.rt)}</b> ${t('tweetRetuits')}</span>
-      <span>❤️ <b>${nf(tw.lk)}</b> ${t('tweetMeGusta')}</span>
-      <span>💬 <b>${nf(tw.rp)}</b></span>
-      <span>👁️ <b>${compact(tw.vw)}</b></span>
+      <span><b>${nf(tw.rt)}</b> ${t('tweetRetuits')}</span>
+      <span><b>${nf(tw.lk)}</b> ${t('tweetMeGusta')}</span>
+      <span><b>${nf(tw.rp)}</b> ${t('tweetRespuestas')}</span>
+      <span><b>${compact(tw.vw)}</b> ${t('tweetVistas')}</span>
       <span><a href="${esc(tw.u)}" target="_blank" rel="noopener">${t('tweetVerX')}</a></span>
     </div>
   </article>`;
@@ -1265,7 +1290,7 @@ function applyTheme(pref) {
   document.documentElement.setAttribute('data-theme-pref', pref);
   // Ajusta theme-color efectivo: el navegador usa el que coincide con prefers-color-scheme,
   // pero en preferencia forzada añadimos un <meta name="theme-color"> sin media que gana.
-  const forced = pref === 'system' ? null : (resolved === 'dark' ? '#1a1613' : '#faf8f5');
+  const forced = pref === 'system' ? null : (resolved === 'dark' ? '#1a1613' : '#f5efe3');
   let m = document.querySelector('meta[name="theme-color"][data-forced]');
   if (forced) {
     if (!m) {
@@ -1347,5 +1372,8 @@ function watchSystemTheme() {
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
   if (h === 'top') { await cargarTop(); }
   route();
+  // en pantallas estrechas el mapa se desplaza en horizontal: se abre centrado en el equilibrio
+  const cw = $('.chart-wrap');
+  if (cw && cw.scrollWidth > cw.clientWidth) cw.scrollLeft = (cw.scrollWidth - cw.clientWidth) / 2;
 })();
 window.addEventListener('hashchange', () => { if (location.hash.includes('top')) cargarTop(); });
