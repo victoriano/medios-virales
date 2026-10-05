@@ -1,0 +1,301 @@
+{
+  "creado": "2026-10-05T09:57:52Z",
+  "semilla": 20261005,
+  "referencia": "~/typesafe-lab/politica/medios/polarizacion/validacion_vnext/referencia_20261005",
+  "referencia_sha256_ids": "a9ac58ec3d5bfcc5cf578c2635171caa33d27f2c8d655c317d9f94d281976047",
+  "ids_sin_texto_en_el_universo": 0,
+  "desarrollo": {
+    "casos": 120,
+    "cuotas": [
+      {
+        "partido": "PSOE",
+        "direccion": "beneficia",
+        "disponibles": 16104,
+        "elegidos": 10,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 4,
+          "2020-2022": 3,
+          "2023-2026": 3
+        }
+      },
+      {
+        "partido": "PSOE",
+        "direccion": "perjudica",
+        "disponibles": 51693,
+        "elegidos": 10,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 4,
+          "2020-2022": 3,
+          "2023-2026": 3
+        }
+      },
+      {
+        "partido": "PSOE",
+        "direccion": "neutro",
+        "disponibles": 12149,
+        "elegidos": 10,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 4,
+          "2020-2022": 3,
+          "2023-2026": 3
+        }
+      },
+      {
+        "partido": "PP",
+        "direccion": "beneficia",
+        "disponibles": 6505,
+        "elegidos": 10,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 4,
+          "2020-2022": 3,
+          "2023-2026": 3
+        }
+      },
+      {
+        "partido": "PP",
+        "direccion": "perjudica",
+        "disponibles": 19852,
+        "elegidos": 10,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 4,
+          "2020-2022": 3,
+          "2023-2026": 3
+        }
+      },
+      {
+        "partido": "PP",
+        "direccion": "neutro",
+        "disponibles": 3540,
+        "elegidos": 10,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 4,
+          "2020-2022": 3,
+          "2023-2026": 3
+        }
+      },
+      {
+        "partido": "Vox",
+        "direccion": "beneficia",
+        "disponibles": 2241,
+        "elegidos": 10,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 4,
+          "2020-2022": 3,
+          "2023-2026": 3
+        }
+      },
+      {
+        "partido": "Vox",
+        "direccion": "perjudica",
+        "disponibles": 4628,
+        "elegidos": 10,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 4,
+          "2020-2022": 3,
+          "2023-2026": 3
+        }
+      },
+      {
+        "partido": "Vox",
+        "direccion": "neutro",
+        "disponibles": 813,
+        "elegidos": 10,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 4,
+          "2020-2022": 3,
+          "2023-2026": 3
+        }
+      },
+      {
+        "partido": "Sumar",
+        "direccion": "beneficia",
+        "disponibles": 2231,
+        "elegidos": 10,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 4,
+          "2020-2022": 3,
+          "2023-2026": 3
+        }
+      },
+      {
+        "partido": "Sumar",
+        "direccion": "perjudica",
+        "disponibles": 2645,
+        "elegidos": 10,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 4,
+          "2020-2022": 3,
+          "2023-2026": 3
+        }
+      },
+      {
+        "partido": "Sumar",
+        "direccion": "neutro",
+        "disponibles": 1017,
+        "elegidos": 10,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 4,
+          "2020-2022": 3,
+          "2023-2026": 3
+        }
+      }
+    ],
+    "fichero": "development.jsonl",
+    "referencia_fuera_del_repo": "~/typesafe-lab/politica/medios/polarizacion/validacion_vnext/muestras_20261005/desarrollo_referencia.jsonl"
+  },
+  "regresion": {
+    "candidatos_control": 24,
+    "cuotas": [
+      {
+        "partido": "PSOE",
+        "direccion": "beneficia",
+        "disponibles": 16094,
+        "elegidos": 2,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 1,
+          "2020-2022": 1
+        }
+      },
+      {
+        "partido": "PSOE",
+        "direccion": "perjudica",
+        "disponibles": 51683,
+        "elegidos": 2,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 1,
+          "2020-2022": 1
+        }
+      },
+      {
+        "partido": "PSOE",
+        "direccion": "neutro",
+        "disponibles": 12139,
+        "elegidos": 2,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 1,
+          "2020-2022": 1
+        }
+      },
+      {
+        "partido": "PP",
+        "direccion": "beneficia",
+        "disponibles": 6495,
+        "elegidos": 2,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 1,
+          "2020-2022": 1
+        }
+      },
+      {
+        "partido": "PP",
+        "direccion": "perjudica",
+        "disponibles": 19842,
+        "elegidos": 2,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 1,
+          "2020-2022": 1
+        }
+      },
+      {
+        "partido": "PP",
+        "direccion": "neutro",
+        "disponibles": 3530,
+        "elegidos": 2,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 1,
+          "2020-2022": 1
+        }
+      },
+      {
+        "partido": "Vox",
+        "direccion": "beneficia",
+        "disponibles": 2231,
+        "elegidos": 2,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 1,
+          "2020-2022": 1
+        }
+      },
+      {
+        "partido": "Vox",
+        "direccion": "perjudica",
+        "disponibles": 4618,
+        "elegidos": 2,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 1,
+          "2020-2022": 1
+        }
+      },
+      {
+        "partido": "Vox",
+        "direccion": "neutro",
+        "disponibles": 803,
+        "elegidos": 2,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 1,
+          "2020-2022": 1
+        }
+      },
+      {
+        "partido": "Sumar",
+        "direccion": "beneficia",
+        "disponibles": 2221,
+        "elegidos": 2,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 1,
+          "2020-2022": 1
+        }
+      },
+      {
+        "partido": "Sumar",
+        "direccion": "perjudica",
+        "disponibles": 2635,
+        "elegidos": 2,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 1,
+          "2020-2022": 1
+        }
+      },
+      {
+        "partido": "Sumar",
+        "direccion": "neutro",
+        "disponibles": 1007,
+        "elegidos": 2,
+        "cuota_incompleta": false,
+        "epocas": {
+          "2018-2019": 1,
+          "2020-2022": 1
+        }
+      }
+    ],
+    "fichero": "regression_candidatos.jsonl",
+    "correcciones_auditoria_antigua": "pendientes: el fichero de la auditoría de 200 no está en el VPS"
+  },
+  "exclusiones": "El desarrollo y los controles excluyen las IDs del examen y cualquier tuit con la misma huella de texto (sin URLs, espacios ni mayúsculas). La contaminación por acontecimiento se revisa a mano.",
+  "hallazgos": [
+    "La referencia etiqueta como Sumar 1.953 tuits políticos de 2018 a 2021 y 685 de 2022, antes de que Sumar existiera como partido (Errejón, Carmena, Garzón, Oltra). Es el defecto de la fecha ausente: conocimiento de hoy aplicado hacia atrás. Las celdas de Sumar del desarrollo incluyen 4 casos de 2018 y 2019 que lo ilustran."
+  ]
+}

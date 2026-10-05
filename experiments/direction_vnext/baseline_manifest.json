@@ -1,0 +1,208 @@
+{
+  "creado": "2026-10-05T09:51:28Z",
+  "copia": "/home/victoriano/typesafe-lab/politica/medios/polarizacion/validacion_vnext/referencia_20261005",
+  "commit_produccion": "6ec417e8d1acac52c06d5286107ed1590440525a",
+  "commit_desarrollo": "6ec417e8d1acac52c06d5286107ed1590440525a",
+  "fuentes": {
+    "historico_contextual": {
+      "origen": "~/typesafe-lab/politica/medios/polarizacion/historico_io_100_may2018_aug2023/clasificado_contextual.jsonl",
+      "tipo": "fichero",
+      "ficheros": 1,
+      "bytes": 90027216,
+      "sha256_arbol": "972af5793b6acff2fa2a422871866b7e0a9c1d1ef6a5343e50c29f8b5aa40b0f",
+      "detalle": [
+        {
+          "ruta": "clasificado_contextual.jsonl",
+          "bytes": 90027216,
+          "sha256": "396f55eb4443a6387df15a11ef61c90a7ab04922c75993f8af81ba78ed7a2ae2"
+        }
+      ]
+    },
+    "xv_contextual": {
+      "origen": "~/typesafe-lab/politica/medios/polarizacion/legislatura_xv_io_100/clasificado_contextual.jsonl",
+      "tipo": "fichero",
+      "ficheros": 1,
+      "bytes": 51714812,
+      "sha256_arbol": "76cefe572d8fc2e79b8e99444111038dc7d2e06375850ee0b051099db8382a8e",
+      "detalle": [
+        {
+          "ruta": "clasificado_contextual.jsonl",
+          "bytes": 51714812,
+          "sha256": "77cfdfa269c8657f4c673d7581991190a2db8aa83d39769fc8ad1e8d7c9d7511"
+        }
+      ]
+    },
+    "historico_base": {
+      "origen": "~/typesafe-lab/politica/medios/polarizacion/historico_io_100_may2018_aug2023/clasificado.jsonl",
+      "tipo": "fichero",
+      "ficheros": 1,
+      "bytes": 89872511,
+      "sha256_arbol": "cb3bc1375212b17e91c3624e457bcf343c8f1a5ba767c97543d16859a142494e",
+      "detalle": [
+        {
+          "ruta": "clasificado.jsonl",
+          "bytes": 89872511,
+          "sha256": "9de86164733e5e7b45460698d1a90b1a6b8fe6bea958336762573086f2cc5fcc"
+        }
+      ]
+    },
+    "xv_base": {
+      "origen": "~/typesafe-lab/politica/medios/polarizacion/legislatura_xv_io_100/clasificado.jsonl",
+      "tipo": "fichero",
+      "ficheros": 1,
+      "bytes": 51269561,
+      "sha256_arbol": "79a6ac3b6fa2d24f0d0ebd05929ccae7e9137081849944948307efb566e5b2b7",
+      "detalle": [
+        {
+          "ruta": "clasificado.jsonl",
+          "bytes": 51269561,
+          "sha256": "d533d46342b94e3a92aa23c43504f833aa6ddcea84cdc7759cfccfe0c5b567a0"
+        }
+      ]
+    },
+    "capa_contextual": {
+      "origen": "~/typesafe-lab/politica/medios/polarizacion/reclasificacion_contextual_psoe_20260925",
+      "tipo": "directorio",
+      "ficheros": 5,
+      "bytes": 3891958,
+      "sha256_arbol": "49e3ae57d3a69fd6da6e0c2fc7f70144592deab01d3cbf83ada1e712ebaf4bdf",
+      "detalle": [
+        {
+          "ruta": "aplicacion_resumen.json",
+          "bytes": 2755,
+          "sha256": "0427c1dc5955094aec30691d8d4af5b17cfada5778e1fa6c905132e83d98a3e6"
+        },
+        {
+          "ruta": "candidatos.jsonl",
+          "bytes": 2041660,
+          "sha256": "e27dd664e3c4af34ccbec107a4fc6a8b28208549511a91d826b709f8ec32aabe"
+        },
+        {
+          "ruta": "errores.jsonl",
+          "bytes": 8562,
+          "sha256": "1f5247897078ddd61aa6b0d6031eb4b0854484274b3460a5fa47a73faa20f7b6"
+        },
+        {
+          "ruta": "estado.json",
+          "bytes": 191,
+          "sha256": "1b59f2f4793f60334e06c3b932309b1d85fcdcd2f9ab78c9908745f581eef6b3"
+        },
+        {
+          "ruta": "resultados.jsonl",
+          "bytes": 1838790,
+          "sha256": "0c992a9bec88bffb288a2d626fb21ca6f2a9a5af820af74ce6fed0668db53415"
+        }
+      ]
+    },
+    "script_clasificador": {
+      "origen": "~/typesafe-lab/politica/medios/polarizacion/clasificar_legislatura_xv.py",
+      "tipo": "fichero",
+      "ficheros": 1,
+      "bytes": 10347,
+      "sha256_arbol": "1e27a4f7e737f77fb499d44c3162786e85be1696159ad2a87475cf66e9e8bef2",
+      "detalle": [
+        {
+          "ruta": "clasificar_legislatura_xv.py",
+          "bytes": 10347,
+          "sha256": "f512fd6139d79be89572edcab2359dad4b772231bd8ef08353d2e8300d1afbde"
+        }
+      ]
+    },
+    "script_reclasificar_contexto": {
+      "origen": "~/typesafe-lab/politica/medios/polarizacion/reclasificar_contexto_psoe.py",
+      "tipo": "fichero",
+      "ficheros": 1,
+      "bytes": 18539,
+      "sha256_arbol": "6b85256486a185e59dffbe56e67a4fe46ab0d3123d8f39c816662204b76d779d",
+      "detalle": [
+        {
+          "ruta": "reclasificar_contexto_psoe.py",
+          "bytes": 18539,
+          "sha256": "b80a28e773a7fe5f3afc48cca6b0d554fd4be4d60d3a31fefc5fb7fc83f3673b"
+        }
+      ]
+    },
+    "script_aplicar_contexto": {
+      "origen": "~/typesafe-lab/politica/medios/polarizacion/aplicar_reclasificacion_contextual.py",
+      "tipo": "fichero",
+      "ficheros": 1,
+      "bytes": 6134,
+      "sha256_arbol": "b89d2b8d01c539df60c7cfcc9e7456ebcf1e51fc3575996ff926b0558d404315",
+      "detalle": [
+        {
+          "ruta": "aplicar_reclasificacion_contextual.py",
+          "bytes": 6134,
+          "sha256": "cb6ee56f0f3e7db3ee57620b1f463c09fca0a55cc16d12bc049456124ba41e58"
+        }
+      ]
+    },
+    "miembros": {
+      "origen": "~/typesafe-lab/politica/medios/members.json",
+      "tipo": "fichero",
+      "ficheros": 1,
+      "bytes": 17303,
+      "sha256_arbol": "eae7569b0faeade0ebc27998e223394d07f918edf4efaa1027b9308fcb23b7cb",
+      "detalle": [
+        {
+          "ruta": "members.json",
+          "bytes": 17303,
+          "sha256": "a224bf4cd2a3d090b200b7a107a941fb7b36b2dca14fedf627746dcfbdb90ebc"
+        }
+      ]
+    },
+    "agregador": {
+      "origen": "~/Code/medios-virales/scripts/build_legislatura_data.py",
+      "tipo": "fichero",
+      "ficheros": 1,
+      "bytes": 17356,
+      "sha256_arbol": "ab8955d12f29f4190c1945ba5f833df8a61e1ed5856dbf499c8101b7bb9e208f",
+      "detalle": [
+        {
+          "ruta": "build_legislatura_data.py",
+          "bytes": 17356,
+          "sha256": "95d92692dee20858701dd839a33818d8ba10d213888a65029b77488e769d2860"
+        }
+      ]
+    },
+    "sitio_produccion": {
+      "origen": "/srv/medios/site/data",
+      "tipo": "directorio",
+      "ficheros": 627,
+      "bytes": 195031313,
+      "sha256_arbol": "10efb6c1359be201fdc98cb2017d58e345897a81189ad8cd1b49f8060e7cb7a5",
+      "detalle": null
+    },
+    "sitio_desarrollo": {
+      "origen": "~/Code/medios-virales/site/data",
+      "tipo": "directorio",
+      "ficheros": 627,
+      "bytes": 195031313,
+      "sha256_arbol": "10efb6c1359be201fdc98cb2017d58e345897a81189ad8cd1b49f8060e7cb7a5",
+      "detalle": null
+    }
+  },
+  "notas": [
+    "Referencia A: etiquetas publicadas con la capa contextual, sin nuevas llamadas.",
+    "conf 0,9/0,7/0,5 son etiquetas alta/media/baja, no probabilidades calibradas.",
+    "Los JSONL no guardan la versión del modelo ni el motivo; quedan como desconocidos."
+  ],
+  "universo": {
+    "por_fuente": {
+      "historico_contextual": {
+        "filas": 384021,
+        "politicos": 99356,
+        "con_revision_contextual": 447,
+        "ids_repetidos_dentro": 0
+      },
+      "xv_contextual": {
+        "filas": 218885,
+        "politicos": 56566,
+        "con_revision_contextual": 1296,
+        "ids_repetidos_dentro": 0
+      }
+    },
+    "ids_repetidos_entre_fuentes": 0,
+    "ids_unicos": 602906,
+    "sha256_ids_ordenados": "a9ac58ec3d5bfcc5cf578c2635171caa33d27f2c8d655c317d9f94d281976047"
+  }
+}
