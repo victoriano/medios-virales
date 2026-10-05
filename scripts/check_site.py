@@ -281,11 +281,11 @@ async def main():
             return {izq: cs.getPropertyValue('--map-izq').trim(), der: cs.getPropertyValue('--map-der').trim(),
                     neu: cs.getPropertyValue('--map-neu').trim()}; }""")
         print("variables de color del mapa:", col)
-        if col["izq"].lower() != "#c53030" or col["der"].lower() != "#1f6fb2" or col["neu"].lower() != "#8a94a6":
+        if col["izq"].lower() != "#d93a3a" or col["der"].lower() != "#1f5fc9" or col["neu"].lower() != "#8e887d":
             errores.append(f"[check] las variables de color del mapa no son rojo/azul/gris: {col}")
 
         # rgb equivalente a cada variable, para comprobar el color ya pintado en el SVG
-        RGB = {"izq": "rgb(197, 48, 48)", "der": "rgb(31, 111, 178)", "neu": "rgb(138, 148, 166)"}
+        RGB = {"izq": "rgb(217, 58, 58)", "der": "rgb(31, 95, 201)", "neu": "rgb(142, 136, 125)"}
         lado = lambda p: "izq" if p < 45 else "der" if p > 55 else "neu"
 
         async def leer_mapa():
@@ -656,7 +656,7 @@ async def main():
         await pg.wait_for_timeout(500)
         html_lang = await pg.evaluate("document.documentElement.lang")
         title_es = await pg.title()
-        tab_es = await pg.locator('.tab[data-view="mapa"]').inner_text()
+        tab_es = (await pg.locator('.tab[data-view="mapa"]').text_content()).strip()
         print(f"idioma inicial: html.lang={html_lang!r} · titulo={title_es!r} · tab={tab_es!r}")
         if html_lang != "es" or "Sesgo y viralidad" not in title_es or tab_es != "Mapa":
             errores.append(f"[check] idioma inicial no es español: lang={html_lang!r} title={title_es!r}")
@@ -664,7 +664,7 @@ async def main():
         await pg.wait_for_timeout(500)
         html_lang_en = await pg.evaluate("document.documentElement.lang")
         title_en = await pg.title()
-        tab_en = await pg.locator('.tab[data-view="mapa"]').inner_text()
+        tab_en = (await pg.locator('.tab[data-view="mapa"]').text_content()).strip()
         desc_en = await pg.eval_on_selector('meta[name="description"]', "el => el.content")
         stored_lang = await pg.evaluate("localStorage.getItem('mv-lang')")
         print(f"tras cambiar a EN: lang={html_lang_en!r} · titulo={title_en!r} · tab={tab_en!r} · storage={stored_lang!r}")
@@ -694,7 +694,8 @@ async def main():
         await pg.goto(URL + "#/mapa", wait_until="networkidle")
         await pg.select_option("#mapa-serie", "ambas")
         await pg.wait_for_timeout(1000)
-        pie_en = " ".join((await pg.locator("#mapa-pie").inner_text()).split())
+        # textContent y no innerText: los rótulos van en mayúsculas por CSS
+        pie_en = " ".join((await pg.locator("#mapa-pie").text_content()).split())
         tits_en = await pg.eval_on_selector_all("#mapa .grid text.tit", "e => e.map(x => x.textContent)")
         resumen_en = (await pg.locator("#mapa-resumen").inner_text()).strip()
         print("pie del mapa en EN:", pie_en[:180])
@@ -775,7 +776,7 @@ async def main():
             errores.append(f"[check] preferencia oscura no aplicada/persistida: {theme_dark}/{pref_dark}/{stored_theme}")
         if bg_dark == bg_light:
             errores.append(f"[check] el fondo no cambia en modo oscuro: {bg_dark} == {bg_light}")
-        if not (map_izq_dark and map_der_dark and map_izq_dark != "#c53030"):
+        if not (map_izq_dark and map_der_dark and map_izq_dark != "#d93a3a"):
             errores.append(f"[check] el mapa oscuro no ajusta rojo: {map_izq_dark}")
         if "dark" not in cs_dark:
             errores.append(f"[check] color-scheme no cambia a dark: {cs_dark!r}")

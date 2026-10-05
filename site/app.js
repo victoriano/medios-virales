@@ -16,8 +16,13 @@ const I18N = {
     description: 'Mapa histórico de 602.906 tuits de 66 medios españoles entre 2018 y 2026: posición de lo publicado frente a lo viral.',
     ogTitle: 'Sesgo y viralidad de los medios españoles',
     ogDescription: '602.906 tuits de 66 medios entre 2018 y 2026, clasificados por partido y dirección, con comparación entre lo publicado y lo viral.',
-    kicker: 'victoriano.me · análisis',
-    headline: 'Sesgo y viralidad de los medios españoles',
+    kicker: 'Un análisis de datos',
+    heroTag: 'Sesgo y viralidad de los medios españoles',
+    headline: '¿Hacia qué lado se inclinan los medios españoles cuando se <span class="t-mix">comparten</span>?',
+    byline: 'Por <strong>Victoriano Izquierdo</strong> · Datos de X, 2018 a 2026',
+    espectroIzq: 'Izquierda',
+    espectroMitad: 'Mitad y mitad',
+    espectroDer: 'Derecha',
     lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> tuits muestreados de <strong id="n-medios">${nMedios}</strong> medios generalistas españoles entre 2018 y 2026, clasificados uno a uno para comparar lo que publican con lo que se hace viral.`,
     tabMapa: 'Mapa',
     tabRanking: 'Ranking',
@@ -207,6 +212,12 @@ const I18N = {
     metodoDatosScripts: 'Datos, scripts y este sitio:',
     metodoFuente: (fecha) => `Datos, scripts y este sitio: <a id="repo-link" href="${REPO}" target="_blank" rel="noopener">repositorio público en GitHub</a>. Muestra actualizada el ${fecha}.`,
     footerText: 'Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.',
+    footFirma: 'Datos abiertos y método a la vista.',
+    footCodigo: 'Código y datos',
+    footMetodo: 'Método',
+    footAutor: 'victoriano.me',
+    tweetRespuestas: 'respuestas',
+    tweetVistas: 'vistas',
     decimosTxtIzq: 'izq',
     decimosTxtDer: 'der',
     decimosSinLado: 'sin tuits con lado claro',
@@ -231,8 +242,13 @@ const I18N = {
     description: 'Historical map of 602,906 tweets from 66 Spanish media outlets between 2018 and 2026: published position vs viral position.',
     ogTitle: 'Bias and virality of Spanish media',
     ogDescription: '602,906 tweets from 66 outlets between 2018 and 2026, classified by party and direction, comparing published and viral.',
-    kicker: 'victoriano.me · analysis',
-    headline: 'Bias and virality of Spanish media',
+    kicker: 'A data analysis',
+    heroTag: 'Bias and virality of Spanish media',
+    headline: 'Which way do Spanish media lean when they get <span class="t-mix">shared</span>?',
+    byline: 'By <strong>Victoriano Izquierdo</strong> · X data, 2018 to 2026',
+    espectroIzq: 'Left',
+    espectroMitad: 'Half and half',
+    espectroDer: 'Right',
     lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> sampled tweets from <strong id="n-medios">${nMedios}</strong> Spanish general-interest media between 2018 and 2026, classified one by one to compare what they publish with what goes viral.`,
     tabMapa: 'Map',
     tabRanking: 'Ranking',
@@ -422,6 +438,12 @@ const I18N = {
     metodoDatosScripts: 'Data, scripts and this site:',
     metodoFuente: (fecha) => `Data, scripts and this site: <a id="repo-link" href="${REPO}" target="_blank" rel="noopener">public repository on GitHub</a>. Sample updated on ${fecha}.`,
     footerText: 'Reproducible analysis on public X data. Made for review, not for judgment.',
+    footFirma: 'Open data, method in plain sight.',
+    footCodigo: 'Code and data',
+    footMetodo: 'Method',
+    footAutor: 'victoriano.me',
+    tweetRespuestas: 'replies',
+    tweetVistas: 'views',
     decimosTxtIzq: 'left',
     decimosTxtDer: 'right',
     decimosSinLado: 'no tweets with clear side',
@@ -523,6 +545,7 @@ const PERIODOS_VALIDOS = ['todo', 'xv', '2018', '2019', '2020', '2021', '2022', 
 let currentView = 'mapa';
 function show(v) {
   currentView = v;
+  document.body.dataset.view = v;
   if (v !== 'mapa') pararEvolucion();
   VIEWS.forEach(x => { $('#view-' + x).hidden = x !== v; });
   $$('.tab').forEach(el => el.classList.toggle('is-on', el.dataset.view === v));
@@ -736,7 +759,7 @@ function pintarMedio(meta) {
         <h2>${esc(meta.nombre)}</h2>
         <p class="sub">${esc(meta.handle)} · ${compact(meta.seguidores)} ${t('seguidores')} · ${nf(meta.muestreados || meta.virales)} ${t('medioMuestreados')} · ${nf(meta.virales)} ${t('medioVirales')}</p>
       </div>
-      <div><span class="idx-pill ${cls}" style="font-size:16px;padding:7px 14px">${txt}</span></div>
+      <div><span class="idx-pill ${cls}">${txt}</span></div>
     </div>
     <div class="kpis" id="mkpis"></div>
     <p class="foot-note" id="mkpinota" hidden></p>
@@ -855,10 +878,10 @@ function tarjeta(tw, handle, nombre) {
     </div>
     <p>${esc(tw.t)}</p>
     <div class="metrics">
-      <span>🔁 <b>${nf(tw.rt)}</b> ${t('tweetRetuits')}</span>
-      <span>❤️ <b>${nf(tw.lk)}</b> ${t('tweetMeGusta')}</span>
-      <span>💬 <b>${nf(tw.rp)}</b></span>
-      <span>👁️ <b>${compact(tw.vw)}</b></span>
+      <span><b>${nf(tw.rt)}</b> ${t('tweetRetuits')}</span>
+      <span><b>${nf(tw.lk)}</b> ${t('tweetMeGusta')}</span>
+      <span><b>${nf(tw.rp)}</b> ${t('tweetRespuestas')}</span>
+      <span><b>${compact(tw.vw)}</b> ${t('tweetVistas')}</span>
       <span><a href="${esc(tw.u)}" target="_blank" rel="noopener">${t('tweetVerX')}</a></span>
     </div>
   </article>`;
@@ -1265,7 +1288,7 @@ function applyTheme(pref) {
   document.documentElement.setAttribute('data-theme-pref', pref);
   // Ajusta theme-color efectivo: el navegador usa el que coincide con prefers-color-scheme,
   // pero en preferencia forzada añadimos un <meta name="theme-color"> sin media que gana.
-  const forced = pref === 'system' ? null : (resolved === 'dark' ? '#1a1613' : '#faf8f5');
+  const forced = pref === 'system' ? null : (resolved === 'dark' ? '#1a1613' : '#f5efe3');
   let m = document.querySelector('meta[name="theme-color"][data-forced]');
   if (forced) {
     if (!m) {
