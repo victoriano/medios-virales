@@ -1,0 +1,129 @@
+{
+  "creado": "2026-10-05T09:57:52Z",
+  "semilla": 20261005,
+  "referencia": "~/typesafe-lab/politica/medios/polarizacion/validacion_vnext/referencia_20261005",
+  "referencia_sha256_ids": "a9ac58ec3d5bfcc5cf578c2635171caa33d27f2c8d655c317d9f94d281976047",
+  "ids_sin_texto_en_el_universo": 0,
+  "descripcion": "Examen reservado: 3 épocas por 4 estratos de etiqueta previa, 20 por cruce. Las IDs, etiquetas y pesos por caso están fuera del repositorio.",
+  "ubicacion_entradas": "~/typesafe-lab/politica/medios/polarizacion/validacion_vnext/muestras_20261005/examen/entradas.jsonl",
+  "ubicacion_referencia": "~/typesafe-lab/politica/medios/polarizacion/validacion_vnext/muestras_20261005/examen_referencia",
+  "casos": 240,
+  "sha256_ids_ordenados": "8d01e186a58c8001020d79e4ae5f5aa9aac0439a6af50fe419d403df3fbfe6c5",
+  "sha256_entradas": "4669e366473a63ea164fa9f1a0c632d3cd2b3df96f066f068907d9130a0aa5dc",
+  "sha256_referencia": "9c0134204168bd33d455a036c34d875e282cd8ca1d73fcdc07757a7e5b86acd1",
+  "diseno": [
+    {
+      "epoca": "2018-2019",
+      "estrato": "no_politico",
+      "N": 86264,
+      "n": 20,
+      "probabilidad_inclusion": 0.0002318464249281276,
+      "peso": 4313.2,
+      "cuota_incompleta": false
+    },
+    {
+      "epoca": "2018-2019",
+      "estrato": "concreto_beneficia",
+      "N": 5462,
+      "n": 20,
+      "probabilidad_inclusion": 0.003661662394727206,
+      "peso": 273.1,
+      "cuota_incompleta": false
+    },
+    {
+      "epoca": "2018-2019",
+      "estrato": "concreto_perjudica",
+      "N": 13472,
+      "n": 20,
+      "probabilidad_inclusion": 0.0014845605700712589,
+      "peso": 673.6,
+      "cuota_incompleta": false
+    },
+    {
+      "epoca": "2018-2019",
+      "estrato": "resto_politico",
+      "N": 13131,
+      "n": 20,
+      "probabilidad_inclusion": 0.001523113243469652,
+      "peso": 656.55,
+      "cuota_incompleta": false
+    },
+    {
+      "epoca": "2020-2022",
+      "estrato": "no_politico",
+      "N": 162578,
+      "n": 20,
+      "probabilidad_inclusion": 0.00012301787449716444,
+      "peso": 8128.9,
+      "cuota_incompleta": false
+    },
+    {
+      "epoca": "2020-2022",
+      "estrato": "concreto_beneficia",
+      "N": 11086,
+      "n": 20,
+      "probabilidad_inclusion": 0.0018040772145047808,
+      "peso": 554.3,
+      "cuota_incompleta": false
+    },
+    {
+      "epoca": "2020-2022",
+      "estrato": "concreto_perjudica",
+      "N": 28421,
+      "n": 20,
+      "probabilidad_inclusion": 0.0007037050068611239,
+      "peso": 1421.05,
+      "cuota_incompleta": false
+    },
+    {
+      "epoca": "2020-2022",
+      "estrato": "resto_politico",
+      "N": 15624,
+      "n": 20,
+      "probabilidad_inclusion": 0.0012800819252432156,
+      "peso": 781.2,
+      "cuota_incompleta": false
+    },
+    {
+      "epoca": "2023-2026",
+      "estrato": "no_politico",
+      "N": 198142,
+      "n": 20,
+      "probabilidad_inclusion": 0.00010093771133833311,
+      "peso": 9907.1,
+      "cuota_incompleta": false
+    },
+    {
+      "epoca": "2023-2026",
+      "estrato": "concreto_beneficia",
+      "N": 12179,
+      "n": 20,
+      "probabilidad_inclusion": 0.0016421709499958945,
+      "peso": 608.95,
+      "cuota_incompleta": false
+    },
+    {
+      "epoca": "2023-2026",
+      "estrato": "concreto_perjudica",
+      "N": 41681,
+      "n": 20,
+      "probabilidad_inclusion": 0.00047983493678174706,
+      "peso": 2084.05,
+      "cuota_incompleta": false
+    },
+    {
+      "epoca": "2023-2026",
+      "estrato": "resto_politico",
+      "N": 14866,
+      "n": 20,
+      "probabilidad_inclusion": 0.0013453518094981838,
+      "peso": 743.3,
+      "cuota_incompleta": false
+    }
+  ],
+  "reglas": [
+    "Se evalúa solo A y la variante ganadora, una vez, sin ajustar sobre el examen.",
+    "Una tasa global se pondera con N por cruce; la media simple no estima el error.",
+    "Revisar agrupación por acontecimiento antes de calcular intervalos."
+  ]
+}

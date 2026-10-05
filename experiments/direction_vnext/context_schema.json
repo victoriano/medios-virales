@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "medios-virales/direction_vnext/context_schema.json",
+  "title": "Ficha factual fechada de un tuit",
+  "description": "Hechos verificables y anteriores al tuit. Nunca incluye la etiqueta esperada, la orientacion del medio ni quien sale beneficiado. La valida scripts/evaluation/contract.py.",
+  "type": "array",
+  "maxItems": 12,
+  "items": {
+    "type": "object",
+    "required": ["id", "afirmacion", "fecha_hecho", "fecha_fuente", "fuente"],
+    "additionalProperties": false,
+    "properties": {
+      "id": {"type": "string", "description": "Identificador estable dentro de la ficha, citado desde evidencia."},
+      "tipo": {"enum": ["identidad", "cargo", "afiliacion", "hecho", "incertidumbre"]},
+      "afirmacion": {"type": "string", "maxLength": 400, "description": "Hecho en una frase, sin valoraciones."},
+      "entidad": {"type": "string"},
+      "partido": {"type": "string", "description": "Partido literal en la fecha, sin agrupar Podemos en Sumar."},
+      "cargo": {"type": "string"},
+      "vigencia_desde": {"type": "string", "format": "date"},
+      "vigencia_hasta": {"type": "string", "format": "date"},
+      "fecha_hecho": {"type": "string", "format": "date", "description": "Debe ser igual o anterior a la fecha del tuit."},
+      "fecha_fuente": {"type": "string", "format": "date"},
+      "documenta_hecho_vigente": {"type": "boolean", "description": "Obligatorio si la fuente es posterior al tuit: solo documenta un hecho que ya era cierto entonces."},
+      "fuente": {"type": "string", "description": "URL o referencia de la fuente."}
+    }
+  }
+}

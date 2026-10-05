@@ -119,12 +119,13 @@ Están comprobados y conviene tenerlos presentes antes de presentar cualquier re
 
 - **El clasificador base no envía la fecha del tuit.** Una sonda local interceptó la llamada y
   confirmó `date_sent=false`. Eso impide que el modelo resuelva referencias que dependen del
-  momento. Aplica conocimiento de hoy a un tuit de 2019.
-- **El clasificador base recorta el texto a 400 caracteres.**
+  momento. Aplica conocimiento de hoy a un tuit de 2019. Corregido en el script el 5 de octubre de
+  2026 (prompt `fecha_v2`), pero todas las etiquetas publicadas siguen siendo las antiguas.
+- **El clasificador base recorta el texto a 400 caracteres.** También corregido en el script.
 - **La capa contextual fuerza `partido=Psoe`** cuando aplica una revisión. Puede confundir el
   partido criticado con un beneficiario indirecto. Sus 601 cambios no son 601 mejoras verificadas.
-- **Los JSONL no guardan la versión del modelo** que respondió. Hay filas de modelos distintos
-  mezcladas sin marcar.
+- **Los JSONL publicados no guardan la versión del modelo** que respondió. Hay filas de modelos
+  distintos mezcladas sin marcar. Las filas nuevas de `clasificado_fecha_v2.jsonl` sí la guardan.
 - **La API de twitterapi.io desplaza `until`.** Una consulta `since:D until:D+1` devuelve también
   tuits del día siguiente, y se paga el doble de lo útil. Por eso se guarda todo y se marca con
   `en_muestra` si cae en un día muestreado.
@@ -137,13 +138,15 @@ Están comprobados y conviene tenerlos presentes antes de presentar cualquier re
 
 Ordenado por lo que más desbloquea:
 
-1. **Ejecutar el plan de validación del clasificador**, que está escrito y sin empezar:
-   `docs/plans/2026-09-27-validacion-clasificador.md`. Propone separar los campos semánticos
+1. **Ejecutar el plan de validación del clasificador**:
+   `docs/plans/2026-09-27-validacion-clasificador.md`. Las fases sin coste están hechas en
+   `experiments/direction_vnext/`; lo siguiente son llamadas de pago que necesitan aprobación. Propone separar los campos semánticos
    (partido objetivo, dirección del mensaje, voz y encuadre del medio), usar Jev como filtro amplio
    antes de la clasificación fina y comparar cuatro variantes del juez con puertas de parada.
 2. **Explicar el hueco de `DiarioSabemos`** o documentar la cobertura desconocida por medio y mes.
 3. **Decidir si se publica la capa contextual** como procedencia separada, con sus límites.
-4. **Llevar la fecha al clasificador**, que es la causa raíz de varios errores históricos.
+4. **Reclasificar con fecha.** El script ya envía la fecha y el texto íntegro; falta decidir si se
+   reclasifica el corpus y validar antes el resultado.
 
 ## Trampas que ya han costado tiempo
 

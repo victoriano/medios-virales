@@ -1,30 +1,31 @@
 # Estado del trabajo y pendientes
 
-Foto del proyecto a **2 de octubre de 2026**. Sirve para saber qué está hecho, qué está a medias y
+Foto del proyecto a **5 de octubre de 2026**. Sirve para saber qué está hecho, qué está a medias y
 qué decisiones siguen abiertas, sin tener que reconstruirlo leyendo el historial de git.
 
 Si vas a continuar el trabajo, lee antes `AGENTS.md`. El método detallado está en `docs/metodo.md`.
 
 ## Resumen en una línea
 
-El censo viral y el mapa de nueve años están publicados y funcionando. La siguiente pieza es la
-validación del clasificador, que tiene plan escrito y **no está empezada**.
+El censo viral y el mapa de nueve años están publicados y funcionando. La validación del
+clasificador tiene hechas sus fases sin coste y **espera aprobación para las llamadas de pago**.
 
 ## Qué está publicado y qué no
 
 | | Estado |
 | --- | --- |
-| Web en medios.victoriano.me | Funcionando, sirviendo el commit `cb2fe42` del 25 de septiembre |
+| Web en medios.victoriano.me | Funcionando, sirviendo el commit `6ec417e` del 3 de octubre |
 | Censo viral (21.489 tuits) | Clasificado y publicado |
 | Serie histórica (602.906 filas) | Clasificada, agregada y publicada en la web |
 | Capa de reclasificación contextual | Aplicada y publicada |
-| Mejoras del mapa (eje Y absoluto y mediana de retuits) | **Hechas y sin publicar** |
-| Validación del clasificador | **Sin empezar**, con plan escrito |
+| Mejoras del mapa (eje Y absoluto y mediana de retuits) | Publicadas, comprobadas en navegador el 5 de octubre |
+| Validación del clasificador | **Fases sin coste hechas**, ver `experiments/direction_vnext/README.md` |
+| Fecha en el clasificador | **Corregido en el script**, sin reclasificar el corpus |
 
-## Trabajo hecho y pendiente de publicar
+## Mejoras del mapa publicadas el 3 de octubre
 
-Hay una tanda de cambios locales coherentes entre sí que mejoran el mapa y que **todavía no están
-en el repositorio ni en la web publicada**. Describen mejor lo que el mapa dibuja:
+Una tanda de cambios coherentes entre sí que describen mejor lo que el mapa dibuja. Están en el
+commit `6ec417e`, que es el que sirve `/srv/medios`:
 
 - **El eje vertical pasó de porcentaje a número absoluto.** Antes mostraba el porcentaje de tuits
   con lado claro; ahora muestra cuántos tuits son. Es más honesto con el tamaño real de la muestra.
@@ -51,10 +52,15 @@ Ninguno bloquea la publicación actual, pero todos afectan a cómo se pueden pre
 
 ### Del clasificador
 
+Los defectos 1 a 4 están **corregidos en el script desde el 5 de octubre** (versión de prompt
+`fecha_v2`, ver el pendiente 3), pero **siguen presentes en todas las etiquetas publicadas**, porque
+el corpus no se ha reclasificado.
+
 1. **No recibe la fecha del tuit.** Comprobado con una sonda que interceptó la llamada:
    `date_sent=false`. Es la causa raíz de varios errores históricos, porque el modelo aplica
-   conocimiento de hoy a un tuit de 2019.
-2. **Recorta el texto a 400 caracteres.**
+   conocimiento de hoy a un tuit de 2019. Ejemplo medido: la referencia etiqueta como Sumar 1.953
+   tuits políticos de 2018 a 2021, antes de que el partido existiera.
+2. **Recorta el texto a 400 caracteres.** Afecta a 775 de las 602.906 filas.
 3. **No conserva los motivos** que pide el prompt.
 4. **No guarda la versión del modelo por fila**, así que hay respuestas de modelos distintos
    mezcladas sin marcar.
@@ -72,8 +78,9 @@ Ninguno bloquea la publicación actual, pero todos afectan a cómo se pueden pre
 
 8. **Podemos se agrupa en Sumar.** Es una agrupación para calcular bloques, no la afiliación real
    del actor en la fecha del tuit.
-9. **El desarrollo y lo publicado difieren.** Los JSON del mapa en local y en producción no son
-   idénticos, así que cualquier comparación debe congelar los dos por separado.
+9. **El desarrollo y lo publicado pueden diferir.** El 5 de octubre eran idénticos y se congelaron
+   los dos por separado en `experiments/direction_vnext/baseline_manifest.json`. Si vuelven a
+   divergir, hay que congelarlos de nuevo antes de comparar.
 
 ### De la descarga
 
@@ -87,7 +94,7 @@ Ninguno bloquea la publicación actual, pero todos afectan a cómo se pueden pre
 
 ### 1. Ejecutar la validación del clasificador
 
-Es la pieza grande y la que más mejora desbloquea. Tiene plan completo y revisado, sin empezar:
+Es la pieza grande y la que más mejora desbloquea. Tiene plan completo y revisado:
 
 ```
 docs/plans/2026-09-27-validacion-clasificador.md
@@ -123,6 +130,14 @@ Recuentos que el plan usa para dimensionar el ahorro, calculados con las etiquet
 **Estos recuentos no se deben usar para seleccionar el universo de la candidata**, porque la
 referencia contiene errores y se perderían falsos negativos.
 
+**Hecho el 5 de octubre, sin ninguna llamada de pago** (detalle en
+`experiments/direction_vnext/README.md`): referencia congelada de producción y de desarrollo,
+contrato semántico con sus pruebas, rúbrica revisada pendiente de sellar, esquema de la ficha
+factual, examen reservado de 240 sellado fuera del repositorio, desarrollo de 120, 24 candidatos a
+control y 24 pares mínimos sintéticos. Falta el fichero de la auditoría de 200, del que salen las 8
+correcciones de la prueba 1: no está en el VPS. Lo siguiente es la sonda de 12 llamadas, que
+necesita aprobación.
+
 ### 2. Explicar el hueco de `DiarioSabemos`
 
 O, si no se explica, documentar la cobertura desconocida por medio y mes y no presentar la serie
@@ -130,7 +145,14 @@ histórica como censo exhaustivo.
 
 ### 3. Llevar la fecha al clasificador
 
-Es la causa raíz de varios errores y la corrección más rentable después de la validación.
+**Hecho en el script, sin reclasificar.** `clasificar_legislatura_xv.py` del taller envía cada tuit
+como `TUIT n [AAAA-MM-DD]: texto`, con el texto íntegro, y guarda por fila el modelo que respondió
+(`modelVersion`), la versión y el hash del prompt, el motivo y la longitud enviada. Escribe en
+`clasificado_fecha_v2.jsonl`, nunca en `clasificado.jsonl`. La regla del Gobierno pasa a ser el
+partido que lo presidía en la fecha del tuit. La versión anterior está guardada como
+`clasificar_legislatura_xv.antes_fecha_20261005.py` y la sonda sin red como
+`test_clasificar_legislatura_xv.py`. Reclasificar el corpus completo costó 81,63 USD la primera vez
+y es una decisión aparte.
 
 ### 4. Decidir cómo se publica la capa contextual
 
