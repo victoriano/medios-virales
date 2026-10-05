@@ -5,8 +5,8 @@ Versión `r1`, 5 de octubre de 2026. Es la rúbrica **revisada** del plan
 rúbrica **vigente** (J00 y J01) es la del prompt publicado, adaptada a estos campos sin cambiar
 sus reglas. El validador automático de este contrato está en `scripts/evaluation/contract.py`.
 
-Esta rúbrica está **pendiente de sellar**. Las fronteras marcadas como «decisión abierta» las
-decide Victoriano con ejemplos delante, antes de etiquetar la referencia de desarrollo. Un
+Esta rúbrica está **pendiente de sellar**. Las reglas 2 y 3 las confirmó Victoriano el 5 de
+octubre de 2026. Queda abierta qué lectura alimenta el índice, marcada abajo. Un
 desacuerdo de definición no cuenta como fallo del modelo hasta resolverlo.
 
 ## Lo que ve el juez
@@ -58,7 +58,7 @@ El partido y la dirección son **una decisión conjunta**:
 3. **Coaliciones.** Si la decisión es de un ministerio con responsable concreto de otro partido
    de la coalición (Unidas Podemos entre 2020 y 2023, Sumar desde 2023), el objetivo es el
    partido de ese responsable. Si se atribuye al Gobierno en conjunto, se aplica la regla 2.
-   *Decisión abierta*: confirmar esta frontera con ejemplos antes de sellar.
+   Decidido por Victoriano el 5 de octubre de 2026.
 4. Un **anuncio o trámite sin valoración** es `neutro` aunque lo comunique un ministro.
 5. Un **ataque citado** conserva su dirección. La voz se registra como `entrevistado`,
    `cargo_politico` u `otra_fuente`, y el encuadre como `atribucion_descriptiva`. Publicar una

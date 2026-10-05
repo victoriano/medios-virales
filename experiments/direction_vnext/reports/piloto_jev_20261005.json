@@ -1,0 +1,557 @@
+{
+  "llamadas_ok": 100,
+  "modelos": [
+    "jev-1.13.0"
+  ],
+  "usd": 0.008122,
+  "pares": {
+    "total": 24,
+    "con_fallo": [
+      10,
+      11,
+      15,
+      19,
+      24
+    ],
+    "criticos_con_fallo": [
+      19,
+      24
+    ],
+    "fallos": [
+      {
+        "par": 10,
+        "lado": "a=b",
+        "campo": "igual_que",
+        "critica": false,
+        "a": {
+          "partido_objetivo": "PP",
+          "direccion_mensaje": "beneficia",
+          "voz": "otra_fuente",
+          "encuadre_medio": "atribucion_descriptiva",
+          "evidencia_suficiente": false
+        },
+        "b": {
+          "partido_objetivo": "PP",
+          "direccion_mensaje": "beneficia",
+          "voz": "redaccion",
+          "encuadre_medio": "atribucion_descriptiva",
+          "evidencia_suficiente": true
+        }
+      },
+      {
+        "par": 11,
+        "lado": "a=b",
+        "campo": "igual_que",
+        "critica": false,
+        "a": {
+          "partido_objetivo": "Vox",
+          "direccion_mensaje": "neutro",
+          "voz": "redaccion",
+          "encuadre_medio": "atribucion_descriptiva",
+          "evidencia_suficiente": false
+        },
+        "b": {
+          "partido_objetivo": "Vox",
+          "direccion_mensaje": "neutro",
+          "voz": "no_identificable",
+          "encuadre_medio": "atribucion_descriptiva",
+          "evidencia_suficiente": false
+        }
+      },
+      {
+        "par": 15,
+        "lado": "b",
+        "campo": "voz",
+        "esperado": "redaccion",
+        "obtenido": "otra_fuente",
+        "critica": false
+      },
+      {
+        "par": 19,
+        "lado": "a",
+        "campo": "evidencia_suficiente",
+        "esperado": true,
+        "obtenido": false,
+        "critica": true
+      },
+      {
+        "par": 24,
+        "lado": "b",
+        "campo": "direccion_mensaje",
+        "esperado": {
+          "no": [
+            "beneficia"
+          ]
+        },
+        "obtenido": "beneficia",
+        "critica": true
+      }
+    ]
+  },
+  "controles": {
+    "n": 24,
+    "acuerdo": {
+      "partido_y_direccion": 9,
+      "ninguno": 7,
+      "solo_direccion": 5,
+      "solo_partido": 3
+    },
+    "desacuerdos": [
+      {
+        "id": "1396423032445485060",
+        "fecha": "2021-05-23",
+        "texto": "Los españoles vacunados ya pueden viajar a Baleares sin presentar un test https://t.co/RScwO7OFdG",
+        "referencia": "PSOE beneficia",
+        "jev": "ninguno no_aplica",
+        "confianza_jev": 0.39
+      },
+      {
+        "id": "1367956334503673857",
+        "fecha": "2021-03-05",
+        "texto": "El festival keynesiano durará un año más, al parecer. La Comisión Europea lo prorrogará hasta 2023. Después volverá la austeridad. Y, con ella, los reajustes que la Comisión ha ido apuntando. | Por @guillemmartnez https:",
+        "referencia": "PSOE perjudica",
+        "jev": "ninguno no_aplica",
+        "confianza_jev": 0.35
+      },
+      {
+        "id": "1328802515584954376",
+        "fecha": "2020-11-17",
+        "texto": "#VÍDEO 🎥 | José Luis Pérez: \"En la prensa alemana hablan del 'milagro de Madrid' con la curva de contagios\" 👇 https://t.co/jXIbQqDypv",
+        "referencia": "PP beneficia",
+        "jev": "ninguno no_aplica",
+        "confianza_jev": 0.29
+      },
+      {
+        "id": "1454644301477163008",
+        "fecha": "2021-10-31",
+        "texto": "Al hablar de Ayuso, Bono recuerda en @SextaNocheTV el \"éxito fulgurante\" de Albert Rivera, al que ahora ve como \"nada\" a nivel político #L6Nconmocion https://t.co/HhPfv24mEU",
+        "referencia": "PP perjudica",
+        "jev": "otro perjudica",
+        "confianza_jev": 0.32
+      },
+      {
+        "id": "993139029456687106",
+        "fecha": "2018-05-06",
+        "texto": "Este #vídeo de Rajoy se ha acabado haciendo viral https://t.co/hDnbPulk4z",
+        "referencia": "PP neutro",
+        "jev": "indeterminado indeterminado",
+        "confianza_jev": 0.41
+      },
+      {
+        "id": "1070427700773482496",
+        "fecha": "2018-12-05",
+        "texto": "➡️Ortega Smith, secretario general de Vox: \"No somos franquistas, queremos derogar la Ley de Memoria Histórica pero no por olvidar nuestra Historia, sino por no enfrentar\" https://t.co/5hFbZ518Go",
+        "referencia": "Vox beneficia",
+        "jev": "Vox neutro",
+        "confianza_jev": 0.36
+      },
+      {
+        "id": "1100874465028833280",
+        "fecha": "2019-02-27",
+        "texto": "Antonio Baños y Eulàlia Reguant, multados con 2.500 euros por negarse a responder a Vox y abandonar la sala https://t.co/usELKOUia9",
+        "referencia": "Vox neutro",
+        "jev": "Vox perjudica",
+        "confianza_jev": 0.23
+      },
+      {
+        "id": "1223002951339446273",
+        "fecha": "2020-01-30",
+        "texto": "#LoMásLeído Abascal responde a Évole: \"Nos enseñaron a no abusar de los tirillas\" https://t.co/9kJ9Q8R9LO",
+        "referencia": "Vox neutro",
+        "jev": "Vox perjudica",
+        "confianza_jev": 0.11
+      },
+      {
+        "id": "1469401396390858753",
+        "fecha": "2021-12-10",
+        "texto": "🗣 @RocioMonasteri lanza un mensaje al pueblo cubano durante la manifestación: 'Vamos a estar aquí hasta el final, hasta que consigamos la caída de la dictadura' 🇨🇺 https://t.co/1AiMxAxb09",
+        "referencia": "Vox beneficia",
+        "jev": "ninguno no_aplica",
+        "confianza_jev": 0.87
+      },
+      {
+        "id": "1065708030782857216",
+        "fecha": "2018-11-22",
+        "texto": "#DebateEleccionesAndaluciaH25| .@agarzon: “Cuando hablamos de impuestos hablamos de quien paga la sanidad... Mi familia querrá seguir pagando impuestos, al igual que lo tienen que hacer los ricos en Andalucía” https://t.",
+        "referencia": "Sumar beneficia",
+        "jev": "ninguno neutro",
+        "confianza_jev": 0.41
+      },
+      {
+        "id": "1383608974138757121",
+        "fecha": "2021-04-18",
+        "texto": "Barcelona retira el escudo de Juan Carlos I del obelisco de la plaza Cinc d'Oros https://t.co/4FMQj2FRc9",
+        "referencia": "Sumar beneficia",
+        "jev": "ninguno neutro",
+        "confianza_jev": 0.65
+      },
+      {
+        "id": "1134138399332458497",
+        "fecha": "2019-05-30",
+        "texto": "\"En las sonrisas y adulaciones a la alcaldesa no se percibía el sonido del futuro, sino la emoción de estar inaugurando un folclore\". Carmena y la nostalgia, por @estebanOrdnz https://t.co/N7C29TNj0D",
+        "referencia": "Sumar perjudica",
+        "jev": "otro perjudica",
+        "confianza_jev": 0.57
+      },
+      {
+        "id": "1441126687681363970",
+        "fecha": "2021-09-23",
+        "texto": "Las fiestas de la Mercè de Barcelona arrancan entre abucheos a Colau 👇 https://t.co/aeAaUwMwZx",
+        "referencia": "Sumar perjudica",
+        "jev": "otro perjudica",
+        "confianza_jev": 0.8
+      },
+      {
+        "id": "1096541933256634368",
+        "fecha": "2019-02-15",
+        "texto": "IU abre \"de forma irrevocable\" nuevo proyecto electoral en Madrid con 'Anticapis' https://t.co/vpzthX4UUz",
+        "referencia": "Sumar neutro",
+        "jev": "otro neutro",
+        "confianza_jev": 0.57
+      },
+      {
+        "id": "1216103739544784896",
+        "fecha": "2020-01-11",
+        "texto": "María Amparo Ballester Pastor, catedrática de Derecho del Trabajo, será la jefa de gabinete de la nueva ministra Yolanda Díaz https://t.co/sa4naseI8u https://t.co/N2dBfceCQI",
+        "referencia": "Sumar neutro",
+        "jev": "Podemos neutro",
+        "confianza_jev": 0.37
+      }
+    ]
+  },
+  "desarrollo": {
+    "n": 29,
+    "acuerdo": {
+      "solo_direccion": 6,
+      "partido_y_direccion": 9,
+      "solo_partido": 8,
+      "ninguno": 6
+    },
+    "desacuerdos": [
+      {
+        "id": "1198326601248727040",
+        "fecha": "2019-11-23",
+        "texto": "Iceta: \"Si hay voluntad de diálogo el instrumento no debería ser un problema\" https://t.co/7434qNzNei",
+        "referencia": "PSOE neutro",
+        "jev": "ninguno neutro",
+        "confianza_jev": 0.34
+      },
+      {
+        "id": "1112122331705630720",
+        "fecha": "2019-03-30",
+        "texto": "Quién es quién en la reorganización política a la izquierda del PSOE en Madrid. Por @alexisrmoran https://t.co/H25ZksT0eV",
+        "referencia": "Sumar neutro",
+        "jev": "varios neutro",
+        "confianza_jev": 0.29
+      },
+      {
+        "id": "1012855748794122241",
+        "fecha": "2018-06-30",
+        "texto": "#Lomasleído El discurso de Pedro Morenés que indignó a Quim Torra en Washington https://t.co/Ceo8kg11oQ",
+        "referencia": "PP beneficia",
+        "jev": "PP perjudica",
+        "confianza_jev": 0.48
+      },
+      {
+        "id": "1255670722611089416",
+        "fecha": "2020-04-30",
+        "texto": "El aplazamiento de impuestos aprobado por el Gobierno para pymes y autónomos alcanza a unos 400.000 contribuyentes y Hacienda deja de recaudar 2.334 millones en impuestos https://t.co/aVg3d6C0Lc",
+        "referencia": "PSOE beneficia",
+        "jev": "PSOE neutro",
+        "confianza_jev": 0.75
+      },
+      {
+        "id": "2051664262758576186",
+        "fecha": "2026-05-05",
+        "texto": "Moreno huye de Ayuso, de Feijóo y de las siglas del PP para proteger su mayoría. Su campaña intenta evitar el ruido de Madrid y presentarlo como un perfil institucional y transversal para no depender de Vox Por @martamon",
+        "referencia": "PP neutro",
+        "jev": "PP perjudica",
+        "confianza_jev": 0.46
+      },
+      {
+        "id": "1667198916339683332",
+        "fecha": "2023-06-09",
+        "texto": "#Política | Más Madrid acuerda con Sumar que ocupará los puestos tres, cuatro, siete y diez de la lista en la capital Por Agustín Millán https://t.co/7ttRqLZXZb https://t.co/nLflZXlrT8",
+        "referencia": "Sumar neutro",
+        "jev": "varios neutro",
+        "confianza_jev": 0.36
+      },
+      {
+        "id": "1182706174313017344",
+        "fecha": "2019-10-11",
+        "texto": "Errejón propone una semana laboral de cuatro días y derecho a voto desde los 16 años https://t.co/kqmRh0ElPh",
+        "referencia": "Sumar beneficia",
+        "jev": "Podemos neutro",
+        "confianza_jev": 0.4
+      },
+      {
+        "id": "1452011957876244481",
+        "fecha": "2021-10-23",
+        "texto": "Yolanda Díaz y Alberto Garzón enfrían la crisis abierta por la querella contra Batet https://t.co/e2z2l4fNuX",
+        "referencia": "Sumar beneficia",
+        "jev": "PSOE beneficia",
+        "confianza_jev": 0.27
+      },
+      {
+        "id": "1021278852767789057",
+        "fecha": "2018-07-23",
+        "texto": "Saludamos ahora a Francisco Rosell, director de @elmundoes: \"Creo que ha sido una moción contra el marianismo dentro del partido\"",
+        "referencia": "PP neutro",
+        "jev": "PP perjudica",
+        "confianza_jev": 0.72
+      },
+      {
+        "id": "1030418639755862016",
+        "fecha": "2018-08-17",
+        "texto": "Carmena tiene más devoción por la Virgen de la Paloma que por el Real Madrid https://t.co/0elXRPK08V",
+        "referencia": "Sumar neutro",
+        "jev": "ninguno neutro",
+        "confianza_jev": 0.22
+      },
+      {
+        "id": "2029689577699414169",
+        "fecha": "2026-03-05",
+        "texto": "Juanma Moreno, entre los próximos invitados de #ElHormiguero. 📲 https://t.co/jhfJ1HNLuz",
+        "referencia": "PP beneficia",
+        "jev": "ninguno no_aplica",
+        "confianza_jev": 0.33
+      },
+      {
+        "id": "1032659180279263237",
+        "fecha": "2018-08-23",
+        "texto": "#Barcelona pierde siete puestos en el ránking de ciudades con mejor reputación del mundo https://t.co/VW2u1QsYCn https://t.co/aqaJf5PEAg",
+        "referencia": "Sumar perjudica",
+        "jev": "ninguno no_aplica",
+        "confianza_jev": 0.77
+      },
+      {
+        "id": "1451663845953609731",
+        "fecha": "2021-10-22",
+        "texto": "El pago por uso en las autovías podría costar a cada conductor un promedio de hasta 1.800 euros anuales https://t.co/6LcmvF8uQv",
+        "referencia": "PSOE perjudica",
+        "jev": "PSOE neutro",
+        "confianza_jev": 0.29
+      },
+      {
+        "id": "1169700492865351680",
+        "fecha": "2019-09-05",
+        "texto": "Abascal: \"Lo mejor para España son unas elecciones que eviten un gobierno del Frente Popular\" https://t.co/dnLpDoGtcy https://t.co/9Qd71t5gdP",
+        "referencia": "Vox beneficia",
+        "jev": "varios perjudica",
+        "confianza_jev": 0.34
+      },
+      {
+        "id": "1628133709344870417",
+        "fecha": "2023-02-21",
+        "texto": "🕓El 92% de las empresas que han entrado en el proyecto piloto pretenden seguir con la reducción de jornada sin reducir el salario. https://t.co/GwS7mzofgT",
+        "referencia": "Sumar beneficia",
+        "jev": "PSOE beneficia",
+        "confianza_jev": 0.4
+      },
+      {
+        "id": "1414193473763356679",
+        "fecha": "2021-07-11",
+        "texto": "🎙Mañana, entrevistamos en @eslamananadeFJL al presidente de @vox_es, @Santi_ABASCAL. 👉🏻 A partir de las 9:20 h. 🔗 https://t.co/2TocIrjJnm https://t.co/RfTxok31xf",
+        "referencia": "Vox beneficia",
+        "jev": "Vox neutro",
+        "confianza_jev": 0.95
+      },
+      {
+        "id": "1705682287344427173",
+        "fecha": "2023-09-23",
+        "texto": "La estrategia nacional de Más Madrid: máxima discreción y fidelidad con Yolanda Díaz en busca de un ministerio https://t.co/iko2PPsDlh",
+        "referencia": "Sumar neutro",
+        "jev": "Sumar perjudica",
+        "confianza_jev": 0.5
+      },
+      {
+        "id": "1434686543512363011",
+        "fecha": "2021-09-06",
+        "texto": "#LoMásLeído | Garzón insiste en crear una empresa pública de energía para evitar más subidas de la luz y cree que \"es importante que se sepa\" qué empresas han inflado la factura a sus clientes https://t.co/NwzXKrSzIR",
+        "referencia": "Sumar beneficia",
+        "jev": "ninguno neutro",
+        "confianza_jev": 0.4
+      },
+      {
+        "id": "1140680507933388801",
+        "fecha": "2019-06-17",
+        "texto": "El nuevo alcalde quiere conseguir lo que ni Gallardón, por partida doble, ni Botella lograron https://t.co/zFzLoDN8EC",
+        "referencia": "PP neutro",
+        "jev": "PP perjudica",
+        "confianza_jev": 0.45
+      },
+      {
+        "id": "1613240713214586881",
+        "fecha": "2023-01-11",
+        "texto": "Obligada rectificación de Díaz https://t.co/TQGlvZfGIA",
+        "referencia": "Sumar perjudica",
+        "jev": "indeterminado indeterminado",
+        "confianza_jev": 0.6
+      }
+    ]
+  },
+  "incoherencias_contrato": [
+    {
+      "id": "p02a",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "p10a",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "p11b",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "p11a",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "p15b",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "p18a",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "p19a",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "p23b",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1398928429366530052",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1495884793757802496",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1189681523282382849",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1223002951339446273",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1441126687681363970",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1096541933256634368",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1198326601248727040",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1112122331705630720",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1012855748794122241",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1328827758395367424",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1182706174313017344",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1452011957876244481",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1083581859202781184",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1359601281103368193",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1628133709344870417",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1705682287344427173",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    },
+    {
+      "id": "1140680507933388801",
+      "incoherencias": [
+        "sin evidencia suficiente la dirección es indeterminado, no neutro ni una señal"
+      ]
+    }
+  ],
+  "direcciones_jev": {
+    "neutro": 28,
+    "beneficia": 14,
+    "perjudica": 45,
+    "no_aplica": 8,
+    "indeterminado": 4,
+    "mixto": 1
+  },
+  "instruccion_hostil": {
+    "p23a": 0.97,
+    "p23b": 0.02
+  }
+}

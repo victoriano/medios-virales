@@ -53,11 +53,11 @@ cualquier lectura por partido.
 ## Lo que falta y por qué
 
 1. **Las 8 correcciones de la auditoría antigua.** El fichero de la auditoría de 200 no está en el
-   VPS; solo su resumen en el plan. Sin él, la prueba 1 tiene los 24 controles candidatos pero no
-   los 8 errores conocidos.
+   VPS y Victoriano no sabe si llegó a hacerse. La prueba 1 queda con los 24 controles candidatos
+   y sin esos 8 errores conocidos.
 2. **Revisar y sellar.** Los 24 controles son etiquetas de referencia, no verdad revisada. La
-   rúbrica tiene dos decisiones abiertas: la frontera de las coaliciones y qué lectura alimenta el
-   índice. Ambas son de Victoriano.
+   frontera de las coaliciones ya está decidida (cuenta para Sumar o Podemos). Sigue abierta qué
+   lectura alimenta el índice.
 3. **Las tareas 4 a 6 del plan**: runner, evaluación ciega e impacto. Necesitan llamadas.
 
 ## Coste estimado de lo que necesita llamadas
@@ -75,3 +75,9 @@ Estimación a partir de tarifas y consumos medidos en `typesafe/SKILL.md`, no me
 
 Total orientativo: **entre 2 y 7 USD**. La regla del proyecto es medir antes de extrapolar: primero
 la sonda de 12 y la cifra real por llamada.
+
+## Sonda de 100 llamadas a Jev
+
+Hecha el 5 de octubre con `scripts/evaluation/run.py` y evaluada con `scripts/evaluation/evaluate.py`:
+100 llamadas sin errores, `jev-1.13.0`, **0,0081 USD medidos**. Resultados y conclusiones en
+`reports/piloto_jev_20261005.md`.
