@@ -35,7 +35,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/fraunces-normal-400-900.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fonts.css?v=202610051200">
-<link rel="stylesheet" href="styles.css?v=202610051330">
+<link rel="stylesheet" href="styles.css?v=202610061500">
 </head>
 <body>
 <header class="mast">
@@ -137,6 +137,7 @@
             <option value="0" data-i18n="mapaFiltro0">Todos los medios</option>
             <option value="15" data-i18n="mapaFiltro15">Con muestra de 15 o más</option>
             <option value="30" data-i18n="mapaFiltro30">Con muestra de 30 o más</option>
+            <option value="200" data-i18n="mapaFiltro200">Con muestra de 200 o más</option>
           </select></label>
       </div>
       <p class="resumen" id="mapa-resumen"></p>
@@ -145,6 +146,12 @@
         <div class="tip" id="mapa-tip" hidden></div>
       </div>
       <div class="mapa-pie" id="mapa-pie"></div>
+    </div>
+    <div class="panel historia hallazgos" id="historia">
+      <p class="kicker" data-i18n="histKicker">Lo que dicen los datos</p>
+      <h2 data-i18n="histTitle">Cuatro cosas que se ven en el mapa</h2>
+      <p class="hint" data-i18n-html="histIntro"></p>
+      <ol class="hallazgos-lista" id="historia-hallazgos"></ol>
     </div>
     <div class="panel prose historia">
       <h2 data-i18n="mapaTitle">Cómo leer el mapa</h2>
@@ -223,6 +230,6 @@
   </div>
 </footer>
 
-<script src="app.js?v=202610051930"></script>
+<script src="app.js?v=202610061500"></script>
 </body>
 </html>

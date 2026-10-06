@@ -76,6 +76,22 @@ const I18N = {
     mapaFiltro0: 'Todos los medios',
     mapaFiltro15: 'Con muestra de 15 o más',
     mapaFiltro30: 'Con muestra de 30 o más',
+    mapaFiltro200: 'Con muestra de 200 o más',
+    histKicker: 'Lo que dicen los datos',
+    histTitle: 'Cuatro cosas que se ven en el mapa',
+    histIntro: 'Un tuit cuenta a la <span class="rojo">izquierda</span> si beneficia a PSOE o Sumar o perjudica a PP o Vox, y a la <span class="azul">derecha</span> en el caso contrario. Todas las cifras salen de la misma muestra que dibuja el mapa.',
+    hist1T: 'Hay más medios a la derecha que a la izquierda',
+    hist1P: (nDer, nIzq, nCen, nTot, pub, a0, a1) => `De los ${nTot} medios del mapa, <strong>${nDer}</strong> publican sobre todo a la derecha, <strong>${nIzq}</strong> a la izquierda y ${nCen} quedan en el centro. Sumando todos los tuits con lado claro, el <strong>${pub} %</strong> cae a la derecha. Esa proporción ha pasado del ${a0} % en 2018 al ${a1} % en lo que va de 2026.`,
+    hist1B: 'Ver la evolución año a año',
+    hist2T: 'Al compartirse, cada medio se aleja del centro',
+    hist2P: (nAle, nFue, min, izqN, izqA, izqB, derN, derA, derB) => `Entre los ${nFue} medios con al menos ${min} tuits con lado claro tanto en el total como en los de 100 RT o más, <strong>${nAle}</strong> se desplazan hacia su propio extremo cuando se comparten. ${izqN} pasa de ${izqA} a ${izqB} en la escala; ${derN}, de ${derA} a ${derB}. No significa que el medio cambie lo que publica, sino que sus tuits más partidistas son los que más circulan.`,
+    hist2B: 'Comparar en el mapa',
+    hist3T: 'Pero en lo viral, la balanza se iguala',
+    hist3P: (pub, vir, nI, nD, rI, rD) => `Aunque el ${pub} % de lo publicado cae a la derecha, entre los tuits con 100 RT o más el reparto es casi a partes iguales: <strong>${vir} %</strong> a la derecha (${nI} a la izquierda y ${nD} a la derecha). Se explica porque los tuits de los medios de izquierda se comparten más: el <strong>${rI} %</strong> llega a 100 RT, frente al ${rD} % en los de derecha.`,
+    hist3B: 'Ver solo los de 100 RT o más',
+    hist4T: 'El Gobierno es el blanco',
+    hist4P: (pctPsoe, nPsoe, nResto, perj, ben, ratio) => `El <strong>${pctPsoe} %</strong> de los tuits políticos tiene al PSOE como partido afectado: ${nPsoe}, más que PP, Vox y Sumar juntos (${nResto}). Y se critica mucho más de lo que se elogia: ${perj} tuits perjudican a un partido frente a ${ben} que lo benefician, <strong>${ratio} a 1</strong>. Como el PSOE gobierna desde junio de 2018, criticar al Gobierno suma a la derecha en este índice.`,
+    hist4B: 'Leer los tuits más virales',
     mapaHint: 'Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo significa que todos sus tuits con lado claro van a la izquierda, 100 que todos van a la derecha y 50 que se reparten por igual. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. La altura es el <strong>número de tuits clasificados que benefician o perjudican a un partido</strong>. El tamaño representa la <strong>mediana de retuits de esos mismos tuits</strong>. El filtro de retuits permite mostrar todos, solo los que tienen 100 RT o más, o comparar ambos subconjuntos. El eje vertical se ajusta al periodo y conserva una escala común durante la animación anual. Pasa el ratón para ver los números y pulsa para abrir sus tuits.',
     axisLeft: '◀ todo a la izquierda',
     axisMid: '% de los tuits con lado que va a la derecha',
@@ -302,6 +318,22 @@ const I18N = {
     mapaFiltro0: 'All outlets',
     mapaFiltro15: 'With sample of 15 or more',
     mapaFiltro30: 'With sample of 30 or more',
+    mapaFiltro200: 'With sample of 200 or more',
+    histKicker: 'What the data says',
+    histTitle: 'Four things the map shows',
+    histIntro: 'A tweet counts to the <span class="rojo">left</span> if it helps PSOE or Sumar or hurts PP or Vox, and to the <span class="azul">right</span> otherwise. Every figure comes from the same sample the map draws.',
+    hist1T: 'There are more outlets on the right than on the left',
+    hist1P: (nDer, nIzq, nCen, nTot, pub, a0, a1) => `Of the ${nTot} outlets on the map, <strong>${nDer}</strong> publish mostly to the right, <strong>${nIzq}</strong> to the left and ${nCen} stay in the centre. Adding up every tweet with a clear side, <strong>${pub}%</strong> falls to the right. That share went from ${a0}% in 2018 to ${a1}% so far in 2026.`,
+    hist1B: 'Watch it year by year',
+    hist2T: 'When shared, every outlet drifts away from the centre',
+    hist2P: (nAle, nFue, min, izqN, izqA, izqB, derN, derA, derB) => `Among the ${nFue} outlets with at least ${min} tweets with a clear side both overall and at 100 RT or more, <strong>${nAle}</strong> move towards their own extreme when shared. ${izqN} goes from ${izqA} to ${izqB} on the scale; ${derN}, from ${derA} to ${derB}. It does not mean the outlet changes what it publishes, but that its most partisan tweets are the ones that travel furthest.`,
+    hist2B: 'Compare on the map',
+    hist3T: 'Yet in what goes viral, the scales even out',
+    hist3P: (pub, vir, nI, nD, rI, rD) => `Although ${pub}% of what is published falls to the right, among tweets with 100 RT or more the split is almost even: <strong>${vir}%</strong> to the right (${nI} to the left and ${nD} to the right). That is because tweets from left leaning outlets get shared more: <strong>${rI}%</strong> reach 100 RT, against ${rD}% for right leaning ones.`,
+    hist3B: 'Show only 100 RT or more',
+    hist4T: 'The Government is the target',
+    hist4P: (pctPsoe, nPsoe, nResto, perj, ben, ratio) => `<strong>${pctPsoe}%</strong> of political tweets have PSOE as the affected party: ${nPsoe}, more than PP, Vox and Sumar combined (${nResto}). And criticism far outweighs praise: ${perj} tweets hurt a party against ${ben} that help one, <strong>${ratio} to 1</strong>. Since PSOE has led the Government since June 2018, criticising the Government counts to the right in this index.`,
+    hist4B: 'Read the most viral tweets',
     mapaHint: 'Each outlet is a dot. Horizontally, 0 means all tweets with a clear side go left, 100 means all go right, and 50 is evenly split. Color follows Spanish convention: <span class="rojo">red</span> for left, <span class="azul">blue</span> for right, and gray for center. Height is the <strong>number of classified tweets that benefit or harm a party</strong>. Size represents the <strong>median retweets of those same tweets</strong>. The retweet filter shows all tweets, only tweets with 100+ RT, or compares both subsets. The vertical scale adapts to the selected period and remains fixed during the yearly animation. Hover for figures and click to open the tweets.',
     axisLeft: '◀ all to the left',
     axisMid: '% of tweets with clear side going right',
@@ -1220,6 +1252,108 @@ function tipMapa(n, ev) {
   tip.style.top = y + 'px';
 }
 
+/* ---------- historia: lo que dicen los datos ----------
+   Debajo del mapa. Las cifras se calculan aquí a partir de los mismos JSON
+   que dibuja el mapa, así que siguen a los datos si se regeneran. La brecha
+   viral solo se afirma con 200 tuits con lado claro en las dos series
+   (AGENTS.md, regla 4). */
+const BRECHA_MIN = 200;
+const pct = (a, b) => b ? 100 * a / b : 0;
+const fx = (v, d = 0) => new Intl.NumberFormat(LANG === 'en' ? 'en-US' : 'es-ES', { maximumFractionDigits: d, minimumFractionDigits: d }).format(v);
+
+function datosHistoria() {
+  const P = POL.periodos;
+  const todo = P.todo.medios;
+  const metas = new Map(INDEX.medios.map(m => [m.handle.toLowerCase(), m]));
+  const nombre = h => (metas.get(h.toLowerCase()) || {}).nombre || h;
+  const suma = (filas, serie) => filas.reduce((a, r) => {
+    const d = r[serie] || {};
+    a.i += d.izq || 0; a.d += d.der || 0; a.t += d.tuits || 0;
+    return a;
+  }, { i: 0, d: 0, t: 0 });
+  const derDe = x => pct(x.d, x.i + x.d);
+  const conPos = r => r.publicado && r.publicado.posicion != null;
+
+  const enMapa = todo.filter(r => {
+    const m = metas.get(r.handle.toLowerCase());
+    return m && (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN && conPos(r) && r.publicado.con_lado >= 5;
+  });
+  const lados = { izq: 0, der: 0, neu: 0 };
+  enMapa.forEach(r => { lados[ladoDe(r.publicado.posicion)]++; });
+
+  const pub = suma(todo, 'publicado'), vir = suma(todo, 'viral');
+  const anos = MAPA_ANOS.filter(a => P[a]);
+
+  const fuertes = todo.filter(r => conPos(r) && r.viral && r.viral.posicion != null &&
+    r.publicado.con_lado >= BRECHA_MIN && r.viral.con_lado >= BRECHA_MIN);
+  const alejan = fuertes.filter(r => {
+    const a = r.publicado.posicion - 50, b = r.viral.posicion - 50;
+    return a * b > 0 && Math.abs(b) > Math.abs(a);
+  });
+  const mayor = signo => alejan.filter(r => Math.sign(r.publicado.posicion - 50) === signo)
+    .sort((x, y) => Math.abs(y.viral.posicion - y.publicado.posicion) - Math.abs(x.viral.posicion - x.publicado.posicion))[0];
+
+  const porLado = lado => suma(todo.filter(r => conPos(r) && ladoDe(r.publicado.posicion) === lado), 'publicado');
+  const virLado = lado => suma(todo.filter(r => conPos(r) && ladoDe(r.publicado.posicion) === lado), 'viral');
+
+  const tot = INDEX.totales;
+  const pp = tot.por_partido || {}, dir = tot.por_direccion || {};
+  return {
+    lados, nTot: enMapa.length,
+    pub: derDe(pub), vir: derDe(vir), virI: vir.i, virD: vir.d,
+    a0: derDe(suma(P[anos[0]].medios, 'publicado')), a1: derDe(suma(P[anos[anos.length - 1]].medios, 'publicado')),
+    fuertes: fuertes.length, alejan: alejan.length, izq: mayor(-1), der: mayor(1), nombre,
+    rI: pct(virLado('izq').t, porLado('izq').t), rD: pct(virLado('der').t, porLado('der').t),
+    psoe: pp.PSOE || 0, resto: (pp.PP || 0) + (pp.Vox || 0) + (pp.Sumar || 0), clasif: tot.clasificados,
+    perj: dir.perjudica || 0, ben: dir.beneficia || 0
+  };
+}
+
+function irAlMapa({ serie = 'publicado', filtro = 5, periodo = 'todo', play = false }) {
+  pararEvolucion();
+  mapaSerie = serie; mapaFiltro = filtro;
+  $('#mapa-serie').value = serie;
+  $('#mapa-filtro').value = String(filtro);
+  fijarPeriodoMapa(periodo, true);
+  $('.panel-mapa').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (play) reproducirEvolucion();
+}
+const ACCIONES_HISTORIA = {
+  evolucion: () => irAlMapa({ play: true }),
+  brecha: () => irAlMapa({ serie: 'ambas', filtro: BRECHA_MIN }),
+  viral: () => irAlMapa({ serie: 'viral' }),
+  top: () => { location.hash = '#/top'; }
+};
+
+function pintarHistoria() {
+  const caja = $('#historia-hallazgos');
+  if (!caja || !INDEX || !POL || !POL.periodos || !POL.periodos.todo) return;
+  const h = datosHistoria();
+  const r = v => fx(Math.round(v));
+  const pos = v => fx(Math.round(v));
+  const items = [
+    { k: 'hist1', lado: 'der', cifra: `${r(h.pub)} %`, p: t('hist1P', h.lados.der, h.lados.izq, h.lados.neu, h.nTot, r(h.pub), r(h.a0), r(h.a1)), accion: 'evolucion' },
+    (h.izq && h.der) ? { k: 'hist2', lado: 'mix', cifra: `${h.alejan}/${h.fuertes}`, p: t('hist2P', h.alejan, h.fuertes, BRECHA_MIN,
+      h.nombre(h.izq.handle), pos(h.izq.publicado.posicion), pos(h.izq.viral.posicion),
+      h.nombre(h.der.handle), pos(h.der.publicado.posicion), pos(h.der.viral.posicion)), accion: 'brecha' } : null,
+    { k: 'hist3', lado: 'neu', cifra: `${r(h.vir)} %`, p: t('hist3P', r(h.pub), r(h.vir), nf(h.virI), nf(h.virD), fx(h.rI, 1), fx(h.rD, 1)), accion: 'viral' },
+    { k: 'hist4', lado: 'izq', cifra: `${r(pct(h.psoe, h.clasif))} %`, p: t('hist4P', r(pct(h.psoe, h.clasif)), nf(h.psoe), nf(h.resto), nf(h.perj), nf(h.ben), fx(h.perj / Math.max(1, h.ben), 1)), accion: 'top' }
+  ].filter(Boolean);
+  caja.innerHTML = items.map((it, i) => `
+    <li class="hallazgo lado-${it.lado}">
+      <div class="hallazgo-cifra"><span class="hallazgo-n">${String(i + 1).padStart(2, '0')}</span><b>${it.cifra}</b></div>
+      <div class="hallazgo-txt">
+        <h3>${t(it.k + 'T')}</h3>
+        <p>${it.p}</p>
+        <button type="button" class="hallazgo-btn" data-accion="${it.accion}">${t(it.k + 'B')} →</button>
+      </div>
+    </li>`).join('');
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.hallazgo-btn');
+  if (b && ACCIONES_HISTORIA[b.dataset.accion]) ACCIONES_HISTORIA[b.dataset.accion]();
+});
+
 /* ---------- idioma y tema ---------- */
 function applyLang() {
   const doc = document;
@@ -1255,6 +1389,7 @@ function reRenderCurrent() {
   if (currentView === 'medio' && currentMedioMeta && MEDIO) pintarMedio(currentMedioMeta);
   if (currentView === 'top' && TOP) { pintarTopFiltros(); pintarTop(); }
   renderMapa();
+  pintarHistoria();
 }
 function setLang(newLang) {
   if (newLang !== 'es' && newLang !== 'en') newLang = 'es';
@@ -1369,6 +1504,7 @@ function watchSystemTheme() {
   const play = $('#mapa-play');
   if (play) play.addEventListener('click', reproducirEvolucion);
   actualizarPlay();
+  pintarHistoria();
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
   if (h === 'top') { await cargarTop(); }
   route();
