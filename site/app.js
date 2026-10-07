@@ -77,7 +77,20 @@ const I18N = {
     mapaPlay: '▶ Evolución 2018 a 2026',
     mapaPause: (year) => `⏸ Pausar · ${year}`,
     ariaPlay: 'Reproducir o pausar la evolución anual del mapa',
+    trayTitulo: (nombre, a0, a1) => `Recorrido de <strong>${nombre}</strong> de ${a0} a ${a1}`,
+    traySerie: (serie) => serie === 'viral' ? 'con los tuits de 100 RT o más' : 'con todos los tuits',
+    trayFaltan: (anos) => `Sin muestra suficiente en ${anos}.`,
+    trayPocos: (nombre) => `${nombre} no tiene muestra suficiente en dos años o más para dibujar su recorrido.`,
+    trayTuits: 'Ver sus tuits →',
+    trayQuitar: 'Quitar ✕',
+    trayAyuda: 'Pulsa en un medio para ver su recorrido año a año.',
+    mapaPieTray: 'Recorrido',
+    mapaPieTrayDesc: 'cada punto es un año y las flechas van del primero al último. El eje vertical usa la escala anual, ajustada al medio cuando se ve la serie completa o la legislatura.',
+    trayAyudaQuitar: 'Pulsa fuera del recorrido o en «Quitar» para volver a ver todos los medios.',
     ctlEjeY: 'Eje vertical',
+    ctlAjustes: 'Ejes y tamaño',
+    varCorta: (v) => ({ con_lado: 'A favor o en contra', ben: 'Lo benefician', perj: 'Lo perjudican', politicos: 'Tuits políticos',
+                        tuits: 'Tuits muestreados', rt_media: 'Media RT', rt_mediana: 'Mediana RT' })[v],
     ctlTam: 'Tamaño',
     ariaEjeY: 'Variable del eje vertical',
     ariaTam: 'Variable del tamaño de las burbujas',
@@ -368,7 +381,20 @@ const I18N = {
     mapaPlay: '▶ Evolution 2018 to 2026',
     mapaPause: (year) => `⏸ Pause · ${year}`,
     ariaPlay: 'Play or pause the yearly evolution of the map',
+    trayTitulo: (nombre, a0, a1) => `Path of <strong>${nombre}</strong> from ${a0} to ${a1}`,
+    traySerie: (serie) => serie === 'viral' ? 'with tweets of 100 RT or more' : 'with all tweets',
+    trayFaltan: (anos) => `Sample too small in ${anos}.`,
+    trayPocos: (nombre) => `${nombre} does not have enough sample in two or more years to draw its path.`,
+    trayTuits: 'See its tweets →',
+    trayQuitar: 'Remove ✕',
+    trayAyuda: 'Click an outlet to see its path year by year.',
+    mapaPieTray: 'Path',
+    mapaPieTrayDesc: 'each dot is a year and the arrows go from the first to the last. The vertical axis uses the yearly scale, fitted to the outlet when viewing the full series or the legislature.',
+    trayAyudaQuitar: 'Click outside the path or on «Remove» to see every outlet again.',
     ctlEjeY: 'Vertical axis',
+    ctlAjustes: 'Axis and size',
+    varCorta: (v) => ({ con_lado: 'For or against', ben: 'Benefit it', perj: 'Harm it', politicos: 'Political tweets',
+                        tuits: 'Sampled tweets', rt_media: 'Mean RT', rt_mediana: 'Median RT' })[v],
     ctlTam: 'Size',
     ariaEjeY: 'Vertical axis variable',
     ariaTam: 'Bubble size variable',
@@ -684,6 +710,8 @@ function show(v) {
   currentView = v;
   document.body.dataset.view = v;
   if (v !== 'mapa') pararEvolucion();
+  // el recorrido sobrevive a la ida y vuelta a la ficha del medio, no a cambiar de sección
+  if (v !== 'mapa' && v !== 'medio') mapaTrayectoria = '';
   VIEWS.forEach(x => { $('#view-' + x).hidden = x !== v; });
   $$('.tab').forEach(el => el.classList.toggle('is-on', el.dataset.view === v));
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1070,6 +1098,7 @@ let mapaFiltro = 'todos';
 let mapaPartido = '';
 let PARTIDOS_MAPA = null;
 let mapaEjeY = 'con_lado';
+let mapaTrayectoria = '';
 let mapaTam = 'rt_mediana';
 const VARS_MAPA = ['con_lado', 'ben', 'perj', 'politicos', 'tuits', 'rt_media', 'rt_mediana'];
 const VARS_PARTIDO = ['ben', 'perj'];
@@ -1216,8 +1245,8 @@ function valorDe(d, v) {
   return Number(x) || 0;
 }
 // máximo de una variable en la ventana; en los años se mira 2018 a 2026 para que la escala no salte al animar
-function maxVar(v) {
-  const claves = MAPA_ANOS.includes(mapaPeriodo) ? MAPA_ANOS : [mapaPeriodo];
+function maxVar(v, anual = false) {
+  const claves = anual || MAPA_ANOS.includes(mapaPeriodo) ? MAPA_ANOS : [mapaPeriodo];
   const series = mapaSerie === 'ambas' ? ['publicado', 'viral'] : [mapaSerie];
   let maximo = 1;
   for (const clave of claves) {
@@ -1243,8 +1272,43 @@ function radioDe(d) {
 const volumen = d => d.politicos != null ? `${nf(d.politicos)} ${t('tipPoliticos')}` : `${nf(d.juicios)} ${t('tweetsConLectura')}`;
 const nombreSerie = s => s === 'publicado' ? t('publicado') : t('viral');
 
-function maxYMapa() {
-  return redondoArriba(maxVar(mapaEjeY));
+function maxYMapa(tray) {
+  // con un recorrido abierto fuera de un año solo se dibuja ese medio, así que el eje se ajusta a él
+  if (tray && tray.puntos.length && !MAPA_ANOS.includes(mapaPeriodo)) return redondoArriba(Math.max(1, ...tray.puntos.map(q => q.y)));
+  return redondoArriba(maxVar(mapaEjeY, !!tray));
+}
+
+/* Recorrido de un medio: su posición en cada año de 2018 a 2026, en la serie
+   que se esté viendo (en «comparar», la de todos los tuits). Los años con
+   menos de MUESTRA_MIN tuits con lado claro se saltan. */
+function trayectoriaDe(handle) {
+  const serie = mapaSerie === 'viral' ? 'viral' : 'publicado';
+  const puntos = [], faltan = [];
+  for (const ano of MAPA_ANOS) {
+    const r = mediosPeriodoDe(ano).find(x => x.handle.toLowerCase() === handle.toLowerCase());
+    const d = r && r[serie];
+    if (d && d.posicion != null && d.con_lado >= MUESTRA_MIN) puntos.push({ ano, p: d.posicion, y: valorDe(d, mapaEjeY), d });
+    else faltan.push(ano);
+  }
+  return { serie, puntos, faltan };
+}
+function quitarTrayectoria() {
+  if (!mapaTrayectoria) return;
+  mapaTrayectoria = '';
+  renderMapa();
+}
+function pintarBarraTray(meta, tray) {
+  const bar = $('#mapa-tray');
+  if (!bar) return;
+  if (!meta) { bar.hidden = true; bar.innerHTML = ''; return; }
+  const n = tray.puntos.length;
+  const texto = n < 2
+    ? esc(t('trayPocos', meta.nombre))
+    : `${t('trayTitulo', esc(meta.nombre), tray.puntos[0].ano, tray.puntos[n - 1].ano)}, ${t('traySerie', tray.serie)}.${tray.faltan.length ? ' ' + t('trayFaltan', tray.faltan.join(', ')) : ''}`;
+  bar.innerHTML = `<p>${texto}</p>
+    <div class="mapa-tray-acc"><button type="button" class="hallazgo-btn" data-tray="tuits">${t('trayTuits')}</button>
+    <button type="button" class="hallazgo-btn" data-tray="quitar">${t('trayQuitar')}</button></div>`;
+  bar.hidden = false;
 }
 
 function filasMapa() {
@@ -1288,7 +1352,17 @@ function renderMapa() {
   const umbrales = umbralesMuestra();
   etiquetasFiltro(umbrales);
   etiquetasVariables();
-  const { nodos, parejas } = filasMapa();
+  const filas = filasMapa();
+  const metaTray = mapaTrayectoria ? INDEX.medios.find(m => m.handle.toLowerCase() === mapaTrayectoria.toLowerCase()) : null;
+  if (mapaTrayectoria && !metaTray) mapaTrayectoria = '';
+  const tray = metaTray ? trayectoriaDe(metaTray.handle) : null;
+  pintarBarraTray(metaTray, tray);
+  // con un recorrido abierto el eje usa la escala anual: en un año se atenúan los
+  // demás medios; en la serie completa o la legislatura se ocultan, porque su escala no casa
+  const nodos = !tray ? filas.nodos : MAPA_ANOS.includes(mapaPeriodo)
+    ? filas.nodos.filter(n => n.m.handle !== metaTray.handle && (mapaSerie !== 'ambas' || n.serie === 'publicado'))
+    : [];
+  const parejas = tray ? [] : filas.parejas;
   const totalUniverso = mediosPeriodo().length;
   const admitidos = new Set(INDEX.medios
     .filter(m => (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN)
@@ -1299,7 +1373,7 @@ function renderMapa() {
   const fueraCorte = totalUniverso - total;
 
   const W = 1000, H = 620, M = { t: 46, r: 54, b: 66, l: 82 };
-  const yMax = maxYMapa();
+  const yMax = maxYMapa(tray);
   maxTamMapa = maxVar(mapaTam);
   const lista = Array.from({ length: 6 }, (_, i) => yMax * i / 5);
   const px = v => M.l + v / 100 * (W - M.l - M.r);
@@ -1362,15 +1436,55 @@ function renderMapa() {
     const r = radioDe(n.d);
     const cx = px(n.p), cy = py(n.y);
     const d = (r * 1.74).toFixed(1), off = (-r * 0.87).toFixed(1);
-    return `<g class="burbuja burbuja-${n.serie} lado-${ladoDe(n.p)}" data-h="${esc(n.m.handle)}"
+    return `<g class="burbuja burbuja-${n.serie} lado-${ladoDe(n.p)}${tray ? ' atenuada' : ''}" data-h="${esc(n.m.handle)}"
         data-serie="${n.serie}" data-posicion="${n.p.toFixed(1)}" data-y="${n.y}" data-rt-mediana="${n.d.rt_mediana}" data-y-max="${yMax}" data-i="${i}" transform="translate(${cx.toFixed(1)},${cy.toFixed(1)})">
       <circle class="aro${n.serie === 'viral' ? ' dis' : ''}" r="${r.toFixed(1)}" stroke="${colorDe(n.p)}"></circle>
       <image href="${esc(n.m.logo)}" x="${off}" y="${off}" width="${d}" height="${d}"></image>
     </g>`;
   }).join('');
 
+  let recorrido = '';
+  if (tray && tray.puntos.length) {
+    const pts = tray.puntos.map(q => ({ ...q, x: px(q.p), yy: py(q.y) }));
+    const ult = pts[pts.length - 1];
+    const rUlt = Math.max(14, radioDe(ult.d));
+    pts.forEach((a, i) => {
+      const b = pts[i + 1];
+      if (!b) return;
+      const dx = b.x - a.x, dy = b.yy - a.yy, L = Math.hypot(dx, dy);
+      const rb = b === ult ? rUlt + 3 : 7;
+      if (L < 7 + rb + 3) return;
+      // en los saltos cortos la punta se encoge para que ningún tramo se quede sin flecha
+      const ux = dx / L, uy = dy / L, c = colorDe(a.p), hl = Math.min(9, L - 7 - rb);
+      const sx = a.x + ux * 7, sy = a.yy + uy * 7, ex = b.x - ux * rb, ey = b.yy - uy * rb;
+      const bx = ex - ux * hl, by = ey - uy * hl, nx = -uy, ny = ux;
+      recorrido += `<g class="tramo" data-de="${a.ano}" data-a="${b.ano}">
+        <path d="M ${sx.toFixed(1)} ${sy.toFixed(1)} L ${bx.toFixed(1)} ${by.toFixed(1)}" stroke="${c}"></path>
+        <polygon fill="${c}" points="${ex.toFixed(1)},${ey.toFixed(1)} ${(bx + nx * 4.6).toFixed(1)},${(by + ny * 4.6).toFixed(1)} ${(bx - nx * 4.6).toFixed(1)},${(by - ny * 4.6).toFixed(1)}"></polygon>
+      </g>`;
+    });
+    pts.forEach((q, i) => {
+      // las etiquetas alternan arriba y abajo para que los años cercanos no se pisen
+      const c = colorDe(q.p), arriba = q.yy - M.t > 30 && (i % 2 === 0 || H - M.b - q.yy < 24);
+      if (q === ult) {
+        const d = (rUlt * 1.74).toFixed(1), off = (-rUlt * 0.87).toFixed(1);
+        recorrido += `<g class="paso paso-ultimo" data-ano="${q.ano}" data-posicion="${q.p.toFixed(1)}" data-y="${q.y}" transform="translate(${q.x.toFixed(1)},${q.yy.toFixed(1)})">
+          <circle class="aro" r="${rUlt.toFixed(1)}" stroke="${c}"></circle>
+          <image href="${esc(metaTray.logo)}" x="${off}" y="${off}" width="${d}" height="${d}"></image>
+          <text y="${(arriba ? -rUlt - 7 : rUlt + 15).toFixed(1)}" text-anchor="middle">${q.ano}</text></g>`;
+      } else {
+        recorrido += `<g class="paso${i === 0 ? ' paso-primero' : ''}" data-ano="${q.ano}" data-posicion="${q.p.toFixed(1)}" data-y="${q.y}" transform="translate(${q.x.toFixed(1)},${q.yy.toFixed(1)})">
+          <circle r="${i === 0 ? 7 : 5}" fill="${i === 0 ? 'var(--panel)' : c}" stroke="${c}"></circle>
+          <text y="${arriba ? -11 : 19}" text-anchor="middle">${q.ano}</text></g>`;
+      }
+    });
+  }
+
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  svg.innerHTML = `<g class="grid">${g}</g><g class="flechas">${flechas}</g><g class="nodos">${burbujas}</g><g class="etiquetas">${etiquetas}</g>`;
+  svg.innerHTML = `<g class="grid">${g}</g><g class="flechas">${flechas}</g><g class="nodos">${burbujas}</g><g class="recorrido">${recorrido}</g><g class="etiquetas">${etiquetas}</g>`;
+  svg.classList.toggle('con-recorrido', !!tray);
+  const ultimo = svg.querySelector('.paso-ultimo');
+  if (ultimo) ultimo.addEventListener('click', e => { e.stopPropagation(); location.hash = '#/medio/' + metaTray.handle.replace('@', ''); });
 
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const coords = valor => (valor || '').match(/translate\(([-0-9.]+),\s*([-0-9.]+)\)/);
@@ -1404,7 +1518,7 @@ function renderMapa() {
   } else {
     res.push(t('mapaResSolo', nf(dibujados), nombreSerie(mapaSerie)));
   }
-  $('#mapa-resumen').textContent = res.join(' ');
+  $('#mapa-resumen').textContent = tray ? t('trayAyudaQuitar') : res.join(' ');
 
   svg.querySelectorAll('.burbuja').forEach(el => {
     const n = orden[Number(el.dataset.i)];
@@ -1419,7 +1533,12 @@ function renderMapa() {
     el.addEventListener('mouseleave', () => { $('#mapa-tip').hidden = true; });
     el.addEventListener('touchstart', () => prefetchMedio(m), { passive: true });
     el.addEventListener('pointerdown', () => prefetchMedio(m));
-    el.addEventListener('click', () => { location.hash = '#/medio/' + m.handle.replace('@', ''); });
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      $('#mapa-tip').hidden = true;
+      mapaTrayectoria = m.handle;
+      renderMapa();
+    });
   });
 
   const bolaRT = v => `<span class="bola" style="width:${(2 * RADIO(v)).toFixed(0)}px;height:${(2 * RADIO(v)).toFixed(0)}px"></span> ${nf(v)} RT`;
@@ -1430,6 +1549,7 @@ function renderMapa() {
     : umbrales[mapaFiltro] != null ? t('mapaPieFiltroP', mapaFiltro.slice(1), nf(umbrales[mapaFiltro]))
     : t('mapaPieFiltroTodos');
   $('#mapa-pie').innerHTML = `
+    ${tray ? `<div class="blq"><strong>${t('mapaPieTray')}</strong> ${t('mapaPieTrayDesc')}</div>` : `<div class="blq">${t('trayAyuda')}</div>`}
     ${mapaPartido ? `<div class="blq"><strong>${t('mapaPiePartidoK')}</strong> ${t('mapaPiePartido', mapaPartido)}</div>` : ''}
     <div class="blq"><strong>${t('mapaPieTam')}</strong> ${mapaTam === 'rt_mediana' && !mapaPartido ? t('mapaPieTamDesc') : t('varDesc', mapaTam, mapaPartido)} ${bolas}</div>
     <div class="blq"><strong>${t('mapaPieAro')}</strong> <span class="aro" style="border-color:var(--map-izq)"></span> ${tm('mapaPieIzq')}
@@ -1441,7 +1561,7 @@ function renderMapa() {
     <div class="blq"><strong>${t('mapaPieCorte')}</strong> ${t('mapaPieCorteDesc')}</div>
     <div class="blq">${notaFiltro}</div>
     ${fueraCorte ? `<div class="blq">${t('mapaPieFueraCorte', fueraCorte)}</div>` : ''}
-    ${fuera ? `<div class="blq">${t('mapaPieFuera', fuera)}</div>` : ''}`;
+    ${fuera && !tray ? `<div class="blq">${t('mapaPieFuera', fuera)}</div>` : ''}`;
 }
 
 function lineaVars(n) {
@@ -1451,6 +1571,8 @@ function lineaVars(n) {
   return `<div class="tv">${extra.map(v => `<b>${t('varOpcion', v, mapaPartido)}</b>: ${fmt(v)}`).join(' · ')}</div>`;
 }
 function etiquetasVariables() {
+  const res = $('#ajustes-resumen');
+  if (res) res.textContent = `↕ ${t('varCorta', mapaEjeY)} · ◯ ${t('varCorta', mapaTam)}`;
   ['#mapa-ejey', '#mapa-tam'].forEach(sel => {
     const el = $(sel);
     if (!el) return;
@@ -1588,7 +1710,7 @@ async function fijarPartidoMapa(valor) {
 function irAlMapa({ serie = 'publicado', filtro = 'todos', periodo = 'todo', play = false }) {
   pararEvolucion();
   mapaSerie = serie; mapaFiltro = filtro; mapaPartido = '';
-  mapaEjeY = 'con_lado'; mapaTam = 'rt_mediana';
+  mapaEjeY = 'con_lado'; mapaTam = 'rt_mediana'; mapaTrayectoria = '';
   $('#mapa-ejey').value = mapaEjeY;
   $('#mapa-tam').value = mapaTam;
   $('#mapa-serie').value = serie;
@@ -1777,6 +1899,19 @@ function watchSystemTheme() {
   $('#mapa-filtro').value = mapaFiltro;
   $('#mapa-filtro').addEventListener('change', e => { mapaFiltro = FILTROS_MAPA.includes(e.target.value) ? e.target.value : 'todos'; renderMapa(); });
   $('#mapa-partido').addEventListener('change', e => fijarPartidoMapa(e.target.value));
+  // el configurador de ejes se cierra al pulsar fuera de él
+  document.addEventListener('click', e => {
+    const aj = $('#mapa-ajustes');
+    if (aj && aj.open && !aj.contains(e.target)) aj.open = false;
+  });
+  $('#mapa').addEventListener('click', e => { if (!e.target.closest('.burbuja, .paso-ultimo')) quitarTrayectoria(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && currentView === 'mapa') quitarTrayectoria(); });
+  $('#mapa-tray').addEventListener('click', e => {
+    const b = e.target.closest('[data-tray]');
+    if (!b) return;
+    if (b.dataset.tray === 'tuits' && mapaTrayectoria) location.hash = '#/medio/' + mapaTrayectoria.replace('@', '');
+    else quitarTrayectoria();
+  });
   $('#mapa-ejey').addEventListener('change', e => fijarVariableMapa('ejeY', e.target.value));
   $('#mapa-tam').addEventListener('change', e => fijarVariableMapa('tam', e.target.value));
   const selPer = $('#mapa-periodo');

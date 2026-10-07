@@ -115,21 +115,30 @@ async def main():
         await pg.select_option("#mapa-periodo", "todo")
         await pg.wait_for_timeout(1000)
 
-        # clic en una burbuja superior del mapa: tiene que abrir su medio y hacerlo
-        # en menos de un segundo. Elegimos la última del SVG porque queda por encima
-        # cuando varios medios comparten casi la misma coordenada.
+        # clic en una burbuja superior del mapa: dibuja su recorrido año a año, y
+        # «Ver sus tuits» abre su medio en menos de un segundo. Elegimos la última del
+        # SVG porque queda por encima cuando varios medios comparten casi la misma coordenada.
         objetivo = pg.locator('#mapa .burbuja[data-serie="publicado"]').last
         handle_objetivo = await objetivo.get_attribute("data-h")
-        t0 = time.perf_counter()
         await objetivo.click()
+        await pg.wait_for_timeout(500)
+        anos_tray = await pg.eval_on_selector_all("#mapa .recorrido .paso", "e => e.map(x => x.dataset.ano)")
+        tramos = await pg.locator("#mapa .recorrido .tramo").count()
+        barra = " ".join((await pg.locator("#mapa-tray").inner_text()).split())
+        print(f"recorrido de {handle_objetivo}: años {anos_tray} · {tramos} flechas · {barra[:120]}")
+        if len(anos_tray) < 2 or anos_tray != sorted(anos_tray) or tramos < 1:
+            errores.append(f"[check] el clic en {handle_objetivo} no dibuja su recorrido por años: {anos_tray}, {tramos} flechas")
+        await pg.screenshot(path=f"{OUT}/0-mapa-recorrido.png", full_page=True)
+        t0 = time.perf_counter()
+        await pg.click('#mapa-tray [data-tray="tuits"]')
         await pg.wait_for_selector("#mlist article.tweet", state="visible", timeout=15000)
         ms = round((time.perf_counter() - t0) * 1000)
         titulo_mapa = await pg.locator("#medio-panel h2").inner_text()
-        print(f"clic en el nodo superior {handle_objetivo} -> {titulo_mapa} en {ms} ms")
+        print(f"«ver sus tuits» de {handle_objetivo} -> {titulo_mapa} en {ms} ms")
         if not handle_objetivo or handle_objetivo.lstrip('@').lower() not in pg.url.lower():
-            errores.append(f"[check] la burbuja {handle_objetivo} no abrio su ficha: {pg.url}")
+            errores.append(f"[check] el recorrido de {handle_objetivo} no abrio su ficha: {pg.url}")
         if ms >= 1000:
-            errores.append(f"[check] el clic en la burbuja tarda {ms} ms, mas de un segundo")
+            errores.append(f"[check] abrir la ficha desde el recorrido tarda {ms} ms, mas de un segundo")
         await pg.screenshot(path=f"{OUT}/0-mapa-clic-medio.png", full_page=True)
 
         # ranking
@@ -548,6 +557,7 @@ async def main():
 
         # el eje vertical y el tamaño se pueden llevar a otras variables
         await pg.select_option("#mapa-serie", "publicado")
+        await pg.click("#mapa-ajustes summary")
         await pg.select_option("#mapa-ejey", "politicos")
         await pg.select_option("#mapa-tam", "rt_media")
         await pg.wait_for_timeout(700)
@@ -562,6 +572,12 @@ async def main():
             errores.append(f"[check] el tamaño por media de retuits no distingue medios: {sorted(radios)[:8]}")
         await pg.select_option("#mapa-ejey", "con_lado")
         await pg.select_option("#mapa-tam", "rt_mediana")
+        resumen_aj = await pg.locator("#ajustes-resumen").inner_text()
+        await pg.click("#mapa-resumen")
+        abierto = await pg.eval_on_selector("#mapa-ajustes", "e => e.open")
+        print("configurador de ejes:", resumen_aj, "| sigue abierto tras pulsar fuera:", abierto)
+        if abierto or "Mediana RT" not in resumen_aj:
+            errores.append(f"[check] el configurador de ejes no resume o no se cierra: {resumen_aj}, abierto={abierto}")
         await pg.select_option("#mapa-serie", "ambas")
         await pg.wait_for_timeout(500)
 

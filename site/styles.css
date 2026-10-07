@@ -376,3 +376,35 @@ td.c-dec{min-width:210px}
 .panel-mapa[data-modo="partido"]{--map-izq:var(--perj);--map-der:var(--ben);
   --zona-miz:var(--chip-perj-bg);--zona-iz:color-mix(in srgb,var(--chip-perj-bg) 45%,var(--panel));
   --zona-dr:color-mix(in srgb,var(--chip-ben-bg) 45%,var(--panel));--zona-mdr:var(--chip-ben-bg)}
+
+/* recorrido de un medio año a año */
+.mapa-tray{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;margin:0 0 12px;
+  padding:12px 16px;background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra-s)}
+.mapa-tray p{margin:0;font:400 16.5px/1.45 var(--f-serif);color:var(--prose-fg)}
+.mapa-tray-acc{display:flex;gap:8px;flex-wrap:wrap}
+#mapa .burbuja.atenuada{opacity:.22}
+#mapa .burbuja.atenuada:hover{opacity:.6}
+#mapa .recorrido .tramo path{fill:none;stroke-width:2.4;stroke-linecap:round;opacity:.85}
+#mapa .recorrido .paso text{font:600 11.5px/1 var(--f-mono);fill:var(--ink);paint-order:stroke;stroke:var(--panel);stroke-width:3px}
+#mapa .recorrido .paso circle{stroke-width:2.2}
+#mapa .recorrido .paso-ultimo{cursor:pointer}
+#mapa .recorrido .paso-ultimo .aro{fill:var(--aro-fill);stroke-width:3.5}
+#mapa .recorrido .paso-ultimo image{pointer-events:none}
+
+/* configurador plegable de eje vertical y tamaño: un botón compacto que abre un panel flotante */
+.mapa-ajustes{position:relative}
+.mapa-ajustes summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;gap:5px}
+.mapa-ajustes summary::-webkit-details-marker{display:none}
+.ajustes-v{display:inline-flex;align-items:center;gap:6px;padding:10px 12px;font:500 14px/1.2 var(--f-sans);color:var(--ink);
+  background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra-s);white-space:nowrap}
+.ajustes-v::after{content:"▾";font-size:12px;margin-left:4px}
+.mapa-ajustes[open] .ajustes-v{background:var(--hl);color:var(--hl-ink)}
+.mapa-ajustes summary:hover .ajustes-v{background:var(--panel-soft)}
+.ajustes-pop{position:absolute;top:calc(100% + 8px);left:0;z-index:30;display:grid;gap:12px;min-width:340px;padding:14px;
+  background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra)}
+.ajustes-pop select{width:100%}
+@media (max-width:640px){
+  .panel-mapa .mapa-ajustes{grid-column:1/-1}
+  .ajustes-v{width:100%;justify-content:space-between}
+  .ajustes-pop{left:0;right:0;min-width:0}
+}
