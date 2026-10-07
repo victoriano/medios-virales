@@ -35,7 +35,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/fraunces-normal-400-900.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fonts.css?v=202610051200">
-<link rel="stylesheet" href="styles.css?v=202610061500">
+<link rel="stylesheet" href="styles.css?v=202610071630">
 </head>
 <body>
 <header class="mast">
@@ -132,12 +132,19 @@
             <option value="publicado" selected data-i18n="mapaSeriePub">Todos los tuits</option>
             <option value="viral" data-i18n="mapaSerieViral">100 RT o más</option>
           </select></label>
+        <label class="ctl"><span class="ctl-k" data-i18n="ctlPartido">Partido</span><select id="mapa-partido" data-i18n-aria="ariaPartido" aria-label="Ver la posición de los medios respecto a un partido">
+            <option value="" selected data-i18n="mapaPartidoTodos">Izquierda y derecha</option>
+            <option value="PSOE">PSOE</option>
+            <option value="PP">PP</option>
+            <option value="Vox">Vox</option>
+            <option value="Sumar">Sumar</option>
+          </select></label>
         <label class="ctl"><span class="ctl-k" data-i18n="ctlMuestra">Medios</span><select id="mapa-filtro" data-i18n-aria="ariaFiltro" aria-label="Filtrar por tamaño de muestra">
-            <option value="5" selected data-i18n="mapaFiltro5">Con muestra de 5 o más</option>
-            <option value="0" data-i18n="mapaFiltro0">Todos los medios</option>
-            <option value="15" data-i18n="mapaFiltro15">Con muestra de 15 o más</option>
-            <option value="30" data-i18n="mapaFiltro30">Con muestra de 30 o más</option>
-            <option value="200" data-i18n="mapaFiltro200">Con muestra de 200 o más</option>
+            <option value="todos" selected data-i18n="mapaFiltroTodos">Todos los medios</option>
+            <option value="p25">p25</option>
+            <option value="p50">p50</option>
+            <option value="p75">p75</option>
+            <option value="b200" data-i18n="mapaFiltroB200">Brecha fiable: 200 con lado en cada serie</option>
           </select></label>
       </div>
       <p class="resumen" id="mapa-resumen"></p>
@@ -230,6 +237,6 @@
   </div>
 </footer>
 
-<script src="app.js?v=202610061500"></script>
+<script src="app.js?v=202610071630"></script>
 </body>
 </html>

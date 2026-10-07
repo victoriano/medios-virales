@@ -86,6 +86,10 @@ y sin esto atribuía al PP escándalos que son del Gobierno.
 ### 3. Agregación
 
 `scripts/build_legislatura_data.py` y `scripts/build_data.py` producen los JSON que consume la web.
+Después, `scripts/build_partidos_data.py` saca `site/data/partidos.json` (la posición de cada medio
+respecto a PSOE, PP, Vox y Sumar, para el filtro por partido del mapa) a partir del detalle por medio
+y año que ya está en el repositorio. No necesita el taller, pero hay que repetirlo cada vez que se
+regeneren los datos.
 
 ### 4. Publicación
 

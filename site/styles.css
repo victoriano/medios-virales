@@ -370,3 +370,9 @@ td.c-dec{min-width:210px}
   *{transition:none !important}
 }
 .prose .byline{font:500 12px/1.6 var(--f-mono);color:var(--muted)}
+
+/* mapa respecto a un partido: el eje va de en contra (naranja) a a favor (verde azulado),
+   los mismos colores que la dirección de los tuits en el resto de la web */
+.panel-mapa[data-modo="partido"]{--map-izq:var(--perj);--map-der:var(--ben);
+  --zona-miz:var(--chip-perj-bg);--zona-iz:color-mix(in srgb,var(--chip-perj-bg) 45%,var(--panel));
+  --zona-dr:color-mix(in srgb,var(--chip-ben-bg) 45%,var(--panel));--zona-mdr:var(--chip-ben-bg)}
