@@ -235,6 +235,34 @@ td.c-dec{min-width:210px}
 .historia{margin-top:56px;padding-top:32px;border-top:3px solid var(--rule)}
 .historia h2{font-size:clamp(24px,3vw,34px)}
 .historia .hint{font-size:18.5px}
+.historia + .historia{margin-top:24px}
+/* hallazgos: cuatro cifras grandes con su explicación y un botón que lleva al mapa */
+.hallazgos .kicker{margin-bottom:8px}
+.hallazgos .hint{max-width:62ch}
+.hallazgos-lista{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:18px}
+.hallazgo{display:grid;grid-template-columns:minmax(150px,210px) 1fr;gap:8px 28px;padding:22px 24px;
+  background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra)}
+.hallazgo-cifra{display:flex;flex-direction:column;gap:4px;border-right:1.5px solid var(--line);padding-right:20px}
+.hallazgo-n{font:600 11px/1 var(--f-mono);letter-spacing:.12em;color:var(--muted)}
+.hallazgo-cifra b{font:900 clamp(40px,5.5vw,64px)/1 var(--f-display);letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;font-variation-settings:"opsz" 144}
+.hallazgo.lado-der .hallazgo-cifra b{color:var(--map-der)}
+.hallazgo.lado-izq .hallazgo-cifra b{color:var(--map-izq)}
+.hallazgo.lado-neu .hallazgo-cifra b{color:var(--ink)}
+.hallazgo.lado-mix .hallazgo-cifra b{background:linear-gradient(90deg,var(--map-izq) 0 50%,var(--map-der) 50% 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hallazgo-txt h3{margin:0 0 8px;font:800 clamp(20px,2.4vw,26px)/1.15 var(--f-display);letter-spacing:-.015em;font-variation-settings:"opsz" 72}
+.hallazgo-txt p{margin:0 0 14px;color:var(--prose-fg);font:400 17.5px/1.6 var(--f-serif);max-width:68ch}
+.hallazgo-txt strong{font-weight:600}
+.hallazgo-btn{font:600 13px/1 var(--f-sans);padding:10px 14px;background:var(--bg);color:var(--ink);cursor:pointer;
+  border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra-s);transition:transform .08s ease,box-shadow .08s ease}
+.hallazgo-btn:hover{background:var(--hl);color:var(--hl-ink)}
+.hallazgo-btn:active{transform:translate(2px,2px);box-shadow:none}
+.hallazgo-btn:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+@media (max-width:640px){
+  .hallazgo{grid-template-columns:1fr;padding:18px 16px}
+  .hallazgo-cifra{flex-direction:row;align-items:baseline;gap:12px;border-right:0;border-bottom:1.5px solid var(--line);padding:0 0 10px}
+}
 .chart-wrap{position:relative;overflow-x:auto;margin:0 0 4px;padding:18px 18px 8px;background:var(--panel);
   border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra)}
 #mapa{display:block;width:100%;min-width:780px;height:auto;overflow:visible}
@@ -342,3 +370,41 @@ td.c-dec{min-width:210px}
   *{transition:none !important}
 }
 .prose .byline{font:500 12px/1.6 var(--f-mono);color:var(--muted)}
+
+/* mapa respecto a un partido: el eje va de en contra (naranja) a a favor (verde azulado),
+   los mismos colores que la dirección de los tuits en el resto de la web */
+.panel-mapa[data-modo="partido"]{--map-izq:var(--perj);--map-der:var(--ben);
+  --zona-miz:var(--chip-perj-bg);--zona-iz:color-mix(in srgb,var(--chip-perj-bg) 45%,var(--panel));
+  --zona-dr:color-mix(in srgb,var(--chip-ben-bg) 45%,var(--panel));--zona-mdr:var(--chip-ben-bg)}
+
+/* recorrido de un medio año a año */
+.mapa-tray{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;margin:0 0 12px;
+  padding:12px 16px;background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra-s)}
+.mapa-tray p{margin:0;font:400 16.5px/1.45 var(--f-serif);color:var(--prose-fg)}
+.mapa-tray-acc{display:flex;gap:8px;flex-wrap:wrap}
+#mapa .burbuja.atenuada{opacity:.22}
+#mapa .burbuja.atenuada:hover{opacity:.6}
+#mapa .recorrido .tramo path{fill:none;stroke-width:2.4;stroke-linecap:round;opacity:.85}
+#mapa .recorrido .paso text{font:600 11.5px/1 var(--f-mono);fill:var(--ink);paint-order:stroke;stroke:var(--panel);stroke-width:3px}
+#mapa .recorrido .paso circle{stroke-width:2.2}
+#mapa .recorrido .paso-ultimo{cursor:pointer}
+#mapa .recorrido .paso-ultimo .aro{fill:var(--aro-fill);stroke-width:3.5}
+#mapa .recorrido .paso-ultimo image{pointer-events:none}
+
+/* configurador plegable de eje vertical y tamaño: un botón compacto que abre un panel flotante */
+.mapa-ajustes{position:relative}
+.mapa-ajustes summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;gap:5px}
+.mapa-ajustes summary::-webkit-details-marker{display:none}
+.ajustes-v{display:inline-flex;align-items:center;gap:6px;padding:10px 12px;font:500 14px/1.2 var(--f-sans);color:var(--ink);
+  background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra-s);white-space:nowrap}
+.ajustes-v::after{content:"▾";font-size:12px;margin-left:4px}
+.mapa-ajustes[open] .ajustes-v{background:var(--hl);color:var(--hl-ink)}
+.mapa-ajustes summary:hover .ajustes-v{background:var(--panel-soft)}
+.ajustes-pop{position:absolute;top:calc(100% + 8px);left:0;z-index:30;display:grid;gap:12px;min-width:340px;padding:14px;
+  background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra)}
+.ajustes-pop select{width:100%}
+@media (max-width:640px){
+  .panel-mapa .mapa-ajustes{grid-column:1/-1}
+  .ajustes-v{width:100%;justify-content:space-between}
+  .ajustes-pop{left:0;right:0;min-width:0}
+}

@@ -115,21 +115,30 @@ async def main():
         await pg.select_option("#mapa-periodo", "todo")
         await pg.wait_for_timeout(1000)
 
-        # clic en una burbuja superior del mapa: tiene que abrir su medio y hacerlo
-        # en menos de un segundo. Elegimos la última del SVG porque queda por encima
-        # cuando varios medios comparten casi la misma coordenada.
+        # clic en una burbuja superior del mapa: dibuja su recorrido año a año, y
+        # «Ver sus tuits» abre su medio en menos de un segundo. Elegimos la última del
+        # SVG porque queda por encima cuando varios medios comparten casi la misma coordenada.
         objetivo = pg.locator('#mapa .burbuja[data-serie="publicado"]').last
         handle_objetivo = await objetivo.get_attribute("data-h")
-        t0 = time.perf_counter()
         await objetivo.click()
+        await pg.wait_for_timeout(500)
+        anos_tray = await pg.eval_on_selector_all("#mapa .recorrido .paso", "e => e.map(x => x.dataset.ano)")
+        tramos = await pg.locator("#mapa .recorrido .tramo").count()
+        barra = " ".join((await pg.locator("#mapa-tray").inner_text()).split())
+        print(f"recorrido de {handle_objetivo}: años {anos_tray} · {tramos} flechas · {barra[:120]}")
+        if len(anos_tray) < 2 or anos_tray != sorted(anos_tray) or tramos < 1:
+            errores.append(f"[check] el clic en {handle_objetivo} no dibuja su recorrido por años: {anos_tray}, {tramos} flechas")
+        await pg.screenshot(path=f"{OUT}/0-mapa-recorrido.png", full_page=True)
+        t0 = time.perf_counter()
+        await pg.click('#mapa-tray [data-tray="tuits"]')
         await pg.wait_for_selector("#mlist article.tweet", state="visible", timeout=15000)
         ms = round((time.perf_counter() - t0) * 1000)
         titulo_mapa = await pg.locator("#medio-panel h2").inner_text()
-        print(f"clic en el nodo superior {handle_objetivo} -> {titulo_mapa} en {ms} ms")
+        print(f"«ver sus tuits» de {handle_objetivo} -> {titulo_mapa} en {ms} ms")
         if not handle_objetivo or handle_objetivo.lstrip('@').lower() not in pg.url.lower():
-            errores.append(f"[check] la burbuja {handle_objetivo} no abrio su ficha: {pg.url}")
+            errores.append(f"[check] el recorrido de {handle_objetivo} no abrio su ficha: {pg.url}")
         if ms >= 1000:
-            errores.append(f"[check] el clic en la burbuja tarda {ms} ms, mas de un segundo")
+            errores.append(f"[check] abrir la ficha desde el recorrido tarda {ms} ms, mas de un segundo")
         await pg.screenshot(path=f"{OUT}/0-mapa-clic-medio.png", full_page=True)
 
         # ranking
@@ -501,19 +510,76 @@ async def main():
         else:
             print("escala del eje Y estable durante la animación:", list(yMax_muestra)[0])
 
-        # el filtro de muestra sigue moviendo el numero de nodos
+        # el filtro de muestra por cuartiles de tuits políticos sigue moviendo el numero de nodos
         await pg.select_option("#mapa-serie", "ambas")
-        await pg.select_option("#mapa-filtro", "30")
+        await pg.select_option("#mapa-filtro", "p75")
         await pg.wait_for_timeout(500)
         pocos = await pg.locator("#mapa .burbuja").count()
-        await pg.select_option("#mapa-filtro", "0")
+        await pg.select_option("#mapa-filtro", "p50")
+        await pg.wait_for_timeout(500)
+        medios_p50 = await pg.locator("#mapa .burbuja").count()
+        await pg.select_option("#mapa-filtro", "todos")
         await pg.wait_for_timeout(500)
         todos = await pg.locator("#mapa .burbuja").count()
-        print(f"nodos con el filtro de 30: {pocos} · con todos los medios: {todos}")
-        if not pocos < todos:
-            errores.append(f"[check] el filtro de muestra no cambia nada: {pocos} vs {todos}")
-        await pg.select_option("#mapa-filtro", "5")
-        await pg.wait_for_timeout(400)
+        etiquetas_filtro = await pg.eval_on_selector_all("#mapa-filtro option", "e => e.map(o => o.textContent)")
+        print(f"nodos con p75: {pocos} · p50: {medios_p50} · todos: {todos} · opciones: {etiquetas_filtro}")
+        if not pocos <= medios_p50 < todos:
+            errores.append(f"[check] el filtro por cuartiles no recorta en orden: {pocos}, {medios_p50}, {todos}")
+        if not all("tuits políticos" in e for e in etiquetas_filtro[1:4]):
+            errores.append(f"[check] las opciones p25, p50 y p75 no dicen su umbral: {etiquetas_filtro}")
+
+        # el filtro por partido recoloca los medios respecto a ese partido
+        partidos = await pg.evaluate("fetch('data/partidos.json').then(r => r.json())")
+        await pg.select_option("#mapa-periodo", "todo")
+        await pg.select_option("#mapa-filtro", "todos")
+        await pg.select_option("#mapa-serie", "publicado")
+        await pg.select_option("#mapa-partido", "PSOE")
+        await pg.wait_for_timeout(700)
+        est_p = await leer_mapa()
+        bloque = {r["h"].lower(): r["PSOE"][0] for r in partidos["periodos"]["todo"]["medios"]}
+        esp_psoe = sum(1 for h, (ben, perj, *_) in bloque.items() if h in admitidos and ben + perj >= 5)
+        print(f"modo PSOE: {len(est_p['nodos'])} nodos (esperados {esp_psoe}) · títulos {est_p['titulos'][:2]}")
+        if len(est_p["nodos"]) != esp_psoe:
+            errores.append(f"[check] el mapa del PSOE dibuja {len(est_p['nodos'])} medios y se esperaban {esp_psoe}")
+        if not any("PSOE" in t for t in est_p["titulos"]):
+            errores.append(f"[check] los títulos del mapa no nombran al partido: {est_p['titulos']}")
+        mal_pos = []
+        for n in est_p["nodos"]:
+            ben, perj, *_ = bloque[n["h"].lower()]
+            if abs(n["pos"] - 100 * ben / (ben + perj)) > 0.15:
+                mal_pos.append(n["h"])
+        if mal_pos:
+            errores.append(f"[check] posiciones respecto al PSOE que no cuadran: {mal_pos[:5]}")
+        await pg.screenshot(path=f"{MAPOUT}/partido-psoe.png", full_page=True)
+        await pg.select_option("#mapa-partido", "")
+        await pg.select_option("#mapa-serie", "ambas")
+        await pg.wait_for_timeout(500)
+
+        # el eje vertical y el tamaño se pueden llevar a otras variables
+        await pg.select_option("#mapa-serie", "publicado")
+        await pg.click("#mapa-ajustes summary")
+        await pg.select_option("#mapa-ejey", "politicos")
+        await pg.select_option("#mapa-tam", "rt_media")
+        await pg.wait_for_timeout(700)
+        est_v = await leer_mapa()
+        pol_todo = {m["handle"].lower(): m for m in pol["periodos"]["todo"]["medios"]}
+        mal_y = [n["h"] for n in est_v["nodos"] if n["conLado"] != pol_todo[n["h"].lower()]["publicado"]["politicos"]]
+        print(f"eje Y en tuits políticos: {len(est_v['nodos'])} nodos, {len(mal_y)} con la altura mal · títulos {est_v['titulos'][:1]}")
+        if mal_y or not any("Tuits políticos" in t for t in est_v["titulos"]):
+            errores.append(f"[check] el eje Y por tuits políticos no cuadra: {mal_y[:5]} {est_v['titulos'][:1]}")
+        radios = {round(n["r"], 1) for n in est_v["nodos"]}
+        if len(radios) < 5:
+            errores.append(f"[check] el tamaño por media de retuits no distingue medios: {sorted(radios)[:8]}")
+        await pg.select_option("#mapa-ejey", "con_lado")
+        await pg.select_option("#mapa-tam", "rt_mediana")
+        resumen_aj = await pg.locator("#ajustes-resumen").inner_text()
+        await pg.click("#mapa-resumen")
+        abierto = await pg.eval_on_selector("#mapa-ajustes", "e => e.open")
+        print("configurador de ejes:", resumen_aj, "| sigue abierto tras pulsar fuera:", abierto)
+        if abierto or "Mediana RT" not in resumen_aj:
+            errores.append(f"[check] el configurador de ejes no resume o no se cierra: {resumen_aj}, abierto={abierto}")
+        await pg.select_option("#mapa-serie", "ambas")
+        await pg.wait_for_timeout(500)
 
         # la herramienta de un nodo cuenta las dos series, el número de tuits con lado y la mediana de retuits
         await pg.locator('#mapa .burbuja').last.hover()
@@ -537,7 +603,7 @@ async def main():
         # conserva el modo de serie activo. Los conteos se comparan con lo que trae
         # polarizacion.json en cada bloque, no con cifras fijas de datos antiguos.
         await pg.select_option("#mapa-serie", "ambas")
-        await pg.select_option("#mapa-filtro", "5")
+        await pg.select_option("#mapa-filtro", "todos")
         await pg.select_option("#mapa-periodo", "todo")
         await pg.wait_for_timeout(400)
 

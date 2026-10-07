@@ -34,6 +34,23 @@ class SiteDataTest(unittest.TestCase):
         self.assertEqual(self.index["revision_contextual"]["cambios"], 601)
         self.assertEqual(self.index["revision_contextual"]["coste_usd"], 1.16287)
 
+    def test_party_data_adds_up_to_left_and_right(self):
+        """partidos.json reparte por partido exactamente los mismos tuits que polarizacion.json."""
+        partidos = json.loads((DATA / "partidos.json").read_text())
+        self.assertEqual(list(partidos["periodos"]), EXPECTED_PERIODS)
+        for clave in EXPECTED_PERIODS:
+            por_handle = {r["h"].lower(): r for r in partidos["periodos"][clave]["medios"]}
+            for medio in self.polarizacion["periodos"][clave]["medios"]:
+                fila = por_handle[medio["handle"].lower()]
+                for i, serie in enumerate(("publicado", "viral")):
+                    izq = fila["PSOE"][i][0] + fila["Sumar"][i][0] + fila["PP"][i][1] + fila["Vox"][i][1]
+                    der = fila["PSOE"][i][1] + fila["Sumar"][i][1] + fila["PP"][i][0] + fila["Vox"][i][0]
+                    self.assertEqual((izq, der), (medio[serie]["izq"], medio[serie]["der"]),
+                                     f"{clave} {medio['handle']} {serie}")
+                    lados = fila["lados"][i]
+                    self.assertEqual((lados[0], lados[1]), (izq, der), f"{clave} {medio['handle']} {serie}")
+                    self.assertEqual(lados[2], medio[serie]["rt_mediana"], f"{clave} {medio['handle']} {serie}")
+
     def test_periods_cover_full_series_xv_and_each_year(self):
         self.assertEqual(list(self.polarizacion["periodos"]), EXPECTED_PERIODS)
         full = self.polarizacion["periodos"]["todo"]

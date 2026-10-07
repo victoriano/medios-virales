@@ -10,6 +10,11 @@ const DIRCHIP = { beneficia: 'ben', perjudica: 'perj', neutro: 'neu' };
    Diccionario único para castellano e inglés. Los valores son cadenas o
    funciones que devuelven cadenas: no hay JSON aparte ni framework. */
 let LANG = 'es';
+// artículos para los partidos en castellano: «del PSOE», «de Vox», «al PP», «a Sumar»
+const conArticulo = p => p === 'PSOE' || p === 'PP';
+const delP = p => conArticulo(p) ? `del ${p}` : `de ${p}`;
+const alP = p => conArticulo(p) ? `al ${p}` : `a ${p}`;
+const elP = p => conArticulo(p) ? `el ${p}` : p;
 const I18N = {
   es: {
     title: 'Sesgo y viralidad de los medios españoles · victoriano.me',
@@ -72,10 +77,88 @@ const I18N = {
     mapaPlay: '▶ Evolución 2018 a 2026',
     mapaPause: (year) => `⏸ Pausar · ${year}`,
     ariaPlay: 'Reproducir o pausar la evolución anual del mapa',
-    mapaFiltro5: 'Con muestra de 5 o más',
-    mapaFiltro0: 'Todos los medios',
-    mapaFiltro15: 'Con muestra de 15 o más',
-    mapaFiltro30: 'Con muestra de 30 o más',
+    trayTitulo: (nombre, a0, a1) => `Recorrido de <strong>${nombre}</strong> de ${a0} a ${a1}`,
+    traySerie: (serie) => serie === 'viral' ? 'con los tuits de 100 RT o más' : 'con todos los tuits',
+    trayFaltan: (anos) => `Sin muestra suficiente en ${anos}.`,
+    trayPocos: (nombre) => `${nombre} no tiene muestra suficiente en dos años o más para dibujar su recorrido.`,
+    trayTuits: 'Ver sus tuits →',
+    trayQuitar: 'Quitar ✕',
+    trayAyuda: 'Pulsa en un medio para ver su recorrido año a año.',
+    mapaPieTray: 'Recorrido',
+    mapaPieTrayDesc: 'cada punto es un año y las flechas van del primero al último. El eje vertical usa la escala anual, ajustada al medio cuando se ve la serie completa o la legislatura.',
+    trayAyudaQuitar: 'Pulsa fuera del recorrido o en «Quitar» para volver a ver todos los medios.',
+    ctlEjeY: 'Eje vertical',
+    ctlAjustes: 'Ejes y tamaño',
+    varCorta: (v) => ({ con_lado: 'A favor o en contra', ben: 'Lo benefician', perj: 'Lo perjudican', politicos: 'Tuits políticos',
+                        tuits: 'Tuits muestreados', rt_media: 'Media RT', rt_mediana: 'Mediana RT' })[v],
+    ctlTam: 'Tamaño',
+    ariaEjeY: 'Variable del eje vertical',
+    ariaTam: 'Variable del tamaño de las burbujas',
+    varOpcion: (v, p) => ({
+      con_lado: p ? `Tuits a favor o en contra ${delP(p)}` : 'Tuits a favor o en contra de un partido',
+      ben: p ? `Tuits que benefician ${alP(p)}` : 'Tuits que benefician',
+      perj: p ? `Tuits que perjudican ${alP(p)}` : 'Tuits que perjudican',
+      politicos: 'Tuits políticos del medio',
+      tuits: 'Tuits muestreados',
+      rt_media: 'Media de retuits',
+      rt_mediana: 'Mediana de retuits',
+    })[v],
+    varDesc: (v, p) => ({
+      con_lado: p ? `número de tuits que benefician o perjudican claramente ${alP(p)}.` : 'número de tuits clasificados que benefician o perjudican claramente a un partido.',
+      ben: `número de tuits que benefician ${alP(p)}.`,
+      perj: `número de tuits que perjudican ${alP(p)}.`,
+      politicos: 'número de tuits del medio con lectura política, tomen partido o no.',
+      tuits: 'número de tuits muestreados del medio en la serie elegida.',
+      rt_media: p ? `media de retuits de los tuits que benefician o perjudican ${alP(p)}.` : 'media de retuits de los tuits con lado claro.',
+      rt_mediana: p ? `mediana de retuits de los tuits que benefician o perjudican ${alP(p)}.` : 'mediana de retuits de los tuits con lado claro.',
+    })[v],
+    varTitulo: (v, p, periodo) => `${({
+      ben: `Tuits que benefician ${alP(p)}`, perj: `Tuits que perjudican ${alP(p)}`,
+      politicos: 'Tuits políticos del medio', tuits: 'Tuits muestreados',
+      rt_media: 'Media de retuits', rt_mediana: 'Mediana de retuits',
+    })[v]} · ${periodo}`,
+    ctlPartido: 'Partido',
+    ariaPartido: 'Ver la posición de los medios respecto a un partido',
+    mapaPartidoTodos: 'Izquierda y derecha',
+    mapaFiltroTodos: 'Todos los medios',
+    mapaFiltroP: (q, n) => `Desde el p${q}: ${n} tuits políticos o más`,
+    mapaFiltroB200: 'Brecha fiable: 200 con lado en cada serie',
+    mapaPieFiltroTodos: 'Se dibujan todos los medios con 5 o más tuits con lado claro en la serie elegida.',
+    mapaPieFiltroP: (q, n) => `Solo se dibujan los medios con ${n} tuits políticos o más en el periodo, el percentil ${q} de los medios analizados, y con 5 o más tuits con lado claro.`,
+    zonaMuyIzqP: () => 'muy en contra',
+    zonaIzqP: () => 'en contra',
+    zonaEqP: () => 'equilibrio',
+    zonaDerP: () => 'a favor',
+    zonaMuyDerP: () => 'muy a favor',
+    axisLeftP: (p) => `◀ todo en contra ${delP(p)}`,
+    axisMidP: (p) => `% de los tuits sobre ${elP(p)} que lo favorecen`,
+    axisRightP: (p) => `todo a favor ${delP(p)} ▶`,
+    axisYTitleP: (p, periodo) => `Tuits que benefician o perjudican ${alP(p)} · ${periodo}`,
+    mapaPieIzqP: () => 'en contra',
+    mapaPieDerP: () => 'a favor',
+    mapaPieCentroP: () => 'equilibrio',
+    mapaPieAlturaDescP: (p) => `número de tuits que benefician o perjudican claramente ${alP(p)}.`,
+    mapaPiePartido: (p) => `Posición respecto ${alP(p)}: 0 si todos los tuits del medio sobre ${elP(p)} lo perjudican, 100 si todos lo favorecen. Podemos se cuenta dentro de Sumar.`,
+    mapaPiePartidoK: 'Partido',
+    mapaResDespSuLadoP: (p, n, total) => `${n} de ${total} se alejan del equilibrio al compartirse.`,
+    mapaResMedianaP: (p, pts, aFavor) => `La mediana del desplazamiento es de ${pts} puntos ${aFavor ? 'a favor' : 'en contra'} ${delP(p)}.`,
+    tipADerechaP: (p) => `% a favor ${delP(p)}`,
+    tipDesplazaP: (p, pts, aFavor) => `Al compartirse se desplaza ${pts} puntos ${aFavor ? 'a favor' : 'en contra'} ${delP(p)}.`,
+    histKicker: 'Lo que dicen los datos',
+    histTitle: 'Cuatro cosas que se ven en el mapa',
+    histIntro: 'Un tuit cuenta a la <span class="rojo">izquierda</span> si beneficia a PSOE o Sumar o perjudica a PP o Vox, y a la <span class="azul">derecha</span> en el caso contrario. Todas las cifras salen de la misma muestra que dibuja el mapa.',
+    hist1T: 'Hay más medios a la derecha que a la izquierda',
+    hist1P: (nDer, nIzq, nCen, nTot, pub, a0, a1) => `De los ${nTot} medios del mapa, <strong>${nDer}</strong> publican sobre todo a la derecha, <strong>${nIzq}</strong> a la izquierda y ${nCen} quedan en el centro. Sumando todos los tuits con lado claro, el <strong>${pub} %</strong> cae a la derecha. Esa proporción ha pasado del ${a0} % en 2018 al ${a1} % en lo que va de 2026.`,
+    hist1B: 'Ver la evolución año a año',
+    hist2T: 'Al compartirse, cada medio se aleja del centro',
+    hist2P: (nAle, nFue, min, izqN, izqA, izqB, derN, derA, derB) => `Entre los ${nFue} medios con al menos ${min} tuits con lado claro tanto en el total como en los de 100 RT o más, <strong>${nAle}</strong> se desplazan hacia su propio extremo cuando se comparten. ${izqN} pasa de ${izqA} a ${izqB} en la escala; ${derN}, de ${derA} a ${derB}. No significa que el medio cambie lo que publica, sino que sus tuits más partidistas son los que más circulan.`,
+    hist2B: 'Comparar en el mapa',
+    hist3T: 'Pero en lo viral, la balanza se iguala',
+    hist3P: (pub, vir, nI, nD, rI, rD) => `Aunque el ${pub} % de lo publicado cae a la derecha, entre los tuits con 100 RT o más el reparto es casi a partes iguales: <strong>${vir} %</strong> a la derecha (${nI} a la izquierda y ${nD} a la derecha). Se explica porque los tuits de los medios de izquierda se comparten más: el <strong>${rI} %</strong> llega a 100 RT, frente al ${rD} % en los de derecha.`,
+    hist3B: 'Ver solo los de 100 RT o más',
+    hist4T: 'El Gobierno es el blanco',
+    hist4P: (pctPsoe, nPsoe, nResto, perj, ben, ratio) => `El <strong>${pctPsoe} %</strong> de los tuits políticos tiene al PSOE como partido afectado: ${nPsoe}, más que PP, Vox y Sumar juntos (${nResto}). Y se critica mucho más de lo que se elogia: ${perj} tuits perjudican a un partido frente a ${ben} que lo benefician, <strong>${ratio} a 1</strong>. Como el PSOE gobierna desde junio de 2018, criticar al Gobierno suma a la derecha en este índice.`,
+    hist4B: 'Leer los tuits más virales',
     mapaHint: 'Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo significa que todos sus tuits con lado claro van a la izquierda, 100 que todos van a la derecha y 50 que se reparten por igual. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. La altura es el <strong>número de tuits clasificados que benefician o perjudican a un partido</strong>. El tamaño representa la <strong>mediana de retuits de esos mismos tuits</strong>. El filtro de retuits permite mostrar todos, solo los que tienen 100 RT o más, o comparar ambos subconjuntos. El eje vertical se ajusta al periodo y conserva una escala común durante la animación anual. Pasa el ratón para ver los números y pulsa para abrir sus tuits.',
     axisLeft: '◀ todo a la izquierda',
     axisMid: '% de los tuits con lado que va a la derecha',
@@ -298,10 +381,88 @@ const I18N = {
     mapaPlay: '▶ Evolution 2018 to 2026',
     mapaPause: (year) => `⏸ Pause · ${year}`,
     ariaPlay: 'Play or pause the yearly evolution of the map',
-    mapaFiltro5: 'With sample of 5 or more',
-    mapaFiltro0: 'All outlets',
-    mapaFiltro15: 'With sample of 15 or more',
-    mapaFiltro30: 'With sample of 30 or more',
+    trayTitulo: (nombre, a0, a1) => `Path of <strong>${nombre}</strong> from ${a0} to ${a1}`,
+    traySerie: (serie) => serie === 'viral' ? 'with tweets of 100 RT or more' : 'with all tweets',
+    trayFaltan: (anos) => `Sample too small in ${anos}.`,
+    trayPocos: (nombre) => `${nombre} does not have enough sample in two or more years to draw its path.`,
+    trayTuits: 'See its tweets →',
+    trayQuitar: 'Remove ✕',
+    trayAyuda: 'Click an outlet to see its path year by year.',
+    mapaPieTray: 'Path',
+    mapaPieTrayDesc: 'each dot is a year and the arrows go from the first to the last. The vertical axis uses the yearly scale, fitted to the outlet when viewing the full series or the legislature.',
+    trayAyudaQuitar: 'Click outside the path or on «Remove» to see every outlet again.',
+    ctlEjeY: 'Vertical axis',
+    ctlAjustes: 'Axis and size',
+    varCorta: (v) => ({ con_lado: 'For or against', ben: 'Benefit it', perj: 'Harm it', politicos: 'Political tweets',
+                        tuits: 'Sampled tweets', rt_media: 'Mean RT', rt_mediana: 'Median RT' })[v],
+    ctlTam: 'Size',
+    ariaEjeY: 'Vertical axis variable',
+    ariaTam: 'Bubble size variable',
+    varOpcion: (v, p) => ({
+      con_lado: p ? `Tweets for or against ${p}` : 'Tweets for or against a party',
+      ben: p ? `Tweets that benefit ${p}` : 'Tweets that benefit',
+      perj: p ? `Tweets that harm ${p}` : 'Tweets that harm',
+      politicos: 'Political tweets by the outlet',
+      tuits: 'Sampled tweets',
+      rt_media: 'Mean retweets',
+      rt_mediana: 'Median retweets',
+    })[v],
+    varDesc: (v, p) => ({
+      con_lado: p ? `number of tweets that clearly benefit or harm ${p}.` : 'number of classified tweets that clearly benefit or harm a party.',
+      ben: `number of tweets that benefit ${p}.`,
+      perj: `number of tweets that harm ${p}.`,
+      politicos: 'number of tweets by the outlet with a political reading, whether or not they take sides.',
+      tuits: 'number of sampled tweets by the outlet in the chosen series.',
+      rt_media: p ? `mean retweets of the tweets that benefit or harm ${p}.` : 'mean retweets among tweets with a clear side.',
+      rt_mediana: p ? `median retweets of the tweets that benefit or harm ${p}.` : 'median retweets among tweets with a clear side.',
+    })[v],
+    varTitulo: (v, p, periodo) => `${({
+      ben: `Tweets that benefit ${p}`, perj: `Tweets that harm ${p}`,
+      politicos: 'Political tweets by the outlet', tuits: 'Sampled tweets',
+      rt_media: 'Mean retweets', rt_mediana: 'Median retweets',
+    })[v]} · ${periodo}`,
+    ctlPartido: 'Party',
+    ariaPartido: 'Show the outlets position towards one party',
+    mapaPartidoTodos: 'Left and right',
+    mapaFiltroTodos: 'All outlets',
+    mapaFiltroP: (q, n) => `From p${q}: ${n} political tweets or more`,
+    mapaFiltroB200: 'Reliable gap: 200 with clear side in each series',
+    mapaPieFiltroTodos: 'All outlets with 5 or more tweets with clear side in the chosen series are drawn.',
+    mapaPieFiltroP: (q, n) => `Only outlets with ${n} or more political tweets in the period, the ${q}th percentile of the outlets analysed, and 5 or more tweets with clear side are drawn.`,
+    zonaMuyIzqP: () => 'strongly against',
+    zonaIzqP: () => 'against',
+    zonaEqP: () => 'balanced',
+    zonaDerP: () => 'in favour',
+    zonaMuyDerP: () => 'strongly in favour',
+    axisLeftP: (p) => `◀ all against ${p}`,
+    axisMidP: (p) => `% of tweets about ${p} that favour it`,
+    axisRightP: (p) => `all in favour of ${p} ▶`,
+    axisYTitleP: (p, periodo) => `Tweets that benefit or harm ${p} · ${periodo}`,
+    mapaPieIzqP: () => 'against',
+    mapaPieDerP: () => 'in favour',
+    mapaPieCentroP: () => 'balanced',
+    mapaPieAlturaDescP: (p) => `number of tweets that clearly benefit or harm ${p}.`,
+    mapaPiePartido: (p) => `Position towards ${p}: 0 if every tweet by the outlet about ${p} harms it, 100 if every one favours it. Podemos is counted within Sumar.`,
+    mapaPiePartidoK: 'Party',
+    mapaResDespSuLadoP: (p, n, total) => `${n} out of ${total} move away from balance when shared.`,
+    mapaResMedianaP: (p, pts, aFavor) => `The median shift is ${pts} points ${aFavor ? 'in favour of' : 'against'} ${p}.`,
+    tipADerechaP: (p) => `% in favour of ${p}`,
+    tipDesplazaP: (p, pts, aFavor) => `Shifts ${pts} points ${aFavor ? 'in favour of' : 'against'} ${p} when shared.`,
+    histKicker: 'What the data says',
+    histTitle: 'Four things the map shows',
+    histIntro: 'A tweet counts to the <span class="rojo">left</span> if it helps PSOE or Sumar or hurts PP or Vox, and to the <span class="azul">right</span> otherwise. Every figure comes from the same sample the map draws.',
+    hist1T: 'There are more outlets on the right than on the left',
+    hist1P: (nDer, nIzq, nCen, nTot, pub, a0, a1) => `Of the ${nTot} outlets on the map, <strong>${nDer}</strong> publish mostly to the right, <strong>${nIzq}</strong> to the left and ${nCen} stay in the centre. Adding up every tweet with a clear side, <strong>${pub}%</strong> falls to the right. That share went from ${a0}% in 2018 to ${a1}% so far in 2026.`,
+    hist1B: 'Watch it year by year',
+    hist2T: 'When shared, every outlet drifts away from the centre',
+    hist2P: (nAle, nFue, min, izqN, izqA, izqB, derN, derA, derB) => `Among the ${nFue} outlets with at least ${min} tweets with a clear side both overall and at 100 RT or more, <strong>${nAle}</strong> move towards their own extreme when shared. ${izqN} goes from ${izqA} to ${izqB} on the scale; ${derN}, from ${derA} to ${derB}. It does not mean the outlet changes what it publishes, but that its most partisan tweets are the ones that travel furthest.`,
+    hist2B: 'Compare on the map',
+    hist3T: 'Yet in what goes viral, the scales even out',
+    hist3P: (pub, vir, nI, nD, rI, rD) => `Although ${pub}% of what is published falls to the right, among tweets with 100 RT or more the split is almost even: <strong>${vir}%</strong> to the right (${nI} to the left and ${nD} to the right). That is because tweets from left leaning outlets get shared more: <strong>${rI}%</strong> reach 100 RT, against ${rD}% for right leaning ones.`,
+    hist3B: 'Show only 100 RT or more',
+    hist4T: 'The Government is the target',
+    hist4P: (pctPsoe, nPsoe, nResto, perj, ben, ratio) => `<strong>${pctPsoe}%</strong> of political tweets have PSOE as the affected party: ${nPsoe}, more than PP, Vox and Sumar combined (${nResto}). And criticism far outweighs praise: ${perj} tweets hurt a party against ${ben} that help one, <strong>${ratio} to 1</strong>. Since PSOE has led the Government since June 2018, criticising the Government counts to the right in this index.`,
+    hist4B: 'Read the most viral tweets',
     mapaHint: 'Each outlet is a dot. Horizontally, 0 means all tweets with a clear side go left, 100 means all go right, and 50 is evenly split. Color follows Spanish convention: <span class="rojo">red</span> for left, <span class="azul">blue</span> for right, and gray for center. Height is the <strong>number of classified tweets that benefit or harm a party</strong>. Size represents the <strong>median retweets of those same tweets</strong>. The retweet filter shows all tweets, only tweets with 100+ RT, or compares both subsets. The vertical scale adapts to the selected period and remains fixed during the yearly animation. Hover for figures and click to open the tweets.',
     axisLeft: '◀ all to the left',
     axisMid: '% of tweets with clear side going right',
@@ -549,6 +710,8 @@ function show(v) {
   currentView = v;
   document.body.dataset.view = v;
   if (v !== 'mapa') pararEvolucion();
+  // el recorrido sobrevive a la ida y vuelta a la ficha del medio, no a cambiar de sección
+  if (v !== 'mapa' && v !== 'medio') mapaTrayectoria = '';
   VIEWS.forEach(x => { $('#view-' + x).hidden = x !== v; });
   $$('.tab').forEach(el => el.classList.toggle('is-on', el.dataset.view === v));
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -931,7 +1094,17 @@ const ladoDe = p => p < 45 ? 'izq' : p > 55 ? 'der' : 'neu';
 const colorDe = p => MAPA_COLOR[ladoDe(p)];
 
 let mapaSerie = 'publicado';
-let mapaFiltro = 5;
+let mapaFiltro = 'todos';
+let mapaPartido = '';
+let PARTIDOS_MAPA = null;
+let mapaEjeY = 'con_lado';
+let mapaTrayectoria = '';
+let mapaTam = 'rt_mediana';
+const VARS_MAPA = ['con_lado', 'ben', 'perj', 'politicos', 'tuits', 'rt_media', 'rt_mediana'];
+const VARS_PARTIDO = ['ben', 'perj'];
+const VARS_RT = ['rt_media', 'rt_mediana'];
+const FILTROS_MAPA = ['todos', 'p25', 'p50', 'p75', 'b200'];
+const MUESTRA_MIN = 5;
 let mapaPeriodo = 'todo';
 const MAPA_ANOS = ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'];
 let mapaTimer = null;
@@ -972,11 +1145,86 @@ function reproducirEvolucion() {
   actualizarPlay();
 }
 
-function mediosPeriodo() {
+function mediosPolDe(clave) {
   if (!POL) return [];
-  const bloque = POL.periodos && POL.periodos[mapaPeriodo];
+  const bloque = POL.periodos && POL.periodos[clave];
   if (bloque && Array.isArray(bloque.medios)) return bloque.medios;
   return POL.medios || [];
+}
+/* Con un partido elegido, cada medio se recoloca respecto a ese partido: la
+   posición es el porcentaje de sus tuits sobre el partido que lo favorecen y la
+   altura, los tuits que lo benefician o perjudican. Se conserva la forma de las
+   filas de polarizacion.json (izq = perjudica, der = beneficia) para que el
+   mapa, las flechas y la ayuda funcionen igual. */
+let cachePartido = new WeakMap();
+function serieDePartido([ben, perj, rt, media], pol) {
+  const n = ben + perj;
+  pol = pol || {};
+  return {
+    izq: perj, der: ben, con_lado: n, posicion: n ? 100 * ben / n : null, rt_mediana: rt, rt_media: media,
+    politicos: pol.politicos != null ? pol.politicos : pol.juicios, tuits: pol.tuits,
+  };
+}
+function mediosPeriodoDe(clave) {
+  const base = mediosPolDe(clave);
+  if (!PARTIDOS_MAPA) return base;
+  // la caché cuelga del bloque de polarizacion.json del que sale, así nunca sirve filas viejas
+  if (!cachePartido.has(base)) cachePartido.set(base, new Map());
+  const porBase = cachePartido.get(base);
+  const k = clave + '|' + mapaPartido;
+  if (porBase.has(k)) return porBase.get(k);
+  const bloque = (PARTIDOS_MAPA.periodos || {})[clave] || PARTIDOS_MAPA.periodos.todo;
+  const porHandle = new Map(bloque.medios.map(r => [r.h.toLowerCase(), r]));
+  const filas = base.map(r => {
+    const q = porHandle.get(r.handle.toLowerCase());
+    const politicos = (r.publicado || {}).politicos || 0;
+    // sin partido elegido solo se añade la media de retuits, que polarizacion.json no trae
+    if (!mapaPartido) {
+      const lados = q && q.lados;
+      return { ...r, politicos,
+        publicado: r.publicado && { ...r.publicado, rt_media: lados ? lados[0][3] : null },
+        viral: r.viral && { ...r.viral, rt_media: lados ? lados[1][3] : null } };
+    }
+    const d = q && q[mapaPartido];
+    if (!d) return { handle: r.handle, publicado: null, viral: null, politicos };
+    return { handle: r.handle, publicado: serieDePartido(d[0], r.publicado), viral: serieDePartido(d[1], r.viral), politicos };
+  });
+  porBase.set(k, filas);
+  return filas;
+}
+function mediosPeriodo() { return mediosPeriodoDe(mapaPeriodo); }
+const politicosDe = r => r.politicos != null ? r.politicos : ((r.publicado || {}).politicos || 0);
+
+// texto del mapa: con partido elegido usa la variante «P» de la clave, que recibe el partido
+const tm = (clave, ...args) => mapaPartido ? t(clave + 'P', mapaPartido, ...args) : t(clave, ...args);
+
+/* Filtro de muestra por cuartiles del número de tuits políticos de cada medio
+   en el periodo, calculados sobre los medios que superan el corte de inclusión. */
+function cuantil(valores, q) {
+  const v = valores.slice().sort((a, b) => a - b);
+  if (!v.length) return 0;
+  const i = (v.length - 1) * q, lo = Math.floor(i), hi = Math.ceil(i);
+  return v[lo] + (v[hi] - v[lo]) * (i - lo);
+}
+function umbralesMuestra() {
+  const admit = new Set(INDEX.medios.filter(m => (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN).map(m => m.handle.toLowerCase()));
+  const vals = mediosPolDe(mapaPeriodo).filter(r => admit.has(r.handle.toLowerCase()))
+    .map(r => (r.publicado || {}).politicos || 0).filter(v => v > 0);
+  return { p25: Math.ceil(cuantil(vals, 0.25)), p50: Math.ceil(cuantil(vals, 0.5)), p75: Math.ceil(cuantil(vals, 0.75)) };
+}
+function pasaFiltro(r, d, umbrales) {
+  if (!d || d.posicion == null || d.con_lado < MUESTRA_MIN) return false;
+  if (mapaFiltro === 'b200') return d.con_lado >= BRECHA_MIN;
+  if (umbrales[mapaFiltro] != null) return politicosDe(r) >= umbrales[mapaFiltro];
+  return true;
+}
+function etiquetasFiltro(umbrales) {
+  const sel = $('#mapa-filtro');
+  if (!sel) return;
+  ['p25', 'p50', 'p75'].forEach(k => {
+    const op = sel.querySelector(`option[value="${k}"]`);
+    if (op) op.textContent = t('mapaFiltroP', k.slice(1), nf(umbrales[k]));
+  });
 }
 function polDe(handle) {
   return mediosPeriodo().find(r => r.handle.toLowerCase() === (handle || '').toLowerCase());
@@ -987,41 +1235,99 @@ const periodoTxt = () => ({
   2023: '2023', 2024: '2024', 2025: '2025', 2026: '2026'
 });
 const RADIO = v => Math.min(24, Math.max(6, 0.75 * Math.sqrt(Math.max(0, Number(v) || 0))));
-const volumen = d => d.politicos != null ? `${nf(d.politicos)} ${t('tipPoliticos')}` : `${nf(d.juicios)} ${t('tweetsConLectura')}`;
-const nombreSerie = s => s === 'publicado' ? t('publicado') : t('viral');
 
-function maxYMapa() {
-  const claves = MAPA_ANOS.includes(mapaPeriodo) ? MAPA_ANOS : [mapaPeriodo];
+/* Variables que se pueden llevar al eje vertical o al tamaño. En modo partido
+   der son los tuits que lo benefician e izq los que lo perjudican. */
+function valorDe(d, v) {
+  if (!d) return 0;
+  const x = { con_lado: d.con_lado, ben: d.der, perj: d.izq, politicos: d.politicos != null ? d.politicos : d.juicios,
+              tuits: d.tuits, rt_media: d.rt_media, rt_mediana: d.rt_mediana }[v];
+  return Number(x) || 0;
+}
+// máximo de una variable en la ventana; en los años se mira 2018 a 2026 para que la escala no salte al animar
+function maxVar(v, anual = false) {
+  const claves = anual || MAPA_ANOS.includes(mapaPeriodo) ? MAPA_ANOS : [mapaPeriodo];
   const series = mapaSerie === 'ambas' ? ['publicado', 'viral'] : [mapaSerie];
   let maximo = 1;
   for (const clave of claves) {
-    const bloque = POL.periodos && POL.periodos[clave];
-    for (const medio of (bloque && bloque.medios) || []) {
-      for (const serie of series) maximo = Math.max(maximo, Number((medio[serie] || {}).con_lado) || 0);
+    for (const medio of mediosPeriodoDe(clave)) {
+      for (const serie of series) maximo = Math.max(maximo, valorDe(medio[serie], v));
     }
   }
+  return maximo;
+}
+function redondoArriba(maximo) {
   const potencia = 10 ** Math.floor(Math.log10(maximo));
   const base = maximo / potencia;
   const escalones = [1, 1.25, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
   return (escalones.find(v => v >= base) || 10) * potencia;
 }
+// los retuits conservan la escala de siempre; los recuentos, una escala de área relativa al máximo
+let maxTamMapa = 1;
+function radioDe(d) {
+  const v = valorDe(d, mapaTam);
+  if (VARS_RT.includes(mapaTam)) return RADIO(v);
+  return Math.min(24, Math.max(5, 24 * Math.sqrt(Math.max(0, v) / maxTamMapa)));
+}
+const volumen = d => d.politicos != null ? `${nf(d.politicos)} ${t('tipPoliticos')}` : `${nf(d.juicios)} ${t('tweetsConLectura')}`;
+const nombreSerie = s => s === 'publicado' ? t('publicado') : t('viral');
+
+function maxYMapa(tray) {
+  // con un recorrido abierto fuera de un año solo se dibuja ese medio, así que el eje se ajusta a él
+  if (tray && tray.puntos.length && !MAPA_ANOS.includes(mapaPeriodo)) return redondoArriba(Math.max(1, ...tray.puntos.map(q => q.y)));
+  return redondoArriba(maxVar(mapaEjeY, !!tray));
+}
+
+/* Recorrido de un medio: su posición en cada año de 2018 a 2026, en la serie
+   que se esté viendo (en «comparar», la de todos los tuits). Los años con
+   menos de MUESTRA_MIN tuits con lado claro se saltan. */
+function trayectoriaDe(handle) {
+  const serie = mapaSerie === 'viral' ? 'viral' : 'publicado';
+  const puntos = [], faltan = [];
+  for (const ano of MAPA_ANOS) {
+    const r = mediosPeriodoDe(ano).find(x => x.handle.toLowerCase() === handle.toLowerCase());
+    const d = r && r[serie];
+    if (d && d.posicion != null && d.con_lado >= MUESTRA_MIN) puntos.push({ ano, p: d.posicion, y: valorDe(d, mapaEjeY), d });
+    else faltan.push(ano);
+  }
+  return { serie, puntos, faltan };
+}
+function quitarTrayectoria() {
+  if (!mapaTrayectoria) return;
+  mapaTrayectoria = '';
+  renderMapa();
+}
+function pintarBarraTray(meta, tray) {
+  const bar = $('#mapa-tray');
+  if (!bar) return;
+  if (!meta) { bar.hidden = true; bar.innerHTML = ''; return; }
+  const n = tray.puntos.length;
+  const texto = n < 2
+    ? esc(t('trayPocos', meta.nombre))
+    : `${t('trayTitulo', esc(meta.nombre), tray.puntos[0].ano, tray.puntos[n - 1].ano)}, ${t('traySerie', tray.serie)}.${tray.faltan.length ? ' ' + t('trayFaltan', tray.faltan.join(', ')) : ''}`;
+  bar.innerHTML = `<p>${texto}</p>
+    <div class="mapa-tray-acc"><button type="button" class="hallazgo-btn" data-tray="tuits">${t('trayTuits')}</button>
+    <button type="button" class="hallazgo-btn" data-tray="quitar">${t('trayQuitar')}</button></div>`;
+  bar.hidden = false;
+}
 
 function filasMapa() {
   const metas = new Map(INDEX.medios.map(m => [m.handle.toLowerCase(), m]));
   const nodos = [], parejas = [];
+  const umbrales = umbralesMuestra();
   for (const r of mediosPeriodo()) {
     const m = metas.get(r.handle.toLowerCase());
     if (!m) continue;
     if ((m.izq || 0) + (m.der || 0) <= SIGNIFICADOS_MIN) continue;
     const pub = r.publicado, vir = r.viral;
-    const okPub = !!pub && pub.posicion != null && pub.con_lado >= mapaFiltro;
-    const okVir = !!vir && vir.posicion != null && vir.con_lado >= mapaFiltro;
-    const nodoPub = { m, serie: 'publicado', p: pub ? pub.posicion : 0, y: pub ? pub.con_lado : 0, d: pub, o: vir };
-    const nodoVir = { m, serie: 'viral', p: vir ? vir.posicion : 0, y: vir ? vir.con_lado : 0, d: vir, o: pub };
+    const okPub = pasaFiltro(r, pub, umbrales);
+    const okVir = pasaFiltro(r, vir, umbrales);
+    const nodoPub = { m, serie: 'publicado', p: pub ? pub.posicion : 0, y: valorDe(pub, mapaEjeY), d: pub, o: vir };
+    const nodoVir = { m, serie: 'viral', p: vir ? vir.posicion : 0, y: valorDe(vir, mapaEjeY), d: vir, o: pub };
     if (mapaSerie === 'ambas') {
       if (!okPub || !okVir) continue;
       nodos.push(nodoPub, nodoVir);
-      parejas.push({ m, p1: pub.posicion, y1: pub.con_lado, p2: vir.posicion, y2: vir.con_lado, pub, vir });
+      parejas.push({ m, p1: pub.posicion, y1: nodoPub.y, p2: vir.posicion, y2: nodoVir.y, pub, vir });
     } else if (mapaSerie === 'publicado' ? okPub : okVir) {
       nodos.push(mapaSerie === 'publicado' ? nodoPub : nodoVir);
     }
@@ -1041,7 +1347,22 @@ function renderMapa() {
   const posicionesAnteriores = new Map([...svg.querySelectorAll('.burbuja')].map(el => [
     `${el.dataset.h}|${el.dataset.serie}`, el.getAttribute('transform')
   ]));
-  const { nodos, parejas } = filasMapa();
+  const panelMapa = $('.panel-mapa');
+  if (panelMapa) panelMapa.dataset.modo = mapaPartido ? 'partido' : 'lados';
+  const umbrales = umbralesMuestra();
+  etiquetasFiltro(umbrales);
+  etiquetasVariables();
+  const filas = filasMapa();
+  const metaTray = mapaTrayectoria ? INDEX.medios.find(m => m.handle.toLowerCase() === mapaTrayectoria.toLowerCase()) : null;
+  if (mapaTrayectoria && !metaTray) mapaTrayectoria = '';
+  const tray = metaTray ? trayectoriaDe(metaTray.handle) : null;
+  pintarBarraTray(metaTray, tray);
+  // con un recorrido abierto el eje usa la escala anual: en un año se atenúan los
+  // demás medios; en la serie completa o la legislatura se ocultan, porque su escala no casa
+  const nodos = !tray ? filas.nodos : MAPA_ANOS.includes(mapaPeriodo)
+    ? filas.nodos.filter(n => n.m.handle !== metaTray.handle && (mapaSerie !== 'ambas' || n.serie === 'publicado'))
+    : [];
+  const parejas = tray ? [] : filas.parejas;
   const totalUniverso = mediosPeriodo().length;
   const admitidos = new Set(INDEX.medios
     .filter(m => (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN)
@@ -1052,7 +1373,8 @@ function renderMapa() {
   const fueraCorte = totalUniverso - total;
 
   const W = 1000, H = 620, M = { t: 46, r: 54, b: 66, l: 82 };
-  const yMax = maxYMapa();
+  const yMax = maxYMapa(tray);
+  maxTamMapa = maxVar(mapaTam);
   const lista = Array.from({ length: 6 }, (_, i) => yMax * i / 5);
   const px = v => M.l + v / 100 * (W - M.l - M.r);
   const PAD = 32;
@@ -1060,11 +1382,11 @@ function renderMapa() {
   const mitad = px(50);
 
   const ZONAS = [
-    [0, 20, t('zonaMuyIzq'), 'z-miz'],
-    [20, 40, t('zonaIzq'), 'z-iz'],
-    [40, 60, t('zonaEq'), 'z-eq'],
-    [60, 80, t('zonaDer'), 'z-dr'],
-    [80, 100, t('zonaMuyDer'), 'z-mdr'],
+    [0, 20, tm('zonaMuyIzq'), 'z-miz'],
+    [20, 40, tm('zonaIzq'), 'z-iz'],
+    [40, 60, tm('zonaEq'), 'z-eq'],
+    [60, 80, tm('zonaDer'), 'z-dr'],
+    [80, 100, tm('zonaMuyDer'), 'z-mdr'],
   ];
   let g = '', etiquetas = '';
   ZONAS.forEach(([a, z, txt, cls]) => {
@@ -1084,15 +1406,15 @@ function renderMapa() {
     g += `<text class="${c}" x="${x}" y="${H - M.b + 21}" text-anchor="middle">${txt}</text>`;
   });
   const tituloPeriodo = periodoTxt()[mapaPeriodo] || mapaPeriodo;
-  const tituloY = t('axisYTitle', tituloPeriodo);
+  const tituloY = mapaEjeY === 'con_lado' ? tm('axisYTitle', tituloPeriodo) : t('varTitulo', mapaEjeY, mapaPartido, tituloPeriodo);
   g += `<text class="tit" x="${M.l}" y="18">${tituloY}</text>`;
-  g += `<text class="tit" x="${M.l}" y="${H - M.b + 46}">${t('axisLeft')}</text>`;
-  g += `<text class="tit" x="${mitad.toFixed(1)}" y="${H - M.b + 46}" text-anchor="middle">${t('axisMid')}</text>`;
-  g += `<text class="tit" x="${W - M.r}" y="${H - M.b + 46}" text-anchor="end">${t('axisRight')}</text>`;
+  g += `<text class="tit" x="${M.l}" y="${H - M.b + 46}">${tm('axisLeft')}</text>`;
+  g += `<text class="tit" x="${mitad.toFixed(1)}" y="${H - M.b + 46}" text-anchor="middle">${tm('axisMid')}</text>`;
+  g += `<text class="tit" x="${W - M.r}" y="${H - M.b + 46}" text-anchor="end">${tm('axisRight')}</text>`;
 
   const flechas = parejas.map(f => {
     const x1 = px(f.p1), y1 = py(f.y1), x2 = px(f.p2), y2 = py(f.y2);
-    const r1 = RADIO(f.pub.rt_mediana), r2 = RADIO(f.vir.rt_mediana);
+    const r1 = radioDe(f.pub), r2 = radioDe(f.vir);
     const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy);
     if (L < r1 + r2 + 30) return '';
     const ux = dx / L, uy = dy / L;
@@ -1109,20 +1431,60 @@ function renderMapa() {
     </g>`;
   }).join('');
 
-  const orden = nodos.slice().sort((a, b) => RADIO(b.d.rt_mediana) - RADIO(a.d.rt_mediana));
+  const orden = nodos.slice().sort((a, b) => radioDe(b.d) - radioDe(a.d));
   const burbujas = orden.map((n, i) => {
-    const r = RADIO(n.d.rt_mediana);
+    const r = radioDe(n.d);
     const cx = px(n.p), cy = py(n.y);
     const d = (r * 1.74).toFixed(1), off = (-r * 0.87).toFixed(1);
-    return `<g class="burbuja burbuja-${n.serie} lado-${ladoDe(n.p)}" data-h="${esc(n.m.handle)}"
+    return `<g class="burbuja burbuja-${n.serie} lado-${ladoDe(n.p)}${tray ? ' atenuada' : ''}" data-h="${esc(n.m.handle)}"
         data-serie="${n.serie}" data-posicion="${n.p.toFixed(1)}" data-y="${n.y}" data-rt-mediana="${n.d.rt_mediana}" data-y-max="${yMax}" data-i="${i}" transform="translate(${cx.toFixed(1)},${cy.toFixed(1)})">
       <circle class="aro${n.serie === 'viral' ? ' dis' : ''}" r="${r.toFixed(1)}" stroke="${colorDe(n.p)}"></circle>
       <image href="${esc(n.m.logo)}" x="${off}" y="${off}" width="${d}" height="${d}"></image>
     </g>`;
   }).join('');
 
+  let recorrido = '';
+  if (tray && tray.puntos.length) {
+    const pts = tray.puntos.map(q => ({ ...q, x: px(q.p), yy: py(q.y) }));
+    const ult = pts[pts.length - 1];
+    const rUlt = Math.max(14, radioDe(ult.d));
+    pts.forEach((a, i) => {
+      const b = pts[i + 1];
+      if (!b) return;
+      const dx = b.x - a.x, dy = b.yy - a.yy, L = Math.hypot(dx, dy);
+      const rb = b === ult ? rUlt + 3 : 7;
+      if (L < 7 + rb + 3) return;
+      // en los saltos cortos la punta se encoge para que ningún tramo se quede sin flecha
+      const ux = dx / L, uy = dy / L, c = colorDe(a.p), hl = Math.min(9, L - 7 - rb);
+      const sx = a.x + ux * 7, sy = a.yy + uy * 7, ex = b.x - ux * rb, ey = b.yy - uy * rb;
+      const bx = ex - ux * hl, by = ey - uy * hl, nx = -uy, ny = ux;
+      recorrido += `<g class="tramo" data-de="${a.ano}" data-a="${b.ano}">
+        <path d="M ${sx.toFixed(1)} ${sy.toFixed(1)} L ${bx.toFixed(1)} ${by.toFixed(1)}" stroke="${c}"></path>
+        <polygon fill="${c}" points="${ex.toFixed(1)},${ey.toFixed(1)} ${(bx + nx * 4.6).toFixed(1)},${(by + ny * 4.6).toFixed(1)} ${(bx - nx * 4.6).toFixed(1)},${(by - ny * 4.6).toFixed(1)}"></polygon>
+      </g>`;
+    });
+    pts.forEach((q, i) => {
+      // las etiquetas alternan arriba y abajo para que los años cercanos no se pisen
+      const c = colorDe(q.p), arriba = q.yy - M.t > 30 && (i % 2 === 0 || H - M.b - q.yy < 24);
+      if (q === ult) {
+        const d = (rUlt * 1.74).toFixed(1), off = (-rUlt * 0.87).toFixed(1);
+        recorrido += `<g class="paso paso-ultimo" data-ano="${q.ano}" data-posicion="${q.p.toFixed(1)}" data-y="${q.y}" transform="translate(${q.x.toFixed(1)},${q.yy.toFixed(1)})">
+          <circle class="aro" r="${rUlt.toFixed(1)}" stroke="${c}"></circle>
+          <image href="${esc(metaTray.logo)}" x="${off}" y="${off}" width="${d}" height="${d}"></image>
+          <text y="${(arriba ? -rUlt - 7 : rUlt + 15).toFixed(1)}" text-anchor="middle">${q.ano}</text></g>`;
+      } else {
+        recorrido += `<g class="paso${i === 0 ? ' paso-primero' : ''}" data-ano="${q.ano}" data-posicion="${q.p.toFixed(1)}" data-y="${q.y}" transform="translate(${q.x.toFixed(1)},${q.yy.toFixed(1)})">
+          <circle r="${i === 0 ? 7 : 5}" fill="${i === 0 ? 'var(--panel)' : c}" stroke="${c}"></circle>
+          <text y="${arriba ? -11 : 19}" text-anchor="middle">${q.ano}</text></g>`;
+      }
+    });
+  }
+
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  svg.innerHTML = `<g class="grid">${g}</g><g class="flechas">${flechas}</g><g class="nodos">${burbujas}</g><g class="etiquetas">${etiquetas}</g>`;
+  svg.innerHTML = `<g class="grid">${g}</g><g class="flechas">${flechas}</g><g class="nodos">${burbujas}</g><g class="recorrido">${recorrido}</g><g class="etiquetas">${etiquetas}</g>`;
+  svg.classList.toggle('con-recorrido', !!tray);
+  const ultimo = svg.querySelector('.paso-ultimo');
+  if (ultimo) ultimo.addEventListener('click', e => { e.stopPropagation(); location.hash = '#/medio/' + metaTray.handle.replace('@', ''); });
 
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const coords = valor => (valor || '').match(/translate\(([-0-9.]+),\s*([-0-9.]+)\)/);
@@ -1147,14 +1509,16 @@ function renderMapa() {
     const med = deltas.length ? deltas[Math.floor(deltas.length / 2)] : 0;
     const suLado = parejas.filter(f => f.p1 < 50 ? f.p2 < f.p1 : f.p1 > 50 ? f.p2 > f.p1 : false).length;
     res.push(t('mapaResAmbas', nf(parejas.length)));
-    if (parejas.length) res.push(t('mapaResDespSuLado', suLado, parejas.length));
+    if (parejas.length) res.push(tm('mapaResDespSuLado', suLado, parejas.length));
     res.push(med === 0
       ? t('mapaResMedianaCero')
-      : t('mapaResMediana', decsep(Math.abs(med)), med < 0 ? t('izquierda') : t('derecha')));
+      : mapaPartido
+        ? t('mapaResMedianaP', mapaPartido, decsep(Math.abs(med)), med > 0)
+        : t('mapaResMediana', decsep(Math.abs(med)), med < 0 ? t('izquierda') : t('derecha')));
   } else {
     res.push(t('mapaResSolo', nf(dibujados), nombreSerie(mapaSerie)));
   }
-  $('#mapa-resumen').textContent = res.join(' ');
+  $('#mapa-resumen').textContent = tray ? t('trayAyudaQuitar') : res.join(' ');
 
   svg.querySelectorAll('.burbuja').forEach(el => {
     const n = orden[Number(el.dataset.i)];
@@ -1169,23 +1533,71 @@ function renderMapa() {
     el.addEventListener('mouseleave', () => { $('#mapa-tip').hidden = true; });
     el.addEventListener('touchstart', () => prefetchMedio(m), { passive: true });
     el.addEventListener('pointerdown', () => prefetchMedio(m));
-    el.addEventListener('click', () => { location.hash = '#/medio/' + m.handle.replace('@', ''); });
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      $('#mapa-tip').hidden = true;
+      mapaTrayectoria = m.handle;
+      renderMapa();
+    });
   });
 
-  const bola = v => `<span class="bola" style="width:${(2 * RADIO(v)).toFixed(0)}px;height:${(2 * RADIO(v)).toFixed(0)}px"></span> ${nf(v)} RT`;
-  const notaFiltro = mapaFiltro ? t('mapaPieFiltroN', nf(mapaFiltro)) : t('mapaPieFiltro0');
+  const bolaRT = v => `<span class="bola" style="width:${(2 * RADIO(v)).toFixed(0)}px;height:${(2 * RADIO(v)).toFixed(0)}px"></span> ${nf(v)} RT`;
+  const bolaN = v => { const r = Math.min(24, Math.max(5, 24 * Math.sqrt(v / maxTamMapa))); return `<span class="bola" style="width:${(2 * r).toFixed(0)}px;height:${(2 * r).toFixed(0)}px"></span> ${nf(v)}`; };
+  const refTam = redondoArriba(maxTamMapa) / 2;
+  const bolas = VARS_RT.includes(mapaTam) ? `${bolaRT(5)} ${bolaRT(100)} ${bolaRT(500)}` : `${bolaN(refTam / 10)} ${bolaN(refTam / 2)} ${bolaN(refTam)}`;
+  const notaFiltro = mapaFiltro === 'b200' ? t('mapaPieFiltroN', nf(BRECHA_MIN))
+    : umbrales[mapaFiltro] != null ? t('mapaPieFiltroP', mapaFiltro.slice(1), nf(umbrales[mapaFiltro]))
+    : t('mapaPieFiltroTodos');
   $('#mapa-pie').innerHTML = `
-    <div class="blq"><strong>${t('mapaPieTam')}</strong> ${t('mapaPieTamDesc')} ${bola(5)} ${bola(100)} ${bola(500)}</div>
-    <div class="blq"><strong>${t('mapaPieAro')}</strong> <span class="aro" style="border-color:var(--map-izq)"></span> ${t('mapaPieIzq')}
-      <span class="aro" style="border-color:var(--map-der);margin-left:10px"></span> ${t('mapaPieDer')}
-      <span class="aro" style="border-color:var(--map-neu);margin-left:10px"></span> ${t('mapaPieCentro')}</div>
+    ${tray ? `<div class="blq"><strong>${t('mapaPieTray')}</strong> ${t('mapaPieTrayDesc')}</div>` : `<div class="blq">${t('trayAyuda')}</div>`}
+    ${mapaPartido ? `<div class="blq"><strong>${t('mapaPiePartidoK')}</strong> ${t('mapaPiePartido', mapaPartido)}</div>` : ''}
+    <div class="blq"><strong>${t('mapaPieTam')}</strong> ${mapaTam === 'rt_mediana' && !mapaPartido ? t('mapaPieTamDesc') : t('varDesc', mapaTam, mapaPartido)} ${bolas}</div>
+    <div class="blq"><strong>${t('mapaPieAro')}</strong> <span class="aro" style="border-color:var(--map-izq)"></span> ${tm('mapaPieIzq')}
+      <span class="aro" style="border-color:var(--map-der);margin-left:10px"></span> ${tm('mapaPieDer')}
+      <span class="aro" style="border-color:var(--map-neu);margin-left:10px"></span> ${tm('mapaPieCentro')}</div>
     ${mapaSerie === 'ambas' ? `<div class="blq"><strong>${t('mapaPieAroContinuo')}</strong> ${t('mapaPiePublicado')} · <strong>${t('mapaPieAroDiscontinuo')}</strong> ${t('mapaPieLoViral')}</div>
       <div class="blq"><strong>${t('mapaPieFlecha')}</strong> ${t('mapaPieFlechaDesc')}</div>` : ''}
-    <div class="blq"><strong>${t('mapaPieAltura')}</strong> ${t('mapaPieAlturaDesc')}</div>
+    <div class="blq"><strong>${t('mapaPieAltura')}</strong> ${mapaEjeY === 'con_lado' ? tm('mapaPieAlturaDesc') : t('varDesc', mapaEjeY, mapaPartido)}</div>
     <div class="blq"><strong>${t('mapaPieCorte')}</strong> ${t('mapaPieCorteDesc')}</div>
     <div class="blq">${notaFiltro}</div>
     ${fueraCorte ? `<div class="blq">${t('mapaPieFueraCorte', fueraCorte)}</div>` : ''}
-    ${fuera ? `<div class="blq">${t('mapaPieFuera', fuera)}</div>` : ''}`;
+    ${fuera && !tray ? `<div class="blq">${t('mapaPieFuera', fuera)}</div>` : ''}`;
+}
+
+function lineaVars(n) {
+  const extra = [...new Set([mapaEjeY, mapaTam])].filter(v => v !== 'con_lado' && v !== 'rt_mediana');
+  if (!extra.length) return '';
+  const fmt = v => VARS_RT.includes(v) ? decsep(valorDe(n.d, v)) : nf(valorDe(n.d, v));
+  return `<div class="tv">${extra.map(v => `<b>${t('varOpcion', v, mapaPartido)}</b>: ${fmt(v)}`).join(' · ')}</div>`;
+}
+function etiquetasVariables() {
+  const res = $('#ajustes-resumen');
+  if (res) res.textContent = `↕ ${t('varCorta', mapaEjeY)} · ◯ ${t('varCorta', mapaTam)}`;
+  ['#mapa-ejey', '#mapa-tam'].forEach(sel => {
+    const el = $(sel);
+    if (!el) return;
+    el.querySelectorAll('option').forEach(op => {
+      op.textContent = t('varOpcion', op.value, mapaPartido);
+      op.hidden = op.disabled = VARS_PARTIDO.includes(op.value) && !mapaPartido;
+    });
+  });
+}
+async function asegurarPartidos() {
+  if (PARTIDOS_MAPA) return true;
+  try {
+    PARTIDOS_MAPA = await pedirJSON('data/partidos.json' + VER);
+    cachePartido = new WeakMap();
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+async function fijarVariableMapa(cual, valor) {
+  valor = VARS_MAPA.includes(valor) ? valor : (cual === 'ejeY' ? 'con_lado' : 'rt_mediana');
+  if (valor === 'rt_media' && !(await asegurarPartidos())) valor = cual === 'ejeY' ? 'con_lado' : 'rt_mediana';
+  if (cual === 'ejeY') mapaEjeY = valor; else mapaTam = valor;
+  $(cual === 'ejeY' ? '#mapa-ejey' : '#mapa-tam').value = valor;
+  renderMapa();
 }
 
 function tipMapa(n, ev) {
@@ -1194,14 +1606,16 @@ function tipMapa(n, ev) {
   const pub = n.serie === 'publicado' ? n.d : n.o;
   const vir = n.serie === 'viral' ? n.d : n.o;
   const linea = (dat, etq) => dat && dat.posicion != null
-    ? `<div class="tv"><b>${etq}</b>: ${decsep(dat.posicion)} ${t('tipADerecha')}${dat.con_lado < 15 ? ' (' + t('tipMuestraCorta') + ')' : ''} · ${nf(dat.con_lado)} ${t('tipPctSerie')} · ${decsep(dat.rt_mediana)} RT ${t('tipRtMedia')}</div>`
+    ? `<div class="tv"><b>${etq}</b>: ${decsep(dat.posicion)} ${tm('tipADerecha')}${dat.con_lado < 15 ? ' (' + t('tipMuestraCorta') + ')' : ''} · ${nf(dat.con_lado)} ${t('tipPctSerie')} · ${decsep(dat.rt_mediana)} RT ${t('tipRtMedia')}</div>`
     : '';
   let desplaz = '';
   if (pub && vir && pub.posicion != null && vir.posicion != null && vir.con_lado >= 5) {
     const delta = vir.posicion - pub.posicion;
     desplaz = Math.abs(delta) < 0.05
       ? `<div class="tv frase">${t('tipDesplazaQueda')}</div>`
-      : `<div class="tv frase">${t('tipDesplaza', decsep(Math.abs(delta)), delta < 0 ? t('izquierda') : t('derecha'))}</div>`;
+      : `<div class="tv frase">${mapaPartido
+        ? t('tipDesplazaP', mapaPartido, decsep(Math.abs(delta)), delta > 0)
+        : t('tipDesplaza', decsep(Math.abs(delta)), delta < 0 ? t('izquierda') : t('derecha'))}</div>`;
   }
   const d = decimos(m), p = reparto(m);
   const frase = !d.claro
@@ -1209,7 +1623,7 @@ function tipMapa(n, ev) {
     : `${d.texto} (${nf(d.claro)} ${t('tipClaros')} ${nf(m.politicos)} ${t('tipPoliticos')}; ${p.sin} ${t('tipSinLadoPct')})`;
   tip.innerHTML = `<div class="tt">${esc(m.nombre)}</div>
     <div class="tv frase">${esc(frase)}</div>
-    ${linea(pub, t('tipPublicado'))}${linea(vir, t('tipViral'))}${desplaz}
+    ${linea(pub, t('tipPublicado'))}${linea(vir, t('tipViral'))}${desplaz}${lineaVars(n)}
     <div class="tv tm">${esc(m.handle)} · ${t('tipIndiceMuestra')} ${m.indice > 0 ? '+' : m.indice < 0 ? '−' : ''}${Math.abs(m.indice).toFixed(2)}</div>`;
   tip.hidden = false;
   const r = wrap.getBoundingClientRect();
@@ -1219,6 +1633,128 @@ function tipMapa(n, ev) {
   tip.style.left = x + 'px';
   tip.style.top = y + 'px';
 }
+
+/* ---------- historia: lo que dicen los datos ----------
+   Debajo del mapa. Las cifras se calculan aquí a partir de los mismos JSON
+   que dibuja el mapa, así que siguen a los datos si se regeneran. La brecha
+   viral solo se afirma con 200 tuits con lado claro en las dos series
+   (AGENTS.md, regla 4). */
+const BRECHA_MIN = 200;
+const pct = (a, b) => b ? 100 * a / b : 0;
+const fx = (v, d = 0) => new Intl.NumberFormat(LANG === 'en' ? 'en-US' : 'es-ES', { maximumFractionDigits: d, minimumFractionDigits: d }).format(v);
+
+function datosHistoria() {
+  const P = POL.periodos;
+  const todo = P.todo.medios;
+  const metas = new Map(INDEX.medios.map(m => [m.handle.toLowerCase(), m]));
+  const nombre = h => (metas.get(h.toLowerCase()) || {}).nombre || h;
+  const suma = (filas, serie) => filas.reduce((a, r) => {
+    const d = r[serie] || {};
+    a.i += d.izq || 0; a.d += d.der || 0; a.t += d.tuits || 0;
+    return a;
+  }, { i: 0, d: 0, t: 0 });
+  const derDe = x => pct(x.d, x.i + x.d);
+  const conPos = r => r.publicado && r.publicado.posicion != null;
+
+  const enMapa = todo.filter(r => {
+    const m = metas.get(r.handle.toLowerCase());
+    return m && (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN && conPos(r) && r.publicado.con_lado >= 5;
+  });
+  const lados = { izq: 0, der: 0, neu: 0 };
+  enMapa.forEach(r => { lados[ladoDe(r.publicado.posicion)]++; });
+
+  const pub = suma(todo, 'publicado'), vir = suma(todo, 'viral');
+  const anos = MAPA_ANOS.filter(a => P[a]);
+
+  const fuertes = todo.filter(r => conPos(r) && r.viral && r.viral.posicion != null &&
+    r.publicado.con_lado >= BRECHA_MIN && r.viral.con_lado >= BRECHA_MIN);
+  const alejan = fuertes.filter(r => {
+    const a = r.publicado.posicion - 50, b = r.viral.posicion - 50;
+    return a * b > 0 && Math.abs(b) > Math.abs(a);
+  });
+  const mayor = signo => alejan.filter(r => Math.sign(r.publicado.posicion - 50) === signo)
+    .sort((x, y) => Math.abs(y.viral.posicion - y.publicado.posicion) - Math.abs(x.viral.posicion - x.publicado.posicion))[0];
+
+  const porLado = lado => suma(todo.filter(r => conPos(r) && ladoDe(r.publicado.posicion) === lado), 'publicado');
+  const virLado = lado => suma(todo.filter(r => conPos(r) && ladoDe(r.publicado.posicion) === lado), 'viral');
+
+  const tot = INDEX.totales;
+  const pp = tot.por_partido || {}, dir = tot.por_direccion || {};
+  return {
+    lados, nTot: enMapa.length,
+    pub: derDe(pub), vir: derDe(vir), virI: vir.i, virD: vir.d,
+    a0: derDe(suma(P[anos[0]].medios, 'publicado')), a1: derDe(suma(P[anos[anos.length - 1]].medios, 'publicado')),
+    fuertes: fuertes.length, alejan: alejan.length, izq: mayor(-1), der: mayor(1), nombre,
+    rI: pct(virLado('izq').t, porLado('izq').t), rD: pct(virLado('der').t, porLado('der').t),
+    psoe: pp.PSOE || 0, resto: (pp.PP || 0) + (pp.Vox || 0) + (pp.Sumar || 0), clasif: tot.clasificados,
+    perj: dir.perjudica || 0, ben: dir.beneficia || 0
+  };
+}
+
+async function fijarPartidoMapa(valor) {
+  const elegido = ['PSOE', 'PP', 'Vox', 'Sumar'].includes(valor) ? valor : '';
+  if (elegido && !(await asegurarPartidos())) {
+    $('#mapa-partido').value = '';
+    mapaPartido = '';
+    renderMapa();
+    return;
+  }
+  mapaPartido = elegido;
+  $('#mapa-partido').value = elegido;
+  // «beneficia» y «perjudica» solo tienen sentido respecto a un partido
+  if (!elegido && VARS_PARTIDO.includes(mapaEjeY)) { mapaEjeY = 'con_lado'; $('#mapa-ejey').value = mapaEjeY; }
+  if (!elegido && VARS_PARTIDO.includes(mapaTam)) { mapaTam = 'rt_mediana'; $('#mapa-tam').value = mapaTam; }
+  renderMapa();
+}
+
+function irAlMapa({ serie = 'publicado', filtro = 'todos', periodo = 'todo', play = false }) {
+  pararEvolucion();
+  mapaSerie = serie; mapaFiltro = filtro; mapaPartido = '';
+  mapaEjeY = 'con_lado'; mapaTam = 'rt_mediana'; mapaTrayectoria = '';
+  $('#mapa-ejey').value = mapaEjeY;
+  $('#mapa-tam').value = mapaTam;
+  $('#mapa-serie').value = serie;
+  $('#mapa-filtro').value = filtro;
+  $('#mapa-partido').value = '';
+  fijarPeriodoMapa(periodo, true);
+  $('.panel-mapa').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (play) reproducirEvolucion();
+}
+const ACCIONES_HISTORIA = {
+  evolucion: () => irAlMapa({ play: true }),
+  brecha: () => irAlMapa({ serie: 'ambas', filtro: 'b200' }),
+  viral: () => irAlMapa({ serie: 'viral' }),
+  top: () => { location.hash = '#/top'; }
+};
+
+function pintarHistoria() {
+  const caja = $('#historia-hallazgos');
+  if (!caja || !INDEX || !POL || !POL.periodos || !POL.periodos.todo) return;
+  const h = datosHistoria();
+  const r = v => fx(Math.round(v));
+  const pos = v => fx(Math.round(v));
+  const items = [
+    { k: 'hist1', lado: 'der', cifra: `${r(h.pub)} %`, p: t('hist1P', h.lados.der, h.lados.izq, h.lados.neu, h.nTot, r(h.pub), r(h.a0), r(h.a1)), accion: 'evolucion' },
+    (h.izq && h.der) ? { k: 'hist2', lado: 'mix', cifra: `${h.alejan}/${h.fuertes}`, p: t('hist2P', h.alejan, h.fuertes, BRECHA_MIN,
+      h.nombre(h.izq.handle), pos(h.izq.publicado.posicion), pos(h.izq.viral.posicion),
+      h.nombre(h.der.handle), pos(h.der.publicado.posicion), pos(h.der.viral.posicion)), accion: 'brecha' } : null,
+    { k: 'hist3', lado: 'neu', cifra: `${r(h.vir)} %`, p: t('hist3P', r(h.pub), r(h.vir), nf(h.virI), nf(h.virD), fx(h.rI, 1), fx(h.rD, 1)), accion: 'viral' },
+    { k: 'hist4', lado: 'izq', cifra: `${r(pct(h.psoe, h.clasif))} %`, p: t('hist4P', r(pct(h.psoe, h.clasif)), nf(h.psoe), nf(h.resto), nf(h.perj), nf(h.ben), fx(h.perj / Math.max(1, h.ben), 1)), accion: 'top' }
+  ].filter(Boolean);
+  caja.innerHTML = items.map((it, i) => `
+    <li class="hallazgo lado-${it.lado}">
+      <div class="hallazgo-cifra"><span class="hallazgo-n">${String(i + 1).padStart(2, '0')}</span><b>${it.cifra}</b></div>
+      <div class="hallazgo-txt">
+        <h3>${t(it.k + 'T')}</h3>
+        <p>${it.p}</p>
+        <button type="button" class="hallazgo-btn" data-accion="${it.accion}">${t(it.k + 'B')} →</button>
+      </div>
+    </li>`).join('');
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.hallazgo-btn');
+  if (b && ACCIONES_HISTORIA[b.dataset.accion]) ACCIONES_HISTORIA[b.dataset.accion]();
+});
 
 /* ---------- idioma y tema ---------- */
 function applyLang() {
@@ -1255,6 +1791,7 @@ function reRenderCurrent() {
   if (currentView === 'medio' && currentMedioMeta && MEDIO) pintarMedio(currentMedioMeta);
   if (currentView === 'top' && TOP) { pintarTopFiltros(); pintarTop(); }
   renderMapa();
+  pintarHistoria();
 }
 function setLang(newLang) {
   if (newLang !== 'es' && newLang !== 'en') newLang = 'es';
@@ -1359,8 +1896,24 @@ function watchSystemTheme() {
     POL = null;
   }
   $('#mapa-serie').addEventListener('change', e => { mapaSerie = e.target.value; renderMapa(); });
-  $('#mapa-filtro').value = String(mapaFiltro);
-  $('#mapa-filtro').addEventListener('change', e => { mapaFiltro = Number(e.target.value) || 0; renderMapa(); });
+  $('#mapa-filtro').value = mapaFiltro;
+  $('#mapa-filtro').addEventListener('change', e => { mapaFiltro = FILTROS_MAPA.includes(e.target.value) ? e.target.value : 'todos'; renderMapa(); });
+  $('#mapa-partido').addEventListener('change', e => fijarPartidoMapa(e.target.value));
+  // el configurador de ejes se cierra al pulsar fuera de él
+  document.addEventListener('click', e => {
+    const aj = $('#mapa-ajustes');
+    if (aj && aj.open && !aj.contains(e.target)) aj.open = false;
+  });
+  $('#mapa').addEventListener('click', e => { if (!e.target.closest('.burbuja, .paso-ultimo')) quitarTrayectoria(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && currentView === 'mapa') quitarTrayectoria(); });
+  $('#mapa-tray').addEventListener('click', e => {
+    const b = e.target.closest('[data-tray]');
+    if (!b) return;
+    if (b.dataset.tray === 'tuits' && mapaTrayectoria) location.hash = '#/medio/' + mapaTrayectoria.replace('@', '');
+    else quitarTrayectoria();
+  });
+  $('#mapa-ejey').addEventListener('change', e => fijarVariableMapa('ejeY', e.target.value));
+  $('#mapa-tam').addEventListener('change', e => fijarVariableMapa('tam', e.target.value));
   const selPer = $('#mapa-periodo');
   if (selPer) {
     selPer.value = mapaPeriodo;
@@ -1369,6 +1922,7 @@ function watchSystemTheme() {
   const play = $('#mapa-play');
   if (play) play.addEventListener('click', reproducirEvolucion);
   actualizarPlay();
+  pintarHistoria();
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
   if (h === 'top') { await cargarTop(); }
   route();
