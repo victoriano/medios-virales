@@ -528,7 +528,7 @@ async def main():
         await pg.wait_for_timeout(700)
         est_p = await leer_mapa()
         bloque = {r["h"].lower(): r["PSOE"][0] for r in partidos["periodos"]["todo"]["medios"]}
-        esp_psoe = sum(1 for h, (ben, perj, _) in bloque.items() if h in admitidos and ben + perj >= 5)
+        esp_psoe = sum(1 for h, (ben, perj, *_) in bloque.items() if h in admitidos and ben + perj >= 5)
         print(f"modo PSOE: {len(est_p['nodos'])} nodos (esperados {esp_psoe}) · títulos {est_p['titulos'][:2]}")
         if len(est_p["nodos"]) != esp_psoe:
             errores.append(f"[check] el mapa del PSOE dibuja {len(est_p['nodos'])} medios y se esperaban {esp_psoe}")
@@ -536,13 +536,32 @@ async def main():
             errores.append(f"[check] los títulos del mapa no nombran al partido: {est_p['titulos']}")
         mal_pos = []
         for n in est_p["nodos"]:
-            ben, perj, _ = bloque[n["h"].lower()]
+            ben, perj, *_ = bloque[n["h"].lower()]
             if abs(n["pos"] - 100 * ben / (ben + perj)) > 0.15:
                 mal_pos.append(n["h"])
         if mal_pos:
             errores.append(f"[check] posiciones respecto al PSOE que no cuadran: {mal_pos[:5]}")
         await pg.screenshot(path=f"{MAPOUT}/partido-psoe.png", full_page=True)
         await pg.select_option("#mapa-partido", "")
+        await pg.select_option("#mapa-serie", "ambas")
+        await pg.wait_for_timeout(500)
+
+        # el eje vertical y el tamaño se pueden llevar a otras variables
+        await pg.select_option("#mapa-serie", "publicado")
+        await pg.select_option("#mapa-ejey", "politicos")
+        await pg.select_option("#mapa-tam", "rt_media")
+        await pg.wait_for_timeout(700)
+        est_v = await leer_mapa()
+        pol_todo = {m["handle"].lower(): m for m in pol["periodos"]["todo"]["medios"]}
+        mal_y = [n["h"] for n in est_v["nodos"] if n["conLado"] != pol_todo[n["h"].lower()]["publicado"]["politicos"]]
+        print(f"eje Y en tuits políticos: {len(est_v['nodos'])} nodos, {len(mal_y)} con la altura mal · títulos {est_v['titulos'][:1]}")
+        if mal_y or not any("Tuits políticos" in t for t in est_v["titulos"]):
+            errores.append(f"[check] el eje Y por tuits políticos no cuadra: {mal_y[:5]} {est_v['titulos'][:1]}")
+        radios = {round(n["r"], 1) for n in est_v["nodos"]}
+        if len(radios) < 5:
+            errores.append(f"[check] el tamaño por media de retuits no distingue medios: {sorted(radios)[:8]}")
+        await pg.select_option("#mapa-ejey", "con_lado")
+        await pg.select_option("#mapa-tam", "rt_mediana")
         await pg.select_option("#mapa-serie", "ambas")
         await pg.wait_for_timeout(500)
 

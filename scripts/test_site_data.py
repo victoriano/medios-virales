@@ -47,6 +47,9 @@ class SiteDataTest(unittest.TestCase):
                     der = fila["PSOE"][i][1] + fila["Sumar"][i][1] + fila["PP"][i][0] + fila["Vox"][i][0]
                     self.assertEqual((izq, der), (medio[serie]["izq"], medio[serie]["der"]),
                                      f"{clave} {medio['handle']} {serie}")
+                    lados = fila["lados"][i]
+                    self.assertEqual((lados[0], lados[1]), (izq, der), f"{clave} {medio['handle']} {serie}")
+                    self.assertEqual(lados[2], medio[serie]["rt_mediana"], f"{clave} {medio['handle']} {serie}")
 
     def test_periods_cover_full_series_xv_and_each_year(self):
         self.assertEqual(list(self.polarizacion["periodos"]), EXPECTED_PERIODS)

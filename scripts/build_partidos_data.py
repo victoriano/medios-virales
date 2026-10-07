@@ -6,14 +6,16 @@ Lee el detalle por medio y año que ya publica ``build_legislatura_data.py``
 puede repetir en cualquier máquina con el repositorio. Hay que ejecutarlo
 después de ``build_legislatura_data.py`` cada vez que se regeneren los datos.
 
-Para cada periodo del mapa, medio y partido guarda dos tripletas, una para
-todos los tuits y otra para los de 100 RT o más:
+Para cada periodo del mapa, medio y partido guarda dos cuartetos, uno para
+todos los tuits y otro para los de 100 RT o más:
 
-    [beneficia, perjudica, mediana de retuits de esos tuits]
+    [beneficia, perjudica, mediana de retuits, media de retuits]
 
-La web calcula con ellas la posición (porcentaje que favorece al partido) y la
-altura (tuits que lo benefician o perjudican). Podemos ya llega agrupado en
-Sumar, igual que en el resto del sitio.
+La web calcula con ellos la posición (porcentaje que favorece al partido) y la
+altura (tuits que lo benefician o perjudican). Bajo la clave ``lados`` va lo
+mismo para izquierda y derecha, [izquierda, derecha, mediana, media], porque
+``polarizacion.json`` no trae la media de retuits. Podemos ya llega agrupado
+en Sumar, igual que en el resto del sitio.
 """
 import json
 import statistics
@@ -22,6 +24,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "site" / "data"
 PARTIDOS = ["PSOE", "PP", "Vox", "Sumar"]
+IZQUIERDA = {"PSOE", "Sumar"}
 XV_START = "2023-08-17"
 YEARS = [str(year) for year in range(2018, 2027)]
 
@@ -33,11 +36,21 @@ def periodos_de(fecha):
     return claves
 
 
-def tripleta(filas):
-    ben = sum(1 for f in filas if f["d"] == "beneficia")
-    perj = len(filas) - ben
-    rt = round(statistics.median(f["rt"] for f in filas), 1) if filas else 0
-    return [ben, perj, rt]
+def a_favor_izquierda(tuit):
+    return (tuit["p"] in IZQUIERDA) == (tuit["d"] == "beneficia")
+
+
+def cuarteto(filas, primero):
+    """[primero, resto, mediana de retuits, media de retuits] de las filas."""
+    n1 = sum(1 for f in filas if primero(f))
+    rt = [f["rt"] for f in filas]
+    mediana = round(statistics.median(rt), 1) if rt else 0
+    media = round(statistics.fmean(rt), 1) if rt else 0
+    return [n1, len(filas) - n1, mediana, media]
+
+
+def series(filas, primero):
+    return [cuarteto(filas, primero), cuarteto([f for f in filas if f["rt"] >= 100], primero)]
 
 
 def main():
@@ -57,13 +70,13 @@ def main():
         for clave in claves:
             fila = {"h": medio["handle"]}
             for partido in PARTIDOS:
-                todas = filas[clave][partido]
-                fila[partido] = [tripleta(todas), tripleta([f for f in todas if f["rt"] >= 100])]
+                fila[partido] = series(filas[clave][partido], lambda f: f["d"] == "beneficia")
+            fila["lados"] = series([f for p in PARTIDOS for f in filas[clave][p]], a_favor_izquierda)
             periodos[clave]["medios"].append(fila)
     salida = {
         "generado": pol.get("generado"),
         "partidos": PARTIDOS,
-        "formato": "por periodo y medio, para cada partido: [[beneficia, perjudica, mediana RT] de todos los tuits, [...] de los de 100 RT o más]",
+        "formato": "por periodo y medio, para cada partido: [[beneficia, perjudica, mediana RT, media RT] de todos los tuits, [...] de los de 100 RT o más]; en lados: [izquierda, derecha, mediana RT, media RT]",
         "periodos": periodos,
     }
     (DATA / "partidos.json").write_text(json.dumps(salida, ensure_ascii=False, separators=(",", ":")))
