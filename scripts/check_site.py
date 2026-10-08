@@ -700,12 +700,12 @@ async def main():
         await pg.goto(URL + "#/metodo", wait_until="networkidle")
         await pg.wait_for_timeout(400)
         metodo = " ".join((await pg.locator("#view-metodo").inner_text()).split())
-        for trozo in ["602.906 tuits únicos", "del 02/05/2018 al 24/09/2026",
+        for trozo in ["607.571 tuits únicos", "del 02/05/2018 al 24/09/2026",
                       "más de 50 tuits durante toda la muestra",
                       "Porcentaje de tuits políticos", "Cómo leer el mapa"]:
             if trozo not in metodo:
                 errores.append(f"[check] falta en metodología: {trozo}")
-        if "155.922 tuits políticos y 446.984 sin lectura política" not in metodo:
+        if "157.659 tuits políticos y 449.912 sin lectura política" not in metodo:
             errores.append("[check] el recuento combinado de lectura política de la metodología no cuadra")
         for trozo in ["3.813 tuits", "601 correcciones"]:
             if trozo not in metodo:
@@ -796,7 +796,7 @@ async def main():
         await pg.goto(URL + "#/metodo", wait_until="networkidle")
         await pg.wait_for_timeout(500)
         met_en = " ".join((await pg.locator("#view-metodo").inner_text()).split())
-        for esperado in ["How it was done", "602,906 unique tweets", "May 2, 2018", "September 24, 2026"]:
+        for esperado in ["How it was done", "607,571 unique tweets", "May 2, 2018", "September 24, 2026"]:
             if esperado not in met_en:
                 errores.append(f"[check] metodo sin traducir ({esperado}): {met_en[:200]!r}")
         # persistencia tras recargar

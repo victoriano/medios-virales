@@ -23,7 +23,7 @@ cosas diferentes, se descargaron con proveedores diferentes y no son intercambia
 | Corpus | Qué es | Ventana | Filas | Políticos | Fuente de descarga |
 | --- | --- | --- | --- | --- | --- |
 | **Censo viral** | Todos los tuits con **100 retuits o más** | 19 sep 2025 a 19 sep 2026 | 21.489 | 13.412 | Apify |
-| **Serie histórica** | **Muestra** de hasta 100 tuits por medio y mes | 2 may 2018 a 24 sep 2026 | 602.906 | 155.922 | twitterapi.io |
+| **Serie histórica** | **Muestra** de hasta 100 tuits por medio y mes | 2 may 2018 a 24 sep 2026 | 607.571 | 157.659 | twitterapi.io |
 
 La primera es un **censo**: está todo lo que superó el corte. La segunda es una **muestra**: sirve
 para comparar medios entre sí y a lo largo del tiempo, pero **no es el total publicado**.
@@ -50,8 +50,19 @@ que sale el mapa de nueve años son:
 ~/typesafe-lab/politica/medios/polarizacion/legislatura_xv_io_100/clasificado_contextual.jsonl
 ```
 
-`scripts/build_legislatura_data.py` los lee de ahí por ruta absoluta. Si trabajas en otra máquina,
-o esos ficheros no están, o el script falla.
+Más las dos cuentas añadidas el 8 de octubre de 2026 (`@EnBocaDe_Todos` y `@HorizonteCuatro`), que
+viven en su propia carpeta para no reescribir los corpus anteriores:
+
+```
+~/typesafe-lab/politica/medios/polarizacion/nuevas_cuentas_202610/historico/
+~/typesafe-lab/politica/medios/polarizacion/nuevas_cuentas_202610/legislatura_xv/
+```
+
+Se descargaron y clasificaron con el mismo método y el mismo prompt que el resto (sin fecha), y
+pasaron por la misma capa contextual. Sus metadatos están en `members_nuevas.json` de esa carpeta,
+no en `members.json`. `scripts/build_legislatura_data.py` lee todo por ruta absoluta y suma esas
+raíces a cada muestra. Si trabajas en otra máquina, o esos ficheros no están, o el script falla.
+Para añadir otra cuenta, sigue el `NOTAS.md` y el `lanzar.sh` de esa carpeta.
 
 ## Cómo está montado el flujo
 
@@ -136,7 +147,7 @@ Están comprobados y conviene tenerlos presentes antes de presentar cualquier re
 - **Hay un hueco de cobertura sin explicar** en `DiarioSabemos` con twitterapi.io: recuperó 637
   tuits frente a 2.538 con Apify. Antes de extrapolar a 2018 hay que explicarlo.
 - **No es un censo.** La serie histórica son hasta 100 tuits por medio y mes. 100 meses así son
-  602.906 filas, no los nueve años de producción real de 66 medios.
+  607.571 filas, no los nueve años de producción real de 68 medios.
 
 ## Lo que está pendiente
 
@@ -176,10 +187,13 @@ después, más 27,13 USD de clasificación acumulada en `costes_ia.jsonl`.
 
 | Concepto | Histórico | XV Legislatura | Total |
 | --- | --- | --- | --- |
-| Descarga (twitterapi.io) | 57,85 USD | 33,02 USD | 90,87 USD |
-| Clasificación (Gemini 3.7 Flash) | 52,84 USD | 28,79 USD | 81,63 USD |
-| Reclasificación contextual | incluida abajo | incluida abajo | 1,16 USD |
-| **Total** | | | **173,67 USD** |
+| Descarga (twitterapi.io) | 57,98 USD | 33,60 USD | 91,58 USD |
+| Clasificación (Gemini 3.7 Flash) | 52,96 USD | 29,40 USD | 82,36 USD |
+| Reclasificación contextual | incluida abajo | incluida abajo | 1,19 USD |
+| **Total** | | | **175,13 USD** |
+
+De ese total, 1,47 USD son las dos cuentas añadidas en octubre de 2026: 0,71 de descarga,
+0,73 de clasificación y 0,03 de capa contextual.
 
 ## Cómo verificar que lo que dices es verdad
 
@@ -192,8 +206,8 @@ python3 -B scripts/test_site_data.py
 # La web contra el sitio publicado, en un navegador real
 uv run --with playwright python3 scripts/check_site.py
 
-# El recuento de los dos corpus, que debe dar 602.906 filas y 155.922 políticos
-wc -l ~/typesafe-lab/politica/medios/polarizacion/*/clasificado_contextual.jsonl
+# El recuento de los corpus, que debe dar 602.906 + 4.665 = 607.571 filas y 157.659 políticos
+wc -l ~/typesafe-lab/politica/medios/polarizacion/{*,nuevas_cuentas_202610/*}/clasificado_contextual.jsonl
 ```
 
 Y la regla que resume todo: **una cifra que no has leído de un fichero no es una cifra, es un

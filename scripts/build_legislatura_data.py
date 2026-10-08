@@ -25,6 +25,14 @@ XV_ROOT = Path(os.environ.get(
     "LEGISLATURA_ROOT",
     "~/typesafe-lab/politica/medios/polarizacion/legislatura_xv_io_100",
 )).expanduser()
+# Cuentas añadidas en octubre de 2026 (@EnBocaDe_Todos y @HorizonteCuatro). Se descargaron y
+# clasificaron aparte, con el mismo método, y se leen desde sus propias raíces para no reescribir
+# los corpus publicados. Cada raíz trae su resumen.json (descarga) y clasificar_estado.json.
+ADDED_DIR = Path(os.environ.get(
+    "ADDED_DIR", "~/typesafe-lab/politica/medios/polarizacion/nuevas_cuentas_202610",
+)).expanduser()
+ADDED_ROOTS = {"historico": ADDED_DIR / "historico", "xv": ADDED_DIR / "legislatura_xv"}
+ADDED_MEMBERS = ADDED_DIR / "members_nuevas.json"
 SITE = Path(os.environ.get("SITE_DIR", "~/Code/medios-virales/site")).expanduser()
 DATA = SITE / "data"
 DETAIL = DATA / "medios"
@@ -39,9 +47,10 @@ RIGHT = {"PP", "Vox"}
 CANON = {"psoe": "PSOE", "pp": "PP", "vox": "Vox", "sumar": "Sumar", "podemos": "Sumar"}
 DOWNLOAD_COSTS = {"historico": 57.85245, "xv": 33.0213}
 CLASSIFIED_BASENAME = os.environ.get("CLASSIFIED_BASENAME", "clasificado_contextual.jsonl")
-CONTEXT_REVIEW_COST_USD = 1.16287
-CONTEXT_REVIEW_CANDIDATES = 3813
-CONTEXT_REVIEW_CHANGES = 601
+# Revisión contextual: la original más la de las cuentas añadidas (contextual/ en ADDED_DIR).
+CONTEXT_REVIEW_COST_USD = 1.16287 + 0.031478
+CONTEXT_REVIEW_CANDIDATES = 3813 + 88
+CONTEXT_REVIEW_CHANGES = 601 + 11
 
 
 def slug(handle):
@@ -128,8 +137,11 @@ def map_row(handle, rows):
 
 def load_metadata():
     metadata = {}
-    if MEMBERS.exists():
-        for member in json.loads(MEMBERS.read_text()):
+    members = json.loads(MEMBERS.read_text()) if MEMBERS.exists() else []
+    if ADDED_MEMBERS.exists():
+        members += json.loads(ADDED_MEMBERS.read_text())
+    if members:
+        for member in members:
             handle = "@" + member["handle"].lstrip("@")
             metadata[slug(handle)] = {
                 "handle": handle,
@@ -165,10 +177,17 @@ def load_classified(root):
 
 
 def load_source(name, root):
-    classified = load_classified(root)
+    roots = [root] + [extra for extra in [ADDED_ROOTS.get(name)] if extra and extra.exists()]
+    classified = {}
+    for each in roots:
+        added = load_classified(each)
+        if classified.keys() & added.keys():
+            raise SystemExit(f"Ids repetidos entre {root} y {each}")
+        classified.update(added)
     rows = []
     raw_ids = set()
-    for path in sorted((root / "tweets").glob("*/*.json")):
+    paths = sorted(path for each in roots for path in (each / "tweets").glob("*/*.json"))
+    for path in paths:
         for tweet in json.loads(path.read_text()):
             tweet_id = str(tweet.get("id") or "")
             raw_ids.add(tweet_id)
@@ -188,14 +207,26 @@ def load_source(name, root):
     missing = raw_ids - classified.keys()
     if missing:
         raise SystemExit(f"Clasificación incompleta en {name}: {len(missing)} de {len(raw_ids)} tuits sin resultado")
-    state_path = root / "clasificar_estado.json"
-    state = json.loads(state_path.read_text()) if state_path.exists() else {}
+    cost = 0.0
+    for each in roots:
+        state_path = each / "clasificar_estado.json"
+        state = json.loads(state_path.read_text()) if state_path.exists() else {}
+        cost += float(state.get("cost_usd") or 0)
     return rows, {
         "raw": len(raw_ids),
         "classified": len(classified),
         "political": sum(bool(row.get("politica")) for row in rows),
-        "cost": float(state.get("cost_usd") or 0),
+        "cost": cost,
     }
+
+
+def download_cost(name):
+    """Coste de descarga de la muestra publicada más el de su raíz añadida, si existe."""
+    cost = DOWNLOAD_COSTS[name]
+    summary = ADDED_ROOTS[name] / "resumen.json"
+    if summary.exists():
+        cost += float(json.loads(summary.read_text())["cost_usd"])
+    return cost
 
 
 def period_block(label_es, label_en, rows_by_handle, predicate, start, end):
@@ -334,7 +365,7 @@ def main():
 
     index_media.sort(key=lambda row: row["indice"])
     class_cost = historical_stats["cost"] + xv_stats["cost"] + CONTEXT_REVIEW_COST_USD
-    download_cost = sum(DOWNLOAD_COSTS.values())
+    download_total = download_cost("historico") + download_cost("xv")
     included = sum(medium["incluido"] for medium in index_media)
     index = {
         "generado": datetime.now(timezone.utc).date().isoformat(),
@@ -350,9 +381,9 @@ def main():
         },
         "muestras": {
             "historico": {"desde": "2018-05-02", "hasta": "2023-08-16", **historical_stats,
-                          "coste_descarga_usd": DOWNLOAD_COSTS["historico"]},
+                          "coste_descarga_usd": download_cost("historico")},
             "xv": {"desde": XV_START, "hasta": date_max, **xv_stats,
-                   "coste_descarga_usd": DOWNLOAD_COSTS["xv"]},
+                   "coste_descarga_usd": download_cost("xv")},
         },
         "totales": {
             "muestreados": len(rows), "virales": total_viral,
@@ -362,7 +393,7 @@ def main():
             "por_partido": dict(all_parties.most_common()),
             "por_direccion": dict(all_directions.most_common()),
             "cruce": {}, "ironia_media": None,
-            "coste_descarga_usd": download_cost, "coste_clasificacion_usd": class_cost,
+            "coste_descarga_usd": download_total, "coste_clasificacion_usd": class_cost,
         },
         "meses": dict(sorted(months.items())),
         "medios": index_media,
@@ -387,7 +418,7 @@ def main():
         "sources": {"historico": historical_stats, "xv": xv_stats},
         "exported": len(rows), "media": len(index_media), "included": included,
         "viral": total_viral, "political": total_political, "nonpolitical": len(rows) - total_political,
-        "classification_cost_usd": class_cost, "download_cost_usd": download_cost,
+        "classification_cost_usd": class_cost, "download_cost_usd": download_total,
         "periods": list(periods), "site": str(SITE), "version": VER,
     }, ensure_ascii=False))
 
