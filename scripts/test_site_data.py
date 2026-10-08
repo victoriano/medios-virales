@@ -8,9 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "site" / "data"
 EXPECTED_PERIODS = ["todo", "xv", *map(str, range(2018, 2027))]
 EXPECTED_TOTALS = {
-    "muestreados": 602_906,
-    "clasificados": 155_922,
-    "gate_no": 446_984,
+    "muestreados": 607_571,
+    "clasificados": 157_659,
+    "gate_no": 449_912,
 }
 
 
@@ -27,12 +27,13 @@ class SiteDataTest(unittest.TestCase):
         self.assertEqual(self.index["ventana"]["desde"][:10], "2018-05-02")
         self.assertEqual(self.index["ventana"]["hasta"][:10], "2026-09-24")
         self.assertEqual(
-            totals["coste_clasificacion_usd"], 52.836766 + 28.794637 + 1.16287
+            totals["coste_clasificacion_usd"],
+            (0.0 + 52.836766 + 0.127702) + (0.0 + 28.794637 + 0.602315) + (1.16287 + 0.031478),
         )
-        self.assertEqual(totals["coste_descarga_usd"], 57.85245 + 33.0213)
-        self.assertEqual(self.index["revision_contextual"]["candidatos"], 3_813)
-        self.assertEqual(self.index["revision_contextual"]["cambios"], 601)
-        self.assertEqual(self.index["revision_contextual"]["coste_usd"], 1.16287)
+        self.assertEqual(totals["coste_descarga_usd"], (57.85245 + 0.13065) + (33.0213 + 0.57465))
+        self.assertEqual(self.index["revision_contextual"]["candidatos"], 3_813 + 88)
+        self.assertEqual(self.index["revision_contextual"]["cambios"], 601 + 11)
+        self.assertEqual(self.index["revision_contextual"]["coste_usd"], 1.16287 + 0.031478)
 
     def test_party_data_adds_up_to_left_and_right(self):
         """partidos.json reparte por partido exactamente los mismos tuits que polarizacion.json."""

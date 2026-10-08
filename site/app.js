@@ -18,9 +18,9 @@ const elP = p => conArticulo(p) ? `el ${p}` : p;
 const I18N = {
   es: {
     title: 'Sesgo y viralidad de los medios españoles · victoriano.me',
-    description: 'Mapa histórico de 602.906 tuits de 66 medios españoles entre 2018 y 2026: posición de lo publicado frente a lo viral.',
+    description: 'Mapa histórico de 607.571 tuits de 68 medios españoles entre 2018 y 2026: posición de lo publicado frente a lo viral.',
     ogTitle: 'Sesgo y viralidad de los medios españoles',
-    ogDescription: '602.906 tuits de 66 medios entre 2018 y 2026, clasificados por partido y dirección, con comparación entre lo publicado y lo viral.',
+    ogDescription: '607.571 tuits de 68 medios entre 2018 y 2026, clasificados por partido y dirección, con comparación entre lo publicado y lo viral.',
     kicker: 'Un análisis de datos',
     headline: '¿Cuál es el <span class="t-mix">sesgo</span> de los medios españoles en redes?',
     byline: 'Por <strong>Victoriano Izquierdo</strong> · Datos de X, 2018 a 2026',
@@ -322,9 +322,9 @@ const I18N = {
   },
   en: {
     title: 'Bias and virality of Spanish media · victoriano.me',
-    description: 'Historical map of 602,906 tweets from 66 Spanish media outlets between 2018 and 2026: published position vs viral position.',
+    description: 'Historical map of 607,571 tweets from 68 Spanish media outlets between 2018 and 2026: published position vs viral position.',
     ogTitle: 'Bias and virality of Spanish media',
-    ogDescription: '602,906 tweets from 66 outlets between 2018 and 2026, classified by party and direction, comparing published and viral.',
+    ogDescription: '607,571 tweets from 68 outlets between 2018 and 2026, classified by party and direction, comparing published and viral.',
     kicker: 'A data analysis',
     headline: 'What is the <span class="t-mix">bias</span> of Spanish media on social media?',
     byline: 'By <strong>Victoriano Izquierdo</strong> · X data, 2018 to 2026',

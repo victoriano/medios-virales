@@ -25,8 +25,8 @@ Conviene no confundirlas: miden cosas distintas, se descargaron con proveedores 
 | --- | --- | --- |
 | Qué es | Todos los tuits con 100 retuits o más | Muestra de hasta 100 tuits por medio y mes |
 | Ventana | 19 sep 2025 a 19 sep 2026 | 2 may 2018 a 24 sep 2026 |
-| Filas | 21.489 | 602.906 |
-| Tuits políticos | 13.412 | 155.922 |
+| Filas | 21.489 | 607.571 |
+| Tuits políticos | 13.412 | 157.659 |
 | Descarga | Apify | twitterapi.io |
 
 La primera es un **censo**: está todo lo que superó el corte. La segunda es una **muestra**: sirve para comparar medios entre sí y a lo largo del tiempo, pero **no es el total publicado**. El mapa de nueve años dibuja esa muestra, no un censo de nueve años.
