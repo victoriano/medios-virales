@@ -510,23 +510,21 @@ async def main():
         else:
             print("escala del eje Y estable durante la animación:", list(yMax_muestra)[0])
 
-        # el filtro de muestra por cuartiles de tuits políticos sigue moviendo el numero de nodos
-        await pg.select_option("#mapa-serie", "ambas")
-        await pg.select_option("#mapa-filtro", "p75")
-        await pg.wait_for_timeout(500)
-        pocos = await pg.locator("#mapa .burbuja").count()
-        await pg.select_option("#mapa-filtro", "p50")
-        await pg.wait_for_timeout(500)
-        medios_p50 = await pg.locator("#mapa .burbuja").count()
+        # el filtro «Medios» por tipo de cuenta solo deja los medios de ese tipo
+        await pg.select_option("#mapa-serie", "publicado")
         await pg.select_option("#mapa-filtro", "todos")
         await pg.wait_for_timeout(500)
         todos = await pg.locator("#mapa .burbuja").count()
-        etiquetas_filtro = await pg.eval_on_selector_all("#mapa-filtro option", "e => e.map(o => o.textContent)")
-        print(f"nodos con p75: {pocos} · p50: {medios_p50} · todos: {todos} · opciones: {etiquetas_filtro}")
-        if not pocos <= medios_p50 < todos:
-            errores.append(f"[check] el filtro por cuartiles no recorta en orden: {pocos}, {medios_p50}, {todos}")
-        if not all("tuits políticos" in e for e in etiquetas_filtro[1:4]):
-            errores.append(f"[check] las opciones p25, p50 y p75 no dicen su umbral: {etiquetas_filtro}")
+        await pg.select_option("#mapa-filtro", "programa_tv")
+        await pg.wait_for_timeout(500)
+        programas = await pg.locator("#mapa .burbuja").count()
+        etiqueta_tipo = await pg.eval_on_selector("#mapa-filtro option[value=programa_tv]", "o => o.textContent")
+        await pg.select_option("#mapa-filtro", "todos")
+        await pg.wait_for_timeout(500)
+        print(f"nodos con todos: {todos} · programas de televisión: {programas} · opción: {etiqueta_tipo}")
+        if not 0 < programas < todos or f"({programas})" not in etiqueta_tipo:
+            errores.append(f"[check] el filtro por tipo no recorta bien: {programas} de {todos}, {etiqueta_tipo}")
+        await pg.select_option("#mapa-serie", "ambas")
 
         # el filtro por partido recoloca los medios respecto a ese partido
         partidos = await pg.evaluate("fetch('data/partidos.json').then(r => r.json())")

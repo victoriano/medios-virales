@@ -104,7 +104,7 @@ regeneren los datos.
 
 Por último, `scripts/build_tipos_data.py` añade a `index.json` el tipo de cada cuenta (prensa
 escrita, digital, televisión, programa de televisión, radio, programa de radio o agencia), que usa
-el filtro «Tipo» del mapa. La clasificación es manual y vive en `data/tipos_medio.json`: un programa
+el filtro «Medios» del mapa. La clasificación es manual y vive en `data/tipos_medio.json`: un programa
 como Malas Lenguas no es un medio, es un espacio dentro de una cadena, y por eso va aparte. Una
 cuenta nueva sin tipo hace fallar el script y la prueba de datos.
 
