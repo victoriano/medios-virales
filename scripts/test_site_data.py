@@ -73,6 +73,15 @@ class SiteDataTest(unittest.TestCase):
             )
             self.assertAlmostEqual(medium["pct_politicos"], expected, places=6)
 
+    def test_every_medium_has_a_known_type(self):
+        tipos = self.index["tipos"]
+        manual = json.loads((ROOT / "data" / "tipos_medio.json").read_text())
+        self.assertEqual(tipos, manual["tipos"])
+        por_handle = {h.lower(): t for h, t in manual["medios"].items()}
+        for medium in self.index["medios"]:
+            self.assertIn(medium.get("tipo"), tipos, medium["handle"])
+            self.assertEqual(medium["tipo"], por_handle[medium["handle"].lower()], medium["handle"])
+
     def test_detail_is_partitioned_and_complete(self):
         total = 0
         for medium in self.index["medios"]:

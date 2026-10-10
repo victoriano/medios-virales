@@ -102,6 +102,12 @@ respecto a PSOE, PP, Vox y Sumar, para el filtro por partido del mapa) a partir 
 y año que ya está en el repositorio. No necesita el taller, pero hay que repetirlo cada vez que se
 regeneren los datos.
 
+Por último, `scripts/build_tipos_data.py` añade a `index.json` el tipo de cada cuenta (prensa
+escrita, digital, televisión, programa de televisión, radio, programa de radio o agencia), que usa
+el filtro «Medios» del mapa. La clasificación es manual y vive en `data/tipos_medio.json`: un programa
+como Malas Lenguas no es un medio, es un espacio dentro de una cadena, y por eso va aparte. Una
+cuenta nueva sin tipo hace fallar el script y la prueba de datos.
+
 ### 4. Publicación
 
 `git push` y luego `git pull` en `/srv/medios`. La web es estática, sin dependencias y sin build.
