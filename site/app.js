@@ -1291,9 +1291,12 @@ function escalaY(maximo) {
   if (!mejor) { const tope = redondoArriba(maximo); mejor = { tope, paso: tope / 5, tramos: 5 }; }
   return mejor;
 }
-function maxYMapa(tray) {
+function maxYMapa(tray, nodos) {
   // con un recorrido abierto fuera de un año solo se dibuja ese medio, así que el eje se ajusta a él
   if (tray && tray.puntos.length && !MAPA_ANOS.includes(mapaPeriodo)) return escalaY(Math.max(1, ...tray.puntos.map(q => q.y)));
+  // fuera de los años el eje se ajusta a los medios que pasan los filtros; en los años
+  // se mira 2018 a 2026 completo para que la escala no salte al animar
+  if (!tray && !MAPA_ANOS.includes(mapaPeriodo) && nodos.length) return escalaY(Math.max(1, ...nodos.map(n => n.y)));
   return escalaY(maxVar(mapaEjeY, !!tray));
 }
 
@@ -1392,7 +1395,7 @@ function renderMapa() {
   const fueraCorte = totalUniverso - total;
 
   const W = 1000, H = 620, M = { t: 46, r: 54, b: 66, l: 82 };
-  const escala = maxYMapa(tray), yMax = escala.tope;
+  const escala = maxYMapa(tray, nodos), yMax = escala.tope;
   maxTamMapa = maxVar(mapaTam);
   const lista = Array.from({ length: escala.tramos + 1 }, (_, i) => +(escala.paso * i).toPrecision(12));
   const px = v => M.l + v / 100 * (W - M.l - M.r);

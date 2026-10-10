@@ -384,7 +384,7 @@ async def main():
         #     El eje Y representa el número absoluto de tuits con lado claro y su escala se calcula por periodo/serie.
         #     El tamaño de la burbuja depende de la mediana de retuits: r = min(34, 7 + 1.08·√rt_mediana).
         por_handle = {m["handle"]: m for m in pol["medios"]}
-        escala_todo = calcular_ymax(pol, admitidos, "todo", "ambas")
+        escala_todo = escala_y(max([1] + [n["conLado"] for n in est["nodos"]]))  # fuera de los años, se ajusta a lo dibujado
         yMax_todo = escala_todo[0]
         peor_x, peor_y, peor_r, mal_color, mal_rad, rojos, azules, grises = 0.0, 0.0, 0.0, [], [], 0, 0, 0
         for n in est["nodos"]:
@@ -514,7 +514,8 @@ async def main():
             await pg.select_option("#mapa-periodo", periodo)
             await pg.wait_for_timeout(600)
             est_local = await leer_mapa()
-            escala_local = calcular_ymax(pol, admitidos, periodo, serie)
+            escala_local = (calcular_ymax(pol, admitidos, periodo, serie) if periodo in MAPA_ANOS
+                            else escala_y(max([1] + [n["conLado"] for n in est_local["nodos"]])))
             yMax_local = escala_local[0]
             tics_local = tics_y(escala_local)
             if est_local["yticsCantidad"] != tics_local:
