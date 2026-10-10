@@ -378,6 +378,7 @@ td.c-dec{min-width:210px}
   --zona-dr:color-mix(in srgb,var(--chip-ben-bg) 45%,var(--panel));--zona-mdr:var(--chip-ben-bg)}
 
 /* recorrido de un medio año a año */
+.mapa-tray[hidden]{display:none}
 .mapa-tray{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;margin:0 0 12px;
   padding:12px 16px;background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra-s)}
 .mapa-tray p{margin:0;font:400 16.5px/1.45 var(--f-serif);color:var(--prose-fg)}

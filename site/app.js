@@ -69,6 +69,16 @@ const I18N = {
     ctlPeriodo: 'Periodo',
     ctlTuits: 'Tuits',
     ctlMuestra: 'Medios',
+    ctlTipo: 'Tipo',
+    ariaTipo: 'Filtrar por tipo de medio',
+    mapaTipoTodos: 'Todos los tipos',
+    tipoNombre: k => ({
+      prensa: 'Prensa escrita', digital: 'Digital', tv: 'Televisión', programa_tv: 'Programa de televisión',
+      radio: 'Radio', programa_radio: 'Programa de radio', agencia: 'Agencia de noticias',
+    })[k] || k,
+    mapaTipoOpcion: (nombre, n) => `${nombre} (${n})`,
+    mapaPieTipoK: 'Tipo:',
+    mapaPieTipo: nombre => `solo se dibujan las cuentas de tipo «${nombre}». Televisión agrupa cadenas y sus informativos; los programas van aparte porque no son un medio sino un espacio dentro de una cadena.`,
     mapaPeriodoAll: 'Serie completa',
     mapaPeriodoXV: 'XV Legislatura',
     mapaSerieAmbas: 'Comparar todos y 100 RT o más',
@@ -373,6 +383,16 @@ const I18N = {
     ctlPeriodo: 'Period',
     ctlTuits: 'Tweets',
     ctlMuestra: 'Outlets',
+    ctlTipo: 'Type',
+    ariaTipo: 'Filter by outlet type',
+    mapaTipoTodos: 'All types',
+    tipoNombre: k => ({
+      prensa: 'Print press', digital: 'Digital', tv: 'Television', programa_tv: 'TV programme',
+      radio: 'Radio', programa_radio: 'Radio programme', agencia: 'News agency',
+    })[k] || k,
+    mapaTipoOpcion: (nombre, n) => `${nombre} (${n})`,
+    mapaPieTipoK: 'Type:',
+    mapaPieTipo: nombre => `only accounts of type “${nombre}” are drawn. Television groups channels and their news desks; programmes are listed separately because they are a slot within a channel, not an outlet.`,
     mapaPeriodoAll: 'Full series',
     mapaPeriodoXV: 'XV Legislature',
     mapaSerieAmbas: 'Compare all and 100+ RT',
@@ -1095,6 +1115,7 @@ const colorDe = p => MAPA_COLOR[ladoDe(p)];
 
 let mapaSerie = 'publicado';
 let mapaFiltro = 'todos';
+let mapaTipo = '';
 let mapaPartido = '';
 let PARTIDOS_MAPA = null;
 let mapaEjeY = 'con_lado';
@@ -1226,6 +1247,23 @@ function etiquetasFiltro(umbrales) {
     if (op) op.textContent = t('mapaFiltroP', k.slice(1), nf(umbrales[k]));
   });
 }
+/* Filtro por tipo de cuenta (data/tipos_medio.json): prensa, digital, televisión,
+   programa de televisión, radio, programa de radio o agencia. Cada opción lleva
+   cuántos medios de ese tipo superan el corte de inclusión. */
+const tiposMapa = () => Object.keys((INDEX && INDEX.tipos) || {});
+function etiquetasTipo() {
+  const sel = $('#mapa-tipo');
+  if (!sel) return;
+  const admit = INDEX.medios.filter(m => (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN);
+  // se crean una vez y después solo se reetiquetan, para no cerrar el desplegable al redibujar
+  if (sel.options.length !== tiposMapa().length + 1) {
+    sel.innerHTML = ['', ...tiposMapa()].map(k => `<option value="${k}"></option>`).join('');
+    sel.value = mapaTipo;
+  }
+  for (const op of sel.options) {
+    op.textContent = op.value ? t('mapaTipoOpcion', t('tipoNombre', op.value), admit.filter(m => m.tipo === op.value).length) : t('mapaTipoTodos');
+  }
+}
 function polDe(handle) {
   return mediosPeriodo().find(r => r.handle.toLowerCase() === (handle || '').toLowerCase());
 }
@@ -1319,6 +1357,7 @@ function filasMapa() {
     const m = metas.get(r.handle.toLowerCase());
     if (!m) continue;
     if ((m.izq || 0) + (m.der || 0) <= SIGNIFICADOS_MIN) continue;
+    if (mapaTipo && m.tipo !== mapaTipo) continue;
     const pub = r.publicado, vir = r.viral;
     const okPub = pasaFiltro(r, pub, umbrales);
     const okVir = pasaFiltro(r, vir, umbrales);
@@ -1351,6 +1390,7 @@ function renderMapa() {
   if (panelMapa) panelMapa.dataset.modo = mapaPartido ? 'partido' : 'lados';
   const umbrales = umbralesMuestra();
   etiquetasFiltro(umbrales);
+  etiquetasTipo();
   etiquetasVariables();
   const filas = filasMapa();
   const metaTray = mapaTrayectoria ? INDEX.medios.find(m => m.handle.toLowerCase() === mapaTrayectoria.toLowerCase()) : null;
@@ -1550,6 +1590,7 @@ function renderMapa() {
     : t('mapaPieFiltroTodos');
   $('#mapa-pie').innerHTML = `
     ${tray ? `<div class="blq"><strong>${t('mapaPieTray')}</strong> ${t('mapaPieTrayDesc')}</div>` : `<div class="blq">${t('trayAyuda')}</div>`}
+    ${mapaTipo ? `<div class="blq"><strong>${t('mapaPieTipoK')}</strong> ${esc(t('mapaPieTipo', t('tipoNombre', mapaTipo)))}</div>` : ''}
     ${mapaPartido ? `<div class="blq"><strong>${t('mapaPiePartidoK')}</strong> ${t('mapaPiePartido', mapaPartido)}</div>` : ''}
     <div class="blq"><strong>${t('mapaPieTam')}</strong> ${mapaTam === 'rt_mediana' && !mapaPartido ? t('mapaPieTamDesc') : t('varDesc', mapaTam, mapaPartido)} ${bolas}</div>
     <div class="blq"><strong>${t('mapaPieAro')}</strong> <span class="aro" style="border-color:var(--map-izq)"></span> ${tm('mapaPieIzq')}
@@ -1622,6 +1663,7 @@ function tipMapa(n, ev) {
     ? `${t('tipSinLado')} (${nf(m.politicos)} ${t('tipPoliticos')})`
     : `${d.texto} (${nf(d.claro)} ${t('tipClaros')} ${nf(m.politicos)} ${t('tipPoliticos')}; ${p.sin} ${t('tipSinLadoPct')})`;
   tip.innerHTML = `<div class="tt">${esc(m.nombre)}</div>
+    ${m.tipo ? `<div class="tv tm">${esc(t('tipoNombre', m.tipo))}</div>` : ''}
     <div class="tv frase">${esc(frase)}</div>
     ${linea(pub, t('tipPublicado'))}${linea(vir, t('tipViral'))}${desplaz}${lineaVars(n)}
     <div class="tv tm">${esc(m.handle)} · ${t('tipIndiceMuestra')} ${m.indice > 0 ? '+' : m.indice < 0 ? '−' : ''}${Math.abs(m.indice).toFixed(2)}</div>`;
@@ -1709,7 +1751,8 @@ async function fijarPartidoMapa(valor) {
 
 function irAlMapa({ serie = 'publicado', filtro = 'todos', periodo = 'todo', play = false }) {
   pararEvolucion();
-  mapaSerie = serie; mapaFiltro = filtro; mapaPartido = '';
+  mapaSerie = serie; mapaFiltro = filtro; mapaPartido = ''; mapaTipo = '';
+  $('#mapa-tipo').value = '';
   mapaEjeY = 'con_lado'; mapaTam = 'rt_mediana'; mapaTrayectoria = '';
   $('#mapa-ejey').value = mapaEjeY;
   $('#mapa-tam').value = mapaTam;
@@ -1899,6 +1942,8 @@ function watchSystemTheme() {
   $('#mapa-filtro').value = mapaFiltro;
   $('#mapa-filtro').addEventListener('change', e => { mapaFiltro = FILTROS_MAPA.includes(e.target.value) ? e.target.value : 'todos'; renderMapa(); });
   $('#mapa-partido').addEventListener('change', e => fijarPartidoMapa(e.target.value));
+  etiquetasTipo();
+  $('#mapa-tipo').addEventListener('change', e => { mapaTipo = tiposMapa().includes(e.target.value) ? e.target.value : ''; renderMapa(); });
   // el configurador de ejes se cierra al pulsar fuera de él
   document.addEventListener('click', e => {
     const aj = $('#mapa-ajustes');
