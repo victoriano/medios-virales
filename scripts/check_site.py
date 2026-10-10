@@ -710,7 +710,7 @@ async def main():
         for trozo in ["3.813 tuits", "601 correcciones"]:
             if trozo not in metodo:
                 errores.append(f"[check] falta la revisión contextual en metodología: {trozo}")
-        for coste in ["82,794273", "90,87375"]:
+        for coste in ["83,555768", "91,57905"]:
             if coste not in metodo:
                 errores.append(f"[check] falta el coste combinado {coste} en metodología")
         await pg.screenshot(path=f"{OUT}/6-metodo.png", full_page=True)
