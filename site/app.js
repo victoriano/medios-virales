@@ -1272,10 +1272,29 @@ function radioDe(d) {
 const volumen = d => d.politicos != null ? `${nf(d.politicos)} ${t('tipPoliticos')}` : `${nf(d.juicios)} ${t('tweetsConLectura')}`;
 const nombreSerie = s => s === 'publicado' ? t('publicado') : t('viral');
 
+// techo y paso del eje Y: el techo es el primer tic que alcanza al punto más alto, con un paso
+// redondo (1, 2, 2,5 o 5 por una potencia de diez, o 1,5 en la potencia mayor) y entre cuatro y siete tramos, para no dejar hueco arriba
+function escalaY(maximo) {
+  maximo = Math.max(1, maximo);
+  const potencia = 10 ** Math.floor(Math.log10(maximo));
+  let mejor = null;
+  for (const k of [potencia / 10, potencia]) {
+    for (const m of [1, 1.5, 2, 2.5, 5]) {
+      const paso = k * m;
+      if ((maximo >= 4 && paso < 1) || (m === 1.5 && k < potencia)) continue;
+      const tramos = Math.ceil(maximo / paso - 1e-9);
+      if (tramos < 4 || tramos > 7) continue;
+      const tope = tramos * paso;
+      if (!mejor || tope < mejor.tope - 1e-9 || (Math.abs(tope - mejor.tope) < 1e-9 && tramos < mejor.tramos)) mejor = { tope, paso, tramos };
+    }
+  }
+  if (!mejor) { const tope = redondoArriba(maximo); mejor = { tope, paso: tope / 5, tramos: 5 }; }
+  return mejor;
+}
 function maxYMapa(tray) {
   // con un recorrido abierto fuera de un año solo se dibuja ese medio, así que el eje se ajusta a él
-  if (tray && tray.puntos.length && !MAPA_ANOS.includes(mapaPeriodo)) return redondoArriba(Math.max(1, ...tray.puntos.map(q => q.y)));
-  return redondoArriba(maxVar(mapaEjeY, !!tray));
+  if (tray && tray.puntos.length && !MAPA_ANOS.includes(mapaPeriodo)) return escalaY(Math.max(1, ...tray.puntos.map(q => q.y)));
+  return escalaY(maxVar(mapaEjeY, !!tray));
 }
 
 /* Recorrido de un medio: su posición en cada año de 2018 a 2026, en la serie
@@ -1373,9 +1392,9 @@ function renderMapa() {
   const fueraCorte = totalUniverso - total;
 
   const W = 1000, H = 620, M = { t: 46, r: 54, b: 66, l: 82 };
-  const yMax = maxYMapa(tray);
+  const escala = maxYMapa(tray), yMax = escala.tope;
   maxTamMapa = maxVar(mapaTam);
-  const lista = Array.from({ length: 6 }, (_, i) => yMax * i / 5);
+  const lista = Array.from({ length: escala.tramos + 1 }, (_, i) => +(escala.paso * i).toPrecision(12));
   const px = v => M.l + v / 100 * (W - M.l - M.r);
   const PAD = 32;
   const py = v => H - M.b - Math.max(0, Math.min(yMax, v)) / yMax * (H - M.t - M.b - PAD);
