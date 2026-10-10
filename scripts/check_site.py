@@ -52,10 +52,35 @@ def calcular_ymax(pol, admitidos, clave, serie):
                 val = int((medio.get(s) or {}).get("con_lado") or 0)
                 if val > maximo:
                     maximo = val
+    return escala_y(maximo)
+
+
+def escala_y(maximo):
+    """Réplica de escalaY en app.js: devuelve (tope, paso, tramos) del eje Y."""
+    maximo = max(1, maximo)
     potencia = 10 ** int(math.floor(math.log10(maximo)))
-    base = maximo / potencia
-    escalon = next((v for v in ESCALONES_Y if v >= base), 10)
-    return escalon * potencia
+    mejor = None
+    for k in (potencia / 10, potencia):
+        for m in (1, 1.5, 2, 2.5, 5):
+            paso = k * m
+            if (maximo >= 4 and paso < 1) or (m == 1.5 and k < potencia):
+                continue
+            tramos = math.ceil(maximo / paso - 1e-9)
+            if not 4 <= tramos <= 7:
+                continue
+            tope = tramos * paso
+            if mejor is None or tope < mejor[0] - 1e-9 or (abs(tope - mejor[0]) < 1e-9 and tramos < mejor[2]):
+                mejor = (tope, paso, tramos)
+    if mejor is None:
+        base = maximo / potencia
+        tope = next((v for v in ESCALONES_Y if v >= base), 10) * potencia
+        mejor = (tope, tope / 5, 5)
+    return mejor
+
+
+def tics_y(escala):
+    _, paso, tramos = escala
+    return [num_es(float(f"{paso * i:.12g}")) for i in range(tramos + 1)]
 
 
 def radio_esperado(rt_mediana):
@@ -359,7 +384,8 @@ async def main():
         #     El eje Y representa el número absoluto de tuits con lado claro y su escala se calcula por periodo/serie.
         #     El tamaño de la burbuja depende de la mediana de retuits: r = min(34, 7 + 1.08·√rt_mediana).
         por_handle = {m["handle"]: m for m in pol["medios"]}
-        yMax_todo = calcular_ymax(pol, admitidos, "todo", "ambas")
+        escala_todo = escala_y(max([1] + [n["conLado"] for n in est["nodos"]]))  # fuera de los años, se ajusta a lo dibujado
+        yMax_todo = escala_todo[0]
         peor_x, peor_y, peor_r, mal_color, mal_rad, rojos, azules, grises = 0.0, 0.0, 0.0, [], [], 0, 0, 0
         for n in est["nodos"]:
             r = por_handle.get(n["h"])
@@ -389,7 +415,7 @@ async def main():
                 azules += 1
             else:
                 grises += 1
-        tics_esperados = [num_es(yMax_todo * i / 5) for i in range(6)]
+        tics_esperados = tics_y(escala_todo)
         print(f"X de los nodos frente a posicion = 100*der/(izq+der): desviacion maxima {peor_x:.3f} px")
         print(f"Y de los nodos frente a con_lado / yMax ({yMax_todo}): desviacion maxima {peor_y:.3f} px")
         print(f"radio de las burbujas por rt_mediana: desviacion maxima {peor_r:.3f} px")
@@ -488,8 +514,10 @@ async def main():
             await pg.select_option("#mapa-periodo", periodo)
             await pg.wait_for_timeout(600)
             est_local = await leer_mapa()
-            yMax_local = calcular_ymax(pol, admitidos, periodo, serie)
-            tics_local = [num_es(yMax_local * i / 5) for i in range(6)]
+            escala_local = (calcular_ymax(pol, admitidos, periodo, serie) if periodo in MAPA_ANOS
+                            else escala_y(max([1] + [n["conLado"] for n in est_local["nodos"]])))
+            yMax_local = escala_local[0]
+            tics_local = tics_y(escala_local)
             if est_local["yticsCantidad"] != tics_local:
                 errores.append(f"[check] tics del eje Y en {periodo}/{serie}: {est_local['yticsCantidad']} vs {tics_local} (yMax={yMax_local})")
             if not any("Tuits que benefician o perjudican a un partido" in t for t in est_local["titulos"]):
