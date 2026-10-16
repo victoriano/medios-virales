@@ -639,6 +639,127 @@ const I18N = {
     ariaMapDesc: 'Media scatter by left-right position, with published and viral positions and an arrow showing where each outlet shifts when shared',
   }
 };
+/* textos de la historia guiada, el panel de tuits y los controles simplificados del mapa */
+Object.assign(I18N.es, {
+  ctlEje: 'Eje',
+  ctlMuestra: 'Cuentas',
+  ctlAjustes: 'Más ajustes',
+  mapaPartidoTodos: 'Izq. y der.',
+  mapaPlay: '▶ 2018 a 2026',
+  ariaFiltro: 'Qué cuentas se dibujan',
+  mapaCuentasTodas: n => `Todas las cuentas (${n})`,
+  mapaCuentasGen: n => `Medios generalistas (${n})`,
+  mapaCuentasProg: n => `Programas de TV y radio (${n})`,
+  mapaFiltroB200: 'Solo brecha fiable: 200 con lado en cada serie',
+  mapaPieCuentasK: 'Cuentas:',
+  mapaPieCuentas: k => k === 'generalistas'
+    ? 'solo medios generalistas: prensa, digitales, televisiones, radios y agencias, sin las cuentas de programas concretos.'
+    : 'solo cuentas de programas de televisión y radio, que son espacios dentro de una cadena y cuentan aparte de ella.',
+  mapaPieDestacar: 'Los programas van destacados; el resto de cuentas, atenuadas.',
+  ajustesResumen: n => n ? `⚙ ${n} ${n === 1 ? 'cambio' : 'cambios'}` : '⚙',
+  relatoPaso: (i, n) => `Paso ${i} de ${n}`,
+  relatoSig: 'Siguiente →',
+  relatoFin: 'Seguir leyendo ↓',
+  relatoAnt: 'Paso anterior',
+  relatoIr: i => `Ir al paso ${i}`,
+  relatoSalir: 'Explorar por libre ✕',
+  relatoVolver: '▶ Ver la historia',
+  relatoPista: 'También puedes avanzar haciendo scroll. El mapa se puede tocar en cada paso.',
+  relato1T: 'Empecemos por los medios generalistas',
+  relato1P: (n, izq, der, neu, dist) => `Periódicos, digitales, televisiones, radios y agencias: <strong>${n}</strong> cuentas. <strong>${der}</strong> publican sobre todo a la derecha, <strong>${izq}</strong> a la izquierda y ${neu} quedan en el centro. De media, cada una está a <strong>${dist} puntos</strong> del equilibrio.`,
+  relato2T: 'Ahora sumamos los programas',
+  relato2P: (n, dProg, dGen, der, izq) => `Las ${n} cuentas de programas de televisión y radio, destacadas en el mapa, están más lejos del centro: de media a <strong>${dProg} puntos</strong> del equilibrio, frente a ${dGen} de los medios generalistas.${der ? ` ${der.nombre} tiene el <strong>${der.v} %</strong> de sus tuits con lado claro a la derecha` : ''}${izq ? `${der ? ';' : ''} ${izq.nombre}, el <strong>${izq.v} %</strong> a la izquierda` : ''}.`,
+  relato3T: 'Cada cuenta tiene su recorrido',
+  relato3P: (nombre, a0, p0, a1, p1) => `Pulsa una cuenta y verás cómo se ha movido año a año. ${nombre} pasó de tener el <strong>${p0} %</strong> de sus tuits con lado claro a la derecha en ${a0} al <strong>${p1} %</strong> en ${a1}. Pulsa un año del recorrido para leer los tuits de ese año.`,
+  relato3B: nombre => `Leer los tuits de ${nombre} →`,
+  relato4T: 'También respecto a cada partido',
+  relato4P: (p, nContra, nTot) => `El eje puede medir a quién favorece cada medio. Con ${elP(p)} elegido, 0 es todo en contra y 100 todo a favor. <strong>${nContra}</strong> de ${nTot} cuentas publican más en contra ${delP(p)} que a su favor. Prueba arriba con otro partido.`,
+  relato5T: 'Ahora, explora tú',
+  relato5P: () => `<ul><li>Elige un <strong>periodo</strong> o pulsa ▶ para ver la evolución de 2018 a 2026.</li><li>Cambia el <strong>eje</strong> a un partido o filtra las <strong>cuentas</strong>.</li><li>Pulsa una cuenta para ver su <strong>recorrido</strong> y leer sus <strong>tuits</strong>.</li><li>En <strong>Más ajustes</strong>, compara lo publicado con lo viral.</li></ul>`,
+  relatoCargando: 'Cargando…',
+  ariaCajon: 'Tuits de la cuenta',
+  cajonFicha: 'Ficha completa ↗',
+  cajonCerrar: 'Cerrar',
+  cajonCargando: 'Cargando sus tuits…',
+  cajonError: 'No se han podido cargar los tuits.',
+  cajonBuscar: 'Buscar en sus tuits…',
+  cajonPartido: 'Partido',
+  cajonSentido: 'Sentido',
+  cajonTodos: 'Todos',
+  cajonOtros: 'Otros',
+  cajonAno: 'Año',
+  cajonTodosAnos: 'Todos los años',
+  cajonOrden: 'Orden',
+  cajonOrdenOp: k => ({ rt: 'Más retuits', lk: 'Más me gusta', vw: 'Más vistas', f: 'Más recientes', fa: 'Más antiguos' })[k],
+  cajonSoloPol: 'Solo tuits políticos',
+  cajonDir: (d, p) => ({ beneficia: p ? `A favor ${delP(p)}` : 'A favor', perjudica: p ? `En contra ${delP(p)}` : 'En contra', neutro: 'Neutros' })[d],
+  cajonResumen: (n, izq, der, neu) => `<strong>${n}</strong> tuits · <span class="c-izq">${izq} a la izquierda</span> · <span class="c-der">${der} a la derecha</span> · ${neu} sin lado`,
+  cajonRecorrido: (a0, p0, a1, p1, p) => p
+    ? `Recorrido: del ${p0} % a favor ${delP(p)} en ${a0} al ${p1} % en ${a1}.`
+    : `Recorrido: del ${p0} % de tuits con lado a la derecha en ${a0} al ${p1} % en ${a1}.`,
+  cajonVacio: 'Ningún tuit coincide con estos filtros.',
+  cajonMas: n => `Ver ${n} más`,
+});
+Object.assign(I18N.en, {
+  ctlEje: 'Axis',
+  ctlMuestra: 'Accounts',
+  ctlAjustes: 'More settings',
+  mapaPartidoTodos: 'Left & right',
+  mapaPlay: '▶ 2018 to 2026',
+  ariaFiltro: 'Which accounts are drawn',
+  mapaCuentasTodas: n => `All accounts (${n})`,
+  mapaCuentasGen: n => `General news outlets (${n})`,
+  mapaCuentasProg: n => `TV and radio shows (${n})`,
+  mapaFiltroB200: 'Reliable gap only: 200 with clear side in each series',
+  mapaPieCuentasK: 'Accounts:',
+  mapaPieCuentas: k => k === 'generalistas'
+    ? 'general news outlets only: newspapers, digital outlets, TV channels, radio stations and agencies, without the accounts of specific shows.'
+    : 'TV and radio show accounts only; they are slots inside a channel and are counted apart from it.',
+  mapaPieDestacar: 'Shows are highlighted; every other account is faded.',
+  ajustesResumen: n => n ? `⚙ ${n} change${n === 1 ? '' : 's'}` : '⚙',
+  relatoPaso: (i, n) => `Step ${i} of ${n}`,
+  relatoSig: 'Next →',
+  relatoFin: 'Keep reading ↓',
+  relatoAnt: 'Previous step',
+  relatoIr: i => `Go to step ${i}`,
+  relatoSalir: 'Explore freely ✕',
+  relatoVolver: '▶ See the story',
+  relatoPista: 'You can also move on by scrolling. The map is live at every step.',
+  relato1T: 'Let us start with the general news outlets',
+  relato1P: (n, izq, der, neu, dist) => `Newspapers, digital outlets, TV, radio and agencies: <strong>${n}</strong> accounts. <strong>${der}</strong> publish mostly to the right, <strong>${izq}</strong> to the left and ${neu} sit in the centre. On average each one is <strong>${dist} points</strong> away from balance.`,
+  relato2T: 'Now we add the shows',
+  relato2P: (n, dProg, dGen, der, izq) => `The ${n} TV and radio show accounts, highlighted on the map, sit further from the centre: on average <strong>${dProg} points</strong> from balance, against ${dGen} for general news outlets.${der ? ` ${der.nombre} has <strong>${der.v} %</strong> of its clear side tweets on the right` : ''}${izq ? `${der ? ';' : ''} ${izq.nombre}, <strong>${izq.v} %</strong> on the left` : ''}.`,
+  relato3T: 'Every account has its own path',
+  relato3P: (nombre, a0, p0, a1, p1) => `Click an account to see how it moved year by year. ${nombre} went from <strong>${p0} %</strong> of its clear side tweets on the right in ${a0} to <strong>${p1} %</strong> in ${a1}. Click a year on the path to read that year's tweets.`,
+  relato3B: nombre => `Read ${nombre}'s tweets →`,
+  relato4T: 'And for each party',
+  relato4P: (p, nContra, nTot) => `The axis can also measure who each outlet favours. With ${p} selected, 0 is all against and 100 all in favour. <strong>${nContra}</strong> of ${nTot} accounts publish more against ${p} than in its favour. Try another party above.`,
+  relato5T: 'Now it is your turn',
+  relato5P: () => `<ul><li>Pick a <strong>period</strong> or press ▶ to watch 2018 to 2026.</li><li>Switch the <strong>axis</strong> to a party or filter the <strong>accounts</strong>.</li><li>Click an account to see its <strong>path</strong> and read its <strong>tweets</strong>.</li><li>In <strong>More settings</strong>, compare everything with what went viral.</li></ul>`,
+  relatoCargando: 'Loading…',
+  ariaCajon: 'Account tweets',
+  cajonFicha: 'Full page ↗',
+  cajonCerrar: 'Close',
+  cajonCargando: 'Loading its tweets…',
+  cajonError: 'The tweets could not be loaded.',
+  cajonBuscar: 'Search its tweets…',
+  cajonPartido: 'Party',
+  cajonSentido: 'Direction',
+  cajonTodos: 'All',
+  cajonOtros: 'Other',
+  cajonAno: 'Year',
+  cajonTodosAnos: 'All years',
+  cajonOrden: 'Sort',
+  cajonOrdenOp: k => ({ rt: 'Most retweets', lk: 'Most likes', vw: 'Most views', f: 'Newest', fa: 'Oldest' })[k],
+  cajonSoloPol: 'Political tweets only',
+  cajonDir: (d, p) => ({ beneficia: p ? `For ${p}` : 'For', perjudica: p ? `Against ${p}` : 'Against', neutro: 'Neutral' })[d],
+  cajonResumen: (n, izq, der, neu) => `<strong>${n}</strong> tweets · <span class="c-izq">${izq} left</span> · <span class="c-der">${der} right</span> · ${neu} no side`,
+  cajonRecorrido: (a0, p0, a1, p1, p) => p
+    ? `Path: from ${p0} % for ${p} in ${a0} to ${p1} % in ${a1}.`
+    : `Path: from ${p0} % of clear side tweets on the right in ${a0} to ${p1} % in ${a1}.`,
+  cajonVacio: 'No tweet matches these filters.',
+  cajonMas: n => `Show ${n} more`,
+});
 const t = (key, ...args) => {
   const val = I18N[LANG][key];
   if (typeof val === 'function') return val(...args);
@@ -721,7 +842,7 @@ function show(v) {
   if (v === 'medio' && currentView !== 'medio') vistaPrevia = currentView;
   currentView = v;
   document.body.dataset.view = v;
-  if (v !== 'mapa') pararEvolucion();
+  if (v !== 'mapa') { pararEvolucion(); cerrarCajon(); }
   // el recorrido sobrevive a la ida y vuelta a la ficha del medio, no a cambiar de sección
   if (v !== 'mapa' && v !== 'medio') mapaTrayectoria = '';
   VIEWS.forEach(x => { $('#view-' + x).hidden = x !== v; });
@@ -912,11 +1033,7 @@ async function openMedio(handle) {
   $('#medio-panel').innerHTML = `<p class="empty">${t('medioLoading')}</p>`;
   if (!MEDIO || MEDIO.handle !== meta.handle) {
     try {
-      const manifest = await pedirJSON('data/' + meta.archivo + VER);
-      const base = 'data/' + meta.archivo.replace(/index\.json$/, '');
-      const chunks = await Promise.all((manifest.particiones || []).map(part =>
-        pedirJSON(base + part.archivo + VER)));
-      MEDIO = { ...manifest, tweets: chunks.flatMap(chunk => chunk.tweets || []) };
+      MEDIO = await cargarTuitsDe(meta);
     } catch (err) {
       $('#medio-panel').innerHTML = `<p class="empty">${t('medioError')}</p>`;
       return;
@@ -1107,6 +1224,8 @@ const colorDe = p => MAPA_COLOR[ladoDe(p)];
 
 let mapaSerie = 'publicado';
 let mapaFiltro = 'todos';
+let mapaB200 = false;      // solo medios con brecha fiable (AGENTS.md, regla 4)
+let mapaDestacar = '';     // la historia guiada destaca los programas y atenúa el resto
 let mapaPartido = '';
 let PARTIDOS_MAPA = null;
 let mapaEjeY = 'con_lado';
@@ -1211,19 +1330,30 @@ const tm = (clave, ...args) => mapaPartido ? t(clave + 'P', mapaPartido, ...args
 
 function pasaFiltro(d) {
   if (!d || d.posicion == null || d.con_lado < MUESTRA_MIN) return false;
-  return mapaFiltro !== 'b200' || d.con_lado >= BRECHA_MIN;
+  return !mapaB200 || d.con_lado >= BRECHA_MIN;
 }
-/* El selector «Medios» filtra por brecha fiable o por tipo de cuenta
-   (data/tipos_medio.json): prensa, digital, televisión, programa de televisión,
-   radio, programa de radio o agencia. Cada tipo lleva cuántos medios suyos
-   superan el corte de inclusión. */
+/* El selector «Cuentas» separa los medios generalistas de los programas
+   concretos de televisión y radio, y deja elegir además un tipo de cuenta
+   (data/tipos_medio.json). Cada opción lleva cuántas cuentas suyas superan el
+   corte de inclusión. La brecha fiable va aparte, en «Más ajustes». */
 const tiposMapa = () => Object.keys((INDEX && INDEX.tipos) || {});
-const filtrosMapa = () => ['todos', 'b200', ...tiposMapa()];
+const filtrosMapa = () => ['todos', 'generalistas', 'programas', ...tiposMapa()];
 const tipoFiltro = () => tiposMapa().includes(mapaFiltro) ? mapaFiltro : '';
+const esPrograma = m => String((m && m.tipo) || '').startsWith('programa');
+function pasaCuentas(m, filtro = mapaFiltro) {
+  if (filtro === 'generalistas') return !esPrograma(m);
+  if (filtro === 'programas') return esPrograma(m);
+  if (tiposMapa().includes(filtro)) return m.tipo === filtro;
+  return true;
+}
+const admitidosMapa = () => INDEX.medios.filter(m => (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN);
 function etiquetasTipo() {
   const sel = $('#mapa-filtro');
   if (!sel) return;
-  const admit = INDEX.medios.filter(m => (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN);
+  const admit = admitidosMapa();
+  const cuenta = f => admit.filter(m => pasaCuentas(m, f)).length;
+  const base = { todos: 'mapaCuentasTodas', generalistas: 'mapaCuentasGen', programas: 'mapaCuentasProg' };
+  for (const op of sel.querySelectorAll(':scope > option')) op.textContent = t(base[op.value], cuenta(op.value));
   // el grupo se crea una vez y después solo se reetiqueta, para no cerrar el desplegable al redibujar
   let grupo = sel.querySelector('optgroup[data-tipos]');
   if (!grupo) {
@@ -1235,7 +1365,7 @@ function etiquetasTipo() {
   }
   grupo.label = t('mapaTipoGrupo');
   for (const op of grupo.querySelectorAll('option')) {
-    op.textContent = t('mapaTipoOpcion', t('tipoNombre', op.value), admit.filter(m => m.tipo === op.value).length);
+    op.textContent = t('mapaTipoOpcion', t('tipoNombre', op.value), cuenta(op.value));
   }
 }
 function polDe(handle) {
@@ -1348,12 +1478,11 @@ function pintarBarraTray(meta, tray) {
 function filasMapa() {
   const metas = new Map(INDEX.medios.map(m => [m.handle.toLowerCase(), m]));
   const nodos = [], parejas = [];
-  const tipo = tipoFiltro();
   for (const r of mediosPeriodo()) {
     const m = metas.get(r.handle.toLowerCase());
     if (!m) continue;
     if ((m.izq || 0) + (m.der || 0) <= SIGNIFICADOS_MIN) continue;
-    if (tipo && m.tipo !== tipo) continue;
+    if (!pasaCuentas(m)) continue;
     const pub = r.publicado, vir = r.viral;
     const okPub = pasaFiltro(pub);
     const okVir = pasaFiltro(vir);
@@ -1370,6 +1499,23 @@ function filasMapa() {
   return { nodos, parejas };
 }
 
+/* Tamaño del lienzo. Fuera de la historia es el de siempre, 1000 por 620, y el SVG
+   se escala al ancho. Dentro de la escena el mapa ocupa el hueco que queda bajo
+   los controles: el lienzo toma su proporción y una escala cercana a la real, para
+   que textos y logos no encojan. En pantallas estrechas se desliza en horizontal. */
+function lienzoMapa() {
+  const wrap = $('.chart-wrap');
+  const enEscena = wrap && relatoActivo && !$('#relato').classList.contains('is-libre') && currentView === 'mapa';
+  if (!enEscena) return { W: 1000, H: 620 };
+  const cs = getComputedStyle(wrap);
+  const cw = wrap.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const ch = wrap.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+  if (cw < 50 || ch < 50) return { W: 1000, H: 620 };
+  const pw = Math.floor(Math.max(cw, 600)), ph = Math.floor(ch);
+  const W = Math.round(Math.min(1000, Math.max(900, pw)));
+  const H = Math.round(Math.min(1100, Math.max(380, ph * W / pw)));
+  return { W, H, pw, ph };
+}
 function renderMapa() {
   const svg = $('#mapa');
   if (!INDEX) return;
@@ -1406,7 +1552,8 @@ function renderMapa() {
   const fuera = total - dibujados;
   const fueraCorte = totalUniverso - total;
 
-  const W = 1000, H = 620, M = { t: 46, r: 54, b: 66, l: 82 };
+  const { W, H, pw, ph } = lienzoMapa();
+  const M = { t: 46, r: 54, b: 66, l: 82 };
   const escala = maxYMapa(tray, nodos), yMax = escala.tope;
   maxTamMapa = maxVar(mapaTam);
   const lista = Array.from({ length: escala.tramos + 1 }, (_, i) => +(escala.paso * i).toPrecision(12));
@@ -1465,12 +1612,15 @@ function renderMapa() {
     </g>`;
   }).join('');
 
-  const orden = nodos.slice().sort((a, b) => radioDe(b.d) - radioDe(a.d));
+  const encima = n => mapaDestacar === 'programas' && esPrograma(n.m) ? 1 : 0;
+  const orden = nodos.slice().sort((a, b) => encima(a) - encima(b) || radioDe(b.d) - radioDe(a.d));
   const burbujas = orden.map((n, i) => {
     const r = radioDe(n.d);
     const cx = px(n.p), cy = py(n.y);
     const d = (r * 1.74).toFixed(1), off = (-r * 0.87).toFixed(1);
-    return `<g class="burbuja burbuja-${n.serie} lado-${ladoDe(n.p)}${tray ? ' atenuada' : ''}" data-h="${esc(n.m.handle)}"
+    const tenue = tray || (mapaDestacar === 'programas' && !esPrograma(n.m));
+    const realce = !tray && mapaDestacar === 'programas' && esPrograma(n.m);
+    return `<g class="burbuja burbuja-${n.serie} lado-${ladoDe(n.p)}${tenue ? ' atenuada' : ''}${realce ? ' destacada' : ''}" data-h="${esc(n.m.handle)}"
         data-serie="${n.serie}" data-posicion="${n.p.toFixed(1)}" data-y="${n.y}" data-rt-mediana="${n.d.rt_mediana}" data-y-max="${yMax}" data-i="${i}" transform="translate(${cx.toFixed(1)},${cy.toFixed(1)})">
       <circle class="aro${n.serie === 'viral' ? ' dis' : ''}" r="${r.toFixed(1)}" stroke="${colorDe(n.p)}"></circle>
       <image href="${esc(n.m.logo)}" x="${off}" y="${off}" width="${d}" height="${d}"></image>
@@ -1515,10 +1665,15 @@ function renderMapa() {
   }
 
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.style.width = pw ? pw + 'px' : '';
+  svg.style.height = ph ? ph + 'px' : '';
   svg.innerHTML = `<g class="grid">${g}</g><g class="flechas">${flechas}</g><g class="nodos">${burbujas}</g><g class="recorrido">${recorrido}</g><g class="etiquetas">${etiquetas}</g>`;
   svg.classList.toggle('con-recorrido', !!tray);
-  const ultimo = svg.querySelector('.paso-ultimo');
-  if (ultimo) ultimo.addEventListener('click', e => { e.stopPropagation(); location.hash = '#/medio/' + metaTray.handle.replace('@', ''); });
+  // cada año del recorrido abre los tuits de la cuenta en ese año
+  svg.querySelectorAll('.recorrido .paso').forEach(el => el.addEventListener('click', e => {
+    e.stopPropagation();
+    abrirCajon(metaTray.handle, { ano: el.dataset.ano });
+  }));
 
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const coords = valor => (valor || '').match(/translate\(([-0-9.]+),\s*([-0-9.]+)\)/);
@@ -1572,18 +1727,24 @@ function renderMapa() {
       $('#mapa-tip').hidden = true;
       mapaTrayectoria = m.handle;
       renderMapa();
+      abrirCajon(m.handle);
     });
   });
+
+  const trayCajon = cajonAbierto() && $('#cajon .cajon-tray');
+  if (trayCajon) { const txt = textoTrayCajon(); trayCajon.textContent = txt; trayCajon.hidden = !txt; }
 
   const bolaRT = v => `<span class="bola" style="width:${(2 * RADIO(v)).toFixed(0)}px;height:${(2 * RADIO(v)).toFixed(0)}px"></span> ${nf(v)} RT`;
   const bolaN = v => { const r = Math.min(24, Math.max(5, 24 * Math.sqrt(v / maxTamMapa))); return `<span class="bola" style="width:${(2 * r).toFixed(0)}px;height:${(2 * r).toFixed(0)}px"></span> ${nf(v)}`; };
   const refTam = redondoArriba(maxTamMapa) / 2;
   const bolas = VARS_RT.includes(mapaTam) ? `${bolaRT(5)} ${bolaRT(100)} ${bolaRT(500)}` : `${bolaN(refTam / 10)} ${bolaN(refTam / 2)} ${bolaN(refTam)}`;
-  const notaFiltro = mapaFiltro === 'b200' ? t('mapaPieFiltroN', nf(BRECHA_MIN))
+  const notaFiltro = mapaB200 ? t('mapaPieFiltroN', nf(BRECHA_MIN))
     : t('mapaPieFiltroTodos');
   $('#mapa-pie').innerHTML = `
     ${tray ? `<div class="blq"><strong>${t('mapaPieTray')}</strong> ${t('mapaPieTrayDesc')}</div>` : `<div class="blq">${t('trayAyuda')}</div>`}
     ${tipoFiltro() ? `<div class="blq"><strong>${t('mapaPieTipoK')}</strong> ${esc(t('mapaPieTipo', t('tipoNombre', tipoFiltro())))}</div>` : ''}
+    ${mapaFiltro === 'generalistas' || mapaFiltro === 'programas' ? `<div class="blq"><strong>${t('mapaPieCuentasK')}</strong> ${t('mapaPieCuentas', mapaFiltro)}</div>` : ''}
+    ${mapaDestacar && !tray ? `<div class="blq">${t('mapaPieDestacar')}</div>` : ''}
     ${mapaPartido ? `<div class="blq"><strong>${t('mapaPiePartidoK')}</strong> ${t('mapaPiePartido', mapaPartido)}</div>` : ''}
     <div class="blq"><strong>${t('mapaPieTam')}</strong> ${mapaTam === 'rt_mediana' && !mapaPartido ? t('mapaPieTamDesc') : t('varDesc', mapaTam, mapaPartido)} ${bolas}</div>
     <div class="blq"><strong>${t('mapaPieAro')}</strong> <span class="aro" style="border-color:var(--map-izq)"></span> ${tm('mapaPieIzq')}
@@ -1606,7 +1767,13 @@ function lineaVars(n) {
 }
 function etiquetasVariables() {
   const res = $('#ajustes-resumen');
-  if (res) res.textContent = `↕ ${t('varCorta', mapaEjeY)} · ◯ ${t('varCorta', mapaTam)}`;
+  const cambios = [mapaSerie !== 'publicado', mapaEjeY !== 'con_lado', mapaTam !== 'rt_mediana', mapaB200].filter(Boolean).length;
+  if (res) {
+    res.textContent = t('ajustesResumen', cambios);
+    res.title = `↕ ${t('varCorta', mapaEjeY)} · ◯ ${t('varCorta', mapaTam)}`;
+  }
+  const b200 = $('#mapa-b200');
+  if (b200) b200.checked = mapaB200;
   ['#mapa-ejey', '#mapa-tam'].forEach(sel => {
     const el = $(sel);
     if (!el) return;
@@ -1726,38 +1893,42 @@ function datosHistoria() {
   };
 }
 
+function marcarPartido() {
+  $$('#mapa-partido [data-partido]').forEach(b => {
+    const on = b.dataset.partido === mapaPartido;
+    b.classList.toggle('is-on', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+}
 async function fijarPartidoMapa(valor) {
   const elegido = ['PSOE', 'PP', 'Vox', 'Sumar'].includes(valor) ? valor : '';
   if (elegido && !(await asegurarPartidos())) {
-    $('#mapa-partido').value = '';
     mapaPartido = '';
+    marcarPartido();
     renderMapa();
     return;
   }
   mapaPartido = elegido;
-  $('#mapa-partido').value = elegido;
+  marcarPartido();
   // «beneficia» y «perjudica» solo tienen sentido respecto a un partido
   if (!elegido && VARS_PARTIDO.includes(mapaEjeY)) { mapaEjeY = 'con_lado'; $('#mapa-ejey').value = mapaEjeY; }
   if (!elegido && VARS_PARTIDO.includes(mapaTam)) { mapaTam = 'rt_mediana'; $('#mapa-tam').value = mapaTam; }
   renderMapa();
 }
 
-function irAlMapa({ serie = 'publicado', filtro = 'todos', periodo = 'todo', play = false }) {
+function irAlMapa({ serie = 'publicado', filtro = 'todos', b200 = false, periodo = 'todo', play = false }) {
   pararEvolucion();
-  mapaSerie = serie; mapaFiltro = filtro; mapaPartido = '';
+  salirRelato(false);
+  mapaSerie = serie; mapaFiltro = filtro; mapaB200 = b200; mapaPartido = ''; mapaDestacar = '';
   mapaEjeY = 'con_lado'; mapaTam = 'rt_mediana'; mapaTrayectoria = '';
-  $('#mapa-ejey').value = mapaEjeY;
-  $('#mapa-tam').value = mapaTam;
-  $('#mapa-serie').value = serie;
-  $('#mapa-filtro').value = filtro;
-  $('#mapa-partido').value = '';
+  sincronizarControles();
   fijarPeriodoMapa(periodo, true);
   $('.panel-mapa').scrollIntoView({ behavior: 'smooth', block: 'start' });
   if (play) reproducirEvolucion();
 }
 const ACCIONES_HISTORIA = {
   evolucion: () => irAlMapa({ play: true }),
-  brecha: () => irAlMapa({ serie: 'ambas', filtro: 'b200' }),
+  brecha: () => irAlMapa({ serie: 'ambas', b200: true }),
   viral: () => irAlMapa({ serie: 'viral' }),
   top: () => { location.hash = '#/top'; }
 };
@@ -1790,6 +1961,375 @@ document.addEventListener('click', e => {
   const b = e.target.closest('.hallazgo-btn');
   if (b && ACCIONES_HISTORIA[b.dataset.accion]) ACCIONES_HISTORIA[b.dataset.accion]();
 });
+
+/* ---------- historia guiada ----------
+   Cinco pasos encima del mapa, como diapositivas. Cada paso fija unos filtros de
+   partida y el mapa sigue vivo: se puede tocar, filtrar y pulsar cuentas sin
+   salir del paso. Se avanza con los botones o haciendo scroll: la escena se queda
+   pegada arriba y cada paso ocupa un tramo de la página. Las cifras se calculan
+   aquí con los mismos datos que dibuja el mapa, así que siguen a los datos. */
+const RELATO = [
+  { k: 'relato1', preset: { filtro: 'generalistas' } },
+  { k: 'relato2', preset: { filtro: 'todos', destacar: 'programas' } },
+  { k: 'relato3', preset: { filtro: 'todos', tray: () => (ejemploRecorrido() || {}).handle || '' } },
+  { k: 'relato4', preset: { filtro: 'todos', partido: 'PSOE' } },
+  { k: 'relato5', preset: { filtro: 'todos' } },
+];
+let relatoActivo = true, relatoPaso = -1, relatoTurno = 0, relatoSaltando = false;
+
+// posición de lo publicado en la serie completa, con el mismo corte con el que se dibuja el mapa
+function posicionesTodo(filtro) {
+  const metas = new Map(admitidosMapa().map(m => [m.handle.toLowerCase(), m]));
+  return mediosPolDe('todo').map(r => ({ m: metas.get(r.handle.toLowerCase()), d: r.publicado }))
+    .filter(x => x.m && pasaCuentas(x.m, filtro) && x.d && x.d.posicion != null && x.d.con_lado >= MUESTRA_MIN);
+}
+const distMedia = xs => xs.length ? xs.reduce((a, x) => a + Math.abs(x.d.posicion - 50), 0) / xs.length : 0;
+
+/* El ejemplo del recorrido es la cuenta que más se ha movido entre el primer y el
+   último año, entre las que tienen al menos 100 tuits con lado claro en cada año:
+   así el cambio no sale de una muestra corta. */
+let EJEMPLO;
+function ejemploRecorrido() {
+  if (EJEMPLO !== undefined) return EJEMPLO;
+  let mejor = null;
+  for (const m of admitidosMapa()) {
+    const h = m.handle.toLowerCase();
+    const pts = MAPA_ANOS.map(a => (mediosPolDe(a).find(r => r.handle.toLowerCase() === h) || {}).publicado);
+    if (pts.some(d => !d || d.posicion == null || d.con_lado < 100)) continue;
+    const p0 = pts[0].posicion, p1 = pts[pts.length - 1].posicion;
+    if (!mejor || Math.abs(p1 - p0) > mejor.delta) mejor = { handle: m.handle, nombre: m.nombre, delta: Math.abs(p1 - p0), p0, p1 };
+  }
+  EJEMPLO = mejor;
+  return EJEMPLO;
+}
+// cuántas cuentas publican más en contra de un partido que a su favor, en la serie completa
+function contraPartido(p) {
+  if (!PARTIDOS_MAPA || !PARTIDOS_MAPA.periodos || !PARTIDOS_MAPA.periodos.todo) return null;
+  const porH = new Map(PARTIDOS_MAPA.periodos.todo.medios.map(r => [r.h.toLowerCase(), r]));
+  let n = 0, contra = 0;
+  for (const m of admitidosMapa()) {
+    const q = porH.get(m.handle.toLowerCase());
+    const d = q && q[p] && q[p][0];
+    if (!d || d[0] + d[1] < MUESTRA_MIN) continue;
+    n++;
+    if (d[1] > d[0]) contra++;
+  }
+  return { n, contra };
+}
+function textoRelato(i) {
+  const r = v => fx(Math.round(v));
+  if (i === 0) {
+    const xs = posicionesTodo('generalistas');
+    const l = { izq: 0, der: 0, neu: 0 };
+    xs.forEach(x => { l[ladoDe(x.d.posicion)]++; });
+    return { p: t('relato1P', xs.length, l.izq, l.der, l.neu, r(distMedia(xs))) };
+  }
+  if (i === 1) {
+    const pr = posicionesTodo('programas'), ge = posicionesTodo('generalistas');
+    const der = pr.filter(x => x.d.posicion > 55).sort((a, b) => b.d.posicion - a.d.posicion)[0];
+    const izq = pr.filter(x => x.d.posicion < 45).sort((a, b) => a.d.posicion - b.d.posicion)[0];
+    return { p: t('relato2P', pr.length, r(distMedia(pr)), r(distMedia(ge)),
+      der && { nombre: esc(der.m.nombre), v: r(der.d.posicion) },
+      izq && { nombre: esc(izq.m.nombre), v: r(100 - izq.d.posicion) }) };
+  }
+  if (i === 2) {
+    const ej = ejemploRecorrido();
+    if (!ej) return { p: t('trayAyuda') };
+    return {
+      p: t('relato3P', esc(ej.nombre), MAPA_ANOS[0], r(ej.p0), MAPA_ANOS[MAPA_ANOS.length - 1], r(ej.p1)),
+      accion: `<button type="button" class="hallazgo-btn" data-relato="tuits">${esc(t('relato3B', ej.nombre))}</button>`
+    };
+  }
+  if (i === 3) {
+    const c = contraPartido('PSOE');
+    return { p: c ? t('relato4P', 'PSOE', c.contra, c.n) : t('relatoCargando') };
+  }
+  return { p: t('relato5P') };
+}
+function pintarRelato() {
+  if (relatoPaso < 0 || !INDEX || !POL) return;
+  const i = relatoPaso, n = RELATO.length;
+  $('#relato-paso').textContent = t('relatoPaso', i + 1, n);
+  $('#relato-titulo').textContent = t(RELATO[i].k + 'T');
+  const tx = textoRelato(i);
+  $('#relato-texto').innerHTML = tx.p;
+  $('#relato-accion').innerHTML = tx.accion || '';
+  $('#relato-ant').disabled = i === 0;
+  $('#relato-sig').textContent = i === n - 1 ? t('relatoFin') : t('relatoSig');
+  $('#relato-puntos').innerHTML = RELATO.map((_, j) =>
+    `<button type="button" class="${j === i ? 'is-on' : ''}" data-paso="${j}" aria-label="${esc(t('relatoIr', j + 1))}"${j === i ? ' aria-current="step"' : ''}></button>`).join('');
+}
+function sincronizarControles() {
+  const fija = (sel, v) => { const el = $(sel); if (el) el.value = v; };
+  fija('#mapa-serie', mapaSerie);
+  fija('#mapa-filtro', mapaFiltro);
+  fija('#mapa-ejey', mapaEjeY);
+  fija('#mapa-tam', mapaTam);
+  fija('#mapa-periodo', mapaPeriodo);
+  const b = $('#mapa-b200');
+  if (b) b.checked = mapaB200;
+  marcarPartido();
+}
+async function aplicarPaso(i) {
+  const turno = ++relatoTurno;
+  const p = RELATO[i].preset;
+  pararEvolucion();
+  if (cajonAbierto()) cerrarCajon();
+  if (p.partido && !(await asegurarPartidos())) p.partido = '';
+  if (turno !== relatoTurno) return;
+  mapaSerie = 'publicado'; mapaB200 = false; mapaEjeY = 'con_lado'; mapaTam = 'rt_mediana';
+  mapaFiltro = p.filtro || 'todos';
+  mapaDestacar = p.destacar || '';
+  mapaTrayectoria = typeof p.tray === 'function' ? p.tray() : (p.tray || '');
+  mapaPeriodo = 'todo';
+  mapaPartido = p.partido || '';
+  sincronizarControles();
+  if (currentView === 'mapa' && location.hash.includes('?')) history.replaceState(null, '', '#/mapa');
+  renderMapa();
+  pintarRelato();
+}
+function irAPaso(i) {
+  i = Math.max(0, Math.min(RELATO.length - 1, i));
+  if (i === relatoPaso) return;
+  relatoPaso = i;
+  pintarRelato();
+  aplicarPaso(i);
+}
+// lleva la página al tramo del paso: el observador lo da por activo al cruzar la mitad de la pantalla
+function desplazarAPaso(i) {
+  const el = $(`.relato-paso[data-paso="${i}"]`);
+  irAPaso(i);
+  if (!el) return;
+  relatoSaltando = true;
+  const destino = el.getBoundingClientRect().top + scrollY - innerHeight * 0.5 + 6;
+  const suave = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  scrollTo({ top: Math.max(0, destino), behavior: suave ? 'smooth' : 'auto' });
+  clearTimeout(desplazarAPaso.t);
+  desplazarAPaso.t = setTimeout(() => { relatoSaltando = false; }, suave ? 1100 : 60);
+}
+function salirRelato(desplazar) {
+  relatoActivo = false;
+  $('#relato').classList.add('is-libre');
+  mapaDestacar = '';
+  renderMapa();
+  if (desplazar) $('.panel-mapa').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function entrarRelato() {
+  relatoActivo = true;
+  $('#relato').classList.remove('is-libre');
+  relatoPaso = -1;
+  irAPaso(0);
+  $('#relato').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function iniciarRelato() {
+  const pasos = $('#relato-pasos');
+  pasos.innerHTML = RELATO.map((_, i) => `<div class="relato-paso" data-paso="${i}"></div>`).join('');
+  const nav = $('.nav');
+  const fijarNav = () => document.documentElement.style.setProperty('--nav-h', (nav ? nav.offsetHeight : 0) + 'px');
+  fijarNav();
+  // el lienzo de la escena depende del hueco disponible: se redibuja al cambiar el tamaño
+  let tRes = null;
+  addEventListener('resize', () => {
+    fijarNav();
+    clearTimeout(tRes);
+    tRes = setTimeout(() => { if (currentView === 'mapa' && relatoActivo) renderMapa(); }, 150);
+  });
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entradas => {
+      if (!relatoActivo || relatoSaltando || currentView !== 'mapa') return;
+      for (const e of entradas) if (e.isIntersecting) irAPaso(Number(e.target.dataset.paso));
+    }, { rootMargin: '-50% 0px -50% 0px' });
+    $$('.relato-paso', pasos).forEach(el => io.observe(el));
+  }
+  $('#relato-sig').addEventListener('click', () => {
+    if (relatoPaso >= RELATO.length - 1) $('#historia').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    else desplazarAPaso(relatoPaso + 1);
+  });
+  $('#relato-ant').addEventListener('click', () => desplazarAPaso(relatoPaso - 1));
+  $('#relato-puntos').addEventListener('click', e => {
+    const b = e.target.closest('[data-paso]');
+    if (b) desplazarAPaso(Number(b.dataset.paso));
+  });
+  $('#relato-salir').addEventListener('click', () => salirRelato(true));
+  $('#relato-volver').addEventListener('click', entrarRelato);
+  $('#relato-accion').addEventListener('click', e => {
+    const ej = ejemploRecorrido();
+    if (e.target.closest('[data-relato="tuits"]') && ej) abrirCajon(ej.handle);
+  });
+  // quien llega con un periodo en el enlace viene a explorar, no a la historia
+  const bruto = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
+  if (leePeriodoDeUrl(bruto)) salirRelato(false);
+  else irAPaso(0);
+}
+
+/* ---------- panel de tuits de una cuenta ----------
+   Al pulsar una cuenta del mapa se abre a la vez su recorrido en el mapa y este
+   panel con sus tuits: se ordenan por retuits, me gusta, vistas o fecha y se
+   filtran por partido, sentido y año. Usa los mismos ficheros troceados por año
+   que la ficha completa. */
+const CAJON_PAGINA = 20;
+let CJ = null;
+const TUITS = new Map();
+function cargarTuitsDe(meta) {
+  if (!TUITS.has(meta.handle)) {
+    const prom = (async () => {
+      const manifest = await pedirJSON('data/' + meta.archivo + VER);
+      const base = 'data/' + meta.archivo.replace(/index\.json$/, '');
+      const trozos = await Promise.all((manifest.particiones || []).map(part => pedirJSON(base + part.archivo + VER)));
+      return { ...manifest, tweets: trozos.flatMap(tr => tr.tweets || []) };
+    })();
+    prom.catch(() => TUITS.delete(meta.handle));
+    TUITS.set(meta.handle, prom);
+  }
+  return TUITS.get(meta.handle);
+}
+const cajonAbierto = () => { const c = $('#cajon'); return !!c && !c.hidden; };
+async function abrirCajon(handle, opts = {}) {
+  const meta = metaDe(handle);
+  if (!meta) return;
+  if (!CJ || CJ.meta.handle !== meta.handle) {
+    CJ = { meta, tweets: null, error: false, partido: mapaPartido || '', dir: '', ano: '', orden: 'rt', texto: '', soloPol: true, n: CAJON_PAGINA };
+  }
+  if (opts.ano !== undefined) { CJ.ano = opts.ano; CJ.n = CAJON_PAGINA; }
+  const caja = $('#cajon');
+  caja.hidden = false;
+  const yaAbierto = document.body.classList.contains('con-cajon');
+  document.body.classList.add('con-cajon');
+  if (!yaAbierto && currentView === 'mapa') renderMapa();
+  pintarCajon();
+  caja.scrollTop = 0;
+  if (!CJ.tweets && !CJ.error) {
+    const yo = CJ;
+    try { yo.tweets = (await cargarTuitsDe(meta)).tweets; } catch (err) { yo.error = true; }
+    if (CJ === yo) pintarCajon();
+  }
+}
+function cerrarCajon() {
+  const caja = $('#cajon');
+  if (!caja) return;
+  const estaba = !caja.hidden;
+  caja.hidden = true;
+  document.body.classList.remove('con-cajon');
+  if (estaba && currentView === 'mapa' && INDEX) renderMapa();
+}
+// el recorrido sigue al eje del mapa: izquierda y derecha o un partido
+function textoTrayCajon() {
+  if (!CJ) return '';
+  const tray = trayectoriaDe(CJ.meta.handle);
+  const n = tray.puntos.length;
+  const r = v => fx(Math.round(v));
+  return n >= 2
+    ? t('cajonRecorrido', tray.puntos[0].ano, r(tray.puntos[0].p), tray.puntos[n - 1].ano, r(tray.puntos[n - 1].p), mapaPartido)
+    : '';
+}
+function pintarCajon() {
+  if (!CJ) return;
+  const m = CJ.meta;
+  const recorrido = textoTrayCajon();
+  $('#cajon').innerHTML = `
+    <div class="cajon-cab">
+      ${m.logo ? `<img class="cajon-logo" src="${esc(m.logo)}" alt="">` : ''}
+      <div class="cajon-nombre">
+        <h2>${esc(m.nombre)}</h2>
+        <p class="cajon-sub">${esc(m.handle)}${m.tipo ? ' · ' + esc(t('tipoNombre', m.tipo)) : ''}</p>
+      </div>
+      <button type="button" class="cajon-x" data-cj="cerrar" aria-label="${esc(t('cajonCerrar'))}">✕</button>
+    </div>
+    <p class="cajon-tray"${recorrido ? '' : ' hidden'}>${recorrido}</p>
+    <div class="cajon-filtros">
+      <input type="search" id="cj-q" placeholder="${esc(t('cajonBuscar'))}" autocomplete="off" value="${esc(CJ.texto)}">
+      <div class="cj-fila"><span class="ctl-k">${t('cajonPartido')}</span><div class="cj-chips" id="cj-partidos"></div></div>
+      <div class="cj-fila"><span class="ctl-k">${t('cajonSentido')}</span><div class="cj-chips" id="cj-dirs"></div></div>
+      <div class="cj-sels">
+        <label class="ctl"><span class="ctl-k">${t('cajonAno')}</span><select id="cj-ano"></select></label>
+        <label class="ctl"><span class="ctl-k">${t('cajonOrden')}</span><select id="cj-orden">
+          ${['rt', 'lk', 'vw', 'f', 'fa'].map(k => `<option value="${k}">${t('cajonOrdenOp', k)}</option>`).join('')}
+        </select></label>
+      </div>
+      <label class="cj-check"><input type="checkbox" id="cj-pol"${CJ.soloPol ? ' checked' : ''}> ${t('cajonSoloPol')}</label>
+    </div>
+    <div class="cajon-res" id="cj-res"></div>
+    <div class="cajon-lista" id="cj-lista"></div>
+    <button type="button" class="more" id="cj-mas" hidden></button>
+    <a class="cajon-ficha" href="#/medio/${esc(m.handle.replace('@', ''))}">${t('cajonFicha')}</a>`;
+  $('#cj-orden').value = CJ.orden;
+  pintarCajonLista();
+}
+function pintarCajonLista() {
+  const lista = $('#cj-lista');
+  if (!CJ || !lista) return;
+  if (CJ.error || !CJ.tweets) {
+    lista.innerHTML = `<p class="empty">${t(CJ.error ? 'cajonError' : 'cajonCargando')}</p>`;
+    $('#cj-res').innerHTML = '';
+    $('#cj-partidos').innerHTML = $('#cj-dirs').innerHTML = $('#cj-ano').innerHTML = '';
+    return;
+  }
+  const q = CJ.texto.trim().toLowerCase();
+  const anoDe = tw => (tw.f || '').slice(0, 4);
+  const base = CJ.tweets.filter(tw => (!CJ.soloPol || tw.p) && (!q || tw.t.toLowerCase().includes(q)));
+  const cPart = {}, cDir = {}, cAno = {};
+  for (const tw of base) {
+    const okA = !CJ.ano || anoDe(tw) === CJ.ano, okP = !CJ.partido || tw.p === CJ.partido, okD = !CJ.dir || tw.d === CJ.dir;
+    if (okA && okD && tw.p) cPart[tw.p] = (cPart[tw.p] || 0) + 1;
+    if (okA && okP && tw.d) cDir[tw.d] = (cDir[tw.d] || 0) + 1;
+    if (okP && okD) cAno[anoDe(tw)] = (cAno[anoDe(tw)] || 0) + 1;
+  }
+  let ts = base.filter(tw => (!CJ.ano || anoDe(tw) === CJ.ano) && (!CJ.partido || tw.p === CJ.partido) && (!CJ.dir || tw.d === CJ.dir));
+  const o = CJ.orden;
+  ts = ts.slice().sort((a, b) => o === 'f' ? (a.f < b.f ? 1 : a.f > b.f ? -1 : 0)
+    : o === 'fa' ? (a.f > b.f ? 1 : a.f < b.f ? -1 : 0) : (b[o] || 0) - (a[o] || 0));
+
+  const chip = (attr, val, txt, cuenta, cls) => `<button type="button" class="cj-chip ${cls || ''}${(attr === 'p' ? CJ.partido : CJ.dir) === val ? ' is-on' : ''}"
+      data-cj${attr}="${val}" aria-pressed="${(attr === 'p' ? CJ.partido : CJ.dir) === val}">${txt}${cuenta != null ? ` <span>${nf(cuenta)}</span>` : ''}</button>`;
+  $('#cj-partidos').innerHTML = chip('p', '', t('cajonTodos'), null) +
+    PARTIDOS.filter(p => cPart[p] || p === CJ.partido).map(p => chip('p', p, p, cPart[p] || 0, CHIP[p])).join('');
+  $('#cj-dirs').innerHTML = chip('d', '', t('cajonTodos'), null) +
+    ['beneficia', 'perjudica', 'neutro'].filter(d => cDir[d] || d === CJ.dir)
+      .map(d => chip('d', d, t('cajonDir', d, ['PSOE', 'PP', 'Vox', 'Sumar'].includes(CJ.partido) ? CJ.partido : ''), cDir[d] || 0, DIRCHIP[d])).join('');
+  const anos = Object.keys(cAno).filter(Boolean).sort();
+  $('#cj-ano').innerHTML = `<option value="">${t('cajonTodosAnos')}</option>` +
+    [...new Set([...anos, CJ.ano].filter(Boolean))].sort().map(a => `<option value="${a}">${a} (${nf(cAno[a] || 0)})</option>`).join('');
+  $('#cj-ano').value = CJ.ano;
+
+  const IZQ = { PSOE: 1, Sumar: 1 }, DER = { PP: 1, Vox: 1 };
+  let izq = 0, der = 0;
+  for (const tw of ts) {
+    if ((tw.d === 'beneficia' && IZQ[tw.p]) || (tw.d === 'perjudica' && DER[tw.p])) izq++;
+    else if ((tw.d === 'beneficia' && DER[tw.p]) || (tw.d === 'perjudica' && IZQ[tw.p])) der++;
+  }
+  const neu = ts.length - izq - der;
+  const w = v => ts.length ? (100 * v / ts.length).toFixed(1) : 0;
+  $('#cj-res').innerHTML = `<p>${t('cajonResumen', nf(ts.length), nf(izq), nf(der), nf(neu))}</p>
+    <div class="mini"><i style="width:${w(izq)}%;background:var(--izq)"></i><i style="width:${w(neu)}%;background:var(--track)"></i><i style="width:${w(der)}%;background:var(--der)"></i></div>`;
+  lista.innerHTML = ts.length
+    ? ts.slice(0, CJ.n).map(tw => tarjeta(tw, CJ.meta.handle, CJ.meta.nombre)).join('')
+    : `<p class="empty">${t('cajonVacio')}</p>`;
+  const mas = $('#cj-mas');
+  mas.hidden = ts.length <= CJ.n;
+  mas.textContent = t('cajonMas', nf(Math.min(CAJON_PAGINA, ts.length - CJ.n)));
+}
+function iniciarCajon() {
+  const caja = $('#cajon');
+  caja.addEventListener('click', e => {
+    if (e.target.closest('[data-cj="cerrar"]')) { cerrarCajon(); return; }
+    const p = e.target.closest('[data-cjp]');
+    if (p) { CJ.partido = p.dataset.cjp; CJ.n = CAJON_PAGINA; pintarCajonLista(); return; }
+    const d = e.target.closest('[data-cjd]');
+    if (d) { CJ.dir = d.dataset.cjd; CJ.n = CAJON_PAGINA; pintarCajonLista(); return; }
+    if (e.target.closest('#cj-mas')) { CJ.n += CAJON_PAGINA; pintarCajonLista(); }
+  });
+  caja.addEventListener('input', e => {
+    if (e.target.id === 'cj-q') { CJ.texto = e.target.value; CJ.n = CAJON_PAGINA; pintarCajonLista(); }
+  });
+  caja.addEventListener('change', e => {
+    if (e.target.id === 'cj-ano') CJ.ano = e.target.value;
+    else if (e.target.id === 'cj-orden') CJ.orden = e.target.value;
+    else if (e.target.id === 'cj-pol') CJ.soloPol = e.target.checked;
+    else return;
+    CJ.n = CAJON_PAGINA;
+    pintarCajonLista();
+  });
+}
 
 /* ---------- idioma y tema ---------- */
 function applyLang() {
@@ -1827,6 +2367,8 @@ function reRenderCurrent() {
   if (currentView === 'top' && TOP) { pintarTopFiltros(); pintarTop(); }
   renderMapa();
   pintarHistoria();
+  pintarRelato();
+  if (cajonAbierto()) pintarCajon();
 }
 function setLang(newLang) {
   if (newLang !== 'es' && newLang !== 'en') newLang = 'es';
@@ -1932,19 +2474,41 @@ function watchSystemTheme() {
   }
   $('#mapa-serie').addEventListener('change', e => { mapaSerie = e.target.value; renderMapa(); });
   $('#mapa-filtro').value = mapaFiltro;
-  $('#mapa-filtro').addEventListener('change', e => { mapaFiltro = filtrosMapa().includes(e.target.value) ? e.target.value : 'todos'; renderMapa(); });
-  $('#mapa-partido').addEventListener('change', e => fijarPartidoMapa(e.target.value));
+  $('#mapa-filtro').addEventListener('change', e => {
+    mapaFiltro = filtrosMapa().includes(e.target.value) ? e.target.value : 'todos';
+    mapaDestacar = '';
+    renderMapa();
+  });
+  $('#mapa-b200').addEventListener('change', e => { mapaB200 = e.target.checked; renderMapa(); });
+  $('#mapa-partido').addEventListener('click', e => {
+    const b = e.target.closest('[data-partido]');
+    if (b) fijarPartidoMapa(b.dataset.partido);
+  });
   // el configurador de ejes se cierra al pulsar fuera de él
   document.addEventListener('click', e => {
     const aj = $('#mapa-ajustes');
     if (aj && aj.open && !aj.contains(e.target)) aj.open = false;
   });
   $('#mapa').addEventListener('click', e => { if (!e.target.closest('.burbuja, .paso-ultimo')) quitarTrayectoria(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && currentView === 'mapa') quitarTrayectoria(); });
+  document.addEventListener('keydown', e => {
+    // con la historia en pantalla, las flechas del teclado pasan de paso
+    const escribiendo = e.target.closest && e.target.closest('input, select, textarea');
+    if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && !escribiendo && relatoActivo && currentView === 'mapa' && !cajonAbierto()) {
+      const r = $('#relato').getBoundingClientRect();
+      if (r.top < innerHeight * 0.5 && r.bottom > innerHeight * 0.5) {
+        e.preventDefault();
+        desplazarAPaso(relatoPaso + (e.key === 'ArrowRight' ? 1 : -1));
+      }
+      return;
+    }
+    if (e.key !== 'Escape') return;
+    if (cajonAbierto()) { cerrarCajon(); return; }
+    if (currentView === 'mapa') quitarTrayectoria();
+  });
   $('#mapa-tray').addEventListener('click', e => {
     const b = e.target.closest('[data-tray]');
     if (!b) return;
-    if (b.dataset.tray === 'tuits' && mapaTrayectoria) location.hash = '#/medio/' + mapaTrayectoria.replace('@', '');
+    if (b.dataset.tray === 'tuits' && mapaTrayectoria) abrirCajon(mapaTrayectoria);
     else quitarTrayectoria();
   });
   $('#mapa-ejey').addEventListener('change', e => fijarVariableMapa('ejeY', e.target.value));
@@ -1958,6 +2522,8 @@ function watchSystemTheme() {
   if (play) play.addEventListener('click', reproducirEvolucion);
   actualizarPlay();
   pintarHistoria();
+  iniciarRelato();
+  iniciarCajon();
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
   if (h === 'top') { await cargarTop(); }
   route();
