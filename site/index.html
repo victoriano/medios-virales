@@ -35,7 +35,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/fraunces-normal-400-900.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fonts.css?v=202610051200">
-<link rel="stylesheet" href="styles.css?v=202610081536">
+<link rel="stylesheet" href="styles.css?v=202610161600">
 </head>
 <body>
 <header class="mast">
@@ -111,70 +111,95 @@
 
   <!-- ============ MAPA ============ -->
   <section id="view-mapa" class="view">
-    <div class="panel panel-mapa">
-      <div class="panel-controles">
-        <div class="ctl"><span class="ctl-k" data-i18n="ctlPeriodo">Periodo</span><div class="ctl-v"><select id="mapa-periodo" data-i18n-aria="ariaPeriodo" aria-label="Periodo de la serie histórica">
-            <option value="todo" selected data-i18n="mapaPeriodoAll">Serie completa</option>
-            <option value="xv" data-i18n="mapaPeriodoXV">XV Legislatura</option>
-            <option value="2018">2018</option>
-            <option value="2019">2019</option>
-            <option value="2020">2020</option>
-            <option value="2021">2021</option>
-            <option value="2022">2022</option>
-            <option value="2023">2023</option>
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-            <option value="2026">2026</option>
-          </select>
-        <button type="button" id="mapa-play" class="mapa-play" data-i18n-aria="ariaPlay" aria-label="Reproducir evolución anual">▶ Evolución 2018 a 2026</button></div></div>
-        <label class="ctl"><span class="ctl-k" data-i18n="ctlTuits">Tuits</span><select id="mapa-serie" data-i18n-aria="ariaSerie" aria-label="Filtro de retuits del mapa">
-            <option value="ambas" data-i18n="mapaSerieAmbas">Comparar todos y 100 RT o más</option>
-            <option value="publicado" selected data-i18n="mapaSeriePub">Todos los tuits</option>
-            <option value="viral" data-i18n="mapaSerieViral">100 RT o más</option>
-          </select></label>
-        <label class="ctl"><span class="ctl-k" data-i18n="ctlPartido">Partido</span><select id="mapa-partido" data-i18n-aria="ariaPartido" aria-label="Ver la posición de los medios respecto a un partido">
-            <option value="" selected data-i18n="mapaPartidoTodos">Izquierda y derecha</option>
-            <option value="PSOE">PSOE</option>
-            <option value="PP">PP</option>
-            <option value="Vox">Vox</option>
-            <option value="Sumar">Sumar</option>
-          </select></label>
-        <label class="ctl"><span class="ctl-k" data-i18n="ctlMuestra">Medios</span><select id="mapa-filtro" data-i18n-aria="ariaFiltro" aria-label="Filtrar medios por brecha fiable o por tipo">
-            <option value="todos" selected data-i18n="mapaFiltroTodos">Todos los medios</option>
-            <option value="b200" data-i18n="mapaFiltroB200">Brecha fiable: 200 con lado en cada serie</option>
-          </select></label>
-        <details class="ctl mapa-ajustes" id="mapa-ajustes">
-          <summary><span class="ctl-k" data-i18n="ctlAjustes">Ejes y tamaño</span><span class="ajustes-v" id="ajustes-resumen">↕ A favor o en contra · ◯ Mediana RT</span></summary>
-          <div class="ajustes-pop">
-            <label class="ctl"><span class="ctl-k" data-i18n="ctlEjeY">Eje vertical</span><select id="mapa-ejey" data-i18n-aria="ariaEjeY" aria-label="Variable del eje vertical">
-                <option value="con_lado" selected>con_lado</option>
-                <option value="ben">ben</option>
-                <option value="perj">perj</option>
-                <option value="politicos">politicos</option>
-                <option value="tuits">tuits</option>
-                <option value="rt_media">rt_media</option>
-                <option value="rt_mediana">rt_mediana</option>
-              </select></label>
-            <label class="ctl"><span class="ctl-k" data-i18n="ctlTam">Tamaño</span><select id="mapa-tam" data-i18n-aria="ariaTam" aria-label="Variable del tamaño de las burbujas">
-                <option value="con_lado">con_lado</option>
-                <option value="ben">ben</option>
-                <option value="perj">perj</option>
-                <option value="politicos">politicos</option>
-                <option value="tuits">tuits</option>
-                <option value="rt_media">rt_media</option>
-                <option value="rt_mediana" selected>rt_mediana</option>
-              </select></label>
+    <section class="relato" id="relato">
+      <div class="relato-escena">
+        <aside class="relato-tarjeta" id="relato-tarjeta" aria-live="polite">
+          <div class="relato-top">
+            <p class="kicker" id="relato-paso"></p>
+            <button type="button" class="relato-salir" id="relato-salir" data-i18n="relatoSalir">Explorar por libre</button>
           </div>
-        </details>
+          <h2 id="relato-titulo"></h2>
+          <div class="relato-texto" id="relato-texto"></div>
+          <div class="relato-accion" id="relato-accion"></div>
+          <div class="relato-nav">
+            <button type="button" class="relato-btn" id="relato-ant" data-i18n-aria="relatoAnt" aria-label="Paso anterior">←</button>
+            <div class="relato-puntos" id="relato-puntos"></div>
+            <button type="button" class="relato-btn relato-sig" id="relato-sig"></button>
+          </div>
+          <p class="relato-pista" data-i18n="relatoPista">También puedes avanzar haciendo scroll.</p>
+        </aside>
+        <div class="panel panel-mapa">
+          <div class="panel-controles">
+            <div class="ctl ctl-eje"><span class="ctl-k" data-i18n="ctlEje">Eje</span>
+              <div class="seg" id="mapa-partido" role="group" data-i18n-aria="ariaPartido" aria-label="Ver la posición de los medios respecto a un partido">
+                <button type="button" data-partido="" class="is-on" aria-pressed="true" data-i18n="mapaPartidoTodos">Izq. y der.</button>
+                <button type="button" data-partido="PSOE" aria-pressed="false">PSOE</button>
+                <button type="button" data-partido="PP" aria-pressed="false">PP</button>
+                <button type="button" data-partido="Vox" aria-pressed="false">Vox</button>
+                <button type="button" data-partido="Sumar" aria-pressed="false">Sumar</button>
+              </div>
+            </div>
+            <label class="ctl ctl-cuentas"><span class="ctl-k" data-i18n="ctlMuestra">Cuentas</span><select id="mapa-filtro" data-i18n-aria="ariaFiltro" aria-label="Qué cuentas se dibujan">
+                <option value="todos" selected>todos</option>
+                <option value="generalistas">generalistas</option>
+                <option value="programas">programas</option>
+              </select></label>
+            <div class="ctl ctl-periodo"><span class="ctl-k" data-i18n="ctlPeriodo">Periodo</span><div class="ctl-v"><select id="mapa-periodo" data-i18n-aria="ariaPeriodo" aria-label="Periodo de la serie histórica">
+                <option value="todo" selected data-i18n="mapaPeriodoAll">Serie completa</option>
+                <option value="xv" data-i18n="mapaPeriodoXV">XV Legislatura</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+              </select>
+            <button type="button" id="mapa-play" class="mapa-play" data-i18n-aria="ariaPlay" aria-label="Reproducir evolución anual">▶ 2018 a 2026</button></div></div>
+            <details class="ctl mapa-ajustes" id="mapa-ajustes">
+              <summary><span class="ctl-k" data-i18n="ctlAjustes">Más ajustes</span><span class="ajustes-v" id="ajustes-resumen">⚙</span></summary>
+              <div class="ajustes-pop">
+                <label class="ctl"><span class="ctl-k" data-i18n="ctlTuits">Tuits</span><select id="mapa-serie" data-i18n-aria="ariaSerie" aria-label="Filtro de retuits del mapa">
+                    <option value="publicado" selected data-i18n="mapaSeriePub">Todos los tuits</option>
+                    <option value="viral" data-i18n="mapaSerieViral">100 RT o más</option>
+                    <option value="ambas" data-i18n="mapaSerieAmbas">Comparar todos y 100 RT o más</option>
+                  </select></label>
+                <label class="ctl"><span class="ctl-k" data-i18n="ctlEjeY">Eje vertical</span><select id="mapa-ejey" data-i18n-aria="ariaEjeY" aria-label="Variable del eje vertical">
+                    <option value="con_lado" selected>con_lado</option>
+                    <option value="ben">ben</option>
+                    <option value="perj">perj</option>
+                    <option value="politicos">politicos</option>
+                    <option value="tuits">tuits</option>
+                    <option value="rt_media">rt_media</option>
+                    <option value="rt_mediana">rt_mediana</option>
+                  </select></label>
+                <label class="ctl"><span class="ctl-k" data-i18n="ctlTam">Tamaño</span><select id="mapa-tam" data-i18n-aria="ariaTam" aria-label="Variable del tamaño de las burbujas">
+                    <option value="con_lado">con_lado</option>
+                    <option value="ben">ben</option>
+                    <option value="perj">perj</option>
+                    <option value="politicos">politicos</option>
+                    <option value="tuits">tuits</option>
+                    <option value="rt_media">rt_media</option>
+                    <option value="rt_mediana" selected>rt_mediana</option>
+                  </select></label>
+                <label class="ajustes-check"><input type="checkbox" id="mapa-b200"> <span data-i18n="mapaFiltroB200">Solo brecha fiable: 200 con lado en cada serie</span></label>
+              </div>
+            </details>
+            <button type="button" class="relato-volver" id="relato-volver" data-i18n="relatoVolver">▶ Ver la historia</button>
+          </div>
+          <p class="resumen" id="mapa-resumen"></p>
+          <div class="mapa-tray" id="mapa-tray" hidden></div>
+          <div class="chart-wrap">
+            <svg id="mapa" role="img" data-i18n-aria="ariaMapDesc" aria-label="Dispersión de medios por posición en la escala izquierda-derecha, con lo publicado y lo viral y una flecha hacia donde se desplaza cada medio al compartirse"></svg>
+            <div class="tip" id="mapa-tip" hidden></div>
+          </div>
+        </div>
       </div>
-      <p class="resumen" id="mapa-resumen"></p>
-      <div class="mapa-tray" id="mapa-tray" hidden></div>
-      <div class="chart-wrap">
-        <svg id="mapa" role="img" data-i18n-aria="ariaMapDesc" aria-label="Dispersión de medios por posición en la escala izquierda-derecha, con lo publicado y lo viral y una flecha hacia donde se desplaza cada medio al compartirse"></svg>
-        <div class="tip" id="mapa-tip" hidden></div>
-      </div>
-      <div class="mapa-pie" id="mapa-pie"></div>
-    </div>
+      <div class="relato-pasos" id="relato-pasos" aria-hidden="true"></div>
+    </section>
+    <div class="mapa-pie" id="mapa-pie"></div>
     <div class="panel historia hallazgos" id="historia">
       <p class="kicker" data-i18n="histKicker">Lo que dicen los datos</p>
       <h2 data-i18n="histTitle">Cuatro cosas que se ven en el mapa</h2>
@@ -248,6 +273,9 @@
   </section>
 </main>
 
+<!-- tuits de una cuenta: panel lateral en escritorio, hoja inferior en móvil -->
+<aside class="cajon" id="cajon" hidden tabindex="-1" data-i18n-aria="ariaCajon" aria-label="Tuits de la cuenta"></aside>
+
 <footer class="foot">
   <div class="wrap">
     <p class="foot-firma" data-i18n="footFirma">Datos abiertos y método a la vista.</p>
@@ -258,6 +286,6 @@
   </div>
 </footer>
 
-<script src="app.js?v=202610081536"></script>
+<script src="app.js?v=202610161600"></script>
 </body>
 </html>

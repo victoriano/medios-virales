@@ -409,3 +409,152 @@ td.c-dec{min-width:210px}
   .ajustes-v{width:100%;justify-content:space-between}
   .ajustes-pop{left:0;right:0;min-width:0}
 }
+
+/* ---------- eje: izquierda y derecha o un partido, como botones ---------- */
+.seg{display:inline-flex;border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra-s);background:var(--panel);overflow:hidden}
+.seg button{appearance:none;border:0;border-left:1.5px solid var(--rule);background:transparent;padding:9px 11px;
+  font:600 13.5px/1.2 var(--f-sans);color:var(--ink);cursor:pointer;white-space:nowrap}
+.seg button:first-child{border-left:0}
+.seg button:hover{background:var(--hl);color:var(--hl-ink)}
+.seg button.is-on{background:var(--ink);color:var(--bg)}
+.seg button[data-partido="PSOE"].is-on{background:var(--psoe);color:#fff}
+.seg button[data-partido="PP"].is-on{background:var(--pp);color:#fff}
+.seg button[data-partido="Vox"].is-on{background:var(--vox);color:#fff}
+.seg button[data-partido="Sumar"].is-on{background:var(--sumar);color:#fff}
+:root[data-theme="dark"] .seg button[data-partido].is-on:not([data-partido=""]){color:#161514}
+.ajustes-check{display:flex;gap:8px;align-items:flex-start;font:500 13.5px/1.35 var(--f-sans);color:var(--ink);cursor:pointer}
+.ajustes-check input{margin-top:2px;accent-color:var(--ink)}
+.ajustes-v{min-width:46px;justify-content:center}
+#mapa .burbuja.destacada .aro{stroke-width:4}
+
+/* ---------- historia guiada ----------
+   La escena (tarjeta del paso y mapa) se queda pegada bajo la navegación mientras
+   pasan por detrás unos tramos invisibles, uno por paso: al cruzar la mitad de la
+   pantalla, cada tramo activa su paso. En modo libre la escena vuelve al flujo normal. */
+.relato{position:relative;margin-bottom:8px}
+.relato-escena{position:sticky;top:var(--nav-h,44px);z-index:2;height:calc(100svh - var(--nav-h,44px));
+  display:grid;grid-template-columns:minmax(260px,300px) minmax(0,1fr);gap:22px;padding:16px 0 14px}
+.relato-pasos{margin-top:calc(-1 * (100svh - var(--nav-h,44px)));pointer-events:none;visibility:hidden}
+.relato-paso{height:75svh}
+.relato-paso:last-child{height:130svh}
+.relato-tarjeta{align-self:start;max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:18px 18px 16px;
+  background:var(--panel);border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra)}
+.relato-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.relato-tarjeta h2{margin:0;font:800 clamp(21px,2.1vw,27px)/1.1 var(--f-display);letter-spacing:-.018em;font-variation-settings:"opsz" 72;text-wrap:balance}
+.relato-texto{font:400 16.5px/1.5 var(--f-serif);color:var(--prose-fg)}
+.relato-texto p{margin:0}
+.relato-texto strong{font-weight:600;color:var(--ink)}
+.relato-texto ul{margin:0;padding-left:18px}
+.relato-texto li{margin:0 0 5px}
+.relato-accion:empty{display:none}
+.relato-nav{display:flex;align-items:center;gap:10px;margin-top:4px}
+.relato-btn{border:1.5px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:var(--radio);box-shadow:var(--sombra-s);
+  font:600 13px/1 var(--f-mono);letter-spacing:.04em;text-transform:uppercase;padding:10px 12px;cursor:pointer}
+.relato-btn:hover{background:var(--hl);color:var(--hl-ink)}
+.relato-btn:active{transform:translate(2px,2px);box-shadow:none}
+.relato-btn:disabled{opacity:.35;cursor:default;box-shadow:none}
+.relato-sig{margin-left:auto;background:var(--ink);color:var(--bg)}
+.relato-puntos{display:flex;gap:6px;align-items:center}
+.relato-puntos button{width:11px;height:11px;padding:0;border-radius:50%;border:1.5px solid var(--rule);background:transparent;cursor:pointer}
+.relato-puntos button.is-on{background:var(--ink)}
+.relato-puntos button:hover{background:var(--hl)}
+.relato-salir{appearance:none;border:0;background:none;padding:2px 0;font:500 11.5px/1.2 var(--f-mono);letter-spacing:.04em;color:var(--muted);
+  text-decoration:underline;text-underline-offset:3px;cursor:pointer;white-space:nowrap}
+.relato-salir:hover{color:var(--ink);background:var(--hl)}
+.relato-pista{margin:0;font:400 11.5px/1.45 var(--f-mono);color:var(--muted)}
+.relato-volver{display:none;border:1.5px solid var(--rule);background:var(--hl);color:var(--hl-ink);border-radius:var(--radio);box-shadow:var(--sombra-s);
+  font:600 12.5px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:11px 13px;cursor:pointer;align-self:flex-end}
+.relato.is-libre .relato-volver{display:inline-block}
+/* dentro de la escena, el mapa ocupa todo el alto que queda bajo los controles */
+.relato:not(.is-libre) .panel-mapa{margin:0;display:flex;flex-direction:column;min-height:0;min-width:0}
+.relato:not(.is-libre) .panel-mapa .panel-controles{margin:0 0 10px}
+.relato:not(.is-libre) .resumen{display:none}
+.relato:not(.is-libre) .mapa-tray{padding:8px 12px;margin:0 0 8px}
+.relato:not(.is-libre) .mapa-tray p{font-size:14.5px}
+.relato:not(.is-libre) .chart-wrap{flex:1 1 0;min-height:0;padding:10px 12px 6px;margin:0}
+.relato:not(.is-libre) #mapa{min-width:0;max-width:none}
+.relato.is-libre .relato-escena{position:static;height:auto;display:block;padding:0}
+.relato.is-libre .relato-tarjeta,.relato.is-libre .relato-pasos{display:none}
+
+/* con el panel de tuits abierto, o en pantallas medianas, la tarjeta va encima del mapa */
+@media (max-width:1500px){
+  body.con-cajon .relato-escena{display:flex;flex-direction:column;gap:10px}
+  body.con-cajon .relato-tarjeta{flex:none;max-height:38%}
+  body.con-cajon .relato:not(.is-libre) .panel-mapa{flex:1}
+}
+@media (max-width:900px){
+  .relato-escena{display:flex;flex-direction:column;gap:10px;padding:10px 0}
+  .relato-tarjeta{flex:none;max-height:42%;padding:12px 14px;gap:7px}
+  .relato-texto{font-size:15px;line-height:1.42}
+  .relato-pista{display:none}
+  .relato-btn{padding:8px 10px}
+  .relato:not(.is-libre) .panel-mapa{flex:1}
+  /* los controles van en una sola fila que se desliza, para dejarle alto al mapa */
+  .relato:not(.is-libre) .panel-mapa .panel-controles{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:10px;padding:2px 2px 6px;scrollbar-width:thin}
+  .relato:not(.is-libre) .panel-mapa .ctl{flex:none}
+  .relato:not(.is-libre) .panel-mapa .ctl select{width:auto}
+  .relato:not(.is-libre) .chart-wrap{overflow-x:auto}
+  .ajustes-pop{position:fixed;left:12px;right:12px;top:auto;bottom:12px;min-width:0;z-index:45}
+}
+@media (max-width:640px){
+  .panel-mapa .ctl-eje{grid-column:1/-1}
+  .seg button{padding:9px 9px;font-size:13px}
+  .relato-volver{grid-column:1/-1}
+}
+
+/* ---------- panel de tuits de una cuenta ---------- */
+.cajon{position:fixed;z-index:40;top:0;right:0;bottom:0;width:440px;overflow-y:auto;overscroll-behavior:contain;
+  background:var(--bg);border-left:1.5px solid var(--rule);padding:0 18px 28px;box-shadow:-4px 0 0 var(--rule)}
+.cajon[hidden]{display:none}
+@media (min-width:1100px){
+  body.con-cajon{padding-right:440px}
+}
+@media (max-width:1099px){
+  .cajon{top:auto;left:0;width:auto;height:78svh;border-left:0;border-top:1.5px solid var(--rule);box-shadow:0 -4px 0 var(--rule);
+    border-radius:10px 10px 0 0;padding:0 14px 24px}
+}
+.cajon-cab{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:12px;padding:16px 0 12px;background:var(--bg);border-bottom:1.5px solid var(--rule)}
+.cajon-logo{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--rule);background:var(--panel);flex:none;object-fit:cover}
+.cajon-nombre{min-width:0;flex:1}
+.cajon-nombre h2{margin:0;font:800 23px/1.1 var(--f-display);letter-spacing:-.015em;font-variation-settings:"opsz" 72}
+.cajon-sub{margin:3px 0 0;font:400 11.5px/1.4 var(--f-mono);color:var(--muted)}
+.cajon-x{flex:none;width:36px;height:36px;border:1.5px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:var(--radio);
+  box-shadow:var(--sombra-s);font:600 15px/1 var(--f-sans);cursor:pointer}
+.cajon-x:hover{background:var(--hl);color:var(--hl-ink)}
+.cajon-tray{margin:12px 0 0;padding:2px 0 2px 12px;border-left:4px solid var(--hl);font:400 15px/1.45 var(--f-serif);color:var(--prose-fg)}
+.cajon-tray[hidden]{display:none}
+.cajon-filtros{display:grid;gap:10px;margin:14px 0 12px}
+.cajon-filtros input[type=search]{min-width:0;width:100%}
+.cj-fila{display:grid;gap:6px}
+.cj-chips{display:flex;flex-wrap:wrap;gap:6px}
+.cj-chip{appearance:none;border:1.5px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:var(--radio);padding:6px 9px;
+  font:600 11.5px/1.2 var(--f-mono);letter-spacing:.03em;text-transform:uppercase;cursor:pointer}
+.cj-chip span{font-weight:400;color:var(--muted);margin-left:2px}
+.cj-chip:hover{background:var(--hl);color:var(--hl-ink)}
+.cj-chip.is-on{background:var(--ink);color:var(--bg)}
+.cj-chip.is-on span{color:inherit;opacity:.75}
+.cj-chip.is-on.psoe{background:var(--psoe);border-color:var(--psoe);color:#fff}
+.cj-chip.is-on.pp{background:var(--pp);border-color:var(--pp);color:#fff}
+.cj-chip.is-on.vox{background:var(--vox);border-color:var(--vox);color:#fff}
+.cj-chip.is-on.sumar{background:var(--sumar);border-color:var(--sumar);color:#fff}
+.cj-chip.is-on.ben{background:var(--ben);border-color:var(--ben);color:#fff}
+.cj-chip.is-on.perj{background:var(--perj);border-color:var(--perj);color:#fff}
+:root[data-theme="dark"] .cj-chip.is-on:is(.psoe,.pp,.vox,.sumar,.ben,.perj){color:#161514}
+.cj-sels{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cj-sels select{width:100%}
+.cj-check{display:flex;gap:8px;align-items:center;font:500 13px/1.3 var(--f-sans);cursor:pointer}
+.cj-check input{accent-color:var(--ink)}
+.cajon-res{margin:0 0 12px}
+.cajon-res p{margin:0 0 6px;font:400 12px/1.5 var(--f-mono);color:var(--muted)}
+.cajon-res strong{color:var(--ink)}
+.cajon-res .c-izq{color:var(--izq)}
+.cajon-res .c-der{color:var(--der)}
+.cajon-res .mini{min-width:0}
+.cajon-lista{display:grid;gap:14px}
+.cajon .tweet{padding:14px 15px 11px;box-shadow:var(--sombra-s)}
+.cajon .tweet:hover{transform:none;box-shadow:var(--sombra-s)}
+.cajon .tweet p{font-size:15.5px;line-height:1.45;margin-bottom:12px}
+.cajon .tweet .head{margin-bottom:8px}
+.cajon .tweet .head .who{font-size:14px}
+.cajon .more{margin-top:18px}
+.cajon-ficha{display:block;margin:20px 0 0;text-align:center;font:600 12px/1.4 var(--f-mono);letter-spacing:.06em;text-transform:uppercase}
