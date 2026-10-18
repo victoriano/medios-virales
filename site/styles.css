@@ -184,6 +184,16 @@ td.c-dec{min-width:210px}
 /* ---------- tarjetas de tuit ---------- */
 .cards-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
 .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px;align-items:center}
+/* ---------- contenidos ---------- */
+.cont-filtros{display:grid;gap:14px;margin:0 0 20px}
+.cont-filtros input[type=search]{width:100%;max-width:640px}
+.cont-sels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.cont-sels .ctl{display:grid;gap:6px;min-width:0}
+.cont-sels select{width:100%;min-width:0}
+.cont-checks{display:flex;flex-wrap:wrap;gap:8px 22px}
+.cont-checks [hidden]{display:none}
+#cont-res{max-width:640px;margin-bottom:22px}
+@media (max-width:860px){ .cont-sels{grid-template-columns:1fr 1fr} }
 .tweet{border:1.5px solid var(--rule);border-radius:var(--radio);padding:18px 20px 14px;background:var(--panel);box-shadow:var(--sombra);
   display:flex;flex-direction:column;transition:transform .12s ease, box-shadow .12s ease}
 .tweet:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--rule)}
