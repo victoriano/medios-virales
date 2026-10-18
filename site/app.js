@@ -700,7 +700,10 @@ Object.assign(I18N.es, {
     : `Recorrido: del ${p0} % de tuits con lado a la derecha en ${a0} al ${p1} % en ${a1}.`,
   cajonVacio: 'Ningún tuit coincide con estos filtros.',
   cajonMas: n => `Ver ${n} más`,
-  dgMotivo: (p, d, pc) => d === 'perjudica' ? `critica ${alP(p)} (${pc}\u00a0%)` : `habla bien ${delP(p)} (${pc}\u00a0%)`,
+  dgMotivo: (p, d, v) => d === 'perjudica' ? `critica ${alP(p)} (${v})` : `habla bien ${delP(p)} (${v})`,
+  dgTuits: n => `${n}\u00a0tuits`,
+  dgModo: m => m === 'n' ? 'Tuits' : '%',
+  dgModoAria: 'Ver en número de tuits o en porcentaje',
   dgFrase: (lado, pc, top) => `Sale a la <strong>${lado === 'izq' ? 'izquierda' : 'derecha'}</strong> sobre todo porque ${top.join(' y ')}.`,
   dgCorto: d => d === 'perjudica' ? 'contra' : 'a favor',
   dgTitulo: (p, d, n) => `${n} tuits ${d === 'perjudica' ? 'en contra' : 'a favor'} ${delP(p)}`,
@@ -773,7 +776,10 @@ Object.assign(I18N.en, {
     : `Path: from ${p0} % of clear side tweets on the right in ${a0} to ${p1} % in ${a1}.`,
   cajonVacio: 'No tweet matches these filters.',
   cajonMas: n => `Show ${n} more`,
-  dgMotivo: (p, d, pc) => d === 'perjudica' ? `criticises ${p} (${pc}\u00a0%)` : `speaks well of ${p} (${pc}\u00a0%)`,
+  dgMotivo: (p, d, v) => d === 'perjudica' ? `criticises ${p} (${v})` : `speaks well of ${p} (${v})`,
+  dgTuits: n => `${n}\u00a0tweets`,
+  dgModo: m => m === 'n' ? 'Tweets' : '%',
+  dgModoAria: 'Show as number of tweets or as a percentage',
   dgFrase: (lado, pc, top) => `Leans <strong>${lado === 'izq' ? 'left' : 'right'}</strong> mainly because it ${top.join(' and ')}.`,
   dgCorto: d => d === 'perjudica' ? 'against' : 'for',
   dgTitulo: (p, d, n) => `${n} tweets ${d === 'perjudica' ? 'against' : 'for'} ${p}`,
@@ -877,8 +883,17 @@ function fraseDesglose(l) {
   const lado = l.izq >= l.der ? 'izq' : 'der';
   const pc = n => Math.round(100 * n / l.claro);
   const top = l.celdas.filter(x => x.lado === lado && x.n && pc(x.n) >= 1).slice(0, 2)
-    .map(x => t('dgMotivo', x.p, x.d, pc(x.n)));
+    .map(x => t('dgMotivo', x.p, x.d, DG_MODO === 'n' ? t('dgTuits', nf(x.n)) : `${pc(x.n)}\u00a0%, ${t('dgTuits', nf(x.n))}`));
   return t('dgFrase', lado, Math.round(100 * l[lado] / l.claro), top);
+}
+/* El desglose se lee en porcentaje de los tuits con lado claro (por defecto,
+   con el número de tuits al lado) o solo en número de tuits. Las barras usan
+   la misma escala en las dos mitades. */
+let DG_MODO = 'pc';
+try { if (localStorage.getItem('mv-dg') === 'n') DG_MODO = 'n'; } catch (e) {}
+function fijarModoDesglose(m) {
+  DG_MODO = m === 'pc' ? 'pc' : 'n';
+  try { localStorage.setItem('mv-dg', DG_MODO); } catch (e) {}
 }
 /* Barra de los dos lados y gráfico de mariposa: una fila por partido, a la
    izquierda lo que lo empuja a la izquierda y a la derecha lo contrario. Con
@@ -893,7 +908,8 @@ function htmlDesglose(c, { clic = false, activo = null, resalta = '', frase = tr
     const n = c[p][d], lado = empujeDe(p, d);
     const on = activo && activo.p === p && activo.d === d;
     const v = pc(n);
-    const etq = `<span class="dg-n">${t('dgCorto', d)} <b>${n && v < 1 ? '&lt;1' : fx(v)} %</b></span>`;
+    const cifra = DG_MODO === 'n' ? nf(n) : `${n && v < 1 ? '&lt;1' : fx(v)} %</b> <small>· ${nf(n)}</small><b>`;
+    const etq = `<span class="dg-n">${t('dgCorto', d)} <b>${cifra}</b></span>`;
     const cuerpo = `<span class="dg-t"><i style="width:${(100 * n / max).toFixed(1)}%"></i></span>${etq}`;
     const tit = esc(t('dgTitulo', p, d, nf(n)));
     return clic && n
@@ -905,9 +921,11 @@ function htmlDesglose(c, { clic = false, activo = null, resalta = '', frase = tr
   const izqPc = Math.round(pc(l.izq));
   return `<div class="dg${resalta ? ' con-resalte' : ''}">
     <div class="dg-lados" role="img" aria-label="${esc(t('dgLados', izqPc, 100 - izqPc))}">
-      <span class="dg-li" style="flex:${l.izq}">${izqPc} % ${t('izquierda')}</span><span class="dg-ld" style="flex:${l.der}">${100 - izqPc} % ${t('derecha')}</span>
+      <span class="dg-li" style="flex:${l.izq}">${DG_MODO === 'n' ? `${nf(l.izq)} ${t('izquierda')}` : `${izqPc} % ${t('izquierda')} <small>· ${nf(l.izq)}</small>`}</span><span class="dg-ld" style="flex:${l.der}">${DG_MODO === 'n' ? `${nf(l.der)} ${t('derecha')}` : `${100 - izqPc} % ${t('derecha')} <small>· ${nf(l.der)}</small>`}</span>
     </div>
     ${frase ? `<p class="dg-frase">${fraseDesglose(l)}</p>` : ''}
+    ${clic ? `<div class="dg-modo" role="group" aria-label="${esc(t('dgModoAria'))}">${['n', 'pc'].map(m =>
+      `<button type="button" data-dgmodo="${m}" aria-pressed="${DG_MODO === m}"${DG_MODO === m ? ' class="is-on"' : ''}>${t('dgModo', m)}</button>`).join('')}</div>` : ''}
     <div class="dg-ejes"><span>◀ ${t('dgEjeIzq')}</span><span>${t('dgEjeDer')} ▶</span></div>
     ${filas.map(p => `<div class="dg-fila${resalta && resalta !== p ? ' tenue' : ''}">
       <div class="dg-mitad izq">${barra(p, ladoIzq(p))}</div>
@@ -1191,6 +1209,8 @@ function pintarMedio(meta) {
   $('#mo').addEventListener('change', e => { mShown = PAGE; pintarListaMedio(); });
   $('#mmore').addEventListener('click', () => { mShown += PAGE; pintarListaMedio(); });
   $('#mdg').addEventListener('click', e => {
+    const modo = e.target.closest('[data-dgmodo]');
+    if (modo) { fijarModoDesglose(modo.dataset.dgmodo); pintarListaMedio(); return; }
     const b = e.target.closest('[data-dgp]');
     if (!b) return;
     const on = mParty === b.dataset.dgp && mDir === b.dataset.dgd;
@@ -2489,6 +2509,8 @@ function iniciarCajon() {
     if (p) { CJ.partido = p.dataset.cjp; CJ.n = CAJON_PAGINA; pintarCajonLista(); return; }
     const d = e.target.closest('[data-cjd]');
     if (d) { CJ.dir = d.dataset.cjd; CJ.n = CAJON_PAGINA; pintarCajonLista(); return; }
+    const modo = e.target.closest('[data-dgmodo]');
+    if (modo) { fijarModoDesglose(modo.dataset.dgmodo); pintarCajonLista(); return; }
     // una barra del desglose filtra por su partido y sentido; pulsarla otra vez lo quita
     const b = e.target.closest('[data-dgp]');
     if (b) {

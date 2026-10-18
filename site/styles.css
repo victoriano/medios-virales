@@ -304,7 +304,7 @@ td.c-dec{min-width:210px}
 .tip .tv{font-variant-numeric:tabular-nums;white-space:normal}
 .tip .tv.frase{font-family:var(--f-serif);font-size:14.5px;margin-bottom:4px}
 .tip .tm{color:var(--tip-muted);font:400 11px/1.5 var(--f-mono);margin-top:4px}
-.tip{width:min(360px,calc(100vw - 32px))}
+.tip{width:min(400px,calc(100vw - 32px))}
 .tip .dg{margin:4px 0 8px}
 
 /* por qué sale a un lado: barra de los dos lados y mariposa por partido */
@@ -335,8 +335,21 @@ td.c-dec{min-width:210px}
 .dg-b.izq i{background:var(--izq)}
 .dg-b.der i{background:var(--der)}
 .dg-b.cero i{opacity:.3}
-.dg-n{font:400 10.5px/1 var(--f-mono);white-space:nowrap;opacity:.85}
+.dg-n{flex:none;width:17.5ch;font:400 10.5px/1 var(--f-mono);white-space:nowrap;opacity:.85}
+.dg-mitad.izq .dg-n{text-align:left}
+.dg-mitad.der .dg-n{text-align:right}
+.dg-modo{display:flex;justify-self:end;border:1.5px solid var(--rule);border-radius:var(--radio);overflow:hidden}
+.dg-modo button{appearance:none;border:0;background:var(--panel);color:var(--ink);font:600 11px/1 var(--f-mono);padding:5px 10px;cursor:pointer}
+.dg-modo button+button{border-left:1.5px solid var(--rule)}
+.dg-modo button.is-on{background:var(--ink);color:var(--bg)}
 .dg-n b{font-weight:700}
+.dg-n small,.dg-lados small{font-size:inherit;font-weight:400;opacity:.7}
+/* en móvil el número de tuits baja a una segunda línea para dejar sitio a la barra */
+@media (max-width:480px){
+  .dg-n{width:12.5ch;white-space:normal;line-height:1.2}
+  .dg-n small{display:block}
+  .dg-b{height:auto;min-height:20px}
+}
 button.dg-b{cursor:pointer}
 button.dg-b:hover{background:var(--hl);color:var(--hl-ink)}
 button.dg-b.is-on{outline:2px solid var(--ink);outline-offset:1px}
