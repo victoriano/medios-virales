@@ -287,7 +287,7 @@ const I18N = {
     metodoPosicionP1: 'Un tuit suma a la izquierda si beneficia a PSOE o Sumar, o si perjudica a PP o Vox. Suma a la derecha si beneficia a PP o Vox, o si perjudica a PSOE o Sumar. Los tuits políticos sin lado claro quedan fuera de este cálculo.',
     metodoPosicionP2: 'La posición del mapa es el porcentaje de tuits con lado claro que cae a la derecha. Cero significa que todos caen a la izquierda, cincuenta indica equilibrio y cien significa que todos caen a la derecha. El índice técnico del ranking expresa la misma relación en una escala de menos uno a más uno.',
     metodoLeerMapa: 'Cómo leer el mapa',
-    metodoLeerMapaP: 'El filtro de retuits permite mostrar todos los tuits, solo los que alcanzan 100 RT o más, o comparar ambos subconjuntos. El aro continuo representa todos los tuits y el discontinuo, los de 100 RT o más. La flecha parte de la posición de todos los tuits y termina en la del subconjunto de 100 RT. La altura es el número absoluto de tuits que benefician o perjudican a un partido. El tamaño de cada burbuja representa la mediana de retuits de esos mismos tuits mediante una escala de área con raíz cuadrada. El eje vertical se ajusta a la ventana seleccionada y mantiene una escala común entre 2018 y 2026 durante la animación.',
+    metodoLeerMapaP: 'El filtro de retuits permite mostrar todos los tuits, solo los que alcanzan 100 RT o más, o comparar ambos subconjuntos. El aro continuo representa todos los tuits y el discontinuo, los de 100 RT o más. La flecha parte de la posición de todos los tuits y termina en la del subconjunto de 100 RT. La altura es el número absoluto de tuits que benefician o perjudican a un partido. El tamaño de cada burbuja representa la mediana de retuits de esos mismos tuits mediante una escala de raíz cuadrada relativa al máximo, con un tamaño mínimo para que los logos se lean. El eje vertical se ajusta a la ventana seleccionada y mantiene una escala común entre 2018 y 2026 durante la animación.',
     metodoLimites: 'Límites',
     metodoLimitesItems: [
       'Es una muestra estratificada de hasta 100 tuits por medio y mes, no el historial completo de cada cuenta.',
@@ -597,7 +597,7 @@ const I18N = {
     metodoPosicionP1: 'A tweet counts as left if it benefits PSOE or Sumar, or if it harms PP or Vox. It counts as right if it benefits PP or Vox, or if it harms PSOE or Sumar. Political tweets without a clear side are excluded from this calculation.',
     metodoPosicionP2: 'The map position is the percentage of tweets with a clear side that fall to the right. Zero means all fall to the left, fifty indicates balance, and one hundred means all fall to the right. The technical index in the ranking expresses the same relationship on a scale from minus one to plus one.',
     metodoLeerMapa: 'How to read the map',
-    metodoLeerMapaP: 'The retweet filter shows all tweets, only those reaching 100 RT or more, or compares both subsets. The solid ring represents all tweets and the dashed ring represents those with 100+ RT. The arrow starts at the all tweets position and ends at the 100+ RT position. Height is the absolute number of tweets that benefit or harm a party. Bubble size represents the median retweets of those same tweets through a square root area scale. The vertical axis adapts to the selected window and keeps a common scale from 2018 to 2026 during the animation.',
+    metodoLeerMapaP: 'The retweet filter shows all tweets, only those reaching 100 RT or more, or compares both subsets. The solid ring represents all tweets and the dashed ring represents those with 100+ RT. The arrow starts at the all tweets position and ends at the 100+ RT position. Height is the absolute number of tweets that benefit or harm a party. Bubble size represents the median retweets of those same tweets through a square root scale relative to the maximum, with a minimum size so logos stay readable. The vertical axis adapts to the selected window and keeps a common scale from 2018 to 2026 during the animation.',
     metodoLimites: 'Limitations',
     metodoLimitesItems: [
       'It is a stratified sample of up to 100 tweets per outlet per month, not the complete history of each account.',
@@ -1378,7 +1378,6 @@ const periodoTxt = () => ({
   2018: '2018', 2019: '2019', 2020: '2020', 2021: '2021', 2022: '2022',
   2023: '2023', 2024: '2024', 2025: '2025', 2026: '2026'
 });
-const RADIO = v => Math.min(24, Math.max(6, 0.75 * Math.sqrt(Math.max(0, Number(v) || 0))));
 
 /* Variables que se pueden llevar al eje vertical o al tamaño. En modo partido
    der son los tuits que lo benefician e izq los que lo perjudican. */
@@ -1406,13 +1405,12 @@ function redondoArriba(maximo) {
   const escalones = [1, 1.25, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
   return (escalones.find(v => v >= base) || 10) * potencia;
 }
-// los retuits conservan la escala de siempre; los recuentos, una escala de área relativa al máximo
+// todas las variables usan la misma escala: raíz cuadrada relativa al máximo de la ventana,
+// entre un radio mínimo que deja leer el logo y el de siempre para el mayor
 let maxTamMapa = 1;
-function radioDe(d) {
-  const v = valorDe(d, mapaTam);
-  if (VARS_RT.includes(mapaTam)) return RADIO(v);
-  return Math.min(24, Math.max(5, 24 * Math.sqrt(Math.max(0, v) / maxTamMapa)));
-}
+const R_MIN = 15, R_MAX = 24;
+const radioTam = v => R_MIN + (R_MAX - R_MIN) * Math.sqrt(Math.min(1, Math.max(0, Number(v) || 0) / maxTamMapa));
+const radioDe = d => radioTam(valorDe(d, mapaTam));
 const volumen = d => d.politicos != null ? `${nf(d.politicos)} ${t('tipPoliticos')}` : `${nf(d.juicios)} ${t('tweetsConLectura')}`;
 const nombreSerie = s => s === 'publicado' ? t('publicado') : t('viral');
 
@@ -1736,10 +1734,9 @@ function renderMapa() {
   const trayCajon = cajonAbierto() && $('#cajon .cajon-tray');
   if (trayCajon) { const txt = textoTrayCajon(); trayCajon.textContent = txt; trayCajon.hidden = !txt; }
 
-  const bolaRT = v => `<span class="bola" style="width:${(2 * RADIO(v)).toFixed(0)}px;height:${(2 * RADIO(v)).toFixed(0)}px"></span> ${nf(v)} RT`;
-  const bolaN = v => { const r = Math.min(24, Math.max(5, 24 * Math.sqrt(v / maxTamMapa))); return `<span class="bola" style="width:${(2 * r).toFixed(0)}px;height:${(2 * r).toFixed(0)}px"></span> ${nf(v)}`; };
+  const bola = v => { const r = radioTam(v); return `<span class="bola" style="width:${(2 * r).toFixed(0)}px;height:${(2 * r).toFixed(0)}px"></span> ${nf(v)}${VARS_RT.includes(mapaTam) ? ' RT' : ''}`; };
   const refTam = redondoArriba(maxTamMapa) / 2;
-  const bolas = VARS_RT.includes(mapaTam) ? `${bolaRT(5)} ${bolaRT(100)} ${bolaRT(500)}` : `${bolaN(refTam / 10)} ${bolaN(refTam / 2)} ${bolaN(refTam)}`;
+  const bolas = `${bola(refTam / 10)} ${bola(refTam / 2)} ${bola(refTam)}`;
   const notaFiltro = mapaB200 ? t('mapaPieFiltroN', nf(BRECHA_MIN))
     : t('mapaPieFiltroTodos');
   $('#mapa-pie').innerHTML = `
