@@ -83,9 +83,9 @@ def tics_y(escala):
     return [num_es(float(f"{paso * i:.12g}")) for i in range(tramos + 1)]
 
 
-def radio_esperado(rt_mediana):
-    """Réplica de RADIO en app.js: min(24, max(6, 0.75*sqrt(v))); área ∝ sqrt(v)."""
-    return min(24.0, max(6.0, 0.75 * math.sqrt(max(0.0, float(rt_mediana or 0)))))
+def radio_esperado(rt_mediana, maximo):
+    """Réplica de radioTam en app.js: 15 + 9*sqrt(v/max), con max el mayor valor de la ventana."""
+    return 15.0 + 9.0 * math.sqrt(min(1.0, max(0.0, float(rt_mediana or 0)) / maximo))
 
 
 async def main():
@@ -421,8 +421,10 @@ async def main():
 
         # (2) la X de cada nodo es la posicion de polarizacion.json y el color, rojo a la izquierda y azul a la derecha.
         #     El eje Y representa el número absoluto de tuits con lado claro y su escala se calcula por periodo/serie.
-        #     El tamaño de la burbuja depende de la mediana de retuits: r = min(34, 7 + 1.08·√rt_mediana).
+        #     El tamaño de la burbuja depende de la mediana de retuits: r = 15 + 9·√(rt_mediana / máximo).
         por_handle = {m["handle"]: m for m in pol["medios"]}
+        series_dibujadas = {n["serie"] for n in est["nodos"]}
+        max_rt = max([1] + [((m.get(sr) or {}).get("rt_mediana") or 0) for m in pol["medios"] for sr in series_dibujadas])
         escala_todo = escala_y(max([1] + [n["conLado"] for n in est["nodos"]]))  # fuera de los años, se ajusta a lo dibujado
         yMax_todo = escala_todo[0]
         peor_x, peor_y, peor_r, mal_color, mal_rad, rojos, azules, grises = 0.0, 0.0, 0.0, [], [], 0, 0, 0
@@ -435,7 +437,7 @@ async def main():
             peor_x = max(peor_x, abs(n["x"] - (x0 + d["posicion"] / 100 * (x100 - x0))))
             y_esperada = 554 - (d["con_lado"] or 0) / yMax_todo * 476
             peor_y = max(peor_y, abs(n["y"] - y_esperada))
-            r_esperado = radio_esperado(d.get("rt_mediana") or 0)
+            r_esperado = radio_esperado(d.get("rt_mediana") or 0, max_rt)
             peor_r = max(peor_r, abs(n["r"] - r_esperado))
             if abs(n["r"] - r_esperado) > 0.2:
                 mal_rad.append(f"{n['h']}/{n['serie']} rt_mediana={d.get('rt_mediana')} -> r={n['r']} esperado {r_esperado:.2f}")
