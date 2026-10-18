@@ -35,12 +35,18 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/fraunces-normal-400-900.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fonts.css?v=202610051200">
-<link rel="stylesheet" href="styles.css?v=202610161600">
+<link rel="stylesheet" href="styles.css?v=202610181200">
 </head>
 <body>
-<header class="mast">
-  <div class="wrap mast-bar">
-    <a class="marca" href="https://victoriano.me">victoriano.me</a>
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap nav-bar">
+    <a class="marca" href="https://victoriano.me"><span>victoriano.me</span></a>
+    <div class="tabs" role="tablist">
+      <button class="tab is-on" data-view="mapa" role="tab" data-i18n="tabMapa">Mapa</button>
+      <button class="tab" data-view="ranking" role="tab" data-i18n="tabRanking">Ranking</button>
+      <button class="tab" data-view="top" role="tab" data-i18n="tabTop">Los más virales</button>
+      <button class="tab" data-view="metodo" role="tab" data-i18n="tabMetodo">Método</button>
+    </div>
     <div class="prefs" role="group">
       <label class="sr-only" for="lang-select" data-i18n="ariaLang">Idioma</label>
       <select id="lang-select" class="pref-select" data-i18n-aria="ariaLang" aria-label="Idioma">
@@ -55,25 +61,13 @@
       </select>
     </div>
   </div>
-</header>
+</nav>
 
 <section class="hero">
   <div class="wrap">
     <h1 data-i18n-html="headline">¿Cuál es el <span class="t-mix">sesgo</span> de los medios españoles en redes?</h1>
-    <p class="lede" id="lede"><strong id="n-virales">607.571</strong> tuits muestreados de <strong id="n-medios">68</strong> medios entre 2018 y 2026, clasificados según a qué partido benefician o perjudican. Cada punto es un medio: pulsa para leer sus tuits.</p>
   </div>
 </section>
-
-<nav class="nav" aria-label="Secciones">
-  <div class="wrap">
-    <div class="tabs" role="tablist">
-      <button class="tab is-on" data-view="mapa" role="tab" data-i18n="tabMapa">Mapa</button>
-      <button class="tab" data-view="ranking" role="tab" data-i18n="tabRanking">Ranking</button>
-      <button class="tab" data-view="top" role="tab" data-i18n="tabTop">Los más virales</button>
-      <button class="tab" data-view="metodo" role="tab" data-i18n="tabMetodo">Método</button>
-    </div>
-  </div>
-</nav>
 
 <main class="wrap">
 
@@ -278,7 +272,10 @@
 
 <footer class="foot">
   <div class="wrap">
-    <p class="foot-firma" data-i18n="footFirma">Datos abiertos y método a la vista.</p>
+    <div>
+      <p class="foot-firma" data-i18n="footFirma">Datos abiertos y método a la vista.</p>
+      <p class="foot-lede" id="lede"><strong id="n-virales">607.571</strong> tuits muestreados de <strong id="n-medios">68</strong> medios entre 2018 y 2026, clasificados según a qué partido benefician o perjudican. Cada punto es un medio: pulsa para leer sus tuits.</p>
+    </div>
     <div>
       <p class="foot-texto" data-i18n="footerText">Análisis reproducible sobre datos públicos de X. Hecho para revisar, no para sentenciar.</p>
       <p class="foot-links"><a href="https://github.com/victoriano/medios-virales" data-i18n="footCodigo">Código y datos</a><a href="#/metodo" data-i18n="footMetodo">Método</a><a href="https://victoriano.me" data-i18n="footAutor">victoriano.me</a></p>
@@ -286,6 +283,6 @@
   </div>
 </footer>
 
-<script src="app.js?v=202610161600"></script>
+<script src="app.js?v=202610181200"></script>
 </body>
 </html>
