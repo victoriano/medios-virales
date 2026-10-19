@@ -732,8 +732,6 @@ body[data-view="mapa"] main.wrap,body:not([data-view]) main.wrap{padding-top:6px
 #td-graf .td-linea{cursor:pointer}
 #td-graf .td-hit{fill:none;stroke:transparent;stroke-width:12;stroke-linejoin:round}
 #td-graf .td-trazo{fill:none;stroke-linejoin:round;stroke-linecap:round;pointer-events:none}
-#td-graf .td-gris .td-trazo{stroke:var(--muted);stroke-width:1;opacity:.28}
-#td-graf .td-gris.is-foco .td-trazo{stroke:var(--ink);stroke-width:2;opacity:.9}
 #td-graf .td-color .td-trazo{stroke-width:2.25}
 #td-graf .td-color.is-foco .td-trazo{stroke-width:3.5}
 #td-graf .td-color circle{stroke:var(--panel);stroke-width:2;pointer-events:none}

@@ -812,7 +812,7 @@ Object.assign(I18N.es, {
   tabTendencias: 'Tendencias',
   tdTitulo: 'Tendencias',
   tdAria: 'Evolución de cada medio a lo largo del tiempo',
-  tdHint: (medida, sub) => `Cómo cambia, año a año o mes a mes, <strong>${medida}</strong> de cada medio, contando ${sub}. Las líneas de color son los medios elegidos y las grises, el resto. Destaca los que más crecen o más caen, pasa el ratón para ver las cifras y pulsa una línea gris para añadirla.`,
+  tdHint: (medida, sub) => `Cómo cambia, año a año o mes a mes, <strong>${medida}</strong> de cada medio, contando ${sub}. Solo se dibujan los medios elegidos y la escala se ajusta a ellos. Destaca los que más crecen o más caen, pasa el ratón para ver las cifras y añade medios desde el selector o la tabla.`,
   tdMedida: 'Medida',
   tdMedidaOp: k => ({ rt_mediana: 'Mediana de retuits', rt_media: 'Media de retuits', lk_mediana: 'Mediana de me gusta', n: 'Número de tuits', pct: '% de sus tuits' })[k],
   tdMedidaFrase: k => ({ rt_mediana: 'la mediana de retuits', rt_media: 'la media de retuits', lk_mediana: 'la mediana de me gusta', n: 'el número de tuits', pct: 'el porcentaje de sus tuits' })[k],
@@ -863,7 +863,7 @@ Object.assign(I18N.en, {
   tabTendencias: 'Trends',
   tdTitulo: 'Trends',
   tdAria: 'How each outlet changes over time',
-  tdHint: (medida, sub) => `How <strong>${medida}</strong> changes for each outlet, year by year or month by month, counting ${sub}. Coloured lines are the outlets you picked and grey lines the rest. Highlight the ones rising or falling most, hover to see the numbers and click a grey line to add it.`,
+  tdHint: (medida, sub) => `How <strong>${medida}</strong> changes for each outlet, year by year or month by month, counting ${sub}. Only the outlets you picked are drawn, and the scale fits them. Highlight the ones rising or falling most, hover to see the numbers and add outlets from the picker or the table.`,
   tdMedida: 'Measure',
   tdMedidaOp: k => ({ rt_mediana: 'Median retweets', rt_media: 'Mean retweets', lk_mediana: 'Median likes', n: 'Number of tweets', pct: '% of its tweets' })[k],
   tdMedidaFrase: k => ({ rt_mediana: 'the median retweets', rt_media: 'the mean retweets', lk_mediana: 'the median likes', n: 'the number of tweets', pct: 'the share of its tweets' })[k],
@@ -1499,7 +1499,9 @@ function pintarGraficoTend(series, elegidos, color) {
   const ancho = Math.max(TD.gran === 'mes' ? 620 : 340, Math.round($('.td-wrap').clientWidth - 38));
   const W = ancho, H = Math.round(Math.min(460, Math.max(320, W * 0.5)));
   const M = { t: 30, r: W < 700 ? 16 : 150, b: 40, l: 58 };
-  const todos = series.flatMap(s => s.valores).filter(v => v != null);
+  // solo se dibujan los medios elegidos y la escala se ajusta a ellos
+  const enSel = new Set(elegidos);
+  const todos = series.filter(s => enSel.has(s.slug)).flatMap(s => s.valores).filter(v => v != null);
   if (!todos.length) {
     svg.setAttribute('viewBox', `0 0 ${W} 80`);
     svg.innerHTML = `<text x="20" y="40" class="td-aviso">${esc(t('tdSinDatos'))}</text>`;
@@ -1547,11 +1549,6 @@ function pintarGraficoTend(series, elegidos, color) {
     });
     return d;
   };
-  const enSel = new Set(elegidos);
-  const grises = series.filter(s => !enSel.has(s.slug)).map(s => {
-    const d = camino(s.valores);
-    return d ? `<g class="td-linea td-gris" data-h="${esc(s.slug)}"><path class="td-hit" d="${d}"></path><path class="td-trazo" d="${d}"></path></g>` : '';
-  }).join('');
   const porSlug = new Map(series.map(s => [s.slug, s]));
   const etiquetas = [];
   const color_ = elegidos.map(k => {
@@ -1588,7 +1585,7 @@ function pintarGraficoTend(series, elegidos, color) {
   }
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.style.minWidth = W + 'px';
-  svg.innerHTML = `<g class="grid">${g}</g><g class="td-grises">${grises}</g><g>${color_}</g><g class="td-rotulos">${rotulos}</g>
+  svg.innerHTML = `<g class="grid">${g}</g><g>${color_}</g><g class="td-rotulos">${rotulos}</g>
     <line class="td-cruz" x1="0" x2="0" y1="${M.t}" y2="${H - M.b}" visibility="hidden"></line>`;
   TD_GEO = { periodos, px, W, M, series: porSlug, elegidos, color };
 }
