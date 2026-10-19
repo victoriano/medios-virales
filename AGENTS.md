@@ -111,6 +111,12 @@ Igual `scripts/build_tendencias_data.py`, que saca `site/data/tendencias.json` (
 Tendencias: tuits, mediana y media de retuits y de me gusta por medio, periodo y subconjunto (todos,
 políticos, izquierda, derecha y a favor o en contra de cada partido). No necesita el taller.
 
+`scripts/build_noticias_data.py` saca `site/data/noticias.json`, las noticias políticas que
+Tendencias superpone en el gráfico si el lector lo pide (selector «Noticias políticas»: no mostrar, solo
+las clave o todas). La fuente es `data/noticias_politicas.csv`, copiada tal cual de
+`data/eventos_2018_2026.csv` del repositorio `victoriano/barometro-cis-viz`; si se amplía allí, se vuelve
+a copiar y se repite el script. Es una selección editorial de acontecimientos, no un dato del corpus.
+
 Por último, `scripts/build_tipos_data.py` añade a `index.json` el tipo de cada cuenta (prensa
 escrita, digital, televisión, programa de televisión, radio, programa de radio o agencia), que usa
 el filtro «Medios» del mapa. La clasificación es manual y vive en `data/tipos_medio.json`: un programa

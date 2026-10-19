@@ -861,6 +861,11 @@ Object.assign(I18N.es, {
   tdTipPocos: (n, min) => `${n} tuits, menos de ${min}: sin cifra`,
   tdTipPulsa: 'Pulsa para añadirlo al gráfico',
   tdTipQuita: 'Pulsa para quitarlo del gráfico',
+  tdNoticias: 'Noticias políticas',
+  tdNoticiasOp: k => ({ no: 'No mostrar', clave: 'Solo las clave', todas: 'Todas' })[k],
+  tdNoticiasLeyenda: n => `${n} noticias políticas`,
+  tdNoticiasLista: n => `Las ${n} noticias del gráfico, por fecha`,
+  tdNoticiasFuente: 'Acontecimientos de la política española seleccionados para el proyecto <a href="https://github.com/victoriano/barometro-cis-viz" target="_blank" rel="noopener">de los barómetros del CIS</a>, con su relevancia y a quién beneficiaron o perjudicaron previsiblemente. Las clave son las de relevancia máxima. Que una noticia coincida con un cambio en la línea no demuestra que lo cause.',
   tdTablaTitulo: 'Año a año',
   tdTablaHint: 'Pulsa un medio para añadirlo al gráfico o quitarlo. Pulsa la cabecera de un año para ordenar.',
   tdColMedio: 'Medio',
@@ -914,6 +919,11 @@ Object.assign(I18N.en, {
   tdTipPocos: (n, min) => `${n} tweets, fewer than ${min}: no figure`,
   tdTipPulsa: 'Click to add it to the chart',
   tdTipQuita: 'Click to remove it from the chart',
+  tdNoticias: 'Political news',
+  tdNoticiasOp: k => ({ no: 'Hide', clave: 'Key events only', todas: 'All' })[k],
+  tdNoticiasLeyenda: n => `${n} political news events`,
+  tdNoticiasLista: n => `The ${n} news events on the chart, by date`,
+  tdNoticiasFuente: 'Spanish political events selected for the <a href="https://github.com/victoriano/barometro-cis-viz" target="_blank" rel="noopener">CIS barometers project</a>, with their relevance and who they likely helped or hurt (text in Spanish). Key events are those with the highest relevance. A news event lining up with a change in a line does not prove it caused it.',
   tdTablaTitulo: 'Year by year',
   tdTablaHint: 'Click an outlet to add it to the chart or remove it. Click a year header to sort.',
   tdColMedio: 'Outlet',
@@ -1288,15 +1298,17 @@ $('#q').addEventListener('input', e => { query = e.target.value; pintarRanking()
    datos salen de scripts/build_tendencias_data.py: por medio y periodo, el total
    muestreado y, por subconjunto, [tuits, mediana RT, media RT, mediana me gusta,
    media me gusta]. Los meses van en otro fichero y solo se piden al elegirlos. */
-const TD = { medida: 'rt_mediana', sub: 'todos', gran: 'ano', cuentas: 'todos', destacar: 'altos', log: false, sel: null, orden: 'media', dir: -1 };
+const TD = { medida: 'rt_mediana', sub: 'todos', gran: 'ano', cuentas: 'todos', destacar: 'altos', noticias: 'no', log: false, sel: null, orden: 'media', dir: -1 };
 const TD_DESTACAR = ['altos', 'crecen', 'caen'];
 const TD_MEDIDAS = ['rt_mediana', 'rt_media', 'lk_mediana', 'n', 'pct'];
 const TD_SUBS = ['todos', 'politicos', 'izq', 'der', 'PSOE+', 'PSOE-', 'PP+', 'PP-', 'Vox+', 'Vox-', 'Sumar+', 'Sumar-'];
 const TD_POS = { rt_mediana: 1, rt_media: 2, lk_mediana: 3 };
 const TD_MIN = { ano: 20, mes: 5 };   // tuits mínimos para dibujar una mediana o una media
 const TD_AUTO = 5, TD_MAX = 8;        // ocho colores categóricos, en orden fijo
-const TD_PARAMS = { medida: 'medida', sub: 'tuits', gran: 'ver', cuentas: 'cuentas', destacar: 'destacar' };
-const TEND = { ano: null, mes: null };
+const TD_PARAMS = { medida: 'medida', sub: 'tuits', gran: 'ver', cuentas: 'cuentas', destacar: 'destacar', noticias: 'noticias' };
+// noticias políticas que se pueden superponer: ninguna, solo las de relevancia 5 o todas
+const TD_NOTICIAS = ['no', 'clave', 'todas'];
+const TEND = { ano: null, mes: null, noticias: null };
 let tdError = false;
 
 function leeFiltrosTendencias(cadena) {
@@ -1309,12 +1321,14 @@ function leeFiltrosTendencias(cadena) {
   if (c) TD.cuentas = c;
   const d = usp.get('destacar');
   if (TD_DESTACAR.includes(d)) TD.destacar = d;
+  const nt = usp.get('noticias');
+  if (TD_NOTICIAS.includes(nt)) TD.noticias = nt;
   TD.log = usp.get('log') === '1';
   if (sel) TD.sel = sel.split(',').filter(Boolean).slice(0, TD_MAX);
 }
 function escribeFiltrosTendencias() {
   const usp = new URLSearchParams();
-  const def = { medida: 'rt_mediana', sub: 'todos', gran: 'ano', cuentas: 'todos', destacar: 'altos' };
+  const def = { medida: 'rt_mediana', sub: 'todos', gran: 'ano', cuentas: 'todos', destacar: 'altos', noticias: 'no' };
   for (const k in TD_PARAMS) if (TD[k] !== def[k]) usp.set(TD_PARAMS[k], TD[k]);
   if (TD.log) usp.set('log', '1');
   if (TD.sel) usp.set('medios', TD.sel.join(','));
@@ -1323,15 +1337,31 @@ function escribeFiltrosTendencias() {
 }
 async function abrirTendencias() {
   pintarTendencias();
-  const falta = !TEND.ano || (TD.gran === 'mes' && !TEND.mes);
+  const conNoticias = TD.noticias !== 'no';
+  const falta = !TEND.ano || (TD.gran === 'mes' && !TEND.mes) || (conNoticias && !TEND.noticias);
   if (!falta) return;
   try {
     if (!TEND.ano) TEND.ano = await pedirJSON('data/tendencias.json' + VER);
     if (TD.gran === 'mes' && !TEND.mes) TEND.mes = await pedirJSON('data/tendencias_meses.json' + VER);
     tdError = false;
   } catch (err) { tdError = true; }
+  // las noticias van aparte: si fallan, el gráfico se dibuja igual sin ellas
+  if (conNoticias && !TEND.noticias) {
+    try { TEND.noticias = (await pedirJSON('data/noticias.json' + VER)).noticias; }
+    catch (err) { TEND.noticias = []; }
+  }
   pintarTendencias();
 }
+// las noticias que caen dentro de la ventana de la muestra, según el filtro elegido
+function noticiasTend() {
+  if (TD.noticias === 'no' || !TEND.noticias) return [];
+  const { desde, hasta } = INDEX.ventana;
+  return TEND.noticias.filter(n => n.fecha >= desde && n.fecha <= hasta && (TD.noticias === 'todas' || n.relevancia >= 5));
+}
+const fechaLarga = f => new Date(+f.slice(0, 4), +f.slice(5, 7) - 1, +f.slice(8, 10))
+  .toLocaleDateString(LANG === 'en' ? 'en-GB' : 'es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+const impactosHTML = imps => imps.map(([p, sg]) =>
+  `<span class="td-imp td-imp-${sg === '+' ? 'mas' : sg === '-' ? 'menos' : 'cero'}">${esc(p)} ${{ '-': '−', '0': '=', '±': '±' }[sg] || '+'}</span>`).join('');
 function periodosTend(gran) {
   const anos = [];
   const [a0, a1] = [+INDEX.ventana.desde.slice(0, 4), +INDEX.ventana.hasta.slice(0, 4)];
@@ -1442,6 +1472,9 @@ function pintarTendencias() {
       ${cuentas.map(k => `<option value="${k}">${esc(t(base[k], cuenta(k)))}</option>`).join('')}
       <optgroup label="${esc(t('mapaTipoGrupo'))}">${tiposMapa().map(k => `<option value="${k}">${esc(t('mapaTipoOpcion', t('tipoNombre', k), cuenta(k)))}</option>`).join('')}</optgroup>
     </select></label>
+    <label class="ctl"><span class="ctl-k">${t('tdNoticias')}</span><select id="td-noticias">
+      ${TD_NOTICIAS.map(k => `<option value="${k}">${esc(t('tdNoticiasOp', k))}</option>`).join('')}
+    </select></label>
     <div class="ctl"><span class="ctl-k">${t('tdVer')}</span>
       <div class="ctl-v"><div class="seg" id="td-gran" role="group" aria-label="${esc(t('tdVer'))}">
         ${['ano', 'mes'].map(g => `<button type="button" data-gran="${g}" class="${TD.gran === g ? 'is-on' : ''}" aria-pressed="${TD.gran === g}">${t(g === 'ano' ? 'tdAno' : 'tdMes')}</button>`).join('')}
@@ -1451,6 +1484,7 @@ function pintarTendencias() {
   $('#td-medida').value = TD.medida;
   $('#td-sub').value = TD.sub;
   $('#td-cuentas').value = TD.cuentas;
+  $('#td-noticias').value = TD.noticias;
   $('#td-hint').innerHTML = t('tdHint', t('tdMedidaFrase', TD.medida), t('tdSubFrase', TD.sub));
   $('#td-nota').textContent = t('tdNota', TD_MIN[TD.gran], TD.gran);
   const svg = $('#td-graf');
@@ -1461,6 +1495,7 @@ function pintarTendencias() {
     $('#td-medios').innerHTML = '';
     $('#td-tabla thead').innerHTML = '';
     $('#td-tabla tbody').innerHTML = '';
+    $('#td-noticias-lista').innerHTML = '';
     return;
   }
   escribeFiltrosTendencias();
@@ -1470,6 +1505,7 @@ function pintarTendencias() {
   const color = coloresTend(elegidos);
   pintarElegidosTend(anuales, elegidos, color);
   pintarGraficoTend(series, elegidos, color);
+  pintarListaNoticias();
   pintarTablaTend(anuales, elegidos, color);
 }
 
@@ -1508,7 +1544,8 @@ function pintarGraficoTend(series, elegidos, color) {
   const periodos = periodosTend(TD.gran);
   const ancho = Math.max(TD.gran === 'mes' ? 620 : 340, Math.round($('.td-wrap').clientWidth - 38));
   const W = ancho, H = Math.round(Math.min(460, Math.max(320, W * 0.5)));
-  const M = { t: 30, r: W < 700 ? 16 : 150, b: 40, l: 58 };
+  const noticias = noticiasTend();
+  const M = { t: noticias.length ? 50 : 30, r: W < 700 ? 16 : 150, b: 40, l: 58 };
   // solo se dibujan los elegidos, y la escala se ajusta a ellos
   const enSel = new Set(elegidos);
   const todos = series.filter(s => enSel.has(s.slug)).flatMap(s => s.valores).filter(v => v != null);
@@ -1559,6 +1596,34 @@ function pintarGraficoTend(series, elegidos, color) {
     });
     return d;
   };
+  // noticias: una raya por fecha bajo las líneas, con su marca encima del gráfico.
+  // En los años, el punto de cada año está a mitad de año y la fecha se coloca
+  // en proporción entre puntos; en los meses, dentro de su mes.
+  const posNoticia = f => {
+    let i;
+    if (TD.gran === 'mes') {
+      i = periodos.indexOf(f.slice(0, 7));
+      if (i < 0) return null;
+      const dias = new Date(+f.slice(0, 4), +f.slice(5, 7), 0).getDate();
+      i += (+f.slice(8, 10) - 1) / dias;
+    } else {
+      i = periodos.indexOf(f.slice(0, 4));
+      if (i < 0) return null;
+      const ini = Date.UTC(+f.slice(0, 4), 0, 1), fin = Date.UTC(+f.slice(0, 4) + 1, 0, 1);
+      i += (Date.UTC(+f.slice(0, 4), +f.slice(5, 7) - 1, +f.slice(8, 10)) - ini) / (fin - ini) - 0.5;
+    }
+    return px(Math.max(0, Math.min(n - 1, i)));
+  };
+  const marcas = noticias.map((nt, j) => {
+    const x = posNoticia(nt.fecha);
+    if (x == null) return '';
+    const xs = x.toFixed(1), ym = M.t - 12;
+    return `<g class="td-ev${nt.relevancia >= 5 ? ' is-clave' : ''}" data-ev="${j}">
+      <line class="td-ev-raya" x1="${xs}" x2="${xs}" y1="${ym}" y2="${H - M.b}"></line>
+      <line class="td-ev-hit" x1="${xs}" x2="${xs}" y1="${ym - 7}" y2="${H - M.b}"></line>
+      <path class="td-ev-marca" d="M${xs} ${ym - 5}L${(x + 5).toFixed(1)} ${ym}L${xs} ${ym + 5}L${(x - 5).toFixed(1)} ${ym}Z"></path></g>`;
+  }).join('');
+  if (noticias.length) g += `<text class="td-ev-tit" x="${W - M.r}" y="14" text-anchor="end">◆ ${esc(t('tdNoticiasLeyenda', noticias.length))}</text>`;
   const porSlug = new Map(series.map(s => [s.slug, s]));
   const etiquetas = [];
   const color_ = elegidos.map(k => {
@@ -1595,9 +1660,9 @@ function pintarGraficoTend(series, elegidos, color) {
   }
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.style.minWidth = W + 'px';
-  svg.innerHTML = `<g class="grid">${g}</g><g>${color_}</g><g class="td-rotulos">${rotulos}</g>
+  svg.innerHTML = `<g class="grid">${g}</g><g class="td-evs">${marcas}</g><g>${color_}</g><g class="td-rotulos">${rotulos}</g>
     <line class="td-cruz" x1="0" x2="0" y1="${M.t}" y2="${H - M.b}" visibility="hidden"></line>`;
-  TD_GEO = { periodos, px, W, M, series: porSlug, elegidos, color };
+  TD_GEO = { periodos, px, W, M, series: porSlug, elegidos, color, noticias };
 }
 
 function tipTend(ev) {
@@ -1608,6 +1673,8 @@ function tipTend(ev) {
   const x = (ev.clientX - r.left) * escala;
   const { periodos, px, M } = TD_GEO;
   if (x < M.l - 10 || x > TD_GEO.W - M.r + 10) { ocultarTipTend(); return; }
+  const marca = ev.target.closest && ev.target.closest('.td-ev');
+  if (marca) { tipNoticia(ev, TD_GEO.noticias[+marca.dataset.ev], marca); return; }
   let i = 0, mejor = Infinity;
   periodos.forEach((_, j) => { const d = Math.abs(px(j) - x); if (d < mejor) { mejor = d; i = j; } });
   const cruz = svg.querySelector('.td-cruz');
@@ -1636,6 +1703,10 @@ function tipTend(ev) {
     cuerpo = filas.map(s => fila(s, TD_GEO.color(s.slug))).join('');
   }
   tip.innerHTML = `<div class="tt">${esc(etiqueta)}</div>${cuerpo}`;
+  colocarTipTend(ev);
+}
+function colocarTipTend(ev) {
+  const tip = $('#td-tip');
   tip.hidden = false;
   const wrap = $('.td-wrap').getBoundingClientRect();
   const left = ev.clientX - wrap.left + $('.td-wrap').scrollLeft;
@@ -1644,13 +1715,44 @@ function tipTend(ev) {
   tip.style.left = Math.max(8, derecha ? left + 16 : left - ancho - 16) + 'px';
   tip.style.top = Math.max(8, ev.clientY - wrap.top - 20) + 'px';
 }
+function tipNoticia(ev, nt, marca) {
+  if (!nt) return;
+  ocultarTipTend();
+  marca.classList.add('is-foco');
+  $('#td-tip').innerHTML = `<div class="tt">${esc(fechaLarga(nt.fecha))}</div>
+    <div class="td-ev-nombre">${esc(nt.nombre)}</div>
+    <div class="tm">${esc(nt.categoria)}</div>
+    <div class="td-ev-desc">${esc(nt.descripcion)}</div>
+    ${nt.impactos.length ? `<div class="td-imps">${impactosHTML(nt.impactos)}</div>` : ''}`;
+  colocarTipTend(ev);
+}
 function ocultarTipTend() {
+  $$('#td-graf .td-ev.is-foco').forEach(el => el.classList.remove('is-foco'));
   const tip = $('#td-tip');
   if (tip) tip.hidden = true;
   const cruz = $('#td-graf .td-cruz');
   if (cruz) cruz.setAttribute('visibility', 'hidden');
   $$('#td-graf .td-linea.is-foco').forEach(el => el.classList.remove('is-foco'));
 }
+
+// la lista que acompaña al gráfico cuando hay noticias: para consultar cuándo fue cada una
+function pintarListaNoticias() {
+  const caja = $('#td-noticias-lista');
+  const noticias = noticiasTend();
+  if (!noticias.length) { caja.innerHTML = ''; return; }
+  const dominio = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return u; } };
+  caja.innerHTML = `<details class="td-noticias"${TD_LISTA_ABIERTA ? ' open' : ''}>
+    <summary>${esc(t('tdNoticiasLista', noticias.length))}</summary>
+    <p class="hint">${t('tdNoticiasFuente')}</p>
+    <ol>${noticias.map((nt, j) => `<li data-ev="${j}">
+      <time datetime="${nt.fecha}">${esc(fechaLarga(nt.fecha))}</time>
+      <div><b>${esc(nt.nombre)}</b> <span class="td-ev-cat">${esc(nt.categoria)}</span>
+        <p>${esc(nt.descripcion)}</p>
+        ${nt.impactos.length ? `<div class="td-imps">${impactosHTML(nt.impactos)}</div>` : ''}
+        ${nt.fuentes.length ? `<div class="td-fuentes">${nt.fuentes.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(dominio(u))}</a>`).join(' · ')}</div>` : ''}
+      </div></li>`).join('')}</ol></details>`;
+}
+let TD_LISTA_ABIERTA = false;
 
 function pintarTablaTend(anuales, elegidos, color) {
   const anos = periodosTend('ano');
@@ -1804,6 +1906,7 @@ function iniciarTendencias() {
     else if (id === 'td-sub') TD.sub = e.target.value;
     else if (id === 'td-cuentas') TD.cuentas = e.target.value;
     else if (id === 'td-log') TD.log = e.target.checked;
+    else if (id === 'td-noticias') { TD.noticias = e.target.value; abrirTendencias(); return; }
     else return;
     pintarTendencias();
   });
@@ -1833,7 +1936,28 @@ function iniciarTendencias() {
   const svg = $('#td-graf');
   svg.addEventListener('mousemove', tipTend);
   svg.addEventListener('mouseleave', ocultarTipTend);
+  // al pasar por una noticia de la lista, su marca se ilumina en el gráfico
+  const lista = $('#td-noticias-lista');
+  lista.addEventListener('toggle', e => { TD_LISTA_ABIERTA = e.target.open; }, true);
+  lista.addEventListener('mouseover', e => {
+    const li = e.target.closest('li[data-ev]');
+    $$('#td-graf .td-ev.is-foco').forEach(el => el.classList.remove('is-foco'));
+    if (li) { const m = $(`#td-graf .td-ev[data-ev="${li.dataset.ev}"]`); if (m) m.classList.add('is-foco'); }
+  });
+  lista.addEventListener('mouseleave', () => $$('#td-graf .td-ev.is-foco').forEach(el => el.classList.remove('is-foco')));
   svg.addEventListener('click', e => {
+    const m = e.target.closest('.td-ev');
+    if (m) {
+      // pulsar una marca abre la lista y lleva a esa noticia
+      const det = $('#td-noticias-lista details'), li = $(`#td-noticias-lista li[data-ev="${m.dataset.ev}"]`);
+      if (det && li) {
+        det.open = true;
+        $$('#td-noticias-lista li.is-foco').forEach(el => el.classList.remove('is-foco'));
+        li.classList.add('is-foco');
+        li.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
     const l = e.target.closest('.td-linea');
     if (l) { ocultarTipTend(); alternarTend(l.dataset.h, anuales()); }
   });

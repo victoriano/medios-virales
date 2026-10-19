@@ -173,6 +173,24 @@ class SiteDataTest(unittest.TestCase):
         for esperado in ("número de tuits con lado claro", "mediana de retuits"):
             self.assertIn(esperado, metrica, metrica)
 
+    def test_noticias_match_their_source(self):
+        """noticias.json trae todas las noticias de la fuente, ordenadas, con fecha ISO e impactos leídos."""
+        import csv
+        import re
+        with (ROOT / "data" / "noticias_politicas.csv").open(encoding="utf-8-sig", newline="") as f:
+            fuente = list(csv.DictReader(f))
+        noticias = json.loads((DATA / "noticias.json").read_text())["noticias"]
+        self.assertEqual(len(noticias), len(fuente))
+        self.assertEqual([n["fecha"] for n in noticias], sorted(n["fecha"] for n in noticias))
+        for n in noticias:
+            self.assertRegex(n["fecha"], r"^\d{4}-\d{2}-\d{2}$")
+            self.assertIn(n["relevancia"], range(1, 6))
+            self.assertTrue(n["impactos"], n["id"])
+            self.assertTrue(all(sg in ("+", "-", "0", "±") for _, sg in n["impactos"]), n["id"])
+        ventana = self.index["ventana"]
+        dentro = [n for n in noticias if ventana["desde"] <= n["fecha"] <= ventana["hasta"]]
+        self.assertGreater(len(dentro), 0)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
