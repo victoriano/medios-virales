@@ -44,7 +44,7 @@
     <div class="tabs" role="tablist">
       <button class="tab is-on" data-view="mapa" role="tab" data-i18n="tabMapa">Mapa</button>
       <button class="tab" data-view="ranking" role="tab" data-i18n="tabRanking">Ranking</button>
-      <button class="tab" data-view="top" role="tab" data-i18n="tabTop">Los más virales</button>
+      <button class="tab" data-view="contenidos" role="tab" data-i18n="tabContenidos">Contenidos</button>
       <button class="tab" data-view="metodo" role="tab" data-i18n="tabMetodo">Método</button>
     </div>
     <div class="prefs" role="group">
@@ -215,14 +215,15 @@
     <div class="panel" id="medio-panel"></div>
   </section>
 
-  <!-- ============ TOP ============ -->
-  <section id="view-top" class="view" hidden>
+  <!-- ============ CONTENIDOS ============ -->
+  <section id="view-contenidos" class="view" hidden>
     <div class="panel">
-      <h2 data-i18n="topTitle">Los 300 tuits virales con lectura política</h2>
-      <p class="hint" data-i18n="topHint">Ordenados por retuits. Cada tarjeta lleva el partido al que afecta y la dirección.</p>
-      <div class="filters" id="top-filtros"></div>
-      <div id="top-list" class="cards-list"></div>
-      <button class="more" id="top-more" hidden data-i18n="loadMore">Cargar más</button>
+      <h2 data-i18n="contTitulo">Contenidos</h2>
+      <p class="hint" id="cont-hint"></p>
+      <div class="cont-filtros" id="cont-filtros"></div>
+      <div class="cajon-res" id="cont-res"></div>
+      <div id="cont-lista" class="cards-list"></div>
+      <button type="button" class="more" id="cont-mas" hidden></button>
     </div>
   </section>
 

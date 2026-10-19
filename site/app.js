@@ -28,7 +28,7 @@ const I18N = {
     lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> tuits muestreados de <strong id="n-medios">${nMedios}</strong> medios entre 2018 y 2026, clasificados según a qué partido benefician o perjudican. Cada punto es un medio: pulsa para leer sus tuits.`,
     tabMapa: 'Mapa',
     tabRanking: 'Ranking',
-    tabTop: 'Los más virales',
+    tabContenidos: 'Contenidos',
     tabMetodo: 'Método',
     themeLight: 'Claro',
     themeDark: 'Oscuro',
@@ -164,7 +164,7 @@ const I18N = {
     hist3B: 'Ver solo los de 100 RT o más',
     hist4T: 'El Gobierno es el blanco',
     hist4P: (pctPsoe, nPsoe, nResto, perj, ben, ratio) => `El <strong>${pctPsoe} %</strong> de los tuits políticos tiene al PSOE como partido afectado: ${nPsoe}, más que PP, Vox y Sumar juntos (${nResto}). Y se critica mucho más de lo que se elogia: ${perj} tuits perjudican a un partido frente a ${ben} que lo benefician, <strong>${ratio} a 1</strong>. Como el PSOE gobierna desde junio de 2018, criticar al Gobierno suma a la derecha en este índice.`,
-    hist4B: 'Leer los tuits más virales',
+    hist4B: 'Leer los tuits sobre el PSOE',
     mapaHint: 'Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo significa que todos sus tuits con lado claro van a la izquierda, 100 que todos van a la derecha y 50 que se reparten por igual. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. La altura es el <strong>número de tuits clasificados que benefician o perjudican a un partido</strong>. El tamaño representa la <strong>mediana de retuits de esos mismos tuits</strong>. El filtro de retuits permite mostrar todos, solo los que tienen 100 RT o más, o comparar ambos subconjuntos. El eje vertical se ajusta al periodo y conserva una escala común durante la animación anual. Pasa el ratón para ver los números y pulsa para abrir sus tuits.',
     axisLeft: '◀ todo a la izquierda',
     axisMid: '% de los tuits con lado que va a la derecha',
@@ -254,11 +254,6 @@ const I18N = {
     tweetVerX: 'Ver en X ↗',
     tweetConfianza: 'confianza',
     tweetIroniaDet: 'ironía detectada',
-    topTitle: 'Los 300 tuits virales con lectura política',
-    topHint: 'Ordenados por retuits. Cada tarjeta lleva el partido al que afecta y la dirección.',
-    topAllParty: 'Todo partido',
-    topAllDir: 'Toda dirección',
-    topNoMatch: 'Nada que mostrar con esos filtros.',
     metodoTitle: 'Cómo se ha hecho',
     metodoQueMide: 'Qué se mide',
     metodoQueMideP: 'La posición política de una muestra de publicaciones en X y cómo cambia dentro del subconjunto que alcanza difusión viral. Para cada tuit se determina primero si tiene lectura política española. Cuando la tiene, se identifica el partido afectado y si el contenido lo beneficia, lo perjudica o informa sin tomar partido. El resultado describe la actividad observada en X, no la ideología definitiva de una redacción.',
@@ -338,7 +333,7 @@ const I18N = {
     lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> sampled tweets from <strong id="n-medios">${nMedios}</strong> outlets between 2018 and 2026, classified by which party they help or hurt. Each dot is an outlet: click it to read its tweets.`,
     tabMapa: 'Map',
     tabRanking: 'Ranking',
-    tabTop: 'Most viral',
+    tabContenidos: 'Content',
     tabMetodo: 'Method',
     themeLight: 'Light',
     themeDark: 'Dark',
@@ -474,7 +469,7 @@ const I18N = {
     hist3B: 'Show only 100 RT or more',
     hist4T: 'The Government is the target',
     hist4P: (pctPsoe, nPsoe, nResto, perj, ben, ratio) => `<strong>${pctPsoe}%</strong> of political tweets have PSOE as the affected party: ${nPsoe}, more than PP, Vox and Sumar combined (${nResto}). And criticism far outweighs praise: ${perj} tweets hurt a party against ${ben} that help one, <strong>${ratio} to 1</strong>. Since PSOE has led the Government since June 2018, criticising the Government counts to the right in this index.`,
-    hist4B: 'Read the most viral tweets',
+    hist4B: 'Read the tweets about PSOE',
     mapaHint: 'Each outlet is a dot. Horizontally, 0 means all tweets with a clear side go left, 100 means all go right, and 50 is evenly split. Color follows Spanish convention: <span class="rojo">red</span> for left, <span class="azul">blue</span> for right, and gray for center. Height is the <strong>number of classified tweets that benefit or harm a party</strong>. Size represents the <strong>median retweets of those same tweets</strong>. The retweet filter shows all tweets, only tweets with 100+ RT, or compares both subsets. The vertical scale adapts to the selected period and remains fixed during the yearly animation. Hover for figures and click to open the tweets.',
     axisLeft: '◀ all to the left',
     axisMid: '% of tweets with clear side going right',
@@ -564,11 +559,6 @@ const I18N = {
     tweetVerX: 'View on X ↗',
     tweetConfianza: 'confidence',
     tweetIroniaDet: 'irony detected',
-    topTitle: 'The 300 most viral tweets with political reading',
-    topHint: 'Sorted by retweets. Each card shows the affected party and direction.',
-    topAllParty: 'All parties',
-    topAllDir: 'All directions',
-    topNoMatch: 'Nothing to show with those filters.',
     metodoTitle: 'How it was done',
     metodoQueMide: 'What is measured',
     metodoQueMideP: 'The political position of a sample of X posts and how it changes within the subset that achieves viral reach. For each tweet, we first determine whether it has a Spanish political reading. When it does, we identify the affected party and whether the content benefits it, harms it, or reports without taking sides. The result describes activity observed on X, not the definitive ideology of a newsroom.',
@@ -792,6 +782,32 @@ Object.assign(I18N.en, {
   dgGrupoSin: 'No clear side',
   dgGrupoN: (n, pc) => pc == null ? `${n} tweets` : `${n} tweets · ${pc} % of those with a side`,
 });
+Object.assign(I18N.es, {
+  contTitulo: 'Contenidos',
+  contHint: (n, corte, tot) => `Busca entre los <strong>${n}</strong> tuits que llegaron a ${corte} retuits o más, de cualquier medio y con o sin lectura política. Elige un medio para buscar en toda su muestra, no solo en lo viral. La serie completa tiene ${tot} tuits.`,
+  contHintMedio: (nombre, n, corte) => `Los <strong>${n}</strong> tuits de ${nombre} con ${corte} retuits o más. Marca la casilla de abajo para buscar en toda su muestra.`,
+  contHintTodo: (nombre, n) => `Toda la muestra de ${nombre}: <strong>${n}</strong> tuits, hasta 100 por mes. Es una muestra, no todo lo que ha publicado.`,
+  contBuscar: 'Buscar texto, persona o tema…',
+  contMedio: 'Medio',
+  contTodosMedios: 'Todos los medios',
+  contTipo: 'Tipo de medio',
+  contTodosTipos: 'Todos los tipos',
+  contTodo: n => `Toda su muestra (${n} tuits), no solo los de 100 RT o más`,
+  contCargando: 'Cargando los tuits…',
+});
+Object.assign(I18N.en, {
+  contTitulo: 'Content',
+  contHint: (n, corte, tot) => `Search the <strong>${n}</strong> tweets that reached ${corte} retweets or more, from any outlet, political or not. Pick an outlet to search its whole sample, not only what went viral. The full series has ${tot} tweets.`,
+  contHintMedio: (nombre, n, corte) => `The <strong>${n}</strong> tweets from ${nombre} with ${corte} retweets or more. Tick the box below to search its whole sample.`,
+  contHintTodo: (nombre, n) => `The whole sample for ${nombre}: <strong>${n}</strong> tweets, up to 100 per month. It is a sample, not everything it published.`,
+  contBuscar: 'Search text, people or topics…',
+  contMedio: 'Outlet',
+  contTodosMedios: 'All outlets',
+  contTipo: 'Outlet type',
+  contTodosTipos: 'All types',
+  contTodo: n => `Its whole sample (${n} tweets), not only those with 100 RT or more`,
+  contCargando: 'Loading tweets…',
+});
 const t = (key, ...args) => {
   const val = I18N[LANG][key];
   if (typeof val === 'function') return val(...args);
@@ -960,7 +976,7 @@ function prefetchMedio(meta) {
 }
 
 /* ---------- navegación ---------- */
-const VIEWS = ['ranking', 'mapa', 'medio', 'top', 'metodo'];
+const VIEWS = ['ranking', 'mapa', 'medio', 'contenidos', 'metodo'];
 const PERIODOS_VALIDOS = ['todo', 'xv', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'];
 let currentView = 'mapa';
 let vistaPrevia = 'mapa';
@@ -1006,7 +1022,8 @@ function route() {
   }
   if (ruta.startsWith('medio/')) { openMedio(ruta.slice(6)); return; }
   if (ruta === 'ranking') { show('ranking'); pintarRanking(); return; }
-  if (ruta === 'top') { show('top'); return; }
+  if (ruta === 'top') { history.replaceState(null, '', '#/contenidos'); }
+  if (ruta === 'contenidos' || ruta === 'top') { leeFiltrosContenidos(bruto); show('contenidos'); abrirContenidos(); return; }
   if (ruta === 'metodo') { show('metodo'); return; }
   show('mapa'); renderMapa();
 }
@@ -1330,35 +1347,215 @@ function tarjeta(tw, handle, nombre) {
   </article>`;
 }
 
-/* ---------- top virales ---------- */
-let TOP = null, topShown = PAGE, topParty = '', topDir = '';
-async function cargarTop() {
-  if (TOP) { pintarTop(); return; }
-  TOP = await pedirJSON('data/top.json' + VER);
-  pintarTopFiltros();
-  pintarTop();
+/* ---------- contenidos ----------
+   Buscador de tuits de todos los medios. Sin medio elegido trabaja sobre
+   contenidos.json, todos los tuits con 100 RT o más. Al elegir un medio se
+   puede ampliar a su muestra completa con los mismos ficheros por año que el
+   panel de la cuenta. Los filtros viven en la URL para poder compartirlos. */
+let CONT = null, contError = false;
+const CT = { q: '', medio: '', tipo: '', partido: '', dir: '', ano: '', orden: 'rt', soloPol: true, todo: false, n: PAGE };
+const CT_PARAMS = { q: 'q', medio: 'medio', tipo: 'tipo', partido: 'partido', dir: 'sentido', ano: 'ano', orden: 'orden' };
+const normaliza = s => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const slugDe = h => String(h || '').replace('@', '').toLowerCase();
+const textoBusqueda = tw => tw._q || (tw._q = normaliza(tw.t + ' ' + tw.h + ' ' + ((metaDe(tw.h) || {}).nombre || '')));
+// resumen común con el panel de la cuenta: cuántos van a cada lado y la barra
+function htmlResumen(ts) {
+  const IZQ = { PSOE: 1, Sumar: 1 }, DER = { PP: 1, Vox: 1 };
+  let izq = 0, der = 0;
+  for (const tw of ts) {
+    if ((tw.d === 'beneficia' && IZQ[tw.p]) || (tw.d === 'perjudica' && DER[tw.p])) izq++;
+    else if ((tw.d === 'beneficia' && DER[tw.p]) || (tw.d === 'perjudica' && IZQ[tw.p])) der++;
+  }
+  const neu = ts.length - izq - der;
+  const w = v => ts.length ? (100 * v / ts.length).toFixed(1) : 0;
+  return `<p>${t('cajonResumen', nf(ts.length), nf(izq), nf(der), nf(neu))}</p>
+    <div class="mini"><i style="width:${w(izq)}%;background:var(--izq)"></i><i style="width:${w(neu)}%;background:var(--track)"></i><i style="width:${w(der)}%;background:var(--der)"></i></div>`;
 }
-function pintarTopFiltros() {
-  const cnt = {};
-  TOP.forEach(tw => { cnt[tw.p] = (cnt[tw.p] || 0) + 1; });
-  const dirtxt = DIRTXT();
-  $('#top-filtros').innerHTML = `
-    <select id="tp"><option value="">${t('topAllParty')}</option>${PARTIDOS.filter(p => cnt[p]).map(p => `<option value="${p}">${p} (${nf(cnt[p])})</option>`).join('')}</select>
-    <select id="td"><option value="">${t('topAllDir')}</option><option value="beneficia">${dirtxt.beneficia}</option><option value="perjudica">${dirtxt.perjudica}</option><option value="neutro">${dirtxt.neutro}</option></select>`;
-  $('#tp').value = topParty;
-  $('#td').value = topDir;
-  $('#tp').addEventListener('change', e => { topParty = e.target.value; topShown = PAGE; pintarTop(); });
-  $('#td').addEventListener('change', e => { topDir = e.target.value; topShown = PAGE; pintarTop(); });
-  $('#top-more').addEventListener('click', () => { topShown += PAGE; pintarTop(); });
+function leeFiltrosContenidos(cadena) {
+  const partes = cadena.split('?');
+  if (partes.length < 2 || !partes[1]) return;
+  const usp = new URLSearchParams(partes[1]);
+  for (const [k, param] of Object.entries(CT_PARAMS)) CT[k] = usp.get(param) || '';
+  if (!['rt', 'lk', 'vw', 'f', 'fa'].includes(CT.orden)) CT.orden = 'rt';
+  const meta = CT.medio && metaDe(CT.medio);
+  CT.medio = meta ? slugDe(meta.handle) : '';
+  CT.soloPol = usp.get('pol') !== '0';
+  CT.todo = !!CT.medio && usp.get('todo') === '1';
+  CT.n = PAGE;
 }
-function pintarTop() {
-  if (!TOP) return;
-  const ts = TOP.filter(tw => (!topParty || tw.p === topParty) && (!topDir || tw.d === topDir));
-  $('#top-list').innerHTML = ts.length ? ts.slice(0, topShown).map(tw => tarjeta(tw, tw.h, tw.h)).join('')
-    : `<p class="empty">${t('topNoMatch')}</p>`;
-  const m = $('#top-more');
-  m.hidden = ts.length <= topShown;
-  m.textContent = t('loadMoreN', nf(ts.length - topShown));
+function escribeFiltrosContenidos() {
+  const usp = new URLSearchParams();
+  for (const [k, param] of Object.entries(CT_PARAMS)) {
+    if (CT[k] && !(k === 'orden' && CT[k] === 'rt')) usp.set(param, CT[k]);
+  }
+  if (!CT.soloPol) usp.set('pol', '0');
+  if (CT.todo) usp.set('todo', '1');
+  const qs = usp.toString();
+  history.replaceState(null, '', '#/contenidos' + (qs ? '?' + qs : ''));
+}
+async function abrirContenidos() {
+  pintarContenidos();
+  if (!CONT && !contError) {
+    try {
+      const datos = await pedirJSON('data/contenidos.json' + VER);
+      CONT = datos.tweets.map(tw => ({ ...tw, u: `https://x.com/${tw.h.replace('@', '')}/status/${tw.id}` }));
+    } catch (err) { contError = true; }
+    pintarContenidosLista();
+  }
+}
+// el conjunto sobre el que se filtra: lo viral de todos o la muestra completa de un medio
+async function poolContenidos() {
+  if (CT.medio && CT.todo) {
+    const meta = metaDe(CT.medio);
+    const datos = await cargarTuitsDe(meta);
+    if (!datos._conH) datos._conH = datos.tweets.map(tw => ({ ...tw, h: meta.handle }));
+    return datos._conH;
+  }
+  if (!CONT) return null;
+  return CONT;
+}
+function opcionesMedios() {
+  const tipos = Object.keys(INDEX.tipos || {});
+  const medios = INDEX.medios.filter(m => !CT.tipo || m.tipo === CT.tipo)
+    .slice().sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+  const op = m => `<option value="${esc(slugDe(m.handle))}">${esc(m.nombre)}</option>`;
+  const grupos = tipos.map(k => {
+    const ms = medios.filter(m => m.tipo === k);
+    return ms.length ? `<optgroup label="${esc(t('tipoNombre', k))}">${ms.map(op).join('')}</optgroup>` : '';
+  }).join('');
+  return `<option value="">${t('contTodosMedios')}</option>${grupos}`;
+}
+function pintarContenidos() {
+  const caja = $('#cont-filtros');
+  if (!caja || !INDEX) return;
+  caja.innerHTML = `
+    <input type="search" id="ct-q" placeholder="${esc(t('contBuscar'))}" aria-label="${esc(t('contBuscar'))}" autocomplete="off" value="${esc(CT.q)}">
+    <div class="cont-sels">
+      <label class="ctl"><span class="ctl-k">${t('contMedio')}</span><select id="ct-medio">${opcionesMedios()}</select></label>
+      <label class="ctl"><span class="ctl-k">${t('contTipo')}</span><select id="ct-tipo">
+        <option value="">${t('contTodosTipos')}</option>
+        ${Object.keys(INDEX.tipos || {}).map(k => `<option value="${k}">${esc(t('tipoNombre', k))}</option>`).join('')}
+      </select></label>
+      <label class="ctl"><span class="ctl-k">${t('cajonAno')}</span><select id="ct-ano"></select></label>
+      <label class="ctl"><span class="ctl-k">${t('cajonOrden')}</span><select id="ct-orden">
+        ${['rt', 'lk', 'vw', 'f', 'fa'].map(k => `<option value="${k}">${t('cajonOrdenOp', k)}</option>`).join('')}
+      </select></label>
+    </div>
+    <div class="cj-fila"><span class="ctl-k">${t('cajonPartido')}</span><div class="cj-chips" id="ct-partidos"></div></div>
+    <div class="cj-fila"><span class="ctl-k">${t('cajonSentido')}</span><div class="cj-chips" id="ct-dirs"></div></div>
+    <div class="cont-checks">
+      <label class="cj-check"><input type="checkbox" id="ct-pol"${CT.soloPol ? ' checked' : ''}> ${t('cajonSoloPol')}</label>
+      <label class="cj-check" id="ct-todo-l"><input type="checkbox" id="ct-todo"${CT.todo ? ' checked' : ''}> <span id="ct-todo-t"></span></label>
+    </div>`;
+  $('#ct-medio').value = CT.medio;
+  $('#ct-tipo').value = CT.tipo;
+  $('#ct-orden').value = CT.orden;
+  pintarContenidosLista();
+}
+let contTurno = 0;
+async function pintarContenidosLista() {
+  const lista = $('#cont-lista');
+  if (!lista || !INDEX || !$('#ct-partidos')) return;
+  const meta = CT.medio ? metaDe(CT.medio) : null;
+  $('#ct-todo-l').hidden = !meta;
+  if (meta) $('#ct-todo-t').textContent = t('contTodo', nf(meta.muestreados));
+  const corte = nf(100);
+  $('#cont-hint').innerHTML = meta && CT.todo ? t('contHintTodo', esc(meta.nombre), nf(meta.muestreados))
+    : meta ? t('contHintMedio', esc(meta.nombre), nf(meta.virales), corte)
+    : t('contHint', nf(INDEX.totales.virales), corte, nf(INDEX.totales.muestreados));
+  escribeFiltrosContenidos();
+  const turno = ++contTurno;
+  let pool = null;
+  const necesitaCarga = (CT.medio && CT.todo) ? !TUITS.has(meta.handle) : !CONT;
+  if (necesitaCarga && !contError) {
+    lista.innerHTML = `<p class="empty">${t('contCargando')}</p>`;
+    $('#cont-res').innerHTML = '';
+  }
+  try { pool = await poolContenidos(); } catch (err) { pool = null; }
+  if (turno !== contTurno) return;
+  if (!pool) {
+    lista.innerHTML = `<p class="empty">${t(contError || (CT.medio && CT.todo) ? 'cajonError' : 'contCargando')}</p>`;
+    $('#cont-res').innerHTML = '';
+    $('#ct-partidos').innerHTML = $('#ct-dirs').innerHTML = $('#ct-ano').innerHTML = '';
+    $('#cont-mas').hidden = true;
+    return;
+  }
+  const terminos = normaliza(CT.q).split(/\s+/).filter(Boolean);
+  const anoDe = tw => (tw.f || '').slice(0, 4);
+  const handle = meta ? meta.handle.toLowerCase() : '';
+  const base = pool.filter(tw => (!CT.soloPol || tw.p)
+    && (!handle || tw.h.toLowerCase() === handle)
+    && (!CT.tipo || (metaDe(tw.h) || {}).tipo === CT.tipo)
+    && (!terminos.length || terminos.every(x => textoBusqueda(tw).includes(x))));
+  const cPart = {}, cDir = {}, cAno = {};
+  for (const tw of base) {
+    const okA = !CT.ano || anoDe(tw) === CT.ano, okP = !CT.partido || tw.p === CT.partido, okD = !CT.dir || tw.d === CT.dir;
+    if (okA && okD && tw.p) cPart[tw.p] = (cPart[tw.p] || 0) + 1;
+    if (okA && okP && tw.d) cDir[tw.d] = (cDir[tw.d] || 0) + 1;
+    if (okP && okD) cAno[anoDe(tw)] = (cAno[anoDe(tw)] || 0) + 1;
+  }
+  let ts = base.filter(tw => (!CT.ano || anoDe(tw) === CT.ano) && (!CT.partido || tw.p === CT.partido) && (!CT.dir || tw.d === CT.dir));
+  const o = CT.orden;
+  ts = ts.slice().sort((a, b) => o === 'f' ? (a.f < b.f ? 1 : a.f > b.f ? -1 : 0)
+    : o === 'fa' ? (a.f > b.f ? 1 : a.f < b.f ? -1 : 0) : (b[o] || 0) - (a[o] || 0));
+
+  const chip = (attr, val, txt, cuenta, cls) => {
+    const on = (attr === 'p' ? CT.partido : CT.dir) === val;
+    return `<button type="button" class="cj-chip ${cls || ''}${on ? ' is-on' : ''}" data-ct${attr}="${val}" aria-pressed="${on}">${txt}${cuenta != null ? ` <span>${nf(cuenta)}</span>` : ''}</button>`;
+  };
+  $('#ct-partidos').innerHTML = chip('p', '', t('cajonTodos'), null) +
+    PARTIDOS.filter(p => cPart[p] || p === CT.partido).map(p => chip('p', p, p, cPart[p] || 0, CHIP[p])).join('');
+  $('#ct-dirs').innerHTML = chip('d', '', t('cajonTodos'), null) +
+    ['beneficia', 'perjudica', 'neutro'].filter(d => cDir[d] || d === CT.dir)
+      .map(d => chip('d', d, t('cajonDir', d, ['PSOE', 'PP', 'Vox', 'Sumar'].includes(CT.partido) ? CT.partido : ''), cDir[d] || 0, DIRCHIP[d])).join('');
+  const anos = [...new Set([...Object.keys(cAno), CT.ano].filter(Boolean))].sort();
+  $('#ct-ano').innerHTML = `<option value="">${t('cajonTodosAnos')}</option>` +
+    anos.map(a => `<option value="${a}">${a} (${nf(cAno[a] || 0)})</option>`).join('');
+  $('#ct-ano').value = CT.ano;
+
+  $('#cont-res').innerHTML = htmlResumen(ts);
+  lista.innerHTML = ts.length
+    ? ts.slice(0, CT.n).map(tw => { const m = metaDe(tw.h); return tarjeta(tw, tw.h, m ? m.nombre : tw.h); }).join('')
+    : `<p class="empty">${t('cajonVacio')}</p>`;
+  const mas = $('#cont-mas');
+  mas.hidden = ts.length <= CT.n;
+  mas.textContent = t('loadMoreN', nf(ts.length - CT.n));
+}
+function iniciarContenidos() {
+  const caja = $('#cont-filtros');
+  let espera = 0;
+  caja.addEventListener('click', e => {
+    const p = e.target.closest('[data-ctp]');
+    if (p) { CT.partido = p.dataset.ctp; CT.n = PAGE; pintarContenidosLista(); return; }
+    const d = e.target.closest('[data-ctd]');
+    if (d) { CT.dir = d.dataset.ctd; CT.n = PAGE; pintarContenidosLista(); }
+  });
+  caja.addEventListener('input', e => {
+    if (e.target.id !== 'ct-q') return;
+    CT.q = e.target.value; CT.n = PAGE;
+    clearTimeout(espera);
+    espera = setTimeout(pintarContenidosLista, 150);
+  });
+  caja.addEventListener('change', e => {
+    const id = e.target.id;
+    if (id === 'ct-medio') {
+      CT.medio = e.target.value;
+      if (!CT.medio) CT.todo = false;
+    } else if (id === 'ct-tipo') {
+      CT.tipo = e.target.value;
+      const meta = CT.medio && metaDe(CT.medio);
+      if (meta && CT.tipo && meta.tipo !== CT.tipo) { CT.medio = ''; CT.todo = false; }
+      $('#ct-medio').innerHTML = opcionesMedios();
+      $('#ct-medio').value = CT.medio;
+    } else if (id === 'ct-ano') CT.ano = e.target.value;
+    else if (id === 'ct-orden') CT.orden = e.target.value;
+    else if (id === 'ct-pol') CT.soloPol = e.target.checked;
+    else if (id === 'ct-todo') CT.todo = e.target.checked;
+    else return;
+    CT.n = PAGE;
+    pintarContenidosLista();
+  });
+  $('#cont-mas').addEventListener('click', () => { CT.n += PAGE; pintarContenidosLista(); });
 }
 
 /* ---------- mapa de dispersión ----------
@@ -2084,7 +2281,7 @@ const ACCIONES_HISTORIA = {
   evolucion: () => irAlMapa({ play: true }),
   brecha: () => irAlMapa({ serie: 'ambas', b200: true }),
   viral: () => irAlMapa({ serie: 'viral' }),
-  top: () => { location.hash = '#/top'; }
+  psoe: () => { location.hash = '#/contenidos?partido=PSOE'; }
 };
 
 function pintarHistoria() {
@@ -2099,7 +2296,7 @@ function pintarHistoria() {
       h.nombre(h.izq.handle), pos(h.izq.publicado.posicion), pos(h.izq.viral.posicion),
       h.nombre(h.der.handle), pos(h.der.publicado.posicion), pos(h.der.viral.posicion)), accion: 'brecha' } : null,
     { k: 'hist3', lado: 'neu', cifra: `${r(h.vir)} %`, p: t('hist3P', r(h.pub), r(h.vir), nf(h.virI), nf(h.virD), fx(h.rI, 1), fx(h.rD, 1)), accion: 'viral' },
-    { k: 'hist4', lado: 'izq', cifra: `${r(pct(h.psoe, h.clasif))} %`, p: t('hist4P', r(pct(h.psoe, h.clasif)), nf(h.psoe), nf(h.resto), nf(h.perj), nf(h.ben), fx(h.perj / Math.max(1, h.ben), 1)), accion: 'top' }
+    { k: 'hist4', lado: 'izq', cifra: `${r(pct(h.psoe, h.clasif))} %`, p: t('hist4P', r(pct(h.psoe, h.clasif)), nf(h.psoe), nf(h.resto), nf(h.perj), nf(h.ben), fx(h.perj / Math.max(1, h.ben), 1)), accion: 'psoe' }
   ].filter(Boolean);
   caja.innerHTML = items.map((it, i) => `
     <li class="hallazgo lado-${it.lado}">
@@ -2238,7 +2435,9 @@ async function aplicarPaso(i) {
   mapaPeriodo = 'todo';
   mapaPartido = p.partido || '';
   sincronizarControles();
-  if (currentView === 'mapa' && location.hash.includes('?')) history.replaceState(null, '', '#/mapa');
+  // solo limpia el periodo de la URL del mapa: al arrancar en otra sección, su URL se respeta
+  const rutaHash = location.hash.replace(/^#\/?/, '').split('?')[0];
+  if (currentView === 'mapa' && (!rutaHash || rutaHash === 'mapa') && location.hash.includes('?')) history.replaceState(null, '', '#/mapa');
   renderMapa();
   pintarRelato();
 }
@@ -2482,14 +2681,7 @@ function pintarCajonLista() {
     [...new Set([...anos, CJ.ano].filter(Boolean))].sort().map(a => `<option value="${a}">${a} (${nf(cAno[a] || 0)})</option>`).join('');
   $('#cj-ano').value = CJ.ano;
 
-  let izq = 0, der = 0;
-  for (const tw of ts) {
-    const lado = empujeDe(tw.p, tw.d);
-    if (lado === 'izq') izq++;
-    else if (lado === 'der') der++;
-  }
-  const neu = ts.length - izq - der;
-  $('#cj-res').innerHTML = `<p>${t('cajonResumen', nf(ts.length), nf(izq), nf(der), nf(neu))}</p>`;
+  $('#cj-res').innerHTML = htmlResumen(ts);
   lista.innerHTML = ts.length
     ? (o === 'peso' ? listaPorGrupos(ts.slice(0, CJ.n), casillas, tw => tarjeta(tw, CJ.meta.handle, CJ.meta.nombre))
       : ts.slice(0, CJ.n).map(tw => tarjeta(tw, CJ.meta.handle, CJ.meta.nombre)).join(''))
@@ -2566,7 +2758,7 @@ function reRenderCurrent() {
   pintarStats();
   pintarRanking();
   if (currentView === 'medio' && currentMedioMeta && MEDIO) pintarMedio(currentMedioMeta);
-  if (currentView === 'top' && TOP) { pintarTopFiltros(); pintarTop(); }
+  if (currentView === 'contenidos') pintarContenidos();
   renderMapa();
   pintarHistoria();
   pintarRelato();
@@ -2727,11 +2919,9 @@ function watchSystemTheme() {
   pintarHistoria();
   iniciarRelato();
   iniciarCajon();
-  const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
-  if (h === 'top') { await cargarTop(); }
+  iniciarContenidos();
   route();
   // en pantallas estrechas el mapa se desplaza en horizontal: se abre centrado en el equilibrio
   const cw = $('.chart-wrap');
   if (cw && cw.scrollWidth > cw.clientWidth) cw.scrollLeft = (cw.scrollWidth - cw.clientWidth) / 2;
 })();
-window.addEventListener('hashchange', () => { if (location.hash.includes('top')) cargarTop(); });

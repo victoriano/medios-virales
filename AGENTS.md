@@ -102,6 +102,10 @@ respecto a PSOE, PP, Vox y Sumar, para el filtro por partido del mapa) a partir 
 y año que ya está en el repositorio. No necesita el taller, pero hay que repetirlo cada vez que se
 regeneren los datos.
 
+También `scripts/build_contenidos_data.py` saca `site/data/contenidos.json`, todos los tuits con 100 RT
+o más, que es lo que busca la sección Contenidos cuando no hay un medio elegido. Con un medio elegido,
+la web lee directamente sus ficheros por año. Tampoco necesita el taller y también hay que repetirlo.
+
 Por último, `scripts/build_tipos_data.py` añade a `index.json` el tipo de cada cuenta (prensa
 escrita, digital, televisión, programa de televisión, radio, programa de radio o agencia), que usa
 el filtro «Medios» del mapa. La clasificación es manual y vive en `data/tipos_medio.json`: un programa

@@ -125,14 +125,6 @@ index = {
 }
 json.dump(index, open(os.path.join(DATA, "index.json"), "w"), ensure_ascii=False, indent=1)
 
-top = [r for r in rows if r["partido"]]
-top.sort(key=lambda x: -int(x["retweets"]))
-json.dump([{
-    "h": r["handle"], "f": r["fecha"][:10], "t": r["texto"], "rt": int(r["retweets"]),
-    "lk": int(num(r["likes"], int)), "vw": int(num(r["views"], int)),
-    "p": r["partido"], "d": r["direccion"], "pc": num(r["partido_conf"]), "u": r["url"]
-} for r in top[:300]], open(os.path.join(DATA, "top.json"), "w"), ensure_ascii=False, separators=(",", ":"))
-
 print("medios indexados:", len(indice_medios))
 print("virales totales:", tot_virales)
 
