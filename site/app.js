@@ -851,6 +851,12 @@ Object.assign(I18N.es, {
   tdTipPend: v => `Tendencia: ${v} al año`,
   tdQuitar: nombre => `Quitar ${nombre}`,
   tdLleno: n => `Caben ${n} medios a la vez`,
+  tdPonerTodas: (n, cuentas) => `Poner las ${n} de «${cuentas}»`,
+  tdQuitarTodas: 'Quitar todos',
+  tdGrises: n => `y ${n} más en gris`,
+  tdTipMas: n => `y ${n} más`,
+  tdGrupoLado: 'Por orientación, según su índice',
+  ladoNombre: k => ({ izquierda: 'Izquierda', centro: 'Centro', derecha: 'Derecha' })[k],
   tdCargando: 'Cargando los datos…',
   tdError: 'No se han podido cargar los datos de tendencias.',
   tdSinDatos: 'Ningún medio tiene datos con estos filtros.',
@@ -912,6 +918,12 @@ Object.assign(I18N.en, {
   tdTipPend: v => `Trend: ${v} per year`,
   tdQuitar: nombre => `Remove ${nombre}`,
   tdLleno: n => `Up to ${n} outlets at once`,
+  tdPonerTodas: (n, cuentas) => `Add all ${n} in “${cuentas}”`,
+  tdQuitarTodas: 'Remove all',
+  tdGrises: n => `and ${n} more in grey`,
+  tdTipMas: n => `and ${n} more`,
+  tdGrupoLado: 'By leaning, from their index',
+  ladoNombre: k => ({ izquierda: 'Left', centro: 'Centre', derecha: 'Right' })[k],
   tdCargando: 'Loading data…',
   tdError: 'The trends data could not be loaded.',
   tdSinDatos: 'No outlet has data with these filters.',
@@ -1310,7 +1322,8 @@ const TD_MEDIDAS = ['rt_mediana', 'rt_media', 'lk_mediana', 'n', 'pct'];
 const TD_SUBS = ['todos', 'politicos', 'izq', 'der', 'PSOE+', 'PSOE-', 'PP+', 'PP-', 'Vox+', 'Vox-', 'Sumar+', 'Sumar-'];
 const TD_POS = { rt_mediana: 1, rt_media: 2, lk_mediana: 3 };
 const TD_MIN = { ano: 20, mes: 5 };   // tuits mínimos para dibujar una mediana o una media
-const TD_AUTO = 5, TD_MAX = 8;        // ocho colores categóricos, en orden fijo
+const TD_AUTO = 5, TD_MAX = 8;        // ocho colores categóricos, en orden fijo; a partir del noveno, en gris
+const TD_TOPE = 120;                  // cuántos medios caben a la vez en el gráfico
 const TD_PARAMS = { medida: 'medida', sub: 'tuits', gran: 'ver', cuentas: 'cuentas', destacar: 'destacar', noticias: 'noticias' };
 // noticias políticas que se pueden superponer: ninguna, los grandes eventos (elecciones
 // y corrupción, juntos o por separado), las de relevancia 5 o todas
@@ -1331,7 +1344,7 @@ function leeFiltrosTendencias(cadena) {
   const nt = usp.get('noticias');
   if (TD_NOTICIAS.includes(nt)) TD.noticias = nt;
   TD.log = usp.get('log') === '1';
-  if (sel) TD.sel = sel.split(',').filter(Boolean).slice(0, TD_MAX);
+  if (sel) TD.sel = sel.split(',').filter(Boolean).slice(0, TD_TOPE);
 }
 function escribeFiltrosTendencias() {
   const usp = new URLSearchParams();
@@ -1452,16 +1465,29 @@ function coloresTend(elegidos) {
   for (const k of elegidos) {
     if (TD_COLOR.has(k)) continue;
     const usados = new Set(TD_COLOR.values());
-    TD_COLOR.set(k, Array.from({ length: TD_MAX }, (_, i) => i + 1).find(i => !usados.has(i)) || 1);
+    TD_COLOR.set(k, Array.from({ length: TD_MAX }, (_, i) => i + 1).find(i => !usados.has(i)) || 0);
   }
-  return k => `var(--td-${TD_COLOR.get(k)})`;
+  const color = k => TD_COLOR.get(k) ? `var(--td-${TD_COLOR.get(k)})` : 'var(--td-gris)';
+  color.gris = k => !TD_COLOR.get(k);
+  return color;
 }
 function alternarTend(slug, anuales) {
   const sel = elegidosTend(anuales);
   const i = sel.indexOf(slug);
   if (i >= 0) sel.splice(i, 1);
-  else if (sel.length < TD_MAX) sel.push(slug);
+  else if (sel.length < TD_TOPE) sel.push(slug);
   TD.sel = sel;
+  pintarTendencias();
+}
+// poner en el gráfico todas las cuentas del filtro «Cuentas», o quitarlas todas
+function todasTend(anuales, poner) {
+  const sel = elegidosTend(anuales);
+  if (poner) {
+    // los ya elegidos conservan su color; el resto entra por orden de promedio
+    const nuevos = anuales.filter(s => s.media != null && !sel.includes(s.slug))
+      .sort((a, b) => b.media - a.media).map(s => s.slug);
+    TD.sel = [...sel, ...nuevos].slice(0, TD_TOPE);
+  } else TD.sel = [];
   pintarTendencias();
 }
 
@@ -1472,7 +1498,7 @@ function pintarTendencias() {
   const cuentas = ['todos', 'generalistas', 'programas'];
   const base = { todos: 'mapaCuentasTodas', generalistas: 'mapaCuentasGen', programas: 'mapaCuentasProg' };
   const cuenta = f => INDEX.medios.filter(m => pasaCuentas(m, f)).length;
-  if (!filtrosMapa().includes(TD.cuentas)) TD.cuentas = 'todos';
+  if (!filtrosMapa().includes(TD.cuentas) && !LADOS_CUENTAS.includes(TD.cuentas)) TD.cuentas = 'todos';
   caja.innerHTML = `
     <label class="ctl"><span class="ctl-k">${t('tdMedida')}</span><select id="td-medida">
       ${TD_MEDIDAS.map(k => `<option value="${k}">${esc(t('tdMedidaOp', k))}</option>`).join('')}
@@ -1484,6 +1510,7 @@ function pintarTendencias() {
     </select></label>
     <label class="ctl"><span class="ctl-k">${t('tdCuentas')}</span><select id="td-cuentas">
       ${cuentas.map(k => `<option value="${k}">${esc(t(base[k], cuenta(k)))}</option>`).join('')}
+      <optgroup label="${esc(t('tdGrupoLado'))}">${LADOS_CUENTAS.map(k => `<option value="${k}">${esc(t('mapaTipoOpcion', t('ladoNombre', k), cuenta(k)))}</option>`).join('')}</optgroup>
       <optgroup label="${esc(t('mapaTipoGrupo'))}">${tiposMapa().map(k => `<option value="${k}">${esc(t('mapaTipoOpcion', t('tipoNombre', k), cuenta(k)))}</option>`).join('')}</optgroup>
     </select></label>
     <label class="ctl"><span class="ctl-k">${t('tdNoticias')}</span><select id="td-noticias">
@@ -1525,25 +1552,38 @@ function pintarTendencias() {
   pintarTablaTend(anuales, elegidos, color);
 }
 
+// el nombre de la opción de «Cuentas» elegida, sin el recuento
+function opcionCuentasTend() {
+  const op = $('#td-cuentas') && $('#td-cuentas').selectedOptions[0];
+  return op ? op.textContent.replace(/\s*\(\d+\)\s*$/, '').trim() : '';
+}
 function pintarElegidosTend(anuales, elegidos, color) {
   const porSlug = new Map(anuales.map(s => [s.slug, s]));
   const fuera = anuales.filter(s => !elegidos.includes(s.slug)).sort((a, b) => a.m.nombre.localeCompare(b.m.nombre, 'es'));
-  const chips = elegidos.map(k => {
+  const chips = elegidos.filter(k => !color.gris(k)).map(k => {
     const s = porSlug.get(k);
     return `<button type="button" class="td-chip" data-quita="${esc(k)}" aria-label="${esc(t('tdQuitar', s.m.nombre))}">
       <i style="background:${color(k)}"></i>${esc(s.m.nombre)}<span aria-hidden="true">×</span></button>`;
   }).join('');
-  const lleno = elegidos.length >= TD_MAX;
+  const lleno = elegidos.length >= TD_TOPE;
+  // con muchos medios solo se enseñan las fichas de los que tienen color
+  const grises = elegidos.filter(k => color.gris(k)).length;
+  const masGris = grises ? `<span class="td-mas">${esc(t('tdGrises', grises))}</span>` : '';
+  const conDatos = anuales.filter(s => s.media != null);
+  const faltan = conDatos.filter(s => !elegidos.includes(s.slug)).length;
+  const masivos = `<span class="td-masivo">
+    ${faltan ? `<button type="button" class="td-auto" data-todas="1">${esc(t('tdPonerTodas', conDatos.length, opcionCuentasTend()))}</button>` : ''}
+    ${elegidos.length ? `<button type="button" class="td-auto" data-todas="0">${esc(t('tdQuitarTodas'))}</button>` : ''}</span>`;
   const destacar = `<div class="td-destacar"><span class="ctl-k">${t('tdDestacar', TD_AUTO)}</span>
     <div class="seg" role="group" aria-label="${esc(t('tdDestacar', TD_AUTO))}">${TD_DESTACAR.map(k => {
       const on = !TD.sel && TD.destacar === k;
       return `<button type="button" data-destacar="${k}" class="${on ? 'is-on' : ''}" aria-pressed="${on}">${t('tdDestacarOp', k, TD_AUTO)}</button>`;
     }).join('')}</div></div>`;
-  $('#td-medios').innerHTML = `${destacar}<span class="ctl-k">${t('tdElegidos')}</span>${chips}
+  $('#td-medios').innerHTML = `${destacar}<span class="ctl-k">${t('tdElegidos')}</span>${chips}${masGris}
     <select id="td-anadir" aria-label="${esc(t('tdAnadir'))}"${lleno ? ' disabled' : ''}>
-      <option value="">${esc(lleno ? t('tdLleno', TD_MAX) : t('tdAnadir'))}</option>
+      <option value="">${esc(lleno ? t('tdLleno', TD_TOPE) : t('tdAnadir'))}</option>
       ${fuera.map(s => `<option value="${esc(s.slug)}">${esc(s.m.nombre)}</option>`).join('')}
-    </select>
+    </select>${masivos}
 `;
 }
 
@@ -1648,11 +1688,13 @@ function pintarGraficoTend(series, elegidos, color) {
   }
   const porSlug = new Map(series.map(s => [s.slug, s]));
   const etiquetas = [];
-  const color_ = elegidos.map(k => {
+  const enOrden = [...elegidos].sort((a, b) => color.gris(b) - color.gris(a));
+  const color_ = enOrden.map(k => {
     const s = porSlug.get(k);
     if (!s) return '';
     const d = camino(s.valores);
     const c = color(k);
+    if (color.gris(k)) return `<g class="td-linea td-gris" data-h="${esc(k)}"><path class="td-hit" d="${d}"></path><path class="td-trazo" d="${d}" stroke="${c}"></path></g>`;
     // en los años, un punto por valor; un punto suelto entre huecos también se ve en los meses
     const puntos = s.valores.map((v, i) => {
       if (v == null || py(v) == null) return '';
@@ -1722,7 +1764,9 @@ function tipTend(ev) {
     const filas = TD_GEO.elegidos.map(h => TD_GEO.series.get(h)).filter(Boolean)
       .sort((a, b) => (b.valores[i] ?? -1) - (a.valores[i] ?? -1));
     if (!filas.length) { ocultarTipTend(); return; }
-    cuerpo = filas.map(s => fila(s, TD_GEO.color(s.slug))).join('');
+    const MAXF = 10;
+    cuerpo = filas.slice(0, MAXF).map(s => fila(s, TD_GEO.color(s.slug))).join('')
+      + (filas.length > MAXF ? `<div class="tm">${t('tdTipMas', filas.length - MAXF)}</div>` : '');
   }
   tip.innerHTML = `<div class="tt">${esc(etiqueta)}</div>${cuerpo}`;
   colocarTipTend(ev);
@@ -1952,6 +1996,8 @@ function iniciarTendencias() {
   $('#td-medios').addEventListener('click', e => {
     const q = e.target.closest('[data-quita]');
     if (q) { alternarTend(q.dataset.quita, anuales()); return; }
+    const td = e.target.closest('[data-todas]');
+    if (td) { todasTend(anuales(), td.dataset.todas === '1'); return; }
     const d = e.target.closest('[data-destacar]');
     if (d) {
       TD.destacar = d.dataset.destacar;
@@ -2534,7 +2580,18 @@ const tiposMapa = () => Object.keys((INDEX && INDEX.tipos) || {});
 const filtrosMapa = () => ['todos', 'generalistas', 'programas', ...tiposMapa()];
 const tipoFiltro = () => tiposMapa().includes(mapaFiltro) ? mapaFiltro : '';
 const esPrograma = m => String((m && m.tipo) || '').startsWith('programa');
+/* Orientación de cada cuenta según su índice publicado en toda la serie (de −1,
+   todo a la izquierda, a +1, todo a la derecha): izquierda por debajo de −0,2,
+   derecha por encima de +0,2 y centro entre medias. Solo las cuentas que superan
+   el corte de inclusión; el resto no entra en ninguna de las tres. */
+const LADOS_CUENTAS = ['izquierda', 'centro', 'derecha'];
+const LADO_CORTE = 0.2;
+function ladoCuenta(m) {
+  if (!m || !m.incluido || m.indice == null) return null;
+  return m.indice < -LADO_CORTE ? 'izquierda' : m.indice > LADO_CORTE ? 'derecha' : 'centro';
+}
 function pasaCuentas(m, filtro = mapaFiltro) {
+  if (LADOS_CUENTAS.includes(filtro)) return ladoCuenta(m) === filtro;
   if (filtro === 'generalistas') return !esPrograma(m);
   if (filtro === 'programas') return esPrograma(m);
   if (tiposMapa().includes(filtro)) return m.tipo === filtro;
