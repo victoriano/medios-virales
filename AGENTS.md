@@ -118,6 +118,11 @@ de cada noticia sale de su categoría en la fuente («Elecciones/resultados» y 
 `data/eventos_2018_2026.csv` del repositorio `victoriano/barometro-cis-viz`; si se amplía allí, se vuelve
 a copiar y se repite el script. Es una selección editorial de acontecimientos, no un dato del corpus.
 
+El filtro «Cuentas» de Tendencias añade además la orientación de cada cuenta, calculada en la web
+(`ladoCuenta` en `site/app.js`) con su índice de toda la serie: izquierda por debajo de −0,2, derecha por
+encima de +0,2 y centro entre medias, solo para las cuentas incluidas. Es una lectura del propio índice,
+no una etiqueta editorial.
+
 Por último, `scripts/build_tipos_data.py` añade a `index.json` el tipo de cada cuenta (prensa
 escrita, digital, televisión, programa de televisión, radio, programa de radio o agencia), que usa
 el filtro «Medios» del mapa. La clasificación es manual y vive en `data/tipos_medio.json`: un programa
