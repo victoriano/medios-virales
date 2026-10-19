@@ -52,6 +52,19 @@ class SiteDataTest(unittest.TestCase):
                     self.assertEqual((lados[0], lados[1]), (izq, der), f"{clave} {medio['handle']} {serie}")
                     self.assertEqual(lados[2], medio[serie]["rt_mediana"], f"{clave} {medio['handle']} {serie}")
 
+    def test_contenidos_holds_every_viral_tweet(self):
+        """contenidos.json trae exactamente los tuits de 100 RT o más de cada medio."""
+        contenidos = json.loads((DATA / "contenidos.json").read_text())
+        tweets = contenidos["tweets"]
+        self.assertEqual(len(tweets), self.index["totales"]["virales"])
+        self.assertTrue(all(tw["rt"] >= contenidos["corte"] for tw in tweets))
+        self.assertEqual(len({tw["id"] for tw in tweets}), len(tweets))
+        por_handle = {}
+        for tw in tweets:
+            por_handle[tw["h"]] = por_handle.get(tw["h"], 0) + 1
+        for medio in self.index["medios"]:
+            self.assertEqual(por_handle.get(medio["handle"], 0), medio["virales"], medio["handle"])
+
     def test_periods_cover_full_series_xv_and_each_year(self):
         self.assertEqual(list(self.polarizacion["periodos"]), EXPECTED_PERIODS)
         full = self.polarizacion["periodos"]["todo"]

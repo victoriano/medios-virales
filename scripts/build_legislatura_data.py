@@ -400,14 +400,6 @@ def main():
     }
     (DATA / "index.json").write_text(json.dumps(index, ensure_ascii=False, separators=(",", ":")))
 
-    top = sorted((row for row in rows if row.get("politica") and row["retweets"] >= 100),
-                 key=lambda row: -int(row["retweets"]))[:300]
-    (DATA / "top.json").write_text(json.dumps([{
-        "h": row["handle"], "f": row["fecha"][:10], "t": row["texto"], "rt": int(row["retweets"]),
-        "lk": int(row.get("likes") or 0), "rp": int(row.get("replies") or 0), "vw": int(row.get("views") or 0),
-        "p": detail_party(row.get("partido")), "d": row.get("direccion") or "", "pc": float(row.get("conf") or 0), "u": row["url"],
-    } for row in top], ensure_ascii=False, separators=(",", ":")))
-
     html = SITE / "index.html"
     if html.exists():
         text = html.read_text()

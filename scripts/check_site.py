@@ -757,11 +757,22 @@ async def main():
         await pg.select_option("#mapa-periodo", "todo")
         await pg.wait_for_timeout(300)
 
-        # top
+        # contenidos: la ruta antigua #/top lleva aquí, y el buscador filtra
         await pg.goto(URL + "#/top", wait_until="networkidle")
-        await pg.wait_for_timeout(900)
-        print("tarjetas en top:", await pg.locator("#top-list article.tweet").count())
-        await pg.screenshot(path=f"{OUT}/5-top.png", full_page=True)
+        await pg.wait_for_selector("#cont-lista article.tweet")
+        if "#/contenidos" not in pg.url:
+            errores.append(f"[check] #/top no redirige a contenidos: {pg.url}")
+        n_cont = await pg.locator("#cont-lista article.tweet").count()
+        print("tarjetas en contenidos:", n_cont)
+        await pg.fill("#ct-q", "begoña")
+        await pg.wait_for_timeout(500)
+        res_q = await pg.inner_text("#cont-res")
+        print("contenidos con búsqueda:", res_q, "|", pg.url)
+        if "q=" not in pg.url:
+            errores.append(f"[check] la búsqueda no queda en la URL: {pg.url}")
+        await pg.fill("#ct-q", "")
+        await pg.wait_for_timeout(300)
+        await pg.screenshot(path=f"{OUT}/5-contenidos.png", full_page=True)
 
         # metodo
         await pg.goto(URL + "#/metodo", wait_until="networkidle")
@@ -851,16 +862,16 @@ async def main():
         for esperado in ["All tweets", "100+ RT", "tweets with clear side", "median retweets"]:
             if esperado not in tip_en:
                 errores.append(f"[check] tooltip sin traducir ({esperado}): {tip_en[:220]!r}")
-        # top: cargar y comprobar filtros y titulo
-        await pg.goto(URL + "#/top", wait_until="networkidle")
-        await pg.wait_for_timeout(900)
-        top_h2 = (await pg.locator("#view-top h2").inner_text()).strip()
-        top_all = await pg.eval_on_selector("#tp option[value='']", "el => el.textContent")
-        print("top titulo EN:", top_h2, "| all party:", top_all)
-        if "viral tweets" not in top_h2.lower():
-            errores.append(f"[check] top titulo sin traducir: {top_h2!r}")
-        if top_all != "All parties":
-            errores.append(f"[check] top filtro sin traducir: {top_all!r}")
+        # contenidos: título y filtros traducidos
+        await pg.goto(URL + "#/contenidos", wait_until="networkidle")
+        await pg.wait_for_selector("#ct-medio")
+        cont_h2 = (await pg.locator("#view-contenidos h2").inner_text()).strip()
+        cont_all = await pg.eval_on_selector("#ct-medio option[value='']", "el => el.textContent")
+        print("contenidos titulo EN:", cont_h2, "| all outlets:", cont_all)
+        if cont_h2 != "Content":
+            errores.append(f"[check] contenidos titulo sin traducir: {cont_h2!r}")
+        if cont_all != "All outlets":
+            errores.append(f"[check] contenidos filtro sin traducir: {cont_all!r}")
         # metodo en ingles
         await pg.goto(URL + "#/metodo", wait_until="networkidle")
         await pg.wait_for_timeout(500)
