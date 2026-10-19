@@ -35,7 +35,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/fraunces-normal-400-900.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fonts.css?v=202610051200">
-<link rel="stylesheet" href="styles.css?v=202610191330">
+<link rel="stylesheet" href="styles.css?v=202610191700">
 </head>
 <body>
 <nav class="nav" aria-label="Secciones">
@@ -80,6 +80,7 @@
       <div class="panel-head">
         <h2 data-i18n="rankingTitle">Ranking de medios</h2>
         <input type="search" id="q" data-i18n-placeholder="searchPlaceholder" data-i18n-aria="ariaSearch" placeholder="Buscar medio…" autocomplete="off" aria-label="Buscar medio">
+        <button type="button" class="descarga" data-descarga="ranking" data-i18n="descargar">↓ Descargar imagen</button>
       </div>
       <p class="hint" data-i18n-html="rankingHint">
         Solo aparecen medios que se han significado a favor o en contra en más de 50 tuits durante toda la muestra. <strong>De cada 10 con lado claro</strong> indica cuántos van a la izquierda y cuántos a la derecha. <strong>% políticos</strong> muestra qué parte de todos los tuits muestreados fue clasificada como política. Pulsa una fila para leer sus tuits.
@@ -115,8 +116,9 @@
         <svg id="td-graf" role="img" data-i18n-aria="tdAria" aria-label="Evolución de cada medio a lo largo del tiempo"></svg>
         <div class="tip" id="td-tip" hidden></div>
       </div>
+      <div class="descarga-fila"><button type="button" class="descarga" data-descarga="tendencias" data-i18n="descargar">↓ Descargar imagen</button></div>
       <p class="foot-note" id="td-nota"></p>
-      <h3 class="td-sub" data-i18n="tdTablaTitulo">Año a año</h3>
+      <div class="td-sub-fila"><h3 class="td-sub" data-i18n="tdTablaTitulo">Año a año</h3><button type="button" class="descarga" data-descarga="td-tabla" data-i18n="descargar">↓ Descargar imagen</button></div>
       <p class="hint td-tabla-hint" data-i18n="tdTablaHint">Pulsa un medio para añadirlo al gráfico o quitarlo. Pulsa la cabecera de un año para ordenar.</p>
       <div class="table-scroll">
         <table class="rank td-tabla" id="td-tabla"><thead></thead><tbody></tbody></table>
@@ -202,6 +204,7 @@
                 <label class="ajustes-check"><input type="checkbox" id="mapa-b200"> <span data-i18n="mapaFiltroB200">Solo brecha fiable: 200 con lado en cada serie</span></label>
               </div>
             </details>
+            <button type="button" class="descarga" data-descarga="mapa" data-i18n="descargar">↓ Descargar imagen</button>
             <button type="button" class="relato-volver" id="relato-volver" data-i18n="relatoVolver">▶ Ver la historia</button>
           </div>
           <p class="resumen" id="mapa-resumen"></p>
@@ -305,6 +308,6 @@
   </div>
 </footer>
 
-<script src="app.js?v=202610191330"></script>
+<script src="app.js?v=202610191700"></script>
 </body>
 </html>
