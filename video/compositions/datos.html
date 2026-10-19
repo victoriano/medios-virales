@@ -1,0 +1,42 @@
+<template id="datos-template">
+  <div data-composition-id="datos" data-width="1920" data-height="1080" data-duration="20.52" class="sc">
+
+    <div class="content">
+      <p class="kick" id="d-k">Los datos</p>
+      <h2 class="h2" id="d-t">Las cuentas de X de los medios, una a una</h2>
+      <div class="stats">
+        <div class="stat"><div class="num" data-to="66">0</div><div class="lab">cuentas de medios y programas en seguimiento</div></div>
+        <div class="stat"><div class="num" data-to="607571">0</div><div class="lab">tuits en la serie histórica 2018–2026<br><small>muestra de hasta 100 por medio y mes</small></div></div>
+        <div class="stat hl"><div class="num" data-to="21489">0</div><div class="lab">tuits virales del último año<br><small>todos los que pasaron de 100 retuits</small></div></div>
+      </div>
+    </div>
+    <style>
+
+.stats{display:flex;gap:40px;margin-top:40px}
+.stat{flex:1;background:var(--panel);border:3px solid var(--ink);border-radius:6px;box-shadow:8px 8px 0 var(--ink);padding:44px 40px;display:flex;flex-direction:column;gap:18px}
+.stat.hl{background:var(--hl)}
+.num{font:800 112px/1 var(--f-display);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.lab{font:500 30px/1.3 var(--f-sans)}
+.lab small{display:block;margin-top:8px;font:500 22px/1.3 var(--f-mono);color:var(--muted)}
+.stat.hl .lab small{color:var(--ink)}
+
+    </style>
+    <script>
+      (function(){
+      const tl = gsap.timeline({ paused: true }); const D=20.52;
+function fmt(n){n=Math.round(n);return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,".");}
+      tl.from("#d-k",{y:20,opacity:0,duration:.4,ease:"power3.out"},.15);
+      tl.from("#d-t",{y:50,opacity:0,duration:.6,ease:"expo.out"},.25);
+      tl.from(".stat",{y:80,opacity:0,duration:.6,stagger:.25,ease:"power3.out"},.6);
+      document.querySelectorAll('[data-composition-id="datos"] .num').forEach(function(el,i){
+        const o={v:0}, to=+el.dataset.to;
+        tl.to(o,{v:to,duration:1.6,ease:"power2.out",onUpdate:function(){el.textContent=fmt(o.v)}},.8+i*.25);
+      });
+      tl.to(".content",{x:-140,opacity:0,duration:.4,ease:"power2.in"},D-.45);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["datos"] = tl;
+      })();
+    </script>
+  </div>
+</template>

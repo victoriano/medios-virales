@@ -1,0 +1,52 @@
+<template id="indice-template">
+  <div data-composition-id="indice" data-width="1920" data-height="1080" data-duration="19.56" class="sc">
+
+    <div class="content">
+      <p class="kick" id="i-k">El índice</p>
+      <h2 class="h2" id="i-t">Cada tuit con lado claro suma a un lado</h2>
+      <div class="sides">
+        <div class="side izq" id="i-l"><div class="sh">Izquierda</div><p>beneficia a PSOE o Sumar</p><p>perjudica a PP o Vox</p></div>
+        <div class="side der" id="i-r"><div class="sh">Derecha</div><p>beneficia a PP o Vox</p><p>perjudica a PSOE o Sumar</p></div>
+      </div>
+      <div class="scale" id="i-s">
+        <div class="bar"><div class="knob" id="i-knob"></div></div>
+        <div class="ticks"><span>−1 · todo a la izquierda</span><span>0</span><span>todo a la derecha · +1</span></div>
+      </div>
+      <p class="foot" id="i-f">Índice = (derecha − izquierda) ÷ total con lado claro. Es una decisión de modelado, no una verdad.</p>
+    </div>
+    <style>
+
+.sides{display:flex;gap:40px;margin-top:20px}
+.side{flex:1;border:3px solid var(--ink);border-radius:6px;box-shadow:8px 8px 0 var(--ink);padding:30px 40px}
+.side.izq{background:var(--chip-psoe)} .side.der{background:var(--chip-pp)}
+.sh{font:800 60px/1 var(--f-display);margin-bottom:16px}
+.izq .sh{color:var(--izq)} .der .sh{color:var(--der)}
+.side p{font:500 34px/1.45 var(--f-sans)}
+.scale{margin-top:36px}
+.bar{position:relative;height:36px;border:3px solid var(--ink);border-radius:20px;background:linear-gradient(90deg,var(--izq),#e9e2d4 50%,var(--der))}
+.knob{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:var(--panel);border:4px solid var(--ink)}
+.ticks{display:flex;justify-content:space-between;margin-top:14px;font:500 24px/1 var(--f-mono);color:var(--muted)}
+.foot{font:italic 400 28px/1.4 var(--f-serif);color:var(--muted);margin-top:10px}
+
+    </style>
+    <script>
+      (function(){
+      const tl = gsap.timeline({ paused: true }); const D=19.56;
+
+      tl.from("#i-k",{y:20,opacity:0,duration:.4,ease:"power3.out"},.15);
+      tl.from("#i-t",{y:50,opacity:0,duration:.6,ease:"expo.out"},.25);
+      tl.from("#i-l",{x:-80,opacity:0,duration:.55,ease:"power3.out"},2.4);
+      tl.from("#i-r",{x:80,opacity:0,duration:.55,ease:"power3.out"},6.6);
+      tl.from("#i-s",{scaleX:.2,opacity:0,duration:.6,ease:"expo.out"},8.0);
+      tl.to("#i-knob",{x:-672,duration:.8,ease:"power2.inOut"},9.0);
+      tl.to("#i-knob",{x:672,duration:1.1,ease:"power2.inOut"},10.6);
+      tl.to("#i-knob",{x:0,duration:.7,ease:"power2.inOut"},12.0);
+      tl.from("#i-f",{opacity:0,y:20,duration:.5,ease:"power2.out"},9.0);
+      tl.to(".content",{y:-60,opacity:0,duration:.4,ease:"power2.in"},D-.45);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["indice"] = tl;
+      })();
+    </script>
+  </div>
+</template>

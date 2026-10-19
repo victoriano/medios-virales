@@ -1,0 +1,51 @@
+<template id="ejemplo-template">
+  <div data-composition-id="ejemplo" data-width="1920" data-height="1080" data-duration="16.6" class="sc">
+
+    <div class="content ej">
+      <p class="kick" id="e-k">Un ejemplo real</p>
+      <div class="row">
+        <div class="tweet" id="e-tw">
+          <div class="who"><img src="logos/abc_es.webp"><div><b>ABC.es</b><span>@abc_es · 23 ene 2026</span></div></div>
+          <p class="txt">Adif compró piedra no homologada para el AVE a la cantera que empleaba a la mujer de Koldo</p>
+          <div class="met">3.682 retuits · 7.950 me gusta</div>
+        </div>
+        <div class="verdict">
+          <div class="chip psoe" id="e-c1">PSOE</div>
+          <div class="chip perj" id="e-c2">perjudica</div>
+          <p class="why" id="e-why">Critica una decisión del Gobierno, así que cuenta como PSOE.<br><b>Suma a la derecha.</b></p>
+        </div>
+      </div>
+    </div>
+    <style>
+
+.row{display:flex;gap:80px;align-items:center;margin-top:30px}
+.tweet{width:980px;background:var(--panel);border:3px solid var(--ink);border-radius:10px;box-shadow:10px 10px 0 var(--ink);padding:44px 48px;display:flex;flex-direction:column;gap:26px}
+.who{display:flex;gap:20px;align-items:center}
+.who img{width:84px;height:84px;border-radius:50%;border:2px solid var(--ink)}
+.who b{display:block;font:700 34px/1.2 var(--f-sans)} .who span{font:500 24px/1.2 var(--f-mono);color:var(--muted)}
+.txt{font:500 46px/1.3 var(--f-serif)}
+.met{font:500 24px/1 var(--f-mono);color:var(--muted)}
+.verdict{display:flex;flex-direction:column;gap:24px;align-items:flex-start}
+.chip{font:700 52px/1 var(--f-mono);padding:20px 30px;border:3px solid var(--ink);border-radius:6px;box-shadow:6px 6px 0 var(--ink)}
+.chip.psoe{background:var(--chip-psoe);color:var(--izq)} .chip.perj{background:var(--chip-perj);color:var(--perj)}
+.why{font:400 32px/1.4 var(--f-serif);max-width:560px;margin-top:10px}
+.why b{font-family:var(--f-sans);color:var(--der)}
+
+    </style>
+    <script>
+      (function(){
+      const tl = gsap.timeline({ paused: true }); const D=16.6;
+
+      tl.from("#e-k",{y:20,opacity:0,duration:.4,ease:"power3.out"},.15);
+      tl.from("#e-tw",{x:-120,opacity:0,duration:.7,ease:"expo.out"},.3);
+      tl.from("#e-c1",{scale:1.8,rotation:-8,opacity:0,duration:.45,ease:"back.out(2)"},8.2);
+      tl.from("#e-c2",{scale:1.8,rotation:6,opacity:0,duration:.45,ease:"back.out(2)"},9.6);
+      tl.from("#e-why",{y:30,opacity:0,duration:.5,ease:"power2.out"},6.4);
+      tl.to(".content",{x:-140,opacity:0,duration:.4,ease:"power2.in"},D-.45);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["ejemplo"] = tl;
+      })();
+    </script>
+  </div>
+</template>
