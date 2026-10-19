@@ -681,7 +681,7 @@ Object.assign(I18N.es, {
   cajonAno: 'Año',
   cajonTodosAnos: 'Todos los años',
   cajonOrden: 'Orden',
-  cajonOrdenOp: k => ({ rt: 'Más retuits', lk: 'Más me gusta', vw: 'Más vistas', f: 'Más recientes', fa: 'Más antiguos' })[k],
+  cajonOrdenOp: k => ({ peso: 'Lo que más pesa en su lado', rt: 'Más retuits', lk: 'Más me gusta', vw: 'Más vistas', f: 'Más recientes', fa: 'Más antiguos' })[k],
   cajonSoloPol: 'Solo tuits políticos',
   cajonDir: (d, p) => ({ beneficia: p ? `A favor ${delP(p)}` : 'A favor', perjudica: p ? `En contra ${delP(p)}` : 'En contra', neutro: 'Neutros' })[d],
   cajonResumen: (n, izq, der, neu) => `<strong>${n}</strong> tuits · <span class="c-izq">${izq} a la izquierda</span> · <span class="c-der">${der} a la derecha</span> · ${neu} sin lado`,
@@ -690,6 +690,21 @@ Object.assign(I18N.es, {
     : `Recorrido: del ${p0} % de tuits con lado a la derecha en ${a0} al ${p1} % en ${a1}.`,
   cajonVacio: 'Ningún tuit coincide con estos filtros.',
   cajonMas: n => `Ver ${n} más`,
+  dgMotivo: (p, d, v) => d === 'perjudica' ? `critica ${alP(p)} (${v})` : `habla bien ${delP(p)} (${v})`,
+  dgTuits: n => `${n}\u00a0tuits`,
+  dgModo: m => m === 'n' ? 'Tuits' : '%',
+  dgModoAria: 'Ver en número de tuits o en porcentaje',
+  dgFrase: (lado, pc, top) => `Sale a la <strong>${lado === 'izq' ? 'izquierda' : 'derecha'}</strong> sobre todo porque ${top.join(' y ')}.`,
+  dgCorto: d => d === 'perjudica' ? 'contra' : 'a favor',
+  dgTitulo: (p, d, n) => `${n} tuits ${d === 'perjudica' ? 'en contra' : 'a favor'} ${delP(p)}`,
+  dgLados: (i, d) => `${i} % a la izquierda y ${d} % a la derecha`,
+  dgEjeIzq: 'lo lleva a la izquierda',
+  dgEjeDer: 'lo lleva a la derecha',
+  dgNota: n => `Sobre ${n} tuits con lado claro.`,
+  dgPulsa: 'Pulsa una barra para leer esos tuits.',
+  dgGrupo: (p, d) => d === 'perjudica' ? `Critica ${alP(p)}` : `Habla bien ${delP(p)}`,
+  dgGrupoSin: 'Sin lado claro',
+  dgGrupoN: (n, pc) => pc == null ? `${n} tuits` : `${n} tuits · ${pc} % de los que tienen lado`,
 });
 Object.assign(I18N.en, {
   ctlEje: 'Axis',
@@ -742,7 +757,7 @@ Object.assign(I18N.en, {
   cajonAno: 'Year',
   cajonTodosAnos: 'All years',
   cajonOrden: 'Sort',
-  cajonOrdenOp: k => ({ rt: 'Most retweets', lk: 'Most likes', vw: 'Most views', f: 'Newest', fa: 'Oldest' })[k],
+  cajonOrdenOp: k => ({ peso: 'What weighs most in its lean', rt: 'Most retweets', lk: 'Most likes', vw: 'Most views', f: 'Newest', fa: 'Oldest' })[k],
   cajonSoloPol: 'Political tweets only',
   cajonDir: (d, p) => ({ beneficia: p ? `For ${p}` : 'For', perjudica: p ? `Against ${p}` : 'Against', neutro: 'Neutral' })[d],
   cajonResumen: (n, izq, der, neu) => `<strong>${n}</strong> tweets · <span class="c-izq">${izq} left</span> · <span class="c-der">${der} right</span> · ${neu} no side`,
@@ -751,6 +766,21 @@ Object.assign(I18N.en, {
     : `Path: from ${p0} % of clear side tweets on the right in ${a0} to ${p1} % in ${a1}.`,
   cajonVacio: 'No tweet matches these filters.',
   cajonMas: n => `Show ${n} more`,
+  dgMotivo: (p, d, v) => d === 'perjudica' ? `criticises ${p} (${v})` : `speaks well of ${p} (${v})`,
+  dgTuits: n => `${n}\u00a0tweets`,
+  dgModo: m => m === 'n' ? 'Tweets' : '%',
+  dgModoAria: 'Show as number of tweets or as a percentage',
+  dgFrase: (lado, pc, top) => `Leans <strong>${lado === 'izq' ? 'left' : 'right'}</strong> mainly because it ${top.join(' and ')}.`,
+  dgCorto: d => d === 'perjudica' ? 'against' : 'for',
+  dgTitulo: (p, d, n) => `${n} tweets ${d === 'perjudica' ? 'against' : 'for'} ${p}`,
+  dgLados: (i, d) => `${i} % left and ${d} % right`,
+  dgEjeIzq: 'pulls it left',
+  dgEjeDer: 'pulls it right',
+  dgNota: n => `Out of ${n} tweets with a clear side.`,
+  dgPulsa: 'Click a bar to read those tweets.',
+  dgGrupo: (p, d) => d === 'perjudica' ? `Criticises ${p}` : `Speaks well of ${p}`,
+  dgGrupoSin: 'No clear side',
+  dgGrupoN: (n, pc) => pc == null ? `${n} tweets` : `${n} tweets · ${pc} % of those with a side`,
 });
 Object.assign(I18N.es, {
   contTitulo: 'Contenidos',
@@ -826,6 +856,100 @@ function reparto(m) {
   const izq = p ? Math.round(100 * (m.izq || 0) / p) : 0;
   const der = p ? Math.round(100 * (m.der || 0) / p) : 0;
   return { izq, der, sin: Math.max(0, 100 - izq - der) };
+}
+/* ---------- por qué sale a un lado ----------
+   Cada tuit con lado claro empuja hacia un lado: a la izquierda los que hablan
+   bien del PSOE o de Sumar y los que critican al PP o a Vox; a la derecha, al
+   revés. Estas ocho casillas suman exactamente izq + der, así que el desglose
+   explica el mismo índice que dibuja el mapa. */
+const PARTIDOS_LADO = ['PSOE', 'Sumar', 'PP', 'Vox'];
+const IZQ_P = { PSOE: 1, Sumar: 1 };
+// lado al que empuja un tuit: 'izq', 'der' o '' si no tiene lado claro
+function empujeDe(p, d) {
+  if (!PARTIDOS_LADO.includes(p) || (d !== 'beneficia' && d !== 'perjudica')) return '';
+  return (d === 'beneficia') === !!IZQ_P[p] ? 'izq' : 'der';
+}
+const casillasVacias = () => Object.fromEntries(PARTIDOS_LADO.map(p => [p, { beneficia: 0, perjudica: 0 }]));
+function casillasDeTuits(tweets) {
+  const c = casillasVacias();
+  for (const tw of tweets) if (empujeDe(tw.p, tw.d)) c[tw.p][tw.d]++;
+  return c;
+}
+// fila de partidos.json: [ben, perj, ...] por partido; i = 0 todos los tuits, 1 los de 100 RT o más
+function casillasDeFila(fila, i) {
+  const c = casillasVacias();
+  for (const p of PARTIDOS_LADO) {
+    const v = fila && fila[p] && fila[p][i];
+    if (v) { c[p].beneficia = v[0] || 0; c[p].perjudica = v[1] || 0; }
+  }
+  return c;
+}
+function lecturaCasillas(c) {
+  const celdas = [];
+  for (const p of PARTIDOS_LADO) for (const d of ['perjudica', 'beneficia']) {
+    celdas.push({ p, d, lado: empujeDe(p, d), n: c[p][d] });
+  }
+  const izq = celdas.filter(x => x.lado === 'izq').reduce((s, x) => s + x.n, 0);
+  const der = celdas.filter(x => x.lado === 'der').reduce((s, x) => s + x.n, 0);
+  return { izq, der, claro: izq + der, celdas: celdas.sort((a, b) => b.n - a.n) };
+}
+// la frase que lo explica: las dos casillas que más pesan del lado que gana
+function fraseDesglose(l) {
+  if (!l.claro) return '';
+  const lado = l.izq >= l.der ? 'izq' : 'der';
+  const pc = n => Math.round(100 * n / l.claro);
+  const top = l.celdas.filter(x => x.lado === lado && x.n && pc(x.n) >= 1).slice(0, 2)
+    .map(x => t('dgMotivo', x.p, x.d, DG_MODO === 'n' ? t('dgTuits', nf(x.n)) : `${pc(x.n)}\u00a0%, ${t('dgTuits', nf(x.n))}`));
+  return t('dgFrase', lado, Math.round(100 * l[lado] / l.claro), top);
+}
+/* El desglose se lee en porcentaje de los tuits con lado claro (por defecto,
+   con el número de tuits al lado) o solo en número de tuits. Las barras usan
+   la misma escala en las dos mitades. */
+let DG_MODO = 'pc';
+try { if (localStorage.getItem('mv-dg') === 'n') DG_MODO = 'n'; } catch (e) {}
+function fijarModoDesglose(m) {
+  DG_MODO = m === 'pc' ? 'pc' : 'n';
+  try { localStorage.setItem('mv-dg', DG_MODO); } catch (e) {}
+}
+/* Barra de los dos lados y gráfico de mariposa: una fila por partido, a la
+   izquierda lo que lo empuja a la izquierda y a la derecha lo contrario. Con
+   `clic`, cada barra es un botón que filtra por ese partido y sentido. */
+function htmlDesglose(c, { clic = false, activo = null, resalta = '', frase = true, nota = true } = {}) {
+  const l = lecturaCasillas(c);
+  if (!l.claro) return '';
+  const pc = n => 100 * n / l.claro;
+  const max = Math.max(...l.celdas.map(x => x.n), 1);
+  const filas = PARTIDOS_LADO.slice().sort((a, b) => (c[b].beneficia + c[b].perjudica) - (c[a].beneficia + c[a].perjudica));
+  const barra = (p, d) => {
+    const n = c[p][d], lado = empujeDe(p, d);
+    const on = activo && activo.p === p && activo.d === d;
+    const v = pc(n);
+    const cifra = DG_MODO === 'n' ? nf(n) : `${n && v < 1 ? '&lt;1' : fx(v)} %</b> <small>· ${nf(n)}</small><b>`;
+    const etq = `<span class="dg-n">${t('dgCorto', d)} <b>${cifra}</b></span>`;
+    const cuerpo = `<span class="dg-t"><i style="width:${(100 * n / max).toFixed(1)}%"></i></span>${etq}`;
+    const tit = esc(t('dgTitulo', p, d, nf(n)));
+    return clic && n
+      ? `<button type="button" class="dg-b ${lado}${on ? ' is-on' : ''}" data-dgp="${p}" data-dgd="${d}" aria-pressed="${on}" title="${tit}">${cuerpo}</button>`
+      : `<span class="dg-b ${lado}${n ? '' : ' cero'}" title="${tit}">${cuerpo}</span>`;
+  };
+  const ladoIzq = p => IZQ_P[p] ? 'beneficia' : 'perjudica';
+  const ladoDer = p => IZQ_P[p] ? 'perjudica' : 'beneficia';
+  const izqPc = Math.round(pc(l.izq));
+  return `<div class="dg${resalta ? ' con-resalte' : ''}">
+    <div class="dg-lados" role="img" aria-label="${esc(t('dgLados', izqPc, 100 - izqPc))}">
+      <span class="dg-li" style="flex:${l.izq}">${DG_MODO === 'n' ? `${nf(l.izq)} ${t('izquierda')}` : `${izqPc} % ${t('izquierda')} <small>· ${nf(l.izq)}</small>`}</span><span class="dg-ld" style="flex:${l.der}">${DG_MODO === 'n' ? `${nf(l.der)} ${t('derecha')}` : `${100 - izqPc} % ${t('derecha')} <small>· ${nf(l.der)}</small>`}</span>
+    </div>
+    ${frase ? `<p class="dg-frase">${fraseDesglose(l)}</p>` : ''}
+    ${clic ? `<div class="dg-modo" role="group" aria-label="${esc(t('dgModoAria'))}">${['n', 'pc'].map(m =>
+      `<button type="button" data-dgmodo="${m}" aria-pressed="${DG_MODO === m}"${DG_MODO === m ? ' class="is-on"' : ''}>${t('dgModo', m)}</button>`).join('')}</div>` : ''}
+    <div class="dg-ejes"><span>◀ ${t('dgEjeIzq')}</span><span>${t('dgEjeDer')} ▶</span></div>
+    ${filas.map(p => `<div class="dg-fila${resalta && resalta !== p ? ' tenue' : ''}">
+      <div class="dg-mitad izq">${barra(p, ladoIzq(p))}</div>
+      <span class="dg-p ${CHIP[p]}">${p}</span>
+      <div class="dg-mitad der">${barra(p, ladoDer(p))}</div>
+    </div>`).join('')}
+    ${nota ? `<p class="dg-nota">${t('dgNota', nf(l.claro))}</p>` : ''}
+  </div>`;
 }
 let INDEX = null;
 let POL = null;
@@ -1058,7 +1182,7 @@ async function openMedio(handle) {
       return;
     }
   }
-  mSort = 'rt'; mParty = ''; mDir = ''; mText = ''; mShown = PAGE;
+  mSort = 'peso'; mParty = ''; mDir = ''; mText = ''; mShown = PAGE;
   currentMedioMeta = meta;
   pintarMedio(meta);
 }
@@ -1076,11 +1200,13 @@ function pintarMedio(meta) {
     </div>
     <div class="kpis" id="mkpis"></div>
     <p class="foot-note" id="mkpinota" hidden></p>
+    <div class="medio-dg" id="mdg"></div>
     <div class="filters">
       <input type="search" id="mt" placeholder="${t('medioSearchPlaceholder')}" autocomplete="off">
       <select id="mp"></select>
       <select id="md"></select>
       <select id="ms">
+        <option value="peso">${t('cajonOrdenOp', 'peso')}</option>
         <option value="rt">${t('medioSortRt')}</option>
         <option value="lk">${t('medioSortLk')}</option>
         <option value="vw">${t('medioSortVw')}</option>
@@ -1099,6 +1225,17 @@ function pintarMedio(meta) {
   $('#ms').addEventListener('change', e => { mSort = e.target.value; pintarListaMedio(); });
   $('#mo').addEventListener('change', e => { mShown = PAGE; pintarListaMedio(); });
   $('#mmore').addEventListener('click', () => { mShown += PAGE; pintarListaMedio(); });
+  $('#mdg').addEventListener('click', e => {
+    const modo = e.target.closest('[data-dgmodo]');
+    if (modo) { fijarModoDesglose(modo.dataset.dgmodo); pintarListaMedio(); return; }
+    const b = e.target.closest('[data-dgp]');
+    if (!b) return;
+    const on = mParty === b.dataset.dgp && mDir === b.dataset.dgd;
+    mParty = on ? '' : b.dataset.dgp;
+    mDir = on ? '' : b.dataset.dgd;
+    mShown = PAGE;
+    pintarListaMedio();
+  });
   pintarListaMedio();
 }
 function filtrarTuits() {
@@ -1109,15 +1246,22 @@ function filtrarTuits() {
     (!mDir || tw.d === mDir) &&
     (!soloPol || tw.p) &&
     (!q || tw.t.toLowerCase().includes(q)));
+  if (mSort === 'peso') return ordenPorPeso(ts, casillasMedio());
   ts = ts.slice().sort((a, b) => mSort === 'f' ? (a.f < b.f ? 1 : -1) : (b[mSort] - a[mSort]));
   return ts;
+}
+// el desglose de la ficha sigue a la búsqueda, no al partido ni al sentido
+function casillasMedio() {
+  const q = mText.trim().toLowerCase();
+  return casillasDeTuits(q ? MEDIO.tweets.filter(tw => tw.t.toLowerCase().includes(q)) : MEDIO.tweets);
 }
 function pintarListaMedio() {
   const ts = filtrarTuits();
   pintarMedioCifras(ts);
   const total = ts.length;
+  const pinta = tw => tarjeta(tw, MEDIO.handle, MEDIO.nombre);
   $('#mlist').innerHTML = total
-    ? ts.slice(0, mShown).map(tw => tarjeta(tw, MEDIO.handle, MEDIO.nombre)).join('')
+    ? (mSort === 'peso' ? listaPorGrupos(ts.slice(0, mShown), casillasMedio(), pinta) : ts.slice(0, mShown).map(pinta).join(''))
     : `<p class="empty">${t('medioNoMatch')}</p>`;
   const more = $('#mmore');
   more.hidden = total <= mShown;
@@ -1145,6 +1289,9 @@ function pintarMedioCifras(ts) {
       <div class="kpi"><div class="k">${t('kpiNeutro')}</div><div class="v" style="color:var(--neu)">${nf(neu)}</div></div>
       <div class="kpi"><div class="k">${t('kpiRtMed')}</div><div class="v">${nf(med)}</div></div>
       <div class="kpi"><div class="k">${t('kpiRtMax')}</div><div class="v">${nf(max)}</div></div>`;
+
+  const dg = htmlDesglose(casillasMedio(), { clic: true, activo: mParty && mDir ? { p: mParty, d: mDir } : null });
+  $('#mdg').innerHTML = dg ? dg + `<p class="dg-pulsa">${t('dgPulsa')}</p>` : '';
 
   const filtrando = !!(mParty || mDir || mText.trim() || ($('#mo') || {}).value === 'pol');
   const nota = $('#mkpinota');
@@ -2018,9 +2165,17 @@ function tipMapa(n, ev) {
   const frase = !d.claro
     ? `${t('tipSinLado')} (${nf(m.politicos)} ${t('tipPoliticos')})`
     : `${d.texto} (${nf(d.claro)} ${t('tipClaros')} ${nf(m.politicos)} ${t('tipPoliticos')}; ${p.sin} ${t('tipSinLadoPct')})`;
+  // el desglose sale de partidos.json, del mismo periodo y serie que el punto
+  let desglose = '';
+  if (!PARTIDOS_MAPA) asegurarPartidos();
+  else {
+    const bloque = (PARTIDOS_MAPA.periodos || {})[mapaPeriodo];
+    const fila = bloque && bloque.medios.find(r => r.h.toLowerCase() === m.handle.toLowerCase());
+    if (fila) desglose = htmlDesglose(casillasDeFila(fila, n.serie === 'viral' ? 1 : 0), { resalta: mapaPartido, nota: false });
+  }
   tip.innerHTML = `<div class="tt">${esc(m.nombre)}</div>
     ${m.tipo ? `<div class="tv tm">${esc(t('tipoNombre', m.tipo))}</div>` : ''}
-    <div class="tv frase">${esc(frase)}</div>
+    ${desglose ? `<div class="tv tm">${n.serie === 'viral' ? t('tipViral') : t('tipPublicado')}</div>${desglose}` : `<div class="tv frase">${esc(frase)}</div>`}
     ${linea(pub, t('tipPublicado'))}${linea(vir, t('tipViral'))}${desplaz}${lineaVars(n)}
     <div class="tv tm">${esc(m.handle)} · ${t('tipIndiceMuestra')} ${m.indice > 0 ? '+' : m.indice < 0 ? '−' : ''}${Math.abs(m.indice).toFixed(2)}</div>`;
   tip.hidden = false;
@@ -2366,6 +2521,37 @@ function iniciarRelato() {
    filtran por partido, sentido y año. Usa los mismos ficheros troceados por año
    que la ficha completa. */
 const CAJON_PAGINA = 20;
+/* Orden «lo que más pesa en su lado»: primero las casillas del lado que gana,
+   de la que más tuits tiene a la que menos (en un medio a la izquierda, por
+   ejemplo, los que critican al PP), luego las del otro lado y al final los que
+   no tienen lado claro. Dentro de cada casilla, por retuits. */
+const claveCasilla = tw => empujeDe(tw.p, tw.d) ? tw.p + '|' + tw.d : '';
+function ordenPorPeso(ts, casillas) {
+  const l = lecturaCasillas(casillas);
+  const gana = l.izq >= l.der ? 'izq' : 'der';
+  const peso = tw => {
+    const lado = empujeDe(tw.p, tw.d);
+    return !lado ? -1 : casillas[tw.p][tw.d] + (lado === gana ? l.claro + 1 : 0);
+  };
+  return ts.slice().sort((a, b) => (peso(b) - peso(a)) || claveCasilla(a).localeCompare(claveCasilla(b)) || (b.rt || 0) - (a.rt || 0));
+}
+// la lista ordenada por peso lleva una cabecera cada vez que cambia de casilla
+function listaPorGrupos(ts, casillas, pinta) {
+  const l = lecturaCasillas(casillas);
+  let previa = null, html = '';
+  for (const tw of ts) {
+    const k = claveCasilla(tw);
+    if (k !== previa) {
+      previa = k;
+      const lado = empujeDe(tw.p, tw.d);
+      const n = lado ? casillas[tw.p][tw.d] : null;
+      html += `<h3 class="grupo-lado ${lado || 'sin'}">${lado ? t('dgGrupo', tw.p, tw.d) : t('dgGrupoSin')}
+        <span>${lado ? t('dgGrupoN', nf(n), fx(100 * n / (l.claro || 1))) : ''}</span></h3>`;
+    }
+    html += pinta(tw);
+  }
+  return html;
+}
 let CJ = null;
 const TUITS = new Map();
 function cargarTuitsDe(meta) {
@@ -2386,7 +2572,7 @@ async function abrirCajon(handle, opts = {}) {
   const meta = metaDe(handle);
   if (!meta) return;
   if (!CJ || CJ.meta.handle !== meta.handle) {
-    CJ = { meta, tweets: null, error: false, partido: mapaPartido || '', dir: '', ano: '', orden: 'rt', texto: '', soloPol: true, n: CAJON_PAGINA };
+    CJ = { meta, tweets: null, error: false, partido: mapaPartido || '', dir: '', ano: '', orden: 'peso', texto: '', soloPol: true, n: CAJON_PAGINA };
   }
   if (opts.ano !== undefined) { CJ.ano = opts.ano; CJ.n = CAJON_PAGINA; }
   const caja = $('#cajon');
@@ -2434,6 +2620,7 @@ function pintarCajon() {
       <button type="button" class="cajon-x" data-cj="cerrar" aria-label="${esc(t('cajonCerrar'))}">✕</button>
     </div>
     <p class="cajon-tray"${recorrido ? '' : ' hidden'}>${recorrido}</p>
+    <div class="cajon-dg" id="cj-dg"></div>
     <div class="cajon-filtros">
       <input type="search" id="cj-q" placeholder="${esc(t('cajonBuscar'))}" autocomplete="off" value="${esc(CJ.texto)}">
       <div class="cj-fila"><span class="ctl-k">${t('cajonPartido')}</span><div class="cj-chips" id="cj-partidos"></div></div>
@@ -2441,7 +2628,7 @@ function pintarCajon() {
       <div class="cj-sels">
         <label class="ctl"><span class="ctl-k">${t('cajonAno')}</span><select id="cj-ano"></select></label>
         <label class="ctl"><span class="ctl-k">${t('cajonOrden')}</span><select id="cj-orden">
-          ${['rt', 'lk', 'vw', 'f', 'fa'].map(k => `<option value="${k}">${t('cajonOrdenOp', k)}</option>`).join('')}
+          ${['peso', 'rt', 'lk', 'vw', 'f', 'fa'].map(k => `<option value="${k}">${t('cajonOrdenOp', k)}</option>`).join('')}
         </select></label>
       </div>
       <label class="cj-check"><input type="checkbox" id="cj-pol"${CJ.soloPol ? ' checked' : ''}> ${t('cajonSoloPol')}</label>
@@ -2473,8 +2660,13 @@ function pintarCajonLista() {
     if (okP && okD) cAno[anoDe(tw)] = (cAno[anoDe(tw)] || 0) + 1;
   }
   let ts = base.filter(tw => (!CJ.ano || anoDe(tw) === CJ.ano) && (!CJ.partido || tw.p === CJ.partido) && (!CJ.dir || tw.d === CJ.dir));
+  // el desglose cuenta el año y la búsqueda, no el partido ni el sentido: así se
+  // ve el conjunto y cada barra sirve de filtro
+  const casillas = casillasDeTuits(base.filter(tw => !CJ.ano || anoDe(tw) === CJ.ano));
+  const dg = htmlDesglose(casillas, { clic: true, activo: CJ.partido && CJ.dir ? { p: CJ.partido, d: CJ.dir } : null });
+  $('#cj-dg').innerHTML = dg ? dg + `<p class="dg-pulsa">${t('dgPulsa')}</p>` : '';
   const o = CJ.orden;
-  ts = ts.slice().sort((a, b) => o === 'f' ? (a.f < b.f ? 1 : a.f > b.f ? -1 : 0)
+  ts = o === 'peso' ? ordenPorPeso(ts, casillas) : ts.slice().sort((a, b) => o === 'f' ? (a.f < b.f ? 1 : a.f > b.f ? -1 : 0)
     : o === 'fa' ? (a.f > b.f ? 1 : a.f < b.f ? -1 : 0) : (b[o] || 0) - (a[o] || 0));
 
   const chip = (attr, val, txt, cuenta, cls) => `<button type="button" class="cj-chip ${cls || ''}${(attr === 'p' ? CJ.partido : CJ.dir) === val ? ' is-on' : ''}"
@@ -2491,7 +2683,8 @@ function pintarCajonLista() {
 
   $('#cj-res').innerHTML = htmlResumen(ts);
   lista.innerHTML = ts.length
-    ? ts.slice(0, CJ.n).map(tw => tarjeta(tw, CJ.meta.handle, CJ.meta.nombre)).join('')
+    ? (o === 'peso' ? listaPorGrupos(ts.slice(0, CJ.n), casillas, tw => tarjeta(tw, CJ.meta.handle, CJ.meta.nombre))
+      : ts.slice(0, CJ.n).map(tw => tarjeta(tw, CJ.meta.handle, CJ.meta.nombre)).join(''))
     : `<p class="empty">${t('cajonVacio')}</p>`;
   const mas = $('#cj-mas');
   mas.hidden = ts.length <= CJ.n;
@@ -2505,6 +2698,18 @@ function iniciarCajon() {
     if (p) { CJ.partido = p.dataset.cjp; CJ.n = CAJON_PAGINA; pintarCajonLista(); return; }
     const d = e.target.closest('[data-cjd]');
     if (d) { CJ.dir = d.dataset.cjd; CJ.n = CAJON_PAGINA; pintarCajonLista(); return; }
+    const modo = e.target.closest('[data-dgmodo]');
+    if (modo) { fijarModoDesglose(modo.dataset.dgmodo); pintarCajonLista(); return; }
+    // una barra del desglose filtra por su partido y sentido; pulsarla otra vez lo quita
+    const b = e.target.closest('[data-dgp]');
+    if (b) {
+      const on = CJ.partido === b.dataset.dgp && CJ.dir === b.dataset.dgd;
+      CJ.partido = on ? '' : b.dataset.dgp;
+      CJ.dir = on ? '' : b.dataset.dgd;
+      CJ.n = CAJON_PAGINA;
+      pintarCajonLista();
+      return;
+    }
     if (e.target.closest('#cj-mas')) { CJ.n += CAJON_PAGINA; pintarCajonLista(); }
   });
   caja.addEventListener('input', e => {
@@ -2661,6 +2866,7 @@ function watchSystemTheme() {
   } catch (err) {
     POL = null;
   }
+  asegurarPartidos(); // sin esperar: la tarjeta del mapa lo usa para explicar el lado de cada medio
   $('#mapa-serie').addEventListener('change', e => { mapaSerie = e.target.value; renderMapa(); });
   $('#mapa-filtro').value = mapaFiltro;
   $('#mapa-filtro').addEventListener('change', e => {
