@@ -701,3 +701,59 @@ body[data-view="mapa"] main.wrap,body:not([data-view]) main.wrap{padding-top:6px
   .foot-lede{font-size:15px}
   #view-mapa .resumen{font-size:14.5px;line-height:1.4;margin:0 0 8px;padding-left:10px;border-left-width:4px}
 }
+
+/* ---------- tendencias ----------
+   Ocho colores categóricos en orden fijo, uno por medio elegido; el resto va en gris.
+   En oscuro, los mismos tonos ajustados a la superficie oscura. */
+:root{--td-1:#2a78d6;--td-2:#eb6834;--td-3:#1baf7a;--td-4:#eda100;--td-5:#e87ba4;--td-6:#008300;--td-7:#6250d6;--td-8:#e34948}
+:root[data-theme="dark"]{--td-1:#3987e5;--td-2:#d95926;--td-3:#199e70;--td-4:#c98500;--td-5:#d55181;--td-6:#008300;--td-7:#9085e9;--td-8:#e66767}
+.td-filtros{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:10px 14px;align-items:end;margin:0 0 14px}
+.td-filtros select{width:100%;min-width:0}
+.td-filtros .ctl-v{flex-wrap:wrap;gap:8px 14px}
+.td-log{white-space:nowrap}
+@media (max-width:860px){ .td-filtros{grid-template-columns:1fr 1fr} }
+@media (max-width:480px){ .td-filtros{grid-template-columns:1fr} }
+.td-medios{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}
+.td-medios .ctl-k{margin-right:4px}
+.td-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border:1.5px solid var(--rule);border-radius:var(--radio);
+  background:var(--panel);color:var(--ink);font:600 13px/1 var(--f-sans);cursor:pointer}
+.td-chip i{width:12px;height:4px;border-radius:2px;display:inline-block}
+.td-chip span{color:var(--muted);font-weight:400}
+.td-chip:hover{background:var(--hl);color:var(--hl-ink)}
+.td-medios select{padding:6px 10px;font-size:13px}
+.td-auto{border:0;background:none;color:var(--muted);font:500 12.5px/1 var(--f-sans);text-decoration:underline;cursor:pointer;padding:6px 2px}
+.td-auto:hover{color:var(--ink)}
+#td-graf{display:block;width:100%;height:auto;overflow:visible}
+#td-graf .grid line{stroke:var(--grid-line);stroke-width:1}
+#td-graf .grid line.td-ene{stroke-dasharray:2 4}
+#td-graf text{font-size:12px;fill:var(--muted);font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+#td-graf text.tit{font-size:11.5px;fill:var(--ink);font-weight:600;letter-spacing:.02em}
+#td-graf text.td-aviso{font:400 italic 16px var(--f-serif);fill:var(--muted)}
+#td-graf .td-linea{cursor:pointer}
+#td-graf .td-hit{fill:none;stroke:transparent;stroke-width:12;stroke-linejoin:round}
+#td-graf .td-trazo{fill:none;stroke-linejoin:round;stroke-linecap:round;pointer-events:none}
+#td-graf .td-gris .td-trazo{stroke:var(--muted);stroke-width:1;opacity:.28}
+#td-graf .td-gris.is-foco .td-trazo{stroke:var(--ink);stroke-width:2;opacity:.9}
+#td-graf .td-color .td-trazo{stroke-width:2.25}
+#td-graf .td-color.is-foco .td-trazo{stroke-width:3.5}
+#td-graf .td-color circle{stroke:var(--panel);stroke-width:2;pointer-events:none}
+#td-graf .td-rotulos{pointer-events:none}
+#td-graf .td-guia{fill:none;stroke-width:1;opacity:.6}
+#td-graf text.td-rotulo{fill:var(--ink);font:600 12px var(--f-sans)}
+#td-graf .td-cruz{stroke:var(--ink);stroke-width:1;stroke-dasharray:3 3;pointer-events:none}
+.td-wrap .tip{width:min(300px,calc(100vw - 32px))}
+.td-tf{display:flex;align-items:center;gap:8px;margin-top:6px;font-variant-numeric:tabular-nums}
+.td-tf i{width:12px;height:4px;border-radius:2px;flex:none}
+.td-tf b{font-weight:600;flex:1;min-width:0}
+.td-tf span{font:600 13px/1 var(--f-mono)}
+.td-tf + .tm{margin:0 0 0 20px}
+.td-sub{margin:36px 0 8px;font:800 clamp(20px,2.4vw,26px)/1.15 var(--f-display)}
+.td-tabla-hint{margin-bottom:14px;font-size:16px}
+.td-tabla td.num,.td-tabla th.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.td-tabla th[data-td-orden]{cursor:pointer}
+.td-tabla td.num{font:500 13px/1 var(--f-mono);background:color-mix(in srgb,var(--ink) var(--td-calor,0%),transparent)}
+.td-tabla td.td-vacia{color:var(--muted);background:none}
+.td-tabla tbody tr{cursor:pointer}
+.td-tabla tbody tr.is-sel td.c-medio{font-weight:700}
+.td-nombre{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.td-nombre i{width:12px;height:4px;border-radius:2px;flex:none}
