@@ -812,7 +812,7 @@ Object.assign(I18N.es, {
   tabTendencias: 'Tendencias',
   tdTitulo: 'Tendencias',
   tdAria: 'Evolución de cada medio a lo largo del tiempo',
-  tdHint: (medida, sub) => `Cómo cambia, año a año o mes a mes, <strong>${medida}</strong> de cada medio, contando ${sub}. Las líneas de color son los medios elegidos y las grises, el resto. Destaca los que más crecen o más caen, pasa el ratón para ver las cifras y pulsa una línea gris para añadirla.`,
+  tdHint: (medida, sub) => `Cómo cambia, año a año o mes a mes, <strong>${medida}</strong> de cada medio, contando ${sub}. Destaca los que más crecen o más caen, o elige los medios que quieras en el desplegable o en la tabla. Pasa el ratón para ver las cifras.`,
   tdMedida: 'Medida',
   tdMedidaOp: k => ({ rt_mediana: 'Mediana de retuits', rt_media: 'Media de retuits', lk_mediana: 'Mediana de me gusta', n: 'Número de tuits', pct: '% de sus tuits' })[k],
   tdMedidaFrase: k => ({ rt_mediana: 'la mediana de retuits', rt_media: 'la media de retuits', lk_mediana: 'la mediana de me gusta', n: 'el número de tuits', pct: 'el porcentaje de sus tuits' })[k],
@@ -848,6 +848,8 @@ Object.assign(I18N.es, {
   tdCargando: 'Cargando los datos…',
   tdError: 'No se han podido cargar los datos de tendencias.',
   tdSinDatos: 'Ningún medio tiene datos con estos filtros.',
+  tdSinSel: 'Elige al menos un medio en el desplegable o en la tabla.',
+  tdSinDatosSel: 'Los medios elegidos no tienen datos con estos filtros.',
   tdNota: (min, gran) => `Es una muestra de hasta 100 tuits por medio y mes, no todo lo publicado. Las medianas y medias solo se dibujan con al menos ${min} tuits en el ${gran === 'mes' ? 'mes' : 'año'}. 2018 empieza en mayo y 2026 acaba en septiembre, así que en número de tuits esos dos años salen más bajos. Los retuits y me gusta son los que tenía cada tuit al descargarlo, en 2026. La tendencia es la pendiente de la recta que mejor se ajusta a los valores anuales de cada medio, con al menos tres años; en número de tuits no cuenta 2018 ni 2026.`,
   tdTipN: (n, total) => `${n} de ${total} tuits muestreados`,
   tdTipPocos: (n, min) => `${n} tuits, menos de ${min}: sin cifra`,
@@ -863,7 +865,7 @@ Object.assign(I18N.en, {
   tabTendencias: 'Trends',
   tdTitulo: 'Trends',
   tdAria: 'How each outlet changes over time',
-  tdHint: (medida, sub) => `How <strong>${medida}</strong> changes for each outlet, year by year or month by month, counting ${sub}. Coloured lines are the outlets you picked and grey lines the rest. Highlight the ones rising or falling most, hover to see the numbers and click a grey line to add it.`,
+  tdHint: (medida, sub) => `How <strong>${medida}</strong> changes for each outlet, year by year or month by month, counting ${sub}. Highlight the ones rising or falling most, or pick outlets from the menu or the table. Hover to see the numbers.`,
   tdMedida: 'Measure',
   tdMedidaOp: k => ({ rt_mediana: 'Median retweets', rt_media: 'Mean retweets', lk_mediana: 'Median likes', n: 'Number of tweets', pct: '% of its tweets' })[k],
   tdMedidaFrase: k => ({ rt_mediana: 'the median retweets', rt_media: 'the mean retweets', lk_mediana: 'the median likes', n: 'the number of tweets', pct: 'the share of its tweets' })[k],
@@ -899,6 +901,8 @@ Object.assign(I18N.en, {
   tdCargando: 'Loading data…',
   tdError: 'The trends data could not be loaded.',
   tdSinDatos: 'No outlet has data with these filters.',
+  tdSinSel: 'Pick at least one outlet from the menu or the table.',
+  tdSinDatosSel: 'The outlets you picked have no data with these filters.',
   tdNota: (min, gran) => `This is a sample of up to 100 tweets per outlet and month, not everything published. Medians and means are only drawn with at least ${min} tweets in the ${gran === 'mes' ? 'month' : 'year'}. 2018 starts in May and 2026 ends in September, so those two years look lower in number of tweets. Retweets and likes are what each tweet had when it was downloaded, in 2026. The trend is the slope of the line that best fits each outlet's yearly values, with at least three years; for number of tweets it leaves out 2018 and 2026.`,
   tdTipN: (n, total) => `${n} of ${total} sampled tweets`,
   tdTipPocos: (n, min) => `${n} tweets, fewer than ${min}: no figure`,
@@ -1499,10 +1503,12 @@ function pintarGraficoTend(series, elegidos, color) {
   const ancho = Math.max(TD.gran === 'mes' ? 620 : 340, Math.round($('.td-wrap').clientWidth - 38));
   const W = ancho, H = Math.round(Math.min(460, Math.max(320, W * 0.5)));
   const M = { t: 30, r: W < 700 ? 16 : 150, b: 40, l: 58 };
-  const todos = series.flatMap(s => s.valores).filter(v => v != null);
+  // solo se dibujan los elegidos, y la escala se ajusta a ellos
+  const enSel = new Set(elegidos);
+  const todos = series.filter(s => enSel.has(s.slug)).flatMap(s => s.valores).filter(v => v != null);
   if (!todos.length) {
     svg.setAttribute('viewBox', `0 0 ${W} 80`);
-    svg.innerHTML = `<text x="20" y="40" class="td-aviso">${esc(t('tdSinDatos'))}</text>`;
+    svg.innerHTML = `<text x="20" y="40" class="td-aviso">${esc(t(elegidos.length ? 'tdSinDatosSel' : 'tdSinSel'))}</text>`;
     TD_GEO = null;
     return;
   }
@@ -1547,11 +1553,6 @@ function pintarGraficoTend(series, elegidos, color) {
     });
     return d;
   };
-  const enSel = new Set(elegidos);
-  const grises = series.filter(s => !enSel.has(s.slug)).map(s => {
-    const d = camino(s.valores);
-    return d ? `<g class="td-linea td-gris" data-h="${esc(s.slug)}"><path class="td-hit" d="${d}"></path><path class="td-trazo" d="${d}"></path></g>` : '';
-  }).join('');
   const porSlug = new Map(series.map(s => [s.slug, s]));
   const etiquetas = [];
   const color_ = elegidos.map(k => {
@@ -1588,7 +1589,7 @@ function pintarGraficoTend(series, elegidos, color) {
   }
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.style.minWidth = W + 'px';
-  svg.innerHTML = `<g class="grid">${g}</g><g class="td-grises">${grises}</g><g>${color_}</g><g class="td-rotulos">${rotulos}</g>
+  svg.innerHTML = `<g class="grid">${g}</g><g>${color_}</g><g class="td-rotulos">${rotulos}</g>
     <line class="td-cruz" x1="0" x2="0" y1="${M.t}" y2="${H - M.b}" visibility="hidden"></line>`;
   TD_GEO = { periodos, px, W, M, series: porSlug, elegidos, color };
 }
