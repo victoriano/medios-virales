@@ -28,6 +28,9 @@ const I18N = {
     lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> tuits muestreados de <strong id="n-medios">${nMedios}</strong> medios entre 2018 y 2026, clasificados según a qué partido benefician o perjudican. Cada punto es un medio: pulsa para leer sus tuits.`,
     tabMapa: 'Mapa',
     tabRanking: 'Ranking',
+    descargar: '↓ Descargar imagen',
+    descargaError: 'No se ha podido crear la imagen.',
+    descargaPie: 'medios.victoriano.me · Sesgo político de los medios españoles medido sobre sus tuits',
     tabContenidos: 'Contenidos',
     tabMetodo: 'Método',
     themeLight: 'Claro',
@@ -333,6 +336,9 @@ const I18N = {
     lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> sampled tweets from <strong id="n-medios">${nMedios}</strong> outlets between 2018 and 2026, classified by which party they help or hurt. Each dot is an outlet: click it to read its tweets.`,
     tabMapa: 'Map',
     tabRanking: 'Ranking',
+    descargar: '↓ Download image',
+    descargaError: 'The image could not be created.',
+    descargaPie: 'medios.victoriano.me · Political bias of Spanish media measured on their tweets',
     tabContenidos: 'Content',
     tabMetodo: 'Method',
     themeLight: 'Light',
@@ -1240,7 +1246,7 @@ function pintarRanking() {
     const pocos = tot < CLARO_MIN;
     const marca = pocos ? ` <span class="star" title="${t('decimosMuestraCorta')}">*</span>` : '';
     return `<tr data-h="${esc(m.handle)}">
-      <td><div class="medio-cell"><div><div><strong>${esc(m.nombre)}</strong></div><div class="h">${esc(m.handle)} · ${compact(m.seguidores)} ${t('seguidores')}</div></div></div></td>
+      <td><div class="medio-cell">${m.logo ? `<img class="rank-logo" src="${esc(m.logo)}" alt="" width="34" height="34" loading="lazy">` : ''}<div><div><strong>${esc(m.nombre)}</strong></div><div class="h">${esc(m.handle)} · ${compact(m.seguidores)} ${t('seguidores')}</div></div></div></td>
       <td class="c-dec">
         <div class="dec">
           <div class="dec-top">${tot ? `<strong>${d.texto}</strong>` : `<span class="dec-sin">${t('decimosSinLado')}</span>`}</div>
@@ -1678,6 +1684,116 @@ function pintarTablaTend(anuales, elegidos, color) {
       <td class="c-medio"><span class="td-nombre"><i style="background:${on ? color(s.slug) : 'transparent'}"></i>${esc(s.m.nombre)}</span></td>
       ${s.valores.map(celda).join('')}${celda(s.media)}${celdaPend(s.pendiente)}</tr>`;
   }).join('') || `<tr><td colspan="${anos.length + 3}" class="empty">${t('tdSinDatos')}</td></tr>`;
+}
+
+// ---------- descargar como imagen ----------
+// html-to-image solo se pide la primera vez que alguien descarga algo
+let HTI = null;
+function cargarHTI() {
+  if (!HTI) HTI = new Promise((ok, ko) => {
+    const s = document.createElement('script');
+    s.src = 'vendor/html-to-image.js?v=1.11.11';
+    s.onload = () => window.htmlToImage ? ok(window.htmlToImage) : ko(new Error('html-to-image'));
+    s.onerror = () => { HTI = null; ko(new Error('html-to-image')); };
+    document.head.appendChild(s);
+  });
+  return HTI;
+}
+
+// cortar un texto en líneas que quepan en un ancho
+function lineasTexto(ctx, texto, ancho) {
+  const lineas = [];
+  let actual = '';
+  for (const palabra of String(texto || '').split(/\s+/).filter(Boolean)) {
+    const prueba = actual ? actual + ' ' + palabra : palabra;
+    if (actual && ctx.measureText(prueba).width > ancho) { lineas.push(actual); actual = palabra; }
+    else actual = prueba;
+  }
+  if (actual) lineas.push(actual);
+  return lineas;
+}
+
+async function descargarImagen(nodo, nombre, titulo, subtitulo, altoFijo) {
+  const lib = await cargarHTI();
+  const css = getComputedStyle(document.documentElement);
+  const v = k => css.getPropertyValue(k).trim();
+  const fondo = v('--panel') || '#fff';
+  const escala = 2;
+  const ancho = nodo.scrollWidth, alto = altoFijo || nodo.scrollHeight;
+  const img = await lib.toCanvas(nodo, {
+    backgroundColor: fondo, pixelRatio: escala, width: ancho, height: alto,
+    style: { margin: '0', boxShadow: 'none', overflow: 'visible', maxHeight: 'none', minHeight: '0', height: alto + 'px', flex: 'none' },
+    filter: n => !(n.classList && (n.classList.contains('tip') || n.classList.contains('descarga'))),
+  });
+  // la imagen lleva título arriba y la procedencia abajo, para que se entienda fuera de la web
+  const pad = 28, anchoTexto = ancho;
+  const medir = document.createElement('canvas').getContext('2d');
+  const fTit = `800 26px ${v('--f-display')}`, fSub = `400 15px ${v('--f-sans')}`, fPie = `500 12px ${v('--f-mono')}`;
+  medir.font = fTit; const lTit = lineasTexto(medir, titulo, anchoTexto);
+  medir.font = fSub; const lSub = lineasTexto(medir, subtitulo, anchoTexto);
+  const altoCab = lTit.length * 32 + (lSub.length ? 8 + lSub.length * 21 : 0) + 18;
+  const altoPie = 40;
+  const lienzo = document.createElement('canvas');
+  lienzo.width = (ancho + pad * 2) * escala;
+  lienzo.height = (pad + altoCab + alto + altoPie + pad / 2) * escala;
+  const ctx = lienzo.getContext('2d');
+  ctx.scale(escala, escala);
+  ctx.fillStyle = fondo;
+  ctx.fillRect(0, 0, ancho + pad * 2, lienzo.height / escala);
+  ctx.textBaseline = 'top';
+  let y = pad;
+  ctx.fillStyle = v('--ink'); ctx.font = fTit;
+  lTit.forEach(l => { ctx.fillText(l, pad, y); y += 32; });
+  if (lSub.length) {
+    y += 8; ctx.fillStyle = v('--muted'); ctx.font = fSub;
+    lSub.forEach(l => { ctx.fillText(l, pad, y); y += 21; });
+  }
+  y += 18;
+  ctx.drawImage(img, pad, y, ancho, alto);
+  y += alto + 16;
+  ctx.strokeStyle = v('--line'); ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(pad + ancho, y); ctx.stroke();
+  ctx.fillStyle = v('--muted'); ctx.font = fPie;
+  ctx.fillText(t('descargaPie'), pad, y + 10);
+  const blob = await new Promise(ok => lienzo.toBlob(ok, 'image/png'));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = nombre;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+// qué se fotografía con cada botón, con qué título y con qué nombre de fichero
+function objetivoDescarga(clave) {
+  const opcion = sel => { const s = $(sel); return s && s.selectedOptions[0] ? s.selectedOptions[0].textContent.trim() : ''; };
+  const tdTit = () => `${t('tdMedidaOp', TD.medida)} · ${t('tdSubOp', TD.sub)} · ${t('tdVer')} ${t(TD.gran === 'mes' ? 'tdMes' : 'tdAno').toLowerCase()}`;
+  const limpio = x => String(x).toLowerCase().replace('+', 'a-favor').replace(/-$/, '-en-contra').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  if (clave === 'ranking') return { nodo: $('#tabla-ranking'), nombre: 'medios-ranking.png', titulo: t('rankingTitle'), sub: '' };
+  if (clave === 'mapa') {
+    // en la historia el recuadro del mapa se estira para llenar la pantalla: se recorta a lo que ocupa el dibujo
+    const nodo = $('.panel-mapa .chart-wrap'), svg = $('#mapa');
+    const alto = Math.ceil(svg.getBoundingClientRect().bottom - nodo.getBoundingClientRect().top + parseFloat(getComputedStyle(nodo).paddingBottom) + 2);
+    return { nodo, alto, nombre: `medios-mapa-${limpio(mapaPeriodo)}.png`, titulo: `${t('tabMapa')} · ${opcion('#mapa-periodo')}`, sub: ($('#mapa-resumen') || {}).textContent || '' };
+  }
+  if (clave === 'tendencias') return { nodo: $('.td-wrap'), nombre: `medios-tendencias-${limpio(TD.medida)}-${limpio(TD.sub)}-${TD.gran}.png`, titulo: t('tdTitulo'), sub: tdTit() };
+  if (clave === 'td-tabla') return { nodo: $('#td-tabla'), nombre: `medios-tendencias-tabla-${limpio(TD.medida)}-${limpio(TD.sub)}.png`, titulo: `${t('tdTitulo')} · ${t('tdTablaTitulo')}`, sub: tdTit() };
+  return null;
+}
+
+function iniciarDescargas() {
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('[data-descarga]');
+    if (!b || b.getAttribute('aria-busy') === 'true') return;
+    b.setAttribute('aria-busy', 'true');
+    try {
+      const o = objetivoDescarga(b.dataset.descarga);
+      if (o && o.nodo) await descargarImagen(o.nodo, o.nombre, o.titulo, o.sub.trim(), o.alto);
+    }
+    catch (err) { console.error(err); alert(t('descargaError')); }
+    finally { b.removeAttribute('aria-busy'); }
+  });
 }
 
 function iniciarTendencias() {
@@ -3498,6 +3614,7 @@ function watchSystemTheme() {
   iniciarCajon();
   iniciarContenidos();
   iniciarTendencias();
+  iniciarDescargas();
   route();
   // en pantallas estrechas el mapa se desplaza en horizontal: se abre centrado en el equilibrio
   const cw = $('.chart-wrap');
