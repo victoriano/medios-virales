@@ -6,14 +6,14 @@ Lee el detalle por medio y año que ya publica ``build_legislatura_data.py``
 puede repetir en cualquier máquina con el repositorio. Hay que ejecutarlo
 después de ``build_legislatura_data.py`` cada vez que se regeneren los datos.
 
-Para cada periodo del mapa, medio y partido guarda dos cuartetos, uno para
+Para cada periodo del mapa, medio y partido guarda dos quintetos, uno para
 todos los tuits y otro para los de 100 RT o más:
 
-    [beneficia, perjudica, mediana de retuits, media de retuits]
+    [beneficia, perjudica, mediana de retuits, media de retuits, mediana de favs]
 
 La web calcula con ellos la posición (porcentaje que favorece al partido) y la
 altura (tuits que lo benefician o perjudican). Bajo la clave ``lados`` va lo
-mismo para izquierda y derecha, [izquierda, derecha, mediana, media], porque
+mismo para izquierda y derecha, [izquierda, derecha, mediana, media, favs], porque
 ``polarizacion.json`` no trae la media de retuits. Podemos ya llega agrupado
 en Sumar, igual que en el resto del sitio.
 """
@@ -40,17 +40,18 @@ def a_favor_izquierda(tuit):
     return (tuit["p"] in IZQUIERDA) == (tuit["d"] == "beneficia")
 
 
-def cuarteto(filas, primero):
-    """[primero, resto, mediana de retuits, media de retuits] de las filas."""
+def quinteto(filas, primero):
+    """[primero, resto, mediana de retuits, media de retuits, mediana de favs] de las filas."""
     n1 = sum(1 for f in filas if primero(f))
     rt = [f["rt"] for f in filas]
     mediana = round(statistics.median(rt), 1) if rt else 0
     media = round(statistics.fmean(rt), 1) if rt else 0
-    return [n1, len(filas) - n1, mediana, media]
+    favs = round(statistics.median(f["lk"] for f in filas), 1) if filas else 0
+    return [n1, len(filas) - n1, mediana, media, favs]
 
 
 def series(filas, primero):
-    return [cuarteto(filas, primero), cuarteto([f for f in filas if f["rt"] >= 100], primero)]
+    return [quinteto(filas, primero), quinteto([f for f in filas if f["rt"] >= 100], primero)]
 
 
 def main():
@@ -76,7 +77,7 @@ def main():
     salida = {
         "generado": pol.get("generado"),
         "partidos": PARTIDOS,
-        "formato": "por periodo y medio, para cada partido: [[beneficia, perjudica, mediana RT, media RT] de todos los tuits, [...] de los de 100 RT o más]; en lados: [izquierda, derecha, mediana RT, media RT]",
+        "formato": "por periodo y medio, para cada partido: [[beneficia, perjudica, mediana RT, media RT, mediana favs] de todos los tuits, [...] de los de 100 RT o más]; en lados: [izquierda, derecha, mediana RT, media RT, mediana favs]",
         "periodos": periodos,
     }
     (DATA / "partidos.json").write_text(json.dumps(salida, ensure_ascii=False, separators=(",", ":")))

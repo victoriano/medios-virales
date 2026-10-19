@@ -98,7 +98,7 @@ const I18N = {
     ctlEjeY: 'Eje vertical',
     ctlAjustes: 'Ejes y tamaño',
     varCorta: (v) => ({ con_lado: 'A favor o en contra', ben: 'Lo benefician', perj: 'Lo perjudican', politicos: 'Tuits políticos',
-                        tuits: 'Tuits muestreados', rt_media: 'Media RT', rt_mediana: 'Mediana RT' })[v],
+                        tuits: 'Tuits muestreados', rt_media: 'Media RT', rt_mediana: 'Mediana RT', fav_mediana: 'Mediana favs' })[v],
     ctlTam: 'Tamaño',
     ariaEjeY: 'Variable del eje vertical',
     ariaTam: 'Variable del tamaño de las burbujas',
@@ -110,6 +110,7 @@ const I18N = {
       tuits: 'Tuits muestreados',
       rt_media: 'Media de retuits',
       rt_mediana: 'Mediana de retuits',
+      fav_mediana: 'Mediana de favs',
     })[v],
     varDesc: (v, p) => ({
       con_lado: p ? `número de tuits que benefician o perjudican claramente ${alP(p)}.` : 'número de tuits clasificados que benefician o perjudican claramente a un partido.',
@@ -119,11 +120,12 @@ const I18N = {
       tuits: 'número de tuits muestreados del medio en la serie elegida.',
       rt_media: p ? `media de retuits de los tuits que benefician o perjudican ${alP(p)}.` : 'media de retuits de los tuits con lado claro.',
       rt_mediana: p ? `mediana de retuits de los tuits que benefician o perjudican ${alP(p)}.` : 'mediana de retuits de los tuits con lado claro.',
+      fav_mediana: p ? `mediana de favs (me gusta) de los tuits que benefician o perjudican ${alP(p)}.` : 'mediana de favs (me gusta) de los tuits con lado claro.',
     })[v],
     varTitulo: (v, p, periodo) => `${({
       ben: `Tuits que benefician ${alP(p)}`, perj: `Tuits que perjudican ${alP(p)}`,
       politicos: 'Tuits políticos del medio', tuits: 'Tuits muestreados',
-      rt_media: 'Media de retuits', rt_mediana: 'Mediana de retuits',
+      rt_media: 'Media de retuits', rt_mediana: 'Mediana de retuits', fav_mediana: 'Mediana de favs',
     })[v]} · ${periodo}`,
     ctlPartido: 'Partido',
     ariaPartido: 'Ver la posición de los medios respecto a un partido',
@@ -165,7 +167,7 @@ const I18N = {
     hist4T: 'El Gobierno es el blanco',
     hist4P: (pctPsoe, nPsoe, nResto, perj, ben, ratio) => `El <strong>${pctPsoe} %</strong> de los tuits políticos tiene al PSOE como partido afectado: ${nPsoe}, más que PP, Vox y Sumar juntos (${nResto}). Y se critica mucho más de lo que se elogia: ${perj} tuits perjudican a un partido frente a ${ben} que lo benefician, <strong>${ratio} a 1</strong>. Como el PSOE gobierna desde junio de 2018, criticar al Gobierno suma a la derecha en este índice.`,
     hist4B: 'Leer los tuits sobre el PSOE',
-    mapaHint: 'Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo significa que todos sus tuits con lado claro van a la izquierda, 100 que todos van a la derecha y 50 que se reparten por igual. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. La altura es el <strong>número de tuits clasificados que benefician o perjudican a un partido</strong>. El tamaño representa la <strong>mediana de retuits de esos mismos tuits</strong>. El filtro de retuits permite mostrar todos, solo los que tienen 100 RT o más, o comparar ambos subconjuntos. El eje vertical se ajusta al periodo y conserva una escala común durante la animación anual. Pasa el ratón para ver los números y pulsa para abrir sus tuits.',
+    mapaHint: 'Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo significa que todos sus tuits con lado claro van a la izquierda, 100 que todos van a la derecha y 50 que se reparten por igual. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. La altura es el <strong>número de tuits clasificados que benefician o perjudican a un partido</strong>. El tamaño representa la <strong>mediana de favs (me gusta) de esos mismos tuits</strong>; en los ajustes del mapa se puede cambiar por la mediana de retuits. El filtro de retuits permite mostrar todos, solo los que tienen 100 RT o más, o comparar ambos subconjuntos. El eje vertical se ajusta al periodo y conserva una escala común durante la animación anual. Pasa el ratón para ver los números y pulsa para abrir sus tuits.',
     axisLeft: '◀ todo a la izquierda',
     axisMid: '% de los tuits con lado que va a la derecha',
     axisRight: 'todo a la derecha ▶',
@@ -192,7 +194,7 @@ const I18N = {
     mapaPieFlechaDesc: 'de la posición publicada a la viral: hacia dónde se desplaza el medio al compartirse',
     mapaPieAltura: 'Altura',
     mapaPieAlturaDesc: 'número de tuits clasificados que benefician o perjudican claramente a un partido.',
-    mapaPieTamDesc: 'mediana de retuits de los tuits con lado claro.',
+    mapaPieTamDesc: 'mediana de favs (me gusta) de los tuits con lado claro.',
     mapaPieCorte: 'Corte de inclusión',
     mapaPieCorteDesc: 'más de 50 tuits significados a favor o en contra en toda la muestra.',
     mapaPieFiltroN: (n) => `Solo se dibujan los medios con ${n} o más tuits con lado claro en cada serie.`,
@@ -282,7 +284,7 @@ const I18N = {
     metodoPosicionP1: 'Un tuit suma a la izquierda si beneficia a PSOE o Sumar, o si perjudica a PP o Vox. Suma a la derecha si beneficia a PP o Vox, o si perjudica a PSOE o Sumar. Los tuits políticos sin lado claro quedan fuera de este cálculo.',
     metodoPosicionP2: 'La posición del mapa es el porcentaje de tuits con lado claro que cae a la derecha. Cero significa que todos caen a la izquierda, cincuenta indica equilibrio y cien significa que todos caen a la derecha. El índice técnico del ranking expresa la misma relación en una escala de menos uno a más uno.',
     metodoLeerMapa: 'Cómo leer el mapa',
-    metodoLeerMapaP: 'El filtro de retuits permite mostrar todos los tuits, solo los que alcanzan 100 RT o más, o comparar ambos subconjuntos. El aro continuo representa todos los tuits y el discontinuo, los de 100 RT o más. La flecha parte de la posición de todos los tuits y termina en la del subconjunto de 100 RT. La altura es el número absoluto de tuits que benefician o perjudican a un partido. El tamaño de cada burbuja representa la mediana de retuits de esos mismos tuits mediante una escala de raíz cuadrada relativa al máximo, con un tamaño mínimo para que los logos se lean. El eje vertical se ajusta a la ventana seleccionada y mantiene una escala común entre 2018 y 2026 durante la animación.',
+    metodoLeerMapaP: 'El filtro de retuits permite mostrar todos los tuits, solo los que alcanzan 100 RT o más, o comparar ambos subconjuntos. El aro continuo representa todos los tuits y el discontinuo, los de 100 RT o más. La flecha parte de la posición de todos los tuits y termina en la del subconjunto de 100 RT. La altura es el número absoluto de tuits que benefician o perjudican a un partido. El tamaño de cada burbuja representa por defecto la mediana de favs (me gusta) de esos mismos tuits, y se puede cambiar por la mediana de retuits, mediante una escala de raíz cuadrada relativa al máximo, con un tamaño mínimo para que los logos se lean. El eje vertical se ajusta a la ventana seleccionada y mantiene una escala común entre 2018 y 2026 durante la animación.',
     metodoLimites: 'Límites',
     metodoLimitesItems: [
       'Es una muestra estratificada de hasta 100 tuits por medio y mes, no el historial completo de cada cuenta.',
@@ -403,7 +405,7 @@ const I18N = {
     ctlEjeY: 'Vertical axis',
     ctlAjustes: 'Axis and size',
     varCorta: (v) => ({ con_lado: 'For or against', ben: 'Benefit it', perj: 'Harm it', politicos: 'Political tweets',
-                        tuits: 'Sampled tweets', rt_media: 'Mean RT', rt_mediana: 'Median RT' })[v],
+                        tuits: 'Sampled tweets', rt_media: 'Mean RT', rt_mediana: 'Median RT', fav_mediana: 'Median likes' })[v],
     ctlTam: 'Size',
     ariaEjeY: 'Vertical axis variable',
     ariaTam: 'Bubble size variable',
@@ -415,6 +417,7 @@ const I18N = {
       tuits: 'Sampled tweets',
       rt_media: 'Mean retweets',
       rt_mediana: 'Median retweets',
+      fav_mediana: 'Median likes',
     })[v],
     varDesc: (v, p) => ({
       con_lado: p ? `number of tweets that clearly benefit or harm ${p}.` : 'number of classified tweets that clearly benefit or harm a party.',
@@ -424,11 +427,12 @@ const I18N = {
       tuits: 'number of sampled tweets by the outlet in the chosen series.',
       rt_media: p ? `mean retweets of the tweets that benefit or harm ${p}.` : 'mean retweets among tweets with a clear side.',
       rt_mediana: p ? `median retweets of the tweets that benefit or harm ${p}.` : 'median retweets among tweets with a clear side.',
+      fav_mediana: p ? `median likes of the tweets that benefit or harm ${p}.` : 'median likes among tweets with a clear side.',
     })[v],
     varTitulo: (v, p, periodo) => `${({
       ben: `Tweets that benefit ${p}`, perj: `Tweets that harm ${p}`,
       politicos: 'Political tweets by the outlet', tuits: 'Sampled tweets',
-      rt_media: 'Mean retweets', rt_mediana: 'Median retweets',
+      rt_media: 'Mean retweets', rt_mediana: 'Median retweets', fav_mediana: 'Median likes',
     })[v]} · ${periodo}`,
     ctlPartido: 'Party',
     ariaPartido: 'Show the outlets position towards one party',
@@ -470,7 +474,7 @@ const I18N = {
     hist4T: 'The Government is the target',
     hist4P: (pctPsoe, nPsoe, nResto, perj, ben, ratio) => `<strong>${pctPsoe}%</strong> of political tweets have PSOE as the affected party: ${nPsoe}, more than PP, Vox and Sumar combined (${nResto}). And criticism far outweighs praise: ${perj} tweets hurt a party against ${ben} that help one, <strong>${ratio} to 1</strong>. Since PSOE has led the Government since June 2018, criticising the Government counts to the right in this index.`,
     hist4B: 'Read the tweets about PSOE',
-    mapaHint: 'Each outlet is a dot. Horizontally, 0 means all tweets with a clear side go left, 100 means all go right, and 50 is evenly split. Color follows Spanish convention: <span class="rojo">red</span> for left, <span class="azul">blue</span> for right, and gray for center. Height is the <strong>number of classified tweets that benefit or harm a party</strong>. Size represents the <strong>median retweets of those same tweets</strong>. The retweet filter shows all tweets, only tweets with 100+ RT, or compares both subsets. The vertical scale adapts to the selected period and remains fixed during the yearly animation. Hover for figures and click to open the tweets.',
+    mapaHint: 'Each outlet is a dot. Horizontally, 0 means all tweets with a clear side go left, 100 means all go right, and 50 is evenly split. Color follows Spanish convention: <span class="rojo">red</span> for left, <span class="azul">blue</span> for right, and gray for center. Height is the <strong>number of classified tweets that benefit or harm a party</strong>. Size represents the <strong>median likes of those same tweets</strong>; the map settings can switch it to median retweets. The retweet filter shows all tweets, only tweets with 100+ RT, or compares both subsets. The vertical scale adapts to the selected period and remains fixed during the yearly animation. Hover for figures and click to open the tweets.',
     axisLeft: '◀ all to the left',
     axisMid: '% of tweets with clear side going right',
     axisRight: 'all to the right ▶',
@@ -497,7 +501,7 @@ const I18N = {
     mapaPieFlechaDesc: 'from published position to viral: where the outlet shifts when shared',
     mapaPieAltura: 'Height',
     mapaPieAlturaDesc: 'number of classified tweets that clearly benefit or harm a party.',
-    mapaPieTamDesc: 'median retweets among tweets with a clear side.',
+    mapaPieTamDesc: 'median likes among tweets with a clear side.',
     mapaPieCorte: 'Inclusion threshold',
     mapaPieCorteDesc: 'more than 50 tweets taking sides in the full sample.',
     mapaPieFiltroN: (n) => `Only outlets with ${n} or more tweets with clear side in each series are drawn.`,
@@ -587,7 +591,7 @@ const I18N = {
     metodoPosicionP1: 'A tweet counts as left if it benefits PSOE or Sumar, or if it harms PP or Vox. It counts as right if it benefits PP or Vox, or if it harms PSOE or Sumar. Political tweets without a clear side are excluded from this calculation.',
     metodoPosicionP2: 'The map position is the percentage of tweets with a clear side that fall to the right. Zero means all fall to the left, fifty indicates balance, and one hundred means all fall to the right. The technical index in the ranking expresses the same relationship on a scale from minus one to plus one.',
     metodoLeerMapa: 'How to read the map',
-    metodoLeerMapaP: 'The retweet filter shows all tweets, only those reaching 100 RT or more, or compares both subsets. The solid ring represents all tweets and the dashed ring represents those with 100+ RT. The arrow starts at the all tweets position and ends at the 100+ RT position. Height is the absolute number of tweets that benefit or harm a party. Bubble size represents the median retweets of those same tweets through a square root scale relative to the maximum, with a minimum size so logos stay readable. The vertical axis adapts to the selected window and keeps a common scale from 2018 to 2026 during the animation.',
+    metodoLeerMapaP: 'The retweet filter shows all tweets, only those reaching 100 RT or more, or compares both subsets. The solid ring represents all tweets and the dashed ring represents those with 100+ RT. The arrow starts at the all tweets position and ends at the 100+ RT position. Height is the absolute number of tweets that benefit or harm a party. Bubble size represents by default the median likes of those same tweets, which can be switched to median retweets, through a square root scale relative to the maximum, with a minimum size so logos stay readable. The vertical axis adapts to the selected window and keeps a common scale from 2018 to 2026 during the animation.',
     metodoLimites: 'Limitations',
     metodoLimitesItems: [
       'It is a stratified sample of up to 100 tweets per outlet per month, not the complete history of each account.',
@@ -1576,10 +1580,13 @@ let mapaPartido = '';
 let PARTIDOS_MAPA = null;
 let mapaEjeY = 'con_lado';
 let mapaTrayectoria = '';
-let mapaTam = 'rt_mediana';
-const VARS_MAPA = ['con_lado', 'ben', 'perj', 'politicos', 'tuits', 'rt_media', 'rt_mediana'];
+// el tamaño por defecto es la mediana de favs; la de retuits sigue en el selector
+const TAM_DEF = 'fav_mediana';
+let mapaTam = TAM_DEF;
+const VARS_MAPA = ['con_lado', 'ben', 'perj', 'politicos', 'tuits', 'rt_media', 'rt_mediana', 'fav_mediana'];
 const VARS_PARTIDO = ['ben', 'perj'];
 const VARS_RT = ['rt_media', 'rt_mediana'];
+const VARS_DEC = [...VARS_RT, 'fav_mediana'];
 const MUESTRA_MIN = 5;
 let mapaPeriodo = 'todo';
 const MAPA_ANOS = ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'];
@@ -1633,11 +1640,11 @@ function mediosPolDe(clave) {
    filas de polarizacion.json (izq = perjudica, der = beneficia) para que el
    mapa, las flechas y la ayuda funcionen igual. */
 let cachePartido = new WeakMap();
-function serieDePartido([ben, perj, rt, media], pol) {
+function serieDePartido([ben, perj, rt, media, favs], pol) {
   const n = ben + perj;
   pol = pol || {};
   return {
-    izq: perj, der: ben, con_lado: n, posicion: n ? 100 * ben / n : null, rt_mediana: rt, rt_media: media,
+    izq: perj, der: ben, con_lado: n, posicion: n ? 100 * ben / n : null, rt_mediana: rt, rt_media: media, fav_mediana: favs,
     politicos: pol.politicos != null ? pol.politicos : pol.juicios, tuits: pol.tuits,
   };
 }
@@ -1728,7 +1735,7 @@ const periodoTxt = () => ({
 function valorDe(d, v) {
   if (!d) return 0;
   const x = { con_lado: d.con_lado, ben: d.der, perj: d.izq, politicos: d.politicos != null ? d.politicos : d.juicios,
-              tuits: d.tuits, rt_media: d.rt_media, rt_mediana: d.rt_mediana }[v];
+              tuits: d.tuits, rt_media: d.rt_media, rt_mediana: d.rt_mediana, fav_mediana: d.fav_mediana }[v];
   return Number(x) || 0;
 }
 // máximo de una variable en la ventana; en los años se mira 2018 a 2026 para que la escala no salte al animar
@@ -2078,7 +2085,7 @@ function renderMapa() {
   const trayCajon = cajonAbierto() && $('#cajon .cajon-tray');
   if (trayCajon) { const txt = textoTrayCajon(); trayCajon.textContent = txt; trayCajon.hidden = !txt; }
 
-  const bola = v => { const r = radioTam(v); return `<span class="bola" style="width:${(2 * r).toFixed(0)}px;height:${(2 * r).toFixed(0)}px"></span> ${nf(v)}${VARS_RT.includes(mapaTam) ? ' RT' : ''}`; };
+  const bola = v => { const r = radioTam(v); return `<span class="bola" style="width:${(2 * r).toFixed(0)}px;height:${(2 * r).toFixed(0)}px"></span> ${nf(v)}${VARS_RT.includes(mapaTam) ? ' RT' : mapaTam === 'fav_mediana' ? ' favs' : ''}`; };
   const refTam = redondoArriba(maxTamMapa) / 2;
   const bolas = `${bola(refTam / 10)} ${bola(refTam / 2)} ${bola(refTam)}`;
   const notaFiltro = mapaB200 ? t('mapaPieFiltroN', nf(BRECHA_MIN))
@@ -2089,7 +2096,7 @@ function renderMapa() {
     ${mapaFiltro === 'generalistas' || mapaFiltro === 'programas' ? `<div class="blq"><strong>${t('mapaPieCuentasK')}</strong> ${t('mapaPieCuentas', mapaFiltro)}</div>` : ''}
     ${mapaDestacar && !tray ? `<div class="blq">${t('mapaPieDestacar')}</div>` : ''}
     ${mapaPartido ? `<div class="blq"><strong>${t('mapaPiePartidoK')}</strong> ${t('mapaPiePartido', mapaPartido)}</div>` : ''}
-    <div class="blq"><strong>${t('mapaPieTam')}</strong> ${mapaTam === 'rt_mediana' && !mapaPartido ? t('mapaPieTamDesc') : t('varDesc', mapaTam, mapaPartido)} ${bolas}</div>
+    <div class="blq"><strong>${t('mapaPieTam')}</strong> ${mapaTam === TAM_DEF && !mapaPartido ? t('mapaPieTamDesc') : t('varDesc', mapaTam, mapaPartido)} ${bolas}</div>
     <div class="blq"><strong>${t('mapaPieAro')}</strong> <span class="aro" style="border-color:var(--map-izq)"></span> ${tm('mapaPieIzq')}
       <span class="aro" style="border-color:var(--map-der);margin-left:10px"></span> ${tm('mapaPieDer')}
       <span class="aro" style="border-color:var(--map-neu);margin-left:10px"></span> ${tm('mapaPieCentro')}</div>
@@ -2105,12 +2112,12 @@ function renderMapa() {
 function lineaVars(n) {
   const extra = [...new Set([mapaEjeY, mapaTam])].filter(v => v !== 'con_lado' && v !== 'rt_mediana');
   if (!extra.length) return '';
-  const fmt = v => VARS_RT.includes(v) ? decsep(valorDe(n.d, v)) : nf(valorDe(n.d, v));
+  const fmt = v => VARS_DEC.includes(v) ? decsep(valorDe(n.d, v)) : nf(valorDe(n.d, v));
   return `<div class="tv">${extra.map(v => `<b>${t('varOpcion', v, mapaPartido)}</b>: ${fmt(v)}`).join(' · ')}</div>`;
 }
 function etiquetasVariables() {
   const res = $('#ajustes-resumen');
-  const cambios = [mapaSerie !== 'publicado', mapaEjeY !== 'con_lado', mapaTam !== 'rt_mediana', mapaB200].filter(Boolean).length;
+  const cambios = [mapaSerie !== 'publicado', mapaEjeY !== 'con_lado', mapaTam !== TAM_DEF, mapaB200].filter(Boolean).length;
   if (res) {
     res.textContent = t('ajustesResumen', cambios);
     res.title = `↕ ${t('varCorta', mapaEjeY)} · ◯ ${t('varCorta', mapaTam)}`;
@@ -2137,8 +2144,8 @@ async function asegurarPartidos() {
   }
 }
 async function fijarVariableMapa(cual, valor) {
-  valor = VARS_MAPA.includes(valor) ? valor : (cual === 'ejeY' ? 'con_lado' : 'rt_mediana');
-  if (valor === 'rt_media' && !(await asegurarPartidos())) valor = cual === 'ejeY' ? 'con_lado' : 'rt_mediana';
+  valor = VARS_MAPA.includes(valor) ? valor : (cual === 'ejeY' ? 'con_lado' : TAM_DEF);
+  if (valor === 'rt_media' && !(await asegurarPartidos())) valor = cual === 'ejeY' ? 'con_lado' : TAM_DEF;
   if (cual === 'ejeY') mapaEjeY = valor; else mapaTam = valor;
   $(cual === 'ejeY' ? '#mapa-ejey' : '#mapa-tam').value = valor;
   renderMapa();
@@ -2263,7 +2270,7 @@ async function fijarPartidoMapa(valor) {
   marcarPartido();
   // «beneficia» y «perjudica» solo tienen sentido respecto a un partido
   if (!elegido && VARS_PARTIDO.includes(mapaEjeY)) { mapaEjeY = 'con_lado'; $('#mapa-ejey').value = mapaEjeY; }
-  if (!elegido && VARS_PARTIDO.includes(mapaTam)) { mapaTam = 'rt_mediana'; $('#mapa-tam').value = mapaTam; }
+  if (!elegido && VARS_PARTIDO.includes(mapaTam)) { mapaTam = TAM_DEF; $('#mapa-tam').value = mapaTam; }
   renderMapa();
 }
 
@@ -2271,7 +2278,7 @@ function irAlMapa({ serie = 'publicado', filtro = 'todos', b200 = false, periodo
   pararEvolucion();
   salirRelato(false);
   mapaSerie = serie; mapaFiltro = filtro; mapaB200 = b200; mapaPartido = ''; mapaDestacar = '';
-  mapaEjeY = 'con_lado'; mapaTam = 'rt_mediana'; mapaTrayectoria = '';
+  mapaEjeY = 'con_lado'; mapaTam = TAM_DEF; mapaTrayectoria = '';
   sincronizarControles();
   fijarPeriodoMapa(periodo, true);
   $('.panel-mapa').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2428,7 +2435,7 @@ async function aplicarPaso(i) {
   if (cajonAbierto()) cerrarCajon();
   if (p.partido && !(await asegurarPartidos())) p.partido = '';
   if (turno !== relatoTurno) return;
-  mapaSerie = 'publicado'; mapaB200 = false; mapaEjeY = 'con_lado'; mapaTam = 'rt_mediana';
+  mapaSerie = 'publicado'; mapaB200 = false; mapaEjeY = 'con_lado'; mapaTam = TAM_DEF;
   mapaFiltro = p.filtro || 'todos';
   mapaDestacar = p.destacar || '';
   mapaTrayectoria = typeof p.tray === 'function' ? p.tray() : (p.tray || '');

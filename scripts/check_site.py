@@ -83,9 +83,9 @@ def tics_y(escala):
     return [num_es(float(f"{paso * i:.12g}")) for i in range(tramos + 1)]
 
 
-def radio_esperado(rt_mediana, maximo):
+def radio_esperado(valor, maximo):
     """Réplica de radioTam en app.js: 15 + 9*sqrt(v/max), con max el mayor valor de la ventana."""
-    return 15.0 + 9.0 * math.sqrt(min(1.0, max(0.0, float(rt_mediana or 0)) / maximo))
+    return 15.0 + 9.0 * math.sqrt(min(1.0, max(0.0, float(valor or 0)) / maximo))
 
 
 async def main():
@@ -421,10 +421,10 @@ async def main():
 
         # (2) la X de cada nodo es la posicion de polarizacion.json y el color, rojo a la izquierda y azul a la derecha.
         #     El eje Y representa el número absoluto de tuits con lado claro y su escala se calcula por periodo/serie.
-        #     El tamaño de la burbuja depende de la mediana de retuits: r = 15 + 9·√(rt_mediana / máximo).
+        #     El tamaño de la burbuja depende por defecto de la mediana de favs: r = 15 + 9·√(fav_mediana / máximo).
         por_handle = {m["handle"]: m for m in pol["medios"]}
         series_dibujadas = {n["serie"] for n in est["nodos"]}
-        max_rt = max([1] + [((m.get(sr) or {}).get("rt_mediana") or 0) for m in pol["medios"] for sr in series_dibujadas])
+        max_fav = max([1] + [((m.get(sr) or {}).get("fav_mediana") or 0) for m in pol["medios"] for sr in series_dibujadas])
         escala_todo = escala_y(max([1] + [n["conLado"] for n in est["nodos"]]))  # fuera de los años, se ajusta a lo dibujado
         yMax_todo = escala_todo[0]
         peor_x, peor_y, peor_r, mal_color, mal_rad, rojos, azules, grises = 0.0, 0.0, 0.0, [], [], 0, 0, 0
@@ -437,10 +437,10 @@ async def main():
             peor_x = max(peor_x, abs(n["x"] - (x0 + d["posicion"] / 100 * (x100 - x0))))
             y_esperada = 554 - (d["con_lado"] or 0) / yMax_todo * 476
             peor_y = max(peor_y, abs(n["y"] - y_esperada))
-            r_esperado = radio_esperado(d.get("rt_mediana") or 0, max_rt)
+            r_esperado = radio_esperado(d.get("fav_mediana") or 0, max_fav)
             peor_r = max(peor_r, abs(n["r"] - r_esperado))
             if abs(n["r"] - r_esperado) > 0.2:
-                mal_rad.append(f"{n['h']}/{n['serie']} rt_mediana={d.get('rt_mediana')} -> r={n['r']} esperado {r_esperado:.2f}")
+                mal_rad.append(f"{n['h']}/{n['serie']} fav_mediana={d.get('fav_mediana')} -> r={n['r']} esperado {r_esperado:.2f}")
             if n["yMax"] and abs(n["yMax"] - yMax_todo) > 0.001:
                 errores.append(f"[check] la burbuja {n['h']}/{n['serie']} lleva yMax={n['yMax']} pero calculado {yMax_todo}")
             if n["conLado"] != (d["con_lado"] or 0):
@@ -459,7 +459,7 @@ async def main():
         tics_esperados = tics_y(escala_todo)
         print(f"X de los nodos frente a posicion = 100*der/(izq+der): desviacion maxima {peor_x:.3f} px")
         print(f"Y de los nodos frente a con_lado / yMax ({yMax_todo}): desviacion maxima {peor_y:.3f} px")
-        print(f"radio de las burbujas por rt_mediana: desviacion maxima {peor_r:.3f} px")
+        print(f"radio de las burbujas por fav_mediana: desviacion maxima {peor_r:.3f} px")
         print("tics del eje Y:", " · ".join(est["yticsCantidad"]), "| esperados:", " · ".join(tics_esperados))
         print(f"nodos por color: rojo (izquierda) {rojos} · azul (derecha) {azules} · gris (centro) {grises} | mal pintados: {len(mal_color)}")
         if peor_x > 0.3:
@@ -475,7 +475,7 @@ async def main():
         if radios and (max(radios) > 24.001 or min(radios) < 6):
             errores.append(f"[check] radios fuera de rango razonable: min={min(radios):.1f} max={max(radios):.1f}")
         if mal_rad:
-            errores.append(f"[check] radio por rt_mediana desviado: " + "; ".join(mal_rad[:4]))
+            errores.append(f"[check] radio por fav_mediana desviado: " + "; ".join(mal_rad[:4]))
         if mal_color or not rojos or not azules:
             errores.append(f"[check] colores por lado: {len(mal_color)} mal, {rojos} rojos, {azules} azules :: " + "; ".join(mal_color[:4]))
         arriba = [n for n in est["nodos"] if n["serie"] == "publicado"]
@@ -543,7 +543,7 @@ async def main():
             errores.append("[check] lo viral deberia llevar el aro discontinuo")
         if "aro discontinuo" not in estados["ambas"]["pie"] or "Flecha" not in estados["ambas"]["pie"]:
             errores.append(f"[check] falta la leyenda de las flechas: {estados['ambas']['pie'][:200]}")
-        for esperado in ["mediana de retuits", "número de tuits", "100 RT o más"]:
+        for esperado in ["mediana de favs", "número de tuits", "100 RT o más"]:
             if esperado not in estados["ambas"]["pie"]:
                 errores.append(f"[check] falta '{esperado}' en el pie del mapa: {estados['ambas']['pie'][:200]}")
 
@@ -847,7 +847,7 @@ async def main():
         print("pie del mapa en EN:", pie_en[:180])
         print("titulos del mapa en EN:", tits_en)
         print("resumen del mapa en EN:", resumen_en)
-        for esperado in ["Size", "Ring", "left", "right", "Arrow", "Height", "median retweets", "100+ RT"]:
+        for esperado in ["Size", "Ring", "left", "right", "Arrow", "Height", "median likes", "100+ RT"]:
             if esperado not in pie_en:
                 errores.append(f"[check] pie del mapa sin traducir ({esperado}): {pie_en[:220]!r}")
         if not any("all to the left" in t for t in tits_en) or not any("all to the right" in t for t in tits_en):
