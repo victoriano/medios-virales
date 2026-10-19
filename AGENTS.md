@@ -112,8 +112,9 @@ Tendencias: tuits, mediana y media de retuits y de me gusta por medio, periodo y
 políticos, izquierda, derecha y a favor o en contra de cada partido). No necesita el taller.
 
 `scripts/build_noticias_data.py` saca `site/data/noticias.json`, las noticias políticas que
-Tendencias superpone en el gráfico si el lector lo pide (selector «Noticias políticas»: no mostrar, solo
-las clave o todas). La fuente es `data/noticias_politicas.csv`, copiada tal cual de
+Tendencias superpone en el gráfico si el lector lo pide (selector «Noticias políticas»: los grandes
+eventos, que son elecciones y corrupción juntos o por separado, las de relevancia 5 o todas). El grupo
+de cada noticia sale de su categoría en la fuente («Elecciones/resultados» y «Corrupción/escándalo»). La fuente es `data/noticias_politicas.csv`, copiada tal cual de
 `data/eventos_2018_2026.csv` del repositorio `victoriano/barometro-cis-viz`; si se amplía allí, se vuelve
 a copiar y se repite el script. Es una selección editorial de acontecimientos, no un dato del corpus.
 

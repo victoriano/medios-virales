@@ -862,10 +862,13 @@ Object.assign(I18N.es, {
   tdTipPulsa: 'Pulsa para añadirlo al gráfico',
   tdTipQuita: 'Pulsa para quitarlo del gráfico',
   tdNoticias: 'Noticias políticas',
-  tdNoticiasOp: k => ({ no: 'No mostrar', clave: 'Solo las clave', todas: 'Todas' })[k],
-  tdNoticiasLeyenda: n => `${n} noticias políticas`,
+  tdNoticiasOp: k => ({ no: 'No mostrar', grandes: 'Elecciones y corrupción', elecciones: 'Solo elecciones', corrupcion: 'Solo corrupción', clave: 'Las de mayor relevancia', todas: 'Todas' })[k],
+  tdNoticiasGrandes: 'Grandes eventos',
+  tdNoticiasMas: 'Más noticias',
+  tdNoticiasGrupo: k => ({ elecciones: 'elecciones', corrupcion: 'corrupción', otras: 'otras' })[k],
+  tdNoticiasPulsa: 'Pulsa para verla en la lista',
   tdNoticiasLista: n => `Las ${n} noticias del gráfico, por fecha`,
-  tdNoticiasFuente: 'Acontecimientos de la política española seleccionados para el proyecto <a href="https://github.com/victoriano/barometro-cis-viz" target="_blank" rel="noopener">de los barómetros del CIS</a>, con su relevancia y a quién beneficiaron o perjudicaron previsiblemente. Las clave son las de relevancia máxima. Que una noticia coincida con un cambio en la línea no demuestra que lo cause.',
+  tdNoticiasFuente: 'Acontecimientos de la política española seleccionados para el proyecto <a href="https://github.com/victoriano/barometro-cis-viz" target="_blank" rel="noopener">de los barómetros del CIS</a>, con su relevancia y a quién beneficiaron o perjudicaron previsiblemente. Elecciones son las generales, autonómicas, municipales y europeas; corrupción, los casos y escándalos. Las de mayor relevancia son las que el proyecto puntúa con un 5 sobre 5. Que una noticia coincida con un cambio en la línea no demuestra que lo cause.',
   tdTablaTitulo: 'Año a año',
   tdTablaHint: 'Pulsa un medio para añadirlo al gráfico o quitarlo. Pulsa la cabecera de un año para ordenar.',
   tdColMedio: 'Medio',
@@ -920,10 +923,13 @@ Object.assign(I18N.en, {
   tdTipPulsa: 'Click to add it to the chart',
   tdTipQuita: 'Click to remove it from the chart',
   tdNoticias: 'Political news',
-  tdNoticiasOp: k => ({ no: 'Hide', clave: 'Key events only', todas: 'All' })[k],
-  tdNoticiasLeyenda: n => `${n} political news events`,
+  tdNoticiasOp: k => ({ no: 'Hide', grandes: 'Elections and corruption', elecciones: 'Elections only', corrupcion: 'Corruption only', clave: 'Most relevant', todas: 'All' })[k],
+  tdNoticiasGrandes: 'Major events',
+  tdNoticiasMas: 'More news',
+  tdNoticiasGrupo: k => ({ elecciones: 'elections', corrupcion: 'corruption', otras: 'other' })[k],
+  tdNoticiasPulsa: 'Click to see it in the list',
   tdNoticiasLista: n => `The ${n} news events on the chart, by date`,
-  tdNoticiasFuente: 'Spanish political events selected for the <a href="https://github.com/victoriano/barometro-cis-viz" target="_blank" rel="noopener">CIS barometers project</a>, with their relevance and who they likely helped or hurt (text in Spanish). Key events are those with the highest relevance. A news event lining up with a change in a line does not prove it caused it.',
+  tdNoticiasFuente: 'Spanish political events selected for the <a href="https://github.com/victoriano/barometro-cis-viz" target="_blank" rel="noopener">CIS barometers project</a>, with their relevance and who they likely helped or hurt (text in Spanish). Elections cover general, regional, local and European votes; corruption, the cases and scandals. The most relevant are those the project scores 5 out of 5. A news event lining up with a change in a line does not prove it caused it.',
   tdTablaTitulo: 'Year by year',
   tdTablaHint: 'Click an outlet to add it to the chart or remove it. Click a year header to sort.',
   tdColMedio: 'Outlet',
@@ -1306,8 +1312,9 @@ const TD_POS = { rt_mediana: 1, rt_media: 2, lk_mediana: 3 };
 const TD_MIN = { ano: 20, mes: 5 };   // tuits mínimos para dibujar una mediana o una media
 const TD_AUTO = 5, TD_MAX = 8;        // ocho colores categóricos, en orden fijo
 const TD_PARAMS = { medida: 'medida', sub: 'tuits', gran: 'ver', cuentas: 'cuentas', destacar: 'destacar', noticias: 'noticias' };
-// noticias políticas que se pueden superponer: ninguna, solo las de relevancia 5 o todas
-const TD_NOTICIAS = ['no', 'clave', 'todas'];
+// noticias políticas que se pueden superponer: ninguna, los grandes eventos (elecciones
+// y corrupción, juntos o por separado), las de relevancia 5 o todas
+const TD_NOTICIAS = ['no', 'grandes', 'elecciones', 'corrupcion', 'clave', 'todas'];
 const TEND = { ano: null, mes: null, noticias: null };
 let tdError = false;
 
@@ -1356,7 +1363,14 @@ async function abrirTendencias() {
 function noticiasTend() {
   if (TD.noticias === 'no' || !TEND.noticias) return [];
   const { desde, hasta } = INDEX.ventana;
-  return TEND.noticias.filter(n => n.fecha >= desde && n.fecha <= hasta && (TD.noticias === 'todas' || n.relevancia >= 5));
+  const pasa = {
+    todas: () => true,
+    clave: n => n.relevancia >= 5,
+    grandes: n => !!n.grupo,
+    elecciones: n => n.grupo === 'elecciones',
+    corrupcion: n => n.grupo === 'corrupcion',
+  }[TD.noticias];
+  return TEND.noticias.filter(n => n.fecha >= desde && n.fecha <= hasta && pasa(n));
 }
 const fechaLarga = f => new Date(+f.slice(0, 4), +f.slice(5, 7) - 1, +f.slice(8, 10))
   .toLocaleDateString(LANG === 'en' ? 'en-GB' : 'es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -1473,7 +1487,9 @@ function pintarTendencias() {
       <optgroup label="${esc(t('mapaTipoGrupo'))}">${tiposMapa().map(k => `<option value="${k}">${esc(t('mapaTipoOpcion', t('tipoNombre', k), cuenta(k)))}</option>`).join('')}</optgroup>
     </select></label>
     <label class="ctl"><span class="ctl-k">${t('tdNoticias')}</span><select id="td-noticias">
-      ${TD_NOTICIAS.map(k => `<option value="${k}">${esc(t('tdNoticiasOp', k))}</option>`).join('')}
+      ${TD_NOTICIAS.slice(0, 1).map(k => `<option value="${k}">${esc(t('tdNoticiasOp', k))}</option>`).join('')}
+      <optgroup label="${esc(t('tdNoticiasGrandes'))}">${TD_NOTICIAS.slice(1, 4).map(k => `<option value="${k}">${esc(t('tdNoticiasOp', k))}</option>`).join('')}</optgroup>
+      <optgroup label="${esc(t('tdNoticiasMas'))}">${TD_NOTICIAS.slice(4).map(k => `<option value="${k}">${esc(t('tdNoticiasOp', k))}</option>`).join('')}</optgroup>
     </select></label>
     <div class="ctl"><span class="ctl-k">${t('tdVer')}</span>
       <div class="ctl-v"><div class="seg" id="td-gran" role="group" aria-label="${esc(t('tdVer'))}">
@@ -1618,12 +1634,18 @@ function pintarGraficoTend(series, elegidos, color) {
     const x = posNoticia(nt.fecha);
     if (x == null) return '';
     const xs = x.toFixed(1), ym = M.t - 12;
-    return `<g class="td-ev${nt.relevancia >= 5 ? ' is-clave' : ''}" data-ev="${j}">
+    return `<g class="td-ev${nt.grupo ? ' is-grande' : ''}" data-ev="${j}">
       <line class="td-ev-raya" x1="${xs}" x2="${xs}" y1="${ym}" y2="${H - M.b}"></line>
       <line class="td-ev-hit" x1="${xs}" x2="${xs}" y1="${ym - 7}" y2="${H - M.b}"></line>
-      <path class="td-ev-marca" d="M${xs} ${ym - 5}L${(x + 5).toFixed(1)} ${ym}L${xs} ${ym + 5}L${(x - 5).toFixed(1)} ${ym}Z"></path></g>`;
+      <path class="td-ev-marca" d="${formaNoticia(nt.grupo, x, ym)}"></path></g>`;
   }).join('');
-  if (noticias.length) g += `<text class="td-ev-tit" x="${W - M.r}" y="14" text-anchor="end">◆ ${esc(t('tdNoticiasLeyenda', noticias.length))}</text>`;
+  if (noticias.length) {
+    // la leyenda solo nombra las formas que hay en el gráfico
+    const hay = k => noticias.some(nt => (nt.grupo || 'otras') === k);
+    const leyenda = ['elecciones', 'corrupcion', 'otras'].filter(hay)
+      .map(k => `${{ elecciones: '◆', corrupcion: '■', otras: '◇' }[k]} ${t('tdNoticiasGrupo', k)}`).join('   ');
+    g += `<text class="td-ev-tit" x="${W - M.r}" y="14" text-anchor="end" xml:space="preserve">${esc(leyenda)}</text>`;
+  }
   const porSlug = new Map(series.map(s => [s.slug, s]));
   const etiquetas = [];
   const color_ = elegidos.map(k => {
@@ -1721,9 +1743,10 @@ function tipNoticia(ev, nt, marca) {
   marca.classList.add('is-foco');
   $('#td-tip').innerHTML = `<div class="tt">${esc(fechaLarga(nt.fecha))}</div>
     <div class="td-ev-nombre">${esc(nt.nombre)}</div>
-    <div class="tm">${esc(nt.categoria)}</div>
+    <div class="tm">${esc(nt.categoria)} · ${esc(nt.ambito)}</div>
     <div class="td-ev-desc">${esc(nt.descripcion)}</div>
-    ${nt.impactos.length ? `<div class="td-imps">${impactosHTML(nt.impactos)}</div>` : ''}`;
+    ${nt.impactos.length ? `<div class="td-imps">${impactosHTML(nt.impactos)}</div>` : ''}
+    <div class="tm">${t('tdNoticiasPulsa')}</div>`;
   colocarTipTend(ev);
 }
 function ocultarTipTend() {
@@ -1735,6 +1758,12 @@ function ocultarTipTend() {
   $$('#td-graf .td-linea.is-foco').forEach(el => el.classList.remove('is-foco'));
 }
 
+// elecciones con rombo, corrupción con cuadrado y el resto con rombo hueco
+function formaNoticia(grupo, x, y) {
+  if (grupo === 'corrupcion') return `M${(x - 4.5).toFixed(1)} ${y - 4.5}h9v9h-9Z`;
+  const r = grupo ? 6 : 5;
+  return `M${x.toFixed(1)} ${y - r}L${(x + r).toFixed(1)} ${y}L${x.toFixed(1)} ${y + r}L${(x - r).toFixed(1)} ${y}Z`;
+}
 // la lista que acompaña al gráfico cuando hay noticias: para consultar cuándo fue cada una
 function pintarListaNoticias() {
   const caja = $('#td-noticias-lista');
@@ -1744,7 +1773,7 @@ function pintarListaNoticias() {
   caja.innerHTML = `<details class="td-noticias"${TD_LISTA_ABIERTA ? ' open' : ''}>
     <summary>${esc(t('tdNoticiasLista', noticias.length))}</summary>
     <p class="hint">${t('tdNoticiasFuente')}</p>
-    <ol>${noticias.map((nt, j) => `<li data-ev="${j}">
+    <ol>${noticias.map((nt, j) => `<li data-ev="${j}"${nt.grupo ? ` class="is-grande td-g-${nt.grupo}"` : ''}>
       <time datetime="${nt.fecha}">${esc(fechaLarga(nt.fecha))}</time>
       <div><b>${esc(nt.nombre)}</b> <span class="td-ev-cat">${esc(nt.categoria)}</span>
         <p>${esc(nt.descripcion)}</p>

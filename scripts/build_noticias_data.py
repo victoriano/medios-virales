@@ -28,6 +28,11 @@ def impactos(texto: str) -> list[list[str]]:
             for m in IMPACTO.finditer(texto or "")]
 
 
+# los grandes eventos que la web deja filtrar y destaca: elecciones (generales,
+# autonómicas, municipales y europeas) y casos de corrupción, según la categoría de la fuente
+GRUPOS = {"Elecciones/resultados": "elecciones", "Corrupción/escándalo": "corrupcion"}
+
+
 def main() -> None:
     with CSV.open(encoding="utf-8-sig", newline="") as f:
         filas = list(csv.DictReader(f))
@@ -38,6 +43,7 @@ def main() -> None:
             "fecha": r["fecha_evento"],
             "nombre": r["nombre_evento"].strip(),
             "categoria": r["categoria"].strip(),
+            "grupo": GRUPOS.get(r["categoria"].strip()),
             "ambito": r["ambito"].strip(),
             "descripcion": r["descripcion"].strip(),
             "explicacion": r["explicacion_impacto"].strip(),

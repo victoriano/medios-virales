@@ -185,11 +185,13 @@ class SiteDataTest(unittest.TestCase):
         for n in noticias:
             self.assertRegex(n["fecha"], r"^\d{4}-\d{2}-\d{2}$")
             self.assertIn(n["relevancia"], range(1, 6))
+            self.assertIn(n["grupo"], ("elecciones", "corrupcion", None), n["id"])
             self.assertTrue(n["impactos"], n["id"])
             self.assertTrue(all(sg in ("+", "-", "0", "±") for _, sg in n["impactos"]), n["id"])
         ventana = self.index["ventana"]
         dentro = [n for n in noticias if ventana["desde"] <= n["fecha"] <= ventana["hasta"]]
         self.assertGreater(len(dentro), 0)
+        self.assertTrue({"elecciones", "corrupcion"} <= {n["grupo"] for n in dentro})
 
 
 if __name__ == "__main__":

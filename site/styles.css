@@ -740,13 +740,13 @@ body[data-view="mapa"] main.wrap,body:not([data-view]) main.wrap{padding-top:6px
 #td-graf .td-guia{fill:none;stroke-width:1;opacity:.6}
 #td-graf text.td-rotulo{fill:var(--ink);font:600 12px var(--f-sans)}
 #td-graf .td-ev{cursor:pointer}
-#td-graf .td-ev-raya{stroke:var(--muted);stroke-width:1;stroke-dasharray:1 3;opacity:.45}
-#td-graf .td-ev.is-clave .td-ev-raya{opacity:.7}
+#td-graf .td-ev-raya{stroke:var(--muted);stroke-width:1;stroke-dasharray:1 3;opacity:.4}
+#td-graf .td-ev.is-grande .td-ev-raya{stroke:var(--ink);stroke-dasharray:2 3;opacity:.55}
 #td-graf .td-ev-hit{stroke:transparent;stroke-width:9}
 #td-graf .td-ev-marca{fill:var(--panel);stroke:var(--muted);stroke-width:1.5}
-#td-graf .td-ev.is-clave .td-ev-marca{fill:var(--muted)}
+#td-graf .td-ev.is-grande .td-ev-marca{fill:var(--ink);stroke:var(--panel);stroke-width:1}
 #td-graf .td-ev.is-foco .td-ev-raya{stroke:var(--ink);opacity:1;stroke-dasharray:none}
-#td-graf .td-ev.is-foco .td-ev-marca{fill:var(--ink);stroke:var(--ink)}
+#td-graf .td-ev.is-foco .td-ev-marca{fill:var(--hl);stroke:var(--ink);stroke-width:1.5}
 #td-graf text.td-ev-tit{font:500 11.5px var(--f-sans);fill:var(--muted)}
 .td-ev-nombre{font-weight:700;margin-top:4px}
 .td-ev-desc{margin-top:6px;font-size:13px;line-height:1.4}
@@ -760,6 +760,8 @@ body[data-view="mapa"] main.wrap,body:not([data-view]) main.wrap{padding-top:6px
 .td-noticias ol{list-style:none;margin:10px 0 0;padding:0;max-height:520px;overflow:auto}
 .td-noticias li{display:grid;grid-template-columns:180px 1fr;gap:4px 14px;padding:10px 6px;border-bottom:1px solid var(--rule)}
 .td-noticias li.is-foco,.td-noticias li:hover{background:var(--hl);color:var(--hl-ink)}
+.td-noticias li.is-grande b{font-weight:800}
+.td-noticias li.is-grande time{color:var(--ink)}
 .td-noticias time{font:500 13px/1.4 var(--f-mono);color:var(--muted);white-space:nowrap}
 .td-noticias p{margin:4px 0 0;font-size:14px;line-height:1.45}
 .td-fuentes{margin-top:6px;font-size:12.5px}
