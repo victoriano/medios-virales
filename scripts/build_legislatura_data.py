@@ -94,6 +94,7 @@ def metric(rows, viral=False):
         "der": counts["der"],
         "con_lado": clear,
         "rt_mediana": round(statistics.median(row["retweets"] for row in clear_rows), 1) if clear_rows else 0,
+        "fav_mediana": round(statistics.median(int(row.get("likes") or 0) for row in clear_rows), 1) if clear_rows else 0,
         "posicion": position,
         "tuits": len(selected),
         "porcentaje_con_lado": round(100 * clear / len(selected), 6) if selected else 0,
@@ -285,7 +286,7 @@ def main():
         "generado": datetime.now(timezone.utc).date().isoformat(),
         "fuente": "TwitterAPI.io: hasta 100 tuits Latest por medio y mes, estratificados temporalmente.",
         "viral_definicion": "Subconjunto de la misma muestra con al menos 100 retuits.",
-        "metrica": "índice = (derecha − izquierda) / (derecha + izquierda); posicion = 100 × derecha / (izquierda + derecha); Y = número de tuits con lado claro; tamaño = mediana de retuits de esos tuits",
+        "metrica": "índice = (derecha − izquierda) / (derecha + izquierda); posicion = 100 × derecha / (izquierda + derecha); Y = número de tuits con lado claro; tamaño = mediana de favs de esos tuits por defecto, o mediana de retuits",
         "periodos": periods,
         "medios": periods["todo"]["medios"],
     }

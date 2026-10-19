@@ -51,6 +51,7 @@ class SiteDataTest(unittest.TestCase):
                     lados = fila["lados"][i]
                     self.assertEqual((lados[0], lados[1]), (izq, der), f"{clave} {medio['handle']} {serie}")
                     self.assertEqual(lados[2], medio[serie]["rt_mediana"], f"{clave} {medio['handle']} {serie}")
+                    self.assertEqual(lados[4], medio[serie]["fav_mediana"], f"{clave} {medio['handle']} {serie}")
 
     def test_contenidos_holds_every_viral_tweet(self):
         """contenidos.json trae exactamente los tuits de 100 RT o más de cada medio."""
@@ -119,7 +120,7 @@ class SiteDataTest(unittest.TestCase):
         self.assertFalse(any((DATA / "medios").glob("*.json")))
 
     def test_map_metrics_expose_absolute_counts_and_median_retweets(self):
-        """El eje Y usa con_lado (número absoluto) y el tamaño usa rt_mediana (mediana de retuits)."""
+        """El eje Y usa con_lado (número absoluto) y el tamaño, fav_mediana o rt_mediana (medianas de favs y retuits)."""
         for period in self.polarizacion["periodos"].values():
             for medium in period["medios"]:
                 for series in ("publicado", "viral"):
@@ -132,6 +133,9 @@ class SiteDataTest(unittest.TestCase):
                         self.assertGreaterEqual(metric["con_lado"], 0)
                         self.assertGreaterEqual(metric["rt_mediana"], 0)
                         self.assertIsInstance(metric["rt_mediana"], (int, float))
+                        self.assertIn("fav_mediana", metric)
+                        self.assertGreaterEqual(metric["fav_mediana"], 0)
+                        self.assertIsInstance(metric["fav_mediana"], (int, float))
                         # El subconjunto de 100 RT o más nunca puede tener una mediana inferior a 100 cuando hay muestra.
                         if series == "viral" and metric["con_lado"] > 0:
                             self.assertGreaterEqual(metric["rt_mediana"], 100)
@@ -142,9 +146,9 @@ class SiteDataTest(unittest.TestCase):
                         )
 
     def test_polarizacion_metadata_describes_new_axes(self):
-        """La metodología documenta el nuevo eje Y y el tamaño por mediana de retuits."""
+        """La metodología documenta el nuevo eje Y y el tamaño por mediana de favs o de retuits."""
         metrica = self.polarizacion.get("metrica", "")
-        for esperado in ("número de tuits con lado claro", "mediana de retuits"):
+        for esperado in ("número de tuits con lado claro", "mediana de favs", "mediana de retuits"):
             self.assertIn(esperado, metrica, metrica)
 
 

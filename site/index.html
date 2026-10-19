@@ -168,6 +168,7 @@
                     <option value="tuits">tuits</option>
                     <option value="rt_media">rt_media</option>
                     <option value="rt_mediana">rt_mediana</option>
+                    <option value="fav_mediana">fav_mediana</option>
                   </select></label>
                 <label class="ctl"><span class="ctl-k" data-i18n="ctlTam">Tamaño</span><select id="mapa-tam" data-i18n-aria="ariaTam" aria-label="Variable del tamaño de las burbujas">
                     <option value="con_lado">con_lado</option>
@@ -176,7 +177,8 @@
                     <option value="politicos">politicos</option>
                     <option value="tuits">tuits</option>
                     <option value="rt_media">rt_media</option>
-                    <option value="rt_mediana" selected>rt_mediana</option>
+                    <option value="rt_mediana">rt_mediana</option>
+                    <option value="fav_mediana" selected>fav_mediana</option>
                   </select></label>
                 <label class="ajustes-check"><input type="checkbox" id="mapa-b200"> <span data-i18n="mapaFiltroB200">Solo brecha fiable: 200 con lado en cada serie</span></label>
               </div>
@@ -203,7 +205,7 @@
     <div class="panel prose historia">
       <h2 data-i18n="mapaTitle">Cómo leer el mapa</h2>
       <p class="hint" data-i18n-html="mapaHint">
-        Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo significa que todos sus tuits con lado claro van a la izquierda, 100 que todos van a la derecha y 50 que se reparten por igual. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. La altura es el <strong>número de tuits clasificados que benefician o perjudican a un partido</strong>. El tamaño representa la <strong>mediana de retuits de esos mismos tuits</strong>. El filtro de retuits permite mostrar todos, solo los que tienen 100 RT o más, o comparar ambos subconjuntos. El eje vertical se ajusta al periodo y conserva una escala común durante la animación anual. Pasa el ratón para ver los números y pulsa para abrir sus tuits.
+        Cada medio es un punto. En horizontal, su posición en la escala <strong>izquierda → derecha</strong>: 0 en el borde izquierdo significa que todos sus tuits con lado claro van a la izquierda, 100 que todos van a la derecha y 50 que se reparten por igual. El color sigue la convención española: <span class="rojo">rojo</span> a la izquierda, <span class="azul">azul</span> a la derecha y gris en el centro. La altura es el <strong>número de tuits clasificados que benefician o perjudican a un partido</strong>. El tamaño representa la <strong>mediana de favs (me gusta) de esos mismos tuits</strong>; en los ajustes del mapa se puede cambiar por la mediana de retuits. El filtro de retuits permite mostrar todos, solo los que tienen 100 RT o más, o comparar ambos subconjuntos. El eje vertical se ajusta al periodo y conserva una escala común durante la animación anual. Pasa el ratón para ver los números y pulsa para abrir sus tuits.
       </p>
       <p class="byline" data-i18n-html="byline">Por <strong>Victoriano Izquierdo</strong> · Datos de X, 2018 a 2026</p>
     </div>
@@ -259,7 +261,7 @@
       <p data-i18n="metodoPosicionP2">La posición del mapa es el porcentaje de tuits con lado claro que cae a la derecha. Cero significa que todos caen a la izquierda, cincuenta indica equilibrio y cien significa que todos caen a la derecha. El índice técnico del ranking expresa la misma relación en una escala de menos uno a más uno.</p>
 
       <h3 data-i18n="metodoLeerMapa">Cómo leer el mapa</h3>
-      <p data-i18n="metodoLeerMapaP">El filtro de retuits permite mostrar todos los tuits, solo los que alcanzan 100 RT o más, o comparar ambos subconjuntos. El aro continuo representa todos los tuits y el discontinuo, los de 100 RT o más. La flecha parte de la posición de todos los tuits y termina en la del subconjunto de 100 RT. La altura es el número absoluto de tuits que benefician o perjudican a un partido. El tamaño de cada burbuja representa la mediana de retuits de esos mismos tuits mediante una escala de raíz cuadrada relativa al máximo, con un tamaño mínimo para que los logos se lean. El eje vertical se ajusta a la ventana seleccionada y mantiene una escala común entre 2018 y 2026 durante la animación.</p>
+      <p data-i18n="metodoLeerMapaP">El filtro de retuits permite mostrar todos los tuits, solo los que alcanzan 100 RT o más, o comparar ambos subconjuntos. El aro continuo representa todos los tuits y el discontinuo, los de 100 RT o más. La flecha parte de la posición de todos los tuits y termina en la del subconjunto de 100 RT. La altura es el número absoluto de tuits que benefician o perjudican a un partido. El tamaño de cada burbuja representa por defecto la mediana de favs (me gusta) de esos mismos tuits, y se puede cambiar por la mediana de retuits, mediante una escala de raíz cuadrada relativa al máximo, con un tamaño mínimo para que los logos se lean. El eje vertical se ajusta a la ventana seleccionada y mantiene una escala común entre 2018 y 2026 durante la animación.</p>
 
       <h3 data-i18n="metodoLimites">Límites</h3>
       <ul id="metodo-limites"></ul>
@@ -284,6 +286,6 @@
   </div>
 </footer>
 
-<script src="app.js?v=202610181200"></script>
+<script src="app.js?v=202610190900"></script>
 </body>
 </html>
