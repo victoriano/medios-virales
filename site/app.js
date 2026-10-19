@@ -812,7 +812,7 @@ Object.assign(I18N.es, {
   tabTendencias: 'Tendencias',
   tdTitulo: 'Tendencias',
   tdAria: 'Evolución de cada medio a lo largo del tiempo',
-  tdHint: (medida, sub) => `Cómo cambia, año a año o mes a mes, <strong>${medida}</strong> de cada medio, contando ${sub}. Las líneas de color son los medios elegidos y las grises, el resto. Pasa el ratón para ver las cifras y pulsa una línea gris para añadirla.`,
+  tdHint: (medida, sub) => `Cómo cambia, año a año o mes a mes, <strong>${medida}</strong> de cada medio, contando ${sub}. Las líneas de color son los medios elegidos y las grises, el resto. Destaca los que más crecen o más caen, pasa el ratón para ver las cifras y pulsa una línea gris para añadirla.`,
   tdMedida: 'Medida',
   tdMedidaOp: k => ({ rt_mediana: 'Mediana de retuits', rt_media: 'Media de retuits', lk_mediana: 'Mediana de me gusta', n: 'Número de tuits', pct: '% de sus tuits' })[k],
   tdMedidaFrase: k => ({ rt_mediana: 'la mediana de retuits', rt_media: 'la media de retuits', lk_mediana: 'la mediana de me gusta', n: 'el número de tuits', pct: 'el porcentaje de sus tuits' })[k],
@@ -838,13 +838,17 @@ Object.assign(I18N.es, {
   tdLog: 'Escala logarítmica',
   tdElegidos: 'En el gráfico',
   tdAnadir: 'Añadir medio…',
-  tdAuto: n => `Volver a los ${n} más altos`,
+  tdDestacar: n => `Destacar ${n}`,
+  tdDestacarOp: (k, n) => ({ altos: 'Más altos', crecen: 'Más crecen', caen: 'Más caen' })[k],
+  tdColPend: 'Tendencia',
+  tdColPendTip: 'Cuánto sube o baja cada año, según la recta que mejor se ajusta a sus valores anuales (con al menos tres años)',
+  tdTipPend: v => `Tendencia: ${v} al año`,
   tdQuitar: nombre => `Quitar ${nombre}`,
   tdLleno: n => `Caben ${n} medios a la vez`,
   tdCargando: 'Cargando los datos…',
   tdError: 'No se han podido cargar los datos de tendencias.',
   tdSinDatos: 'Ningún medio tiene datos con estos filtros.',
-  tdNota: (min, gran) => `Es una muestra de hasta 100 tuits por medio y mes, no todo lo publicado. Las medianas y medias solo se dibujan con al menos ${min} tuits en el ${gran === 'mes' ? 'mes' : 'año'}. 2018 empieza en mayo y 2026 acaba en septiembre, así que en número de tuits esos dos años salen más bajos. Los retuits y me gusta son los que tenía cada tuit al descargarlo, en 2026.`,
+  tdNota: (min, gran) => `Es una muestra de hasta 100 tuits por medio y mes, no todo lo publicado. Las medianas y medias solo se dibujan con al menos ${min} tuits en el ${gran === 'mes' ? 'mes' : 'año'}. 2018 empieza en mayo y 2026 acaba en septiembre, así que en número de tuits esos dos años salen más bajos. Los retuits y me gusta son los que tenía cada tuit al descargarlo, en 2026. La tendencia es la pendiente de la recta que mejor se ajusta a los valores anuales de cada medio, con al menos tres años; en número de tuits no cuenta 2018 ni 2026.`,
   tdTipN: (n, total) => `${n} de ${total} tuits muestreados`,
   tdTipPocos: (n, min) => `${n} tuits, menos de ${min}: sin cifra`,
   tdTipPulsa: 'Pulsa para añadirlo al gráfico',
@@ -859,7 +863,7 @@ Object.assign(I18N.en, {
   tabTendencias: 'Trends',
   tdTitulo: 'Trends',
   tdAria: 'How each outlet changes over time',
-  tdHint: (medida, sub) => `How <strong>${medida}</strong> changes for each outlet, year by year or month by month, counting ${sub}. Coloured lines are the outlets you picked and grey lines the rest. Hover to see the numbers and click a grey line to add it.`,
+  tdHint: (medida, sub) => `How <strong>${medida}</strong> changes for each outlet, year by year or month by month, counting ${sub}. Coloured lines are the outlets you picked and grey lines the rest. Highlight the ones rising or falling most, hover to see the numbers and click a grey line to add it.`,
   tdMedida: 'Measure',
   tdMedidaOp: k => ({ rt_mediana: 'Median retweets', rt_media: 'Mean retweets', lk_mediana: 'Median likes', n: 'Number of tweets', pct: '% of its tweets' })[k],
   tdMedidaFrase: k => ({ rt_mediana: 'the median retweets', rt_media: 'the mean retweets', lk_mediana: 'the median likes', n: 'the number of tweets', pct: 'the share of its tweets' })[k],
@@ -885,13 +889,17 @@ Object.assign(I18N.en, {
   tdLog: 'Log scale',
   tdElegidos: 'On the chart',
   tdAnadir: 'Add outlet…',
-  tdAuto: n => `Back to the top ${n}`,
+  tdDestacar: n => `Highlight ${n}`,
+  tdDestacarOp: (k, n) => ({ altos: 'Highest', crecen: 'Rising most', caen: 'Falling most' })[k],
+  tdColPend: 'Trend',
+  tdColPendTip: 'How much it rises or falls per year, from the line that best fits its yearly values (at least three years)',
+  tdTipPend: v => `Trend: ${v} per year`,
   tdQuitar: nombre => `Remove ${nombre}`,
   tdLleno: n => `Up to ${n} outlets at once`,
   tdCargando: 'Loading data…',
   tdError: 'The trends data could not be loaded.',
   tdSinDatos: 'No outlet has data with these filters.',
-  tdNota: (min, gran) => `This is a sample of up to 100 tweets per outlet and month, not everything published. Medians and means are only drawn with at least ${min} tweets in the ${gran === 'mes' ? 'month' : 'year'}. 2018 starts in May and 2026 ends in September, so those two years look lower in number of tweets. Retweets and likes are what each tweet had when it was downloaded, in 2026.`,
+  tdNota: (min, gran) => `This is a sample of up to 100 tweets per outlet and month, not everything published. Medians and means are only drawn with at least ${min} tweets in the ${gran === 'mes' ? 'month' : 'year'}. 2018 starts in May and 2026 ends in September, so those two years look lower in number of tweets. Retweets and likes are what each tweet had when it was downloaded, in 2026. The trend is the slope of the line that best fits each outlet's yearly values, with at least three years; for number of tweets it leaves out 2018 and 2026.`,
   tdTipN: (n, total) => `${n} of ${total} sampled tweets`,
   tdTipPocos: (n, min) => `${n} tweets, fewer than ${min}: no figure`,
   tdTipPulsa: 'Click to add it to the chart',
@@ -1270,13 +1278,14 @@ $('#q').addEventListener('input', e => { query = e.target.value; pintarRanking()
    datos salen de scripts/build_tendencias_data.py: por medio y periodo, el total
    muestreado y, por subconjunto, [tuits, mediana RT, media RT, mediana me gusta,
    media me gusta]. Los meses van en otro fichero y solo se piden al elegirlos. */
-const TD = { medida: 'rt_mediana', sub: 'todos', gran: 'ano', cuentas: 'todos', log: false, sel: null, orden: 'media', dir: -1 };
+const TD = { medida: 'rt_mediana', sub: 'todos', gran: 'ano', cuentas: 'todos', destacar: 'altos', log: false, sel: null, orden: 'media', dir: -1 };
+const TD_DESTACAR = ['altos', 'crecen', 'caen'];
 const TD_MEDIDAS = ['rt_mediana', 'rt_media', 'lk_mediana', 'n', 'pct'];
 const TD_SUBS = ['todos', 'politicos', 'izq', 'der', 'PSOE+', 'PSOE-', 'PP+', 'PP-', 'Vox+', 'Vox-', 'Sumar+', 'Sumar-'];
 const TD_POS = { rt_mediana: 1, rt_media: 2, lk_mediana: 3 };
 const TD_MIN = { ano: 20, mes: 5 };   // tuits mínimos para dibujar una mediana o una media
 const TD_AUTO = 5, TD_MAX = 8;        // ocho colores categóricos, en orden fijo
-const TD_PARAMS = { medida: 'medida', sub: 'tuits', gran: 'ver', cuentas: 'cuentas' };
+const TD_PARAMS = { medida: 'medida', sub: 'tuits', gran: 'ver', cuentas: 'cuentas', destacar: 'destacar' };
 const TEND = { ano: null, mes: null };
 let tdError = false;
 
@@ -1288,12 +1297,14 @@ function leeFiltrosTendencias(cadena) {
   if (TD_SUBS.includes(s)) TD.sub = s;
   if (g === 'ano' || g === 'mes') TD.gran = g;
   if (c) TD.cuentas = c;
+  const d = usp.get('destacar');
+  if (TD_DESTACAR.includes(d)) TD.destacar = d;
   TD.log = usp.get('log') === '1';
   if (sel) TD.sel = sel.split(',').filter(Boolean).slice(0, TD_MAX);
 }
 function escribeFiltrosTendencias() {
   const usp = new URLSearchParams();
-  const def = { medida: 'rt_mediana', sub: 'todos', gran: 'ano', cuentas: 'todos' };
+  const def = { medida: 'rt_mediana', sub: 'todos', gran: 'ano', cuentas: 'todos', destacar: 'altos' };
   for (const k in TD_PARAMS) if (TD[k] !== def[k]) usp.set(TD_PARAMS[k], TD[k]);
   if (TD.log) usp.set('log', '1');
   if (TD.sel) usp.set('medios', TD.sel.join(','));
@@ -1339,9 +1350,32 @@ function seriesTend(gran) {
   return INDEX.medios.filter(m => pasaCuentas(m, TD.cuentas)).map(m => {
     const p = porH.get(m.handle.toLowerCase()) || {};
     const valores = periodos.map(k => valorTend(p[k], gran));
-    return { m, slug: slugDe(m.handle), p, valores, media: mediaDe(valores) };
+    const fila = { m, slug: slugDe(m.handle), p, valores, media: mediaDe(valores) };
+    if (gran === 'ano') fila.pendiente = pendienteTend(periodos, valores);
+    return fila;
   });
 }
+/* Tendencia de un medio: la pendiente de la recta de mínimos cuadrados sobre sus
+   valores anuales, en unidades de la medida por año. Pide cifra en al menos tres
+   años. En número de tuits se dejan fuera 2018 y 2026, que están incompletos y
+   harían caer cualquier serie por los extremos. */
+function pendienteTend(anos, valores) {
+  const incompleto = a => (a === anos[0] && !INDEX.ventana.desde.slice(5).startsWith('01'))
+    || (a === anos[anos.length - 1] && !INDEX.ventana.hasta.slice(5).startsWith('12'));
+  const pts = anos.map((a, i) => [+a, valores[i]])
+    .filter(([a, v]) => v != null && !(TD.medida === 'n' && incompleto(String(a))));
+  if (pts.length < 3) return null;
+  const mx = pts.reduce((x, [a]) => x + a, 0) / pts.length;
+  const my = pts.reduce((x, [, v]) => x + v, 0) / pts.length;
+  const sxx = pts.reduce((x, [a]) => x + (a - mx) ** 2, 0);
+  return sxx ? pts.reduce((x, [a, v]) => x + (a - mx) * (v - my), 0) / sxx : null;
+}
+const fmtPendiente = v => {
+  if (v == null) return '—';
+  const n = Math.abs(v) < 0.05 ? 0 : v;
+  const signo = n > 0 ? '+' : n < 0 ? '−' : '';
+  return signo + fx(Math.abs(n), 1) + (TD.medida === 'pct' ? ' pt' : '');
+};
 // elegidos: los que fijó el lector o, si no fijó ninguno, los más altos con la medida actual
 function elegidosTend(anuales) {
   if (TD.sel) {
@@ -1349,6 +1383,11 @@ function elegidosTend(anuales) {
     return TD.sel.filter(s => validos.has(s));
   }
   // los automáticos piden cifra en al menos tres años, para que una cuenta recién llegada no acapare el gráfico
+  if (TD.destacar !== 'altos') {
+    const signo = TD.destacar === 'crecen' ? 1 : -1;
+    return anuales.filter(s => s.pendiente != null && signo * s.pendiente > 0)
+      .sort((a, b) => signo * (b.pendiente - a.pendiente)).slice(0, TD_AUTO).map(s => s.slug);
+  }
   const conSerie = s => s.valores.filter(v => v != null).length >= 3;
   return anuales.filter(s => s.media != null && conSerie(s)).sort((a, b) => b.media - a.media).slice(0, TD_AUTO).map(s => s.slug);
 }
@@ -1433,12 +1472,17 @@ function pintarElegidosTend(anuales, elegidos, color) {
       <i style="background:${color(k)}"></i>${esc(s.m.nombre)}<span aria-hidden="true">×</span></button>`;
   }).join('');
   const lleno = elegidos.length >= TD_MAX;
-  $('#td-medios').innerHTML = `<span class="ctl-k">${t('tdElegidos')}</span>${chips}
+  const destacar = `<div class="td-destacar"><span class="ctl-k">${t('tdDestacar', TD_AUTO)}</span>
+    <div class="seg" role="group" aria-label="${esc(t('tdDestacar', TD_AUTO))}">${TD_DESTACAR.map(k => {
+      const on = !TD.sel && TD.destacar === k;
+      return `<button type="button" data-destacar="${k}" class="${on ? 'is-on' : ''}" aria-pressed="${on}">${t('tdDestacarOp', k, TD_AUTO)}</button>`;
+    }).join('')}</div></div>`;
+  $('#td-medios').innerHTML = `${destacar}<span class="ctl-k">${t('tdElegidos')}</span>${chips}
     <select id="td-anadir" aria-label="${esc(t('tdAnadir'))}"${lleno ? ' disabled' : ''}>
       <option value="">${esc(lleno ? t('tdLleno', TD_MAX) : t('tdAnadir'))}</option>
       ${fuera.map(s => `<option value="${esc(s.slug)}">${esc(s.m.nombre)}</option>`).join('')}
     </select>
-    ${TD.sel ? `<button type="button" class="td-auto" id="td-auto">${t('tdAuto', TD_AUTO)}</button>` : ''}`;
+`;
 }
 
 function ticksLog(min, max) {
@@ -1576,7 +1620,8 @@ function tipTend(ev) {
     linea.classList.add('is-foco');
     const s = TD_GEO.series.get(linea.dataset.h);
     const elegido = TD_GEO.elegidos.includes(linea.dataset.h);
-    cuerpo = fila(s, elegido ? TD_GEO.color(linea.dataset.h) : null) + `<div class="tm">${t(elegido ? 'tdTipQuita' : 'tdTipPulsa')}</div>`;
+    const pend = s.pendiente != null ? `<div class="tm">${t('tdTipPend', fmtPendiente(s.pendiente))}</div>` : '';
+    cuerpo = fila(s, elegido ? TD_GEO.color(linea.dataset.h) : null) + pend + `<div class="tm">${t(elegido ? 'tdTipQuita' : 'tdTipPulsa')}</div>`;
   } else {
     const filas = TD_GEO.elegidos.map(h => TD_GEO.series.get(h)).filter(Boolean)
       .sort((a, b) => (b.valores[i] ?? -1) - (a.valores[i] ?? -1));
@@ -1602,8 +1647,8 @@ function ocultarTipTend() {
 
 function pintarTablaTend(anuales, elegidos, color) {
   const anos = periodosTend('ano');
-  const col = TD.orden === 'media' ? null : anos.indexOf(TD.orden);
-  const clave = s => col == null || col < 0 ? s.media : s.valores[col];
+  const col = anos.indexOf(TD.orden);
+  const clave = s => TD.orden === 'pendiente' ? s.pendiente : col < 0 ? s.media : s.valores[col];
   const filas = anuales.filter(s => s.media != null).sort((a, b) => {
     const x = clave(a), y = clave(b);
     if (x == null && y == null) return a.m.nombre.localeCompare(b.m.nombre, 'es');
@@ -1615,18 +1660,23 @@ function pintarTablaTend(anuales, elegidos, color) {
   const flecha = k => TD.orden === k ? (TD.dir < 0 ? ' ▼' : ' ▲') : '';
   $('#td-tabla thead').innerHTML = `<tr><th class="c-medio">${t('tdColMedio')}</th>
     ${anos.map(a => `<th class="num${TD.orden === a ? ' sel' : ''}" data-td-orden="${a}">${a}${flecha(a)}</th>`).join('')}
-    <th class="num${TD.orden === 'media' ? ' sel' : ''}" data-td-orden="media" title="${esc(t('tdColMediaTip'))}">${t('tdColMedia')}${flecha('media')}</th></tr>`;
+    <th class="num${TD.orden === 'media' ? ' sel' : ''}" data-td-orden="media" title="${esc(t('tdColMediaTip'))}">${t('tdColMedia')}${flecha('media')}</th>
+    <th class="num${TD.orden === 'pendiente' ? ' sel' : ''}" data-td-orden="pendiente" title="${esc(t('tdColPendTip'))}">${t('tdColPend')}${flecha('pendiente')}</th></tr>`;
   const celda = v => {
     if (v == null) return `<td class="num td-vacia">—</td>`;
     const fuerza = TD.log && v > 0 ? Math.log10(1 + v) / Math.log10(1 + maximo) : v / maximo;
     return `<td class="num" style="--td-calor:${Math.round(3 + 22 * Math.max(0, fuerza))}%">${fmtTend(v)}</td>`;
   };
+  const celdaPend = v => {
+    const cls = v == null || Math.abs(v) < 0.05 ? '' : v > 0 ? ' td-sube' : ' td-baja';
+    return `<td class="num td-pend${cls}">${v == null || Math.abs(v) < 0.05 ? '' : v > 0 ? '▲ ' : '▼ '}${fmtPendiente(v)}</td>`;
+  };
   $('#td-tabla tbody').innerHTML = filas.map(s => {
     const on = elegidos.includes(s.slug);
     return `<tr data-td="${esc(s.slug)}" class="${on ? 'is-sel' : ''}">
       <td class="c-medio"><span class="td-nombre"><i style="background:${on ? color(s.slug) : 'transparent'}"></i>${esc(s.m.nombre)}</span></td>
-      ${s.valores.map(celda).join('')}${celda(s.media)}</tr>`;
-  }).join('') || `<tr><td colspan="${anos.length + 2}" class="empty">${t('tdSinDatos')}</td></tr>`;
+      ${s.valores.map(celda).join('')}${celda(s.media)}${celdaPend(s.pendiente)}</tr>`;
+  }).join('') || `<tr><td colspan="${anos.length + 3}" class="empty">${t('tdSinDatos')}</td></tr>`;
 }
 
 function iniciarTendencias() {
@@ -1650,7 +1700,15 @@ function iniciarTendencias() {
   $('#td-medios').addEventListener('click', e => {
     const q = e.target.closest('[data-quita]');
     if (q) { alternarTend(q.dataset.quita, anuales()); return; }
-    if (e.target.closest('#td-auto')) { TD.sel = null; pintarTendencias(); }
+    const d = e.target.closest('[data-destacar]');
+    if (d) {
+      TD.destacar = d.dataset.destacar;
+      TD.sel = null;
+      // la tabla acompaña: por tendencia al buscar quién crece o cae, por promedio si no
+      if (TD.destacar === 'altos') { TD.orden = 'media'; TD.dir = -1; }
+      else { TD.orden = 'pendiente'; TD.dir = TD.destacar === 'crecen' ? -1 : 1; }
+      pintarTendencias();
+    }
   });
   $('#td-medios').addEventListener('change', e => {
     if (e.target.id === 'td-anadir' && e.target.value) alternarTend(e.target.value, anuales());

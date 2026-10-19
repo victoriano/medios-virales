@@ -757,3 +757,7 @@ body[data-view="mapa"] main.wrap,body:not([data-view]) main.wrap{padding-top:6px
 .td-tabla tbody tr.is-sel td.c-medio{font-weight:700}
 .td-nombre{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
 .td-nombre i{width:12px;height:4px;border-radius:2px;flex:none}
+.td-destacar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;flex-basis:100%;margin-bottom:4px}
+.td-destacar .seg button{font:600 13px/1 var(--f-sans)}
+.td-tabla td.td-pend{background:none;font-weight:600}
+.td-tabla td.td-pend:not(.td-sube):not(.td-baja){color:var(--muted)}
