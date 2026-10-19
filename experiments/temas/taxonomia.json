@@ -1,0 +1,43 @@
+{
+  "version": "t1",
+  "grupos": {
+    "economico": "Económico: igualdad frente a mercado",
+    "diplomatico": "Diplomático: nación frente a mundo",
+    "civil": "Civil: libertad frente a autoridad",
+    "social": "Social: tradición frente a progreso",
+    "gestion": "Gestión",
+    "pactos": "Pactos y alianzas",
+    "salseo": "Salseo político",
+    "otro": "Otro"
+  },
+  "subtemas": {
+    "economia": ["economico", "Impuestos, empleo y pensiones", "impuestos, IRPF, inflación, paro, salarios, pensiones o deuda pública"],
+    "sanidad": ["economico", "Sanidad", "hospitales, listas de espera, atención primaria, cribados o privatización sanitaria"],
+    "educacion": ["economico", "Educación", "colegios, universidades, profesorado o becas"],
+    "vivienda": ["economico", "Vivienda", "alquiler, precio de la vivienda, vivienda pública u okupación como problema de vivienda"],
+    "servicios": ["economico", "Transporte y servicios públicos", "trenes, Rodalies, carreteras, SEPE o una administración pública que no funciona"],
+    "territorial": ["diplomatico", "Unidad de España e independentismo", "amnistía, Puigdemont, independentismo, financiación singular o cesiones a nacionalistas como asunto de Estado"],
+    "exterior": ["diplomatico", "Política exterior", "Gaza e Israel, Marruecos y el Sáhara, Venezuela, Estados Unidos, la Unión Europea u otras relaciones internacionales"],
+    "defensa": ["diplomatico", "Defensa y ejército", "gasto militar, OTAN, envío de armas o Fuerzas Armadas"],
+    "instituciones": ["civil", "Calidad democrática", "gobernar por decreto, eludir el control parlamentario, colonizar instituciones, acusaciones de autoritarismo, independencia judicial o lawfare"],
+    "libertades": ["civil", "Libertades civiles", "censura, libertad de expresión, ley mordaza, vigilancia o derecho de protesta"],
+    "medios": ["civil", "Medios de comunicación", "presiones o ataques a periodistas y medios, RTVE, bulos y desinformación"],
+    "seguridad": ["civil", "Seguridad y orden público", "delincuencia, policía, okupación violenta o terrorismo"],
+    "inmigracion": ["social", "Inmigración", "llegada de inmigrantes, regularización, menores no acompañados, fronteras o prioridad nacional"],
+    "igualdad": ["social", "Feminismo e igualdad", "políticas contra la violencia machista, pulseras, ley del solo sí es sí, igualdad o derechos LGTBI"],
+    "valores": ["social", "Valores y moral social", "aborto, eutanasia, religión e Iglesia, modelo de familia, toros o batalla cultural"],
+    "extremismo": ["social", "Extremismo y memoria", "ultraderecha, franquismo y memoria histórica, comunismo, racismo o discurso de odio"],
+    "medioambiente": ["social", "Campo y medio ambiente", "agricultura, ganadería, agua, energía o clima"],
+    "corrupcion": ["gestion", "Corrupción", "comisiones, malversación, contratos amañados, enriquecimiento, financiación ilegal o casos como Koldo, Ábalos, SEPI, Kitchen o el ático de Ayuso"],
+    "judicial": ["gestion", "Procesos judiciales", "imputaciones, citaciones, juicios o investigaciones judiciales a cargos políticos o a sus familiares, o al fiscal general"],
+    "emergencias": ["gestion", "Gestión de catástrofes", "DANA, incendios, apagón, accidentes con responsabilidad pública o la respuesta a una emergencia"],
+    "pacto_extremos": ["pactos", "Pactos con extremos", "pactos o acuerdos con la extrema derecha o la extrema izquierda, como PP con Vox o PSOE con Podemos"],
+    "pacto_nacionalistas": ["pactos", "Pactos con nacionalistas", "pactos o acuerdos con independentistas o nacionalistas como Junts, ERC, Bildu o PNV, y lo que se cede a cambio"],
+    "coalicion": ["pactos", "Coalición de gobierno", "tensiones entre socios del mismo gobierno, como PSOE y Sumar o PP y Vox donde gobiernan juntos"],
+    "estabilidad": ["pactos", "Estabilidad parlamentaria", "presupuestos, votaciones perdidas, mociones de censura, cuestión de confianza o adelanto electoral"],
+    "enfrentamientos": ["salseo", "Enfrentamientos internos", "peleas entre dirigentes del mismo partido, choques con históricos o críticas de compañeros de partido"],
+    "partido_interno": ["salseo", "Crisis en el partido", "dimisiones, purgas, primarias, escisiones o hundimiento electoral de un partido"],
+    "conducta": ["salseo", "Ética y conducta personal", "mentiras, hipocresía, insultos, privilegios, vida privada o escándalos personales de un dirigente"],
+    "otro": ["otro", "Otro", "ninguno de los temas anteriores encaja"]
+  }
+}
