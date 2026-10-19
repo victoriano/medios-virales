@@ -35,7 +35,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/fraunces-normal-400-900.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fonts.css?v=202610051200">
-<link rel="stylesheet" href="styles.css?v=202610181200">
+<link rel="stylesheet" href="styles.css?v=202610191200">
 </head>
 <body>
 <nav class="nav" aria-label="Secciones">
@@ -44,6 +44,7 @@
     <div class="tabs" role="tablist">
       <button class="tab is-on" data-view="mapa" role="tab" data-i18n="tabMapa">Mapa</button>
       <button class="tab" data-view="ranking" role="tab" data-i18n="tabRanking">Ranking</button>
+      <button class="tab" data-view="tendencias" role="tab" data-i18n="tabTendencias">Tendencias</button>
       <button class="tab" data-view="contenidos" role="tab" data-i18n="tabContenidos">Contenidos</button>
       <button class="tab" data-view="metodo" role="tab" data-i18n="tabMetodo">Método</button>
     </div>
@@ -100,6 +101,26 @@
       </div>
       <p class="foot-note" id="rank-aviso" data-i18n="rankAviso">El corte de inclusión usa únicamente los tuits con lado claro: izquierda más derecha debe superar 50. El porcentaje político usa todos los tuits clasificados como políticos, incluidos los que informan sin tomar partido.</p>
       <p class="foot-note" id="rank-note"></p>
+    </div>
+  </section>
+
+  <!-- ============ TENDENCIAS ============ -->
+  <section id="view-tendencias" class="view" hidden>
+    <div class="panel">
+      <h2 data-i18n="tdTitulo">Tendencias</h2>
+      <p class="hint" id="td-hint"></p>
+      <div class="td-filtros" id="td-filtros"></div>
+      <div class="td-medios" id="td-medios"></div>
+      <div class="chart-wrap td-wrap">
+        <svg id="td-graf" role="img" data-i18n-aria="tdAria" aria-label="Evolución de cada medio a lo largo del tiempo"></svg>
+        <div class="tip" id="td-tip" hidden></div>
+      </div>
+      <p class="foot-note" id="td-nota"></p>
+      <h3 class="td-sub" data-i18n="tdTablaTitulo">Año a año</h3>
+      <p class="hint td-tabla-hint" data-i18n="tdTablaHint">Pulsa un medio para añadirlo al gráfico o quitarlo. Pulsa la cabecera de un año para ordenar.</p>
+      <div class="table-scroll">
+        <table class="rank td-tabla" id="td-tabla"><thead></thead><tbody></tbody></table>
+      </div>
     </div>
   </section>
 
@@ -284,6 +305,6 @@
   </div>
 </footer>
 
-<script src="app.js?v=202610181200"></script>
+<script src="app.js?v=202610191200"></script>
 </body>
 </html>

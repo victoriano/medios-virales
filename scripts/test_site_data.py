@@ -65,6 +65,32 @@ class SiteDataTest(unittest.TestCase):
         for medio in self.index["medios"]:
             self.assertEqual(por_handle.get(medio["handle"], 0), medio["virales"], medio["handle"])
 
+    def test_tendencias_match_partitions_and_sides(self):
+        """tendencias.json cuenta por año los mismos tuits que el detalle y los mismos lados que el mapa."""
+        anos = json.loads((DATA / "tendencias.json").read_text())
+        meses = json.loads((DATA / "tendencias_meses.json").read_text())
+        self.assertEqual([m["h"] for m in anos["medios"]], [m["h"] for m in meses["medios"]])
+        por_handle = {m["h"].lower(): m["p"] for m in anos["medios"]}
+        mensual = {m["h"].lower(): m["p"] for m in meses["medios"]}
+        for medio in self.index["medios"]:
+            h = medio["handle"].lower()
+            manifest = json.loads((DATA / medio["archivo"]).read_text())
+            for part in manifest["particiones"]:
+                fila = por_handle[h][part["year"]]
+                self.assertEqual(fila["n"], part["tuits"], f"{h} {part['year']}")
+                # 30 de los 157.659 políticos llegan al detalle sin partido; tendencias los cuenta
+                # como no políticos porque el detalle no guarda la marca de lectura política
+                faltan = part["politicos"] - fila.get("politicos", [0])[0]
+                self.assertIn(faltan, (0, 1, 2), f"{h} {part['year']}")
+                mes_n = sum(f["n"] for k, f in mensual[h].items() if k.startswith(part["year"]))
+                self.assertEqual(mes_n, part["tuits"], f"{h} {part['year']}")
+            for medio_pol in self.polarizacion["periodos"]["2020"]["medios"]:
+                if medio_pol["handle"].lower() != h:
+                    continue
+                fila = por_handle[h].get("2020", {})
+                lados = (fila.get("izq", [0])[0], fila.get("der", [0])[0])
+                self.assertEqual(lados, (medio_pol["publicado"]["izq"], medio_pol["publicado"]["der"]), h)
+
     def test_periods_cover_full_series_xv_and_each_year(self):
         self.assertEqual(list(self.polarizacion["periodos"]), EXPECTED_PERIODS)
         full = self.polarizacion["periodos"]["todo"]

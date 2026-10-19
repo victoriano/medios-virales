@@ -117,6 +117,7 @@ El corte global de inclusión exige **más de 50 tuits con lado claro** en toda 
 - `site/data/index.json`: agregados por medio y totales globales.
 - `site/data/medios/<medio>.json`: todos los tuits de ese medio.
 - `site/data/contenidos.json`: todos los tuits con 100 RT o más, con y sin lectura política, para la sección Contenidos. Lo genera `scripts/build_contenidos_data.py` a partir de los ficheros por medio y año.
+- `site/data/tendencias.json` y `site/data/tendencias_meses.json`: para la sección Tendencias, cada medio por año y por mes, con el número de tuits y la mediana y la media de retuits y de me gusta de todos sus tuits, de los políticos, de los que van a cada lado y de los que benefician o perjudican a cada partido. Los genera `scripts/build_tendencias_data.py` a partir de los ficheros por medio y año.
 - `site/logos/`: los 50 logos circulares. `scripts/build_data.py` lleva la lista `EXCLUIR` con las cuentas que no se publican y borra del sitio los JSON que sobren.
 
 ## Reproducir

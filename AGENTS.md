@@ -106,6 +106,11 @@ También `scripts/build_contenidos_data.py` saca `site/data/contenidos.json`, to
 o más, que es lo que busca la sección Contenidos cuando no hay un medio elegido. Con un medio elegido,
 la web lee directamente sus ficheros por año. Tampoco necesita el taller y también hay que repetirlo.
 
+Igual `scripts/build_tendencias_data.py`, que saca `site/data/tendencias.json` (por año) y
+`site/data/tendencias_meses.json` (por mes, solo se pide al elegir ver por mes) para la sección
+Tendencias: tuits, mediana y media de retuits y de me gusta por medio, periodo y subconjunto (todos,
+políticos, izquierda, derecha y a favor o en contra de cada partido). No necesita el taller.
+
 Por último, `scripts/build_tipos_data.py` añade a `index.json` el tipo de cada cuenta (prensa
 escrita, digital, televisión, programa de televisión, radio, programa de radio o agencia), que usa
 el filtro «Medios» del mapa. La clasificación es manual y vive en `data/tipos_medio.json`: un programa
