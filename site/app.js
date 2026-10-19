@@ -1820,6 +1820,7 @@ function pintarTablaTend(anuales, elegidos, color) {
 // ---------- descargar como imagen ----------
 // html-to-image solo se pide la primera vez que alguien descarga algo
 let HTI = null;
+const ANCHO_DESCARGA = 3840;
 function cargarHTI() {
   if (!HTI) HTI = new Promise((ok, ko) => {
     const s = document.createElement('script');
@@ -1849,15 +1850,17 @@ async function descargarImagen(nodo, nombre, titulo, subtitulo, altoFijo) {
   const css = getComputedStyle(document.documentElement);
   const v = k => css.getPropertyValue(k).trim();
   const fondo = v('--panel') || '#fff';
-  const escala = 2;
   const ancho = nodo.scrollWidth, alto = altoFijo || nodo.scrollHeight;
+  // 4K de ancho por defecto, sin pasar del lienzo más grande que admiten los navegadores
+  const pad = 28;
+  const escala = Math.min(ANCHO_DESCARGA / (ancho + pad * 2), 32000 / (alto + 300), Math.sqrt(2.4e8 / ((ancho + pad * 2) * (alto + 300))));
   const img = await lib.toCanvas(nodo, {
     backgroundColor: fondo, pixelRatio: escala, width: ancho, height: alto,
     style: { margin: '0', boxShadow: 'none', overflow: 'visible', maxHeight: 'none', minHeight: '0', height: alto + 'px', flex: 'none' },
     filter: n => !(n.classList && (n.classList.contains('tip') || n.classList.contains('descarga'))),
   });
   // la imagen lleva título arriba y la procedencia abajo, para que se entienda fuera de la web
-  const pad = 28, anchoTexto = ancho;
+  const anchoTexto = ancho;
   const medir = document.createElement('canvas').getContext('2d');
   const fTit = `800 26px ${v('--f-display')}`, fSub = `400 15px ${v('--f-sans')}`, fPie = `500 12px ${v('--f-mono')}`;
   medir.font = fTit; const lTit = lineasTexto(medir, titulo, anchoTexto);
@@ -1865,8 +1868,8 @@ async function descargarImagen(nodo, nombre, titulo, subtitulo, altoFijo) {
   const altoCab = lTit.length * 32 + (lSub.length ? 8 + lSub.length * 21 : 0) + 18;
   const altoPie = 40;
   const lienzo = document.createElement('canvas');
-  lienzo.width = (ancho + pad * 2) * escala;
-  lienzo.height = (pad + altoCab + alto + altoPie + pad / 2) * escala;
+  lienzo.width = Math.round((ancho + pad * 2) * escala);
+  lienzo.height = Math.round((pad + altoCab + alto + altoPie + pad / 2) * escala);
   const ctx = lienzo.getContext('2d');
   ctx.scale(escala, escala);
   ctx.fillStyle = fondo;
