@@ -670,6 +670,7 @@ Object.assign(I18N.es, {
   relatoCargando: 'Cargando…',
   ariaCajon: 'Tuits de la cuenta',
   cajonFicha: 'Ficha completa ↗',
+  cajonPerfilX: 'Ver su perfil en X',
   cajonCerrar: 'Cerrar',
   cajonCargando: 'Cargando sus tuits…',
   cajonError: 'No se han podido cargar los tuits.',
@@ -746,6 +747,7 @@ Object.assign(I18N.en, {
   relatoCargando: 'Loading…',
   ariaCajon: 'Account tweets',
   cajonFicha: 'Full page ↗',
+  cajonPerfilX: 'See its profile on X',
   cajonCerrar: 'Close',
   cajonCargando: 'Loading its tweets…',
   cajonError: 'The tweets could not be loaded.',
@@ -2615,7 +2617,7 @@ function pintarCajon() {
       ${m.logo ? `<img class="cajon-logo" src="${esc(m.logo)}" alt="">` : ''}
       <div class="cajon-nombre">
         <h2>${esc(m.nombre)}</h2>
-        <p class="cajon-sub">${esc(m.handle)}${m.tipo ? ' · ' + esc(t('tipoNombre', m.tipo)) : ''}</p>
+        <p class="cajon-sub"><a class="cajon-x-link" href="https://x.com/${esc(m.handle.replace('@', ''))}" target="_blank" rel="noopener" title="${esc(t('cajonPerfilX'))}">${esc(m.handle)} ↗</a>${m.tipo ? ' · ' + esc(t('tipoNombre', m.tipo)) : ''}</p>
       </div>
       <button type="button" class="cajon-x" data-cj="cerrar" aria-label="${esc(t('cajonCerrar'))}">✕</button>
     </div>
