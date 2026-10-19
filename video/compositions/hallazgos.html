@@ -1,0 +1,46 @@
+<template id="hallazgos-template">
+  <div data-composition-id="hallazgos" data-width="1920" data-height="1080" data-duration="13.72" class="sc">
+
+    <div class="content">
+      <p class="kick" id="f-k">Lo más viral del último año</p>
+      <h2 class="h2" id="f-t">El PSOE protagoniza la mitad de los tuits políticos</h2>
+      <div class="frow">
+        <div class="bars"><div class="br"><div class="bn">PSOE</div><div class="bt"><div class="bf" style="width:85%;background:var(--psoe)"></div></div><div class="bv">50 %<small>6.729 tuits</small></div></div><div class="br"><div class="bn">PP</div><div class="bt"><div class="bf" style="width:49%;background:var(--pp)"></div></div><div class="bv">29 %<small>3.903 tuits</small></div></div><div class="br"><div class="bn">Vox</div><div class="bt"><div class="bf" style="width:7%;background:var(--vox)"></div></div><div class="bv">4 %<small>572 tuits</small></div></div><div class="br"><div class="bn">Sumar</div><div class="bt"><div class="bf" style="width:3%;background:var(--sumar)"></div></div><div class="bv">2 %<small>285 tuits</small></div></div></div>
+        <div class="big" id="f-big"><div class="bnum">70 %</div><p>de esos tuits son críticos con el partido al que señalan</p></div>
+      </div>
+      <p class="foot" id="f-f">Censo de 21.489 tuits con más de 100 retuits, sep 2025 – sep 2026. 13.412 con lectura política.</p>
+    </div>
+    <style>
+
+.frow{display:flex;gap:80px;align-items:center;margin-top:30px}
+.bars{flex:1;display:flex;flex-direction:column;gap:30px}
+.br{display:flex;align-items:center;gap:28px}
+.bn{width:150px;font:700 40px/1 var(--f-sans)}
+.bt{flex:1;height:58px;border-bottom:3px solid var(--line)}
+.bf{height:100%;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink)}
+.bv{width:190px;font:800 46px/1 var(--f-display)}
+.bv small{display:block;font:500 20px/1.4 var(--f-mono);color:var(--muted)}
+.big{width:520px;background:var(--hl);border:3px solid var(--ink);border-radius:6px;box-shadow:10px 10px 0 var(--ink);padding:44px}
+.bnum{font:900 150px/1 var(--f-display);color:var(--perj);-webkit-text-stroke:0}
+.big p{font:500 34px/1.3 var(--f-sans);margin-top:14px}
+.foot{font:500 22px/1.4 var(--f-mono);color:var(--muted);margin-top:24px}
+
+    </style>
+    <script>
+      (function(){
+      const tl = gsap.timeline({ paused: true }); const D=13.72;
+
+      tl.from("#f-k",{y:20,opacity:0,duration:.4,ease:"power3.out"},.15);
+      tl.from("#f-t",{y:50,opacity:0,duration:.6,ease:"expo.out"},.25);
+      tl.from('[data-composition-id="hallazgos"] .br',{opacity:0,x:-40,duration:.4,stagger:.15,ease:"power2.out"},.8);
+      tl.from('[data-composition-id="hallazgos"] .bf',{scaleX:0,transformOrigin:"left",duration:.8,stagger:.15,ease:"expo.out"},1.0);
+      tl.from("#f-big",{scale:.7,rotation:-4,opacity:0,duration:.6,ease:"back.out(1.8)"},7.4);
+      tl.from("#f-f",{opacity:0,duration:.5},4.0);
+      tl.to(".content",{y:-60,opacity:0,duration:.4,ease:"power2.in"},D-.45);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["hallazgos"] = tl;
+      })();
+    </script>
+  </div>
+</template>

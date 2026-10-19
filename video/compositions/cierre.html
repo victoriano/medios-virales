@@ -1,0 +1,32 @@
+<template id="cierre-template">
+  <div data-composition-id="cierre" data-width="1920" data-height="1080" data-duration="8.64" class="sc">
+
+    <div class="content cierre">
+      <h2 class="o-t" id="o-t">Explóralo medio a medio,<br>tuit a tuit</h2>
+      <div class="url" id="o-u"><span class="dot"></span>medios.victoriano.me</div>
+      <p class="o-s" id="o-s">Datos y método abiertos en github.com/victoriano/medios-virales</p>
+    </div>
+    <style>
+
+.cierre{align-items:center;text-align:center;justify-content:center}
+.o-t{font:800 110px/1.05 var(--f-display);letter-spacing:-.02em}
+.url{display:inline-flex;align-items:center;gap:26px;margin-top:40px;font:600 64px/1 var(--f-mono);background:var(--panel);border:4px solid var(--ink);border-radius:8px;box-shadow:12px 12px 0 var(--ink);padding:34px 50px}
+.dot{width:52px;height:52px;border-radius:50%;border:3px solid var(--ink);background:linear-gradient(90deg,var(--izq) 0 50%,var(--der) 50% 100%)}
+.o-s{font:500 28px/1.4 var(--f-mono);color:var(--muted);margin-top:36px}
+
+    </style>
+    <script>
+      (function(){
+      const tl = gsap.timeline({ paused: true }); const D=8.64;
+
+      tl.from("#o-t",{y:70,opacity:0,duration:.7,ease:"expo.out"},.2);
+      tl.from("#o-u",{scale:.8,opacity:0,duration:.6,ease:"back.out(1.8)"},.8);
+      tl.from('[data-composition-id="cierre"] .dot',{rotation:-180,duration:1,ease:"power3.out"},.8);
+      tl.from("#o-s",{opacity:0,y:20,duration:.5,ease:"power2.out"},1.4);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["cierre"] = tl;
+      })();
+    </script>
+  </div>
+</template>

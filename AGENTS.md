@@ -233,3 +233,9 @@ recuerdo.** Los recuentos de este documento están verificados y los puedes repr
 - Todo el texto de cara al público va **en español**.
 - **Sin guiones** en la prosa. Ni palabras compuestas con guion ni guiones como separadores.
 - Las tablas están bien en el README y en los documentos; en Telegram no, porque se rompen.
+
+## Vídeo explicativo
+
+`video/` contiene el vídeo de ~2 min que explica el proyecto (Hyperframes), con sus guiones y
+varias locuciones (voz clonada de Victoriano con ElevenLabs y con Higgs TTS 3, y una voz de
+catálogo). Se regenera desde `site/data/index.json`. Todo el proceso está en `video/README.md`.

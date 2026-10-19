@@ -1,0 +1,38 @@
+<template id="hook-template">
+  <div data-composition-id="hook" data-width="1920" data-height="1080" data-duration="10.84" class="sc">
+
+    <div class="h-dot"><span class="l"></span><span class="r"></span></div>
+    <div class="content">
+      <p class="kick" id="h-k">Un análisis de datos · 2018–2026</p>
+      <h1 class="h-title"><span class="ln">¿A qué partido</span><span class="ln"><span class="mark" id="h-mark">beneficia</span> cada medio?</span></h1>
+      <p class="lede" id="h-sub">Lo medimos tuit a tuit en las cuentas de X de los medios generalistas españoles.</p>
+    </div>
+    <style>
+
+.h-title{font:800 140px/1.02 var(--f-display);letter-spacing:-.02em;max-width:1300px}
+.h-title .ln{display:block}
+.mark{background-image:linear-gradient(var(--hl),var(--hl));background-repeat:no-repeat;background-size:0% 42%;background-position:0 88%;padding:0 6px;margin:0 -6px}
+.h-dot{position:absolute;right:110px;top:330px;width:340px;height:340px;border-radius:50%;border:4px solid var(--ink);overflow:hidden;box-shadow:12px 12px 0 var(--ink)}
+.h-dot span{position:absolute;top:0;bottom:0;width:50%}
+.h-dot .l{left:0;background:var(--izq)} .h-dot .r{right:0;background:var(--der)}
+
+    </style>
+    <script>
+      (function(){
+      const tl = gsap.timeline({ paused: true }); const D=10.84;
+
+      tl.from("#h-k",{y:24,opacity:0,duration:.5,ease:"power3.out"},.2);
+      tl.from(".h-title .ln",{y:90,opacity:0,duration:.7,stagger:.18,ease:"expo.out"},.35);
+      tl.to("#h-mark",{backgroundSize:"100% 42%",duration:.6,ease:"power2.inOut"},1.3);
+      tl.from("#h-sub",{y:30,opacity:0,duration:.5,ease:"power2.out"},1.5);
+      tl.from(".h-dot",{scale:.6,rotation:-40,opacity:0,duration:.9,ease:"back.out(1.6)"},.5);
+      tl.to(".h-dot",{rotation:18,duration:4,ease:"sine.inOut"},1.4);
+      tl.to(".content",{y:-50,opacity:0,duration:.4,ease:"power2.in"},D-.45);
+      tl.to(".h-dot",{x:200,opacity:0,duration:.4,ease:"power2.in"},D-.45);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["hook"] = tl;
+      })();
+    </script>
+  </div>
+</template>
