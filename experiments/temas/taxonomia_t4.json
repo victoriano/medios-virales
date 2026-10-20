@@ -1,0 +1,228 @@
+{
+ "version": "t4",
+ "reglas": "Reglas de desempate: los hechos de corrupción y su recorrido en los tribunales (imputaciones, citaciones, condenas) son corrupcion; si la crítica va contra los jueces o el sistema judicial por parcialidad, o contra un partido que ataca a los jueces, es justicia_politizada. Gastos, sueldos o privilegios de un cargo sin delito ni causa judicial son conducta, no corrupcion. Espionaje, dosieres o maniobras para desacreditar a rivales son cloacas. Sondeos y resultados electorales son elecciones, no partido_interno. Si la crítica va contra la competencia de quien gestiona (errores, improvisación, retrasos, caos) es mala_gestion o emergencias; si va contra el estado del servicio o la política en sí (recortes, listas de espera, precios, modelo) es el tema del servicio, como sanidad o servicios.",
+ "grupos": {
+  "economia": "Economía",
+  "servicios": "Servicios públicos",
+  "gestion": "Gestión",
+  "espana_mundo": "España y el mundo",
+  "democracia": "Instituciones y democracia",
+  "sociedad": "Sociedad y valores",
+  "corrupcion": "Corrupción y guerra sucia",
+  "pactos": "Pactos y alianzas",
+  "salseo": "Salseo político",
+  "otro": "Otro"
+ },
+ "subtemas": {
+  "impuestos": [
+   "economia",
+   "Impuestos y deuda",
+   "impuestos, IRPF, Hacienda, recaudación, inflación, deuda pública o financiación autonómica"
+  ],
+  "empleo": [
+   "economia",
+   "Empleo y salarios",
+   "paro, contratos, salario mínimo, jornada laboral, permisos o derechos laborales"
+  ],
+  "pensiones": [
+   "economia",
+   "Pensiones y Seguridad Social",
+   "pensiones, jubilación, cotizaciones o Seguridad Social"
+  ],
+  "vivienda": [
+   "economia",
+   "Vivienda",
+   "alquiler, precio de la vivienda, vivienda pública, desahucios u okupación como problema de vivienda"
+  ],
+  "industria": [
+   "economia",
+   "Industria, comercio y turismo",
+   "empresas, aranceles, cierres de fábricas, comercio, turismo o crecimiento económico"
+  ],
+  "campo": [
+   "economia",
+   "Agricultura, pesca y mundo rural",
+   "agricultura, ganadería, pesca, alimentación, agua para el campo o despoblación"
+  ],
+  "energia_clima": [
+   "economia",
+   "Energía y clima",
+   "energía, renovables, nucleares, apagón como política energética, cambio climático o medio ambiente"
+  ],
+  "sanidad": [
+   "servicios",
+   "Sanidad",
+   "hospitales, listas de espera, atención primaria, huelga de médicos, cribados, residencias o privatización sanitaria"
+  ],
+  "educacion": [
+   "servicios",
+   "Educación, universidades y ciencia",
+   "colegios, universidades, profesorado, becas, investigación o ciencia"
+  ],
+  "servicios": [
+   "servicios",
+   "Transporte y servicios públicos",
+   "trenes, Rodalies, carreteras, aeropuertos, SEPE, funcionarios o una administración pública que no funciona"
+  ],
+  "derechos_sociales": [
+   "servicios",
+   "Derechos sociales y consumo",
+   "dependencia, ingreso mínimo vital, pobreza, servicios sociales, consumo, infancia o juventud"
+  ],
+  "emergencias": [
+   "gestion",
+   "Gestión de catástrofes",
+   "DANA, incendios, accidentes con responsabilidad pública o la respuesta a una emergencia"
+  ],
+  "mala_gestion": [
+   "gestion",
+   "Incompetencia y mala gestión",
+   "errores, chapuzas, improvisación, caos o falta de previsión de un gobierno o un cargo al gestionar algo: obras que no avanzan, dinero sin ejecutar, contratos o programas que fallan, colapsos por mala planificación"
+  ],
+  "promesas": [
+   "gestion",
+   "Promesas incumplidas",
+   "promesas electorales o compromisos de gobierno que no se cumplen, rectificaciones y cambios de criterio"
+  ],
+  "territorial": [
+   "espana_mundo",
+   "Unidad de España e independentismo",
+   "amnistía, Puigdemont, independentismo, financiación singular o cesiones a nacionalistas como asunto de Estado"
+  ],
+  "exterior": [
+   "espana_mundo",
+   "Política exterior",
+   "Gaza e Israel, Marruecos y el Sáhara, Venezuela, Estados Unidos, la Unión Europea u otras relaciones internacionales"
+  ],
+  "defensa": [
+   "espana_mundo",
+   "Defensa y ejército",
+   "gasto militar, OTAN, envío de armas o Fuerzas Armadas"
+  ],
+  "instituciones": [
+   "democracia",
+   "Calidad democrática",
+   "gobernar por decreto, eludir el control parlamentario, colonizar instituciones, limpieza electoral o acusaciones de autoritarismo"
+  ],
+  "justicia_politizada": [
+   "democracia",
+   "Politización de la justicia",
+   "lawfare, parcialidad de jueces o fiscales, choques del Gobierno o de un partido con el Supremo o los tribunales, nombramientos judiciales"
+  ],
+  "libertades": [
+   "democracia",
+   "Libertades civiles",
+   "censura, libertad de expresión, ley mordaza, vigilancia o derecho de protesta"
+  ],
+  "medios": [
+   "democracia",
+   "Medios de comunicación",
+   "presiones o ataques a periodistas y medios, RTVE, bulos y desinformación"
+  ],
+  "bots": [
+   "democracia",
+   "Guerra de bots y seguidores falsos",
+   "bots, granjas de cuentas, seguidores comprados o campañas coordinadas en redes sociales"
+  ],
+  "regulacion_ia": [
+   "democracia",
+   "Regulación de la IA y las plataformas",
+   "leyes sobre inteligencia artificial, control de las grandes tecnológicas o de las redes sociales y los móviles de los menores"
+  ],
+  "inmigracion": [
+   "sociedad",
+   "Inmigración",
+   "llegada de inmigrantes, regularización, menores no acompañados, fronteras o prioridad nacional"
+  ],
+  "igualdad": [
+   "sociedad",
+   "Feminismo e igualdad",
+   "políticas contra la violencia machista, pulseras, ley del solo sí es sí, igualdad o derechos LGTBI"
+  ],
+  "valores": [
+   "sociedad",
+   "Valores y moral social",
+   "aborto, eutanasia, religión e Iglesia, modelo de familia, toros o batalla cultural"
+  ],
+  "extremismo": [
+   "sociedad",
+   "Extremismo y memoria",
+   "ultraderecha, franquismo y memoria histórica, comunismo, racismo o discurso de odio"
+  ],
+  "seguridad": [
+   "sociedad",
+   "Seguridad y orden público",
+   "delincuencia, policía, terrorismo, o amenazas y agresiones a políticos y periodistas"
+  ],
+  "cultura": [
+   "sociedad",
+   "Cultura y deporte",
+   "cine, música, toros como cultura, deporte, RTVE como entretenimiento o subvenciones culturales"
+  ],
+  "corrupcion": [
+   "corrupcion",
+   "Corrupción y tribunales",
+   "comisiones, malversación, contratos amañados, enriquecimiento o financiación ilegal, y los procesos judiciales por esos casos o contra cargos políticos y sus familiares: imputaciones, citaciones, declaraciones, recursos o condenas (Koldo, Ábalos, SEPI, Plus Ultra, Gürtel, el ático de Ayuso, el hermano o la mujer de Sánchez)"
+  ],
+  "cloacas": [
+   "corrupcion",
+   "Cloacas y guerra sucia",
+   "espionaje, dosieres, policía patriótica, Kitchen, las cloacas de Ferraz o maniobras para desacreditar a rivales o a periodistas"
+  ],
+  "pacto_extremos": [
+   "pactos",
+   "Pactos con extremos",
+   "pactos o acuerdos con la extrema derecha o la extrema izquierda, como PP con Vox o PSOE con Podemos"
+  ],
+  "pacto_nacionalistas": [
+   "pactos",
+   "Pactos con nacionalistas",
+   "pactos o acuerdos con independentistas o nacionalistas como Junts, ERC, Bildu o PNV, y lo que se cede a cambio"
+  ],
+  "coalicion": [
+   "pactos",
+   "Coalición de gobierno",
+   "tensiones entre socios del mismo gobierno, como PSOE y Sumar o PP y Vox donde gobiernan juntos"
+  ],
+  "estabilidad": [
+   "pactos",
+   "Estabilidad parlamentaria",
+   "presupuestos, votaciones perdidas, mociones de censura, cuestión de confianza o adelanto electoral"
+  ],
+  "elecciones": [
+   "salseo",
+   "Elecciones y encuestas",
+   "sondeos, intención de voto, resultados electorales, campañas o subidas y caídas de voto"
+  ],
+  "enfrentamientos": [
+   "salseo",
+   "Enfrentamientos internos",
+   "peleas entre dirigentes del mismo partido, choques con históricos o críticas de compañeros de partido"
+  ],
+  "partido_interno": [
+   "salseo",
+   "Crisis en el partido",
+   "dimisiones, purgas, primarias, escisiones o liderazgo de un partido"
+  ],
+  "acoso_partidos": [
+   "salseo",
+   "Acoso y abusos en los partidos",
+   "denuncias de acoso sexual o laboral dentro de un partido o de un cargo público, y su encubrimiento"
+  ],
+  "imagen": [
+   "salseo",
+   "Imagen pública y famosos",
+   "políticos con famosos, en programas de televisión o actos sociales, y famosos que opinan de política"
+  ],
+  "conducta": [
+   "salseo",
+   "Ética y conducta personal",
+   "mentiras, hipocresía, insultos, lapsus, privilegios, vida privada de un dirigente, o uso personal de recursos públicos sin delito ni causa judicial (sueldos, dietas, viajes, coche o piso oficial)"
+  ],
+  "otro": [
+   "otro",
+   "Otro",
+   "ninguno de los temas anteriores encaja"
+  ]
+ }
+}
