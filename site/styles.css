@@ -589,6 +589,8 @@ button.dg-b.is-on{outline:2px solid var(--ink);outline-offset:1px}
 .cajon-nombre{min-width:0;flex:1}
 .cajon-nombre h2{margin:0;font:800 23px/1.1 var(--f-display);letter-spacing:-.015em;font-variation-settings:"opsz" 72}
 .cajon-sub{margin:3px 0 0;font:400 11.5px/1.4 var(--f-mono);color:var(--muted)}
+.cajon-x-link{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.cajon-x-link:hover{background:var(--hl);color:var(--hl-ink)}
 .cajon-x{flex:none;width:36px;height:36px;border:1.5px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:var(--radio);
   box-shadow:var(--sombra-s);font:600 15px/1 var(--f-sans);cursor:pointer}
 .cajon-x:hover{background:var(--hl);color:var(--hl-ink)}
