@@ -84,12 +84,16 @@ def main():
     ap.add_argument("--tope", type=float, default=0.10, help="gasto máximo en USD")
     ap.add_argument("--hilos", type=int, default=8)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--sin-contexto", action="store_true", help="no manda la ficha de contexto (para comparar con tuits que no la tienen)")
     ap.add_argument("--cascada", action="store_true", help="t5: pregunta primero el tipo y luego el tema dentro de ese tipo")
     a = ap.parse_args()
     tax = json.load(open(a.taxonomia))
     PREGUNTAS = preguntas(tax)
 
     tuits = [json.loads(l) for l in open(a.entrada)]
+    if a.sin_contexto:
+        for t in tuits:
+            t["contexto"] = ""
     hechos = set()
     if a.salida.exists():
         hechos = {json.loads(l)["id"] for l in open(a.salida) if json.loads(l).get("ok")}
