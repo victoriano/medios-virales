@@ -820,8 +820,13 @@ Object.assign(I18N.es, {
   tdAria: 'Evolución de cada medio a lo largo del tiempo',
   tdHint: (medida, sub) => `Cómo cambia, año a año o mes a mes, <strong>${medida}</strong> de cada medio, contando ${sub}. Destaca los que más crecen o más caen, o elige los medios que quieras en el desplegable o en la tabla. Pasa el ratón para ver las cifras.`,
   tdMedida: 'Medida',
-  tdMedidaOp: k => ({ rt_mediana: 'Mediana de retuits', rt_media: 'Media de retuits', lk_mediana: 'Mediana de me gusta', n: 'Número de tuits', pct: '% de sus tuits' })[k],
-  tdMedidaFrase: k => ({ rt_mediana: 'la mediana de retuits', rt_media: 'la media de retuits', lk_mediana: 'la mediana de me gusta', n: 'el número de tuits', pct: 'el porcentaje de sus tuits' })[k],
+  tdMedidaOp: k => ({ rt_mediana: 'Mediana de retuits', rt_media: 'Media de retuits', lk_mediana: 'Mediana de me gusta', n: 'Número de tuits', pct: '% de sus tuits', critica: '% de crítica a la izquierda' })[k],
+  tdMedidaFrase: k => ({ rt_mediana: 'la mediana de retuits', rt_media: 'la media de retuits', lk_mediana: 'la mediana de me gusta', n: 'el número de tuits', pct: 'el porcentaje de sus tuits', critica: 'la parte de su crítica que va contra la izquierda' })[k],
+  tdHintCritica: `De todas las críticas de cada medio a un partido, <strong>qué parte va contra la izquierda</strong> (PSOE o Sumar) y qué parte contra la derecha (PP o Vox), año a año o mes a mes. Por encima del 50 % critica más a la izquierda; por debajo, más a la derecha. Filtra por medios de izquierda, centro o derecha en «Cuentas». Pasa el ratón para ver las cifras.`,
+  tdParidad: 'Paridad',
+  tdSubCritica: 'Críticas a partidos',
+  tdTipCritica: (izq, der) => `${izq} críticas a la izquierda y ${der} a la derecha`,
+  tdTipPocasCriticas: (n, min) => `${n} críticas, menos de ${min}: sin cifra`,
   tdTuits: 'Tuits',
   tdSubOp: k => {
     const fijos = { todos: 'Todos los tuits', politicos: 'Tuits políticos', izq: 'A favor de la izquierda', der: 'A favor de la derecha' };
@@ -887,8 +892,13 @@ Object.assign(I18N.en, {
   tdAria: 'How each outlet changes over time',
   tdHint: (medida, sub) => `How <strong>${medida}</strong> changes for each outlet, year by year or month by month, counting ${sub}. Highlight the ones rising or falling most, or pick outlets from the menu or the table. Hover to see the numbers.`,
   tdMedida: 'Measure',
-  tdMedidaOp: k => ({ rt_mediana: 'Median retweets', rt_media: 'Mean retweets', lk_mediana: 'Median likes', n: 'Number of tweets', pct: '% of its tweets' })[k],
-  tdMedidaFrase: k => ({ rt_mediana: 'the median retweets', rt_media: 'the mean retweets', lk_mediana: 'the median likes', n: 'the number of tweets', pct: 'the share of its tweets' })[k],
+  tdMedidaOp: k => ({ rt_mediana: 'Median retweets', rt_media: 'Mean retweets', lk_mediana: 'Median likes', n: 'Number of tweets', pct: '% of its tweets', critica: '% of criticism aimed at the left' })[k],
+  tdMedidaFrase: k => ({ rt_mediana: 'the median retweets', rt_media: 'the mean retweets', lk_mediana: 'the median likes', n: 'the number of tweets', pct: 'the share of its tweets', critica: 'the share of its criticism aimed at the left' })[k],
+  tdHintCritica: `Of each outlet's criticism of a party, <strong>how much is aimed at the left</strong> (PSOE or Sumar) and how much at the right (PP or Vox), year by year or month by month. Above 50 % it criticises the left more; below, the right. Filter by left, centre or right outlets under «Accounts». Hover to see the figures.`,
+  tdParidad: 'Parity',
+  tdSubCritica: 'Criticism of parties',
+  tdTipCritica: (izq, der) => `${izq} criticisms of the left and ${der} of the right`,
+  tdTipPocasCriticas: (n, min) => `${n} criticisms, fewer than ${min}: no figure`,
   tdTuits: 'Tweets',
   tdSubOp: k => {
     const fijos = { todos: 'All tweets', politicos: 'Political tweets', izq: 'For the left', der: 'For the right' };
@@ -1318,7 +1328,13 @@ $('#q').addEventListener('input', e => { query = e.target.value; pintarRanking()
    media me gusta]. Los meses van en otro fichero y solo se piden al elegirlos. */
 const TD = { medida: 'rt_mediana', sub: 'todos', gran: 'ano', cuentas: 'todos', destacar: 'altos', noticias: 'no', log: false, sel: null, orden: 'media', dir: -1 };
 const TD_DESTACAR = ['altos', 'crecen', 'caen'];
-const TD_MEDIDAS = ['rt_mediana', 'rt_media', 'lk_mediana', 'n', 'pct'];
+const TD_MEDIDAS = ['rt_mediana', 'rt_media', 'lk_mediana', 'n', 'pct', 'critica'];
+const tdEsPct = () => TD.medida === 'pct' || TD.medida === 'critica';
+// críticas de un periodo: las que perjudican a PSOE o Sumar frente a las que perjudican a PP o Vox
+const criticasTend = fila => {
+  const c = k => fila && fila[k] ? fila[k][0] : 0;
+  return { izq: c('PSOE-') + c('Sumar-'), der: c('PP-') + c('Vox-') };
+};
 const TD_SUBS = ['todos', 'politicos', 'izq', 'der', 'PSOE+', 'PSOE-', 'PP+', 'PP-', 'Vox+', 'Vox-', 'Sumar+', 'Sumar-'];
 const TD_POS = { rt_mediana: 1, rt_media: 2, lk_mediana: 3 };
 const TD_MIN = { ano: 20, mes: 5 };   // tuits mínimos para dibujar una mediana o una media
@@ -1401,6 +1417,10 @@ function periodosTend(gran) {
 // valor de un medio en un periodo; null si no hay tuits o la muestra es corta para una mediana
 function valorTend(fila, gran) {
   if (!fila || !fila.n) return null;
+  if (TD.medida === 'critica') {
+    const { izq, der } = criticasTend(fila);
+    return izq + der < TD_MIN[gran] ? null : 100 * izq / (izq + der);
+  }
   const s = fila[TD.sub];
   const n = s ? s[0] : 0;
   if (TD.medida === 'n') return n;
@@ -1408,7 +1428,7 @@ function valorTend(fila, gran) {
   if (n < TD_MIN[gran]) return null;
   return s[TD_POS[TD.medida]];
 }
-const fmtTend = v => v == null ? '—' : TD.medida === 'pct' ? `${fx(v, 1)} %` : fx(v, Number.isInteger(v) ? 0 : 1);
+const fmtTend = v => v == null ? '—' : tdEsPct() ? `${fx(v, 1)} %` : fx(v, Number.isInteger(v) ? 0 : 1);
 const mediaDe = xs => { const v = xs.filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
 function seriesTend(gran) {
   const datos = TEND[gran];
@@ -1441,7 +1461,7 @@ const fmtPendiente = v => {
   if (v == null) return '—';
   const n = Math.abs(v) < 0.05 ? 0 : v;
   const signo = n > 0 ? '+' : n < 0 ? '−' : '';
-  return signo + fx(Math.abs(n), 1) + (TD.medida === 'pct' ? ' pt' : '');
+  return signo + fx(Math.abs(n), 1) + (tdEsPct() ? ' pt' : '');
 };
 // elegidos: los que fijó el lector o, si no fijó ninguno, los más altos con la medida actual
 function elegidosTend(anuales) {
@@ -1526,9 +1546,10 @@ function pintarTendencias() {
     </div>`;
   $('#td-medida').value = TD.medida;
   $('#td-sub').value = TD.sub;
+  $('#td-sub').disabled = TD.medida === 'critica';
   $('#td-cuentas').value = TD.cuentas;
   $('#td-noticias').value = TD.noticias;
-  $('#td-hint').innerHTML = t('tdHint', t('tdMedidaFrase', TD.medida), t('tdSubFrase', TD.sub));
+  $('#td-hint').innerHTML = TD.medida === 'critica' ? t('tdHintCritica') : t('tdHint', t('tdMedidaFrase', TD.medida), t('tdSubFrase', TD.sub));
   $('#td-nota').textContent = t('tdNota', TD_MIN[TD.gran], TD.gran);
   const svg = $('#td-graf');
   const listo = TEND.ano && (TD.gran === 'ano' || TEND.mes);
@@ -1611,7 +1632,7 @@ function pintarGraficoTend(series, elegidos, color) {
     TD_GEO = null;
     return;
   }
-  const log = TD.log && todos.some(v => v > 0);
+  const log = TD.log && TD.medida !== 'critica' && todos.some(v => v > 0);
   const positivos = todos.filter(v => v > 0);
   let py, ticks;
   const alto = H - M.t - M.b;
@@ -1620,6 +1641,10 @@ function pintarGraficoTend(series, elegidos, color) {
     const a = Math.log10(lo), b = Math.log10(hi) + 0.02;
     py = v => v > 0 ? H - M.b - (Math.log10(Math.max(lo, v)) - a) / (b - a || 1) * alto : null;
     ticks = ticksLog(lo, hi);
+  } else if (TD.medida === 'critica') {
+    // escala fija de 0 a 100 para que la paridad quede siempre en el mismo sitio
+    py = v => H - M.b - v / 100 * alto;
+    ticks = [0, 25, 50, 75, 100];
   } else {
     const esc_ = escalaY(Math.max(...todos));
     py = v => H - M.b - v / esc_.tope * alto;
@@ -1631,7 +1656,7 @@ function pintarGraficoTend(series, elegidos, color) {
   ticks.forEach(v => {
     const y = py(v).toFixed(1);
     g += `<line x1="${M.l}" x2="${W - M.r}" y1="${y}" y2="${y}"></line>`;
-    g += `<text x="${M.l - 9}" y="${(+y + 4).toFixed(1)}" text-anchor="end">${TD.medida === 'pct' ? fx(v, v < 10 && !Number.isInteger(v) ? 1 : 0) + ' %' : compact(v)}</text>`;
+    g += `<text x="${M.l - 9}" y="${(+y + 4).toFixed(1)}" text-anchor="end">${tdEsPct() ? fx(v, v < 10 && !Number.isInteger(v) ? 1 : 0) + ' %' : compact(v)}</text>`;
   });
   periodos.forEach((k, i) => {
     if (TD.gran === 'mes' && !k.endsWith('-01') && i) return;
@@ -1641,7 +1666,12 @@ function pintarGraficoTend(series, elegidos, color) {
     const mostrar = W >= (TD.gran === 'ano' ? 520 : 760) || +etiqueta % 2 === 0;
     if (mostrar) g += `<text x="${x}" y="${H - M.b + 22}" text-anchor="${TD.gran === 'mes' ? 'start' : 'middle'}">${etiqueta}</text>`;
   });
-  g += `<text class="tit" x="${M.l}" y="14">${esc(t('tdMedidaOp', TD.medida))} · ${esc(t('tdSubOp', TD.sub))}</text>`;
+  if (TD.medida === 'critica') {
+    const y = py(50).toFixed(1);
+    g += `<line class="td-paridad" x1="${M.l}" x2="${W - M.r}" y1="${y}" y2="${y}"></line>`;
+    g += `<text class="td-paridad-k" x="${M.l + 6}" y="${(+y - 6).toFixed(1)}">${esc(t('tdParidad'))}</text>`;
+  }
+  g += `<text class="tit" x="${M.l}" y="14">${esc(t('tdMedidaOp', TD.medida))}${TD.medida === 'critica' ? '' : ` · ${esc(t('tdSubOp', TD.sub))}`}</text>`;
   const camino = vals => {
     let d = '', abierto = false;
     vals.forEach((v, i) => {
@@ -1749,7 +1779,8 @@ function tipTend(ev) {
   const fila = (s, c) => {
     const f = s.p[k], v = s.valores[i];
     const nSub = f && f[TD.sub] ? f[TD.sub][0] : 0;
-    const det = !f || !f.n ? '' : v == null && !['n', 'pct'].includes(TD.medida) ? t('tdTipPocos', nf(nSub), TD_MIN[TD.gran]) : t('tdTipN', nf(nSub), nf(f.n));
+    const cr = criticasTend(f);
+    const det = !f || !f.n ? '' : TD.medida === 'critica' ? (v == null ? t('tdTipPocasCriticas', nf(cr.izq + cr.der), TD_MIN[TD.gran]) : t('tdTipCritica', nf(cr.izq), nf(cr.der))) : v == null && !['n', 'pct'].includes(TD.medida) ? t('tdTipPocos', nf(nSub), TD_MIN[TD.gran]) : t('tdTipN', nf(nSub), nf(f.n));
     return `<div class="td-tf"><i style="background:${c || 'var(--muted)'}"></i><b>${esc(s.m.nombre)}</b><span>${fmtTend(v)}</span></div>${det ? `<div class="tm">${det}</div>` : ''}`;
   };
   let cuerpo;
@@ -1946,7 +1977,7 @@ async function descargarImagen(nodo, nombre, titulo, subtitulo, altoFijo) {
 // qué se fotografía con cada botón, con qué título y con qué nombre de fichero
 function objetivoDescarga(clave) {
   const opcion = sel => { const s = $(sel); return s && s.selectedOptions[0] ? s.selectedOptions[0].textContent.trim() : ''; };
-  const tdTit = () => `${t('tdMedidaOp', TD.medida)} · ${t('tdSubOp', TD.sub)} · ${t('tdVer')} ${t(TD.gran === 'mes' ? 'tdMes' : 'tdAno').toLowerCase()}`;
+  const tdTit = () => `${t('tdMedidaOp', TD.medida)} · ${TD.medida === 'critica' ? t('tdSubCritica') : t('tdSubOp', TD.sub)} · ${t('tdVer')} ${t(TD.gran === 'mes' ? 'tdMes' : 'tdAno').toLowerCase()}`;
   const limpio = x => String(x).toLowerCase().replace('+', 'a-favor').replace(/-$/, '-en-contra').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   if (clave === 'ranking') return { nodo: $('#tabla-ranking'), nombre: 'medios-ranking.png', titulo: t('rankingTitle'), sub: '' };
   if (clave === 'mapa') {
