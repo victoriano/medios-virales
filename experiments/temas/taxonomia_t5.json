@@ -1,0 +1,337 @@
+{
+ "version": "t5",
+ "reglas": "Si el tuit discute qué se hace o se propone, es ideas; si discute cómo de bien se hace, es gestion. Si hay delito o aprovechamiento del cargo, es corrupcion, aunque también se critique la gestión. Un gasto o privilegio sin delito es personal (hipocresia), no corrupcion. Un insulto acompañado de un hecho concreto se clasifica por el hecho; solo es personal si el tuit se queda en la persona. Si el tuit defiende al partido en vez de criticarlo, clasifica el asunto del que lo defiende.",
+ "preguntas": {
+  "tipo": {
+   "instrucciones": "Elige el TIPO de crítica o defensa: qué se le reprocha al partido (o de qué se le defiende).",
+   "opciones": {
+    "ideas": [
+     "Ideas y propuestas",
+     "se discute una medida, una ley, una propuesta o una postura ideológica por su contenido: qué se hace o se quiere hacer"
+    ],
+    "gestion": [
+     "Gestión y competencia",
+     "se reprocha haberlo hecho mal, tarde, sin previsión o sin invertir: cómo de bien se gestiona algo"
+    ],
+    "corrupcion": [
+     "Corrupción",
+     "se reprocha haberse aprovechado del cargo o haber cometido un delito, y su recorrido judicial"
+    ],
+    "democracia": [
+     "Reglas del juego democrático",
+     "se reprocha saltarse los contrapesos: instituciones, Parlamento, jueces, prensa, juego sucio o desinformación"
+    ],
+    "pactos": [
+     "Pactos y alianzas",
+     "se reprocha con quién se alía, de quién depende o las tensiones con sus socios"
+    ],
+    "personal": [
+     "Ataques personales",
+     "se ataca a la persona y no lo que hace: insultos, mentiras, hipocresía, privilegios, vida privada o imagen"
+    ],
+    "interna": [
+     "Vida interna del partido",
+     "peleas, crisis, dimisiones o acoso dentro de un partido"
+    ],
+    "electoral": [
+     "Carrera electoral",
+     "encuestas, resultados o estrategia de campaña"
+    ],
+    "otro": [
+     "Otro",
+     "ningún tipo anterior encaja"
+    ]
+   }
+  },
+  "tema": {
+   "instrucciones": "Elige el TEMA. Si el tipo es ideas o gestion, elige el área de la política (impuestos a otra_area). Si es otro tipo, elige el subtema de ese tipo: corrupción (comisiones a otra_corrupcion), reglas democráticas (instituciones a libertades), pactos (pacto_extremos a estabilidad), ataques personales (insultos a imagen), vida interna (enfrentamientos a acoso) o carrera electoral (encuestas a campana).",
+   "opciones": {
+    "impuestos": [
+     "ideas|gestion",
+     "Impuestos y deuda",
+     "impuestos, IRPF, Hacienda, inflación, deuda pública o financiación autonómica"
+    ],
+    "empleo": [
+     "ideas|gestion",
+     "Empleo y salarios",
+     "paro, contratos, salario mínimo, jornada laboral o derechos laborales"
+    ],
+    "pensiones": [
+     "ideas|gestion",
+     "Pensiones",
+     "pensiones, jubilación, cotizaciones o Seguridad Social"
+    ],
+    "vivienda": [
+     "ideas|gestion",
+     "Vivienda",
+     "alquiler, precio de la vivienda, vivienda pública, desahucios u okupación"
+    ],
+    "industria": [
+     "ideas|gestion",
+     "Industria, comercio y turismo",
+     "empresas, aranceles, cierres de fábricas, comercio, turismo o crecimiento"
+    ],
+    "campo": [
+     "ideas|gestion",
+     "Campo y pesca",
+     "agricultura, ganadería, pesca, agua para el campo o despoblación"
+    ],
+    "energia_clima": [
+     "ideas|gestion",
+     "Energía y clima",
+     "energía, renovables, nucleares, apagón, cambio climático o medio ambiente"
+    ],
+    "sanidad": [
+     "ideas|gestion",
+     "Sanidad y residencias",
+     "hospitales, listas de espera, atención primaria, médicos, cribados o residencias de mayores"
+    ],
+    "educacion": [
+     "ideas|gestion",
+     "Educación y ciencia",
+     "colegios, universidades, profesorado, becas, investigación o ciencia"
+    ],
+    "transporte": [
+     "ideas|gestion",
+     "Transporte e infraestructuras",
+     "trenes, Rodalies, Cercanías, carreteras, aeropuertos u obras públicas"
+    ],
+    "derechos_sociales": [
+     "ideas|gestion",
+     "Derechos sociales",
+     "dependencia, ingreso mínimo vital, pobreza, servicios sociales, consumo o infancia"
+    ],
+    "emergencias": [
+     "ideas|gestion",
+     "Catástrofes y emergencias",
+     "DANA, incendios, accidentes con responsabilidad pública o respuesta a una emergencia"
+    ],
+    "seguridad": [
+     "ideas|gestion",
+     "Seguridad y orden público",
+     "delincuencia, policía, terrorismo o amenazas y agresiones"
+    ],
+    "inmigracion": [
+     "ideas|gestion",
+     "Inmigración",
+     "llegada de inmigrantes, regularización, menores no acompañados o fronteras"
+    ],
+    "igualdad": [
+     "ideas|gestion",
+     "Igualdad y feminismo",
+     "violencia machista, pulseras, ley del solo sí es sí, igualdad o derechos LGTBI"
+    ],
+    "valores": [
+     "ideas|gestion",
+     "Valores y moral social",
+     "aborto, eutanasia, religión, modelo de familia, toros o batalla cultural"
+    ],
+    "memoria": [
+     "ideas|gestion",
+     "Memoria y extremismo",
+     "franquismo, memoria histórica, ultraderecha, comunismo, racismo o discurso de odio como asunto político"
+    ],
+    "cultura": [
+     "ideas|gestion",
+     "Cultura y deporte",
+     "cine, música, deporte o subvenciones culturales"
+    ],
+    "territorial": [
+     "ideas|gestion",
+     "Unidad de España",
+     "amnistía, independentismo, financiación singular o modelo territorial"
+    ],
+    "exterior": [
+     "ideas|gestion",
+     "Política exterior",
+     "Gaza e Israel, Marruecos, Venezuela, Estados Unidos, la Unión Europea u otras relaciones exteriores"
+    ],
+    "defensa": [
+     "ideas|gestion",
+     "Defensa",
+     "gasto militar, OTAN, envío de armas o Fuerzas Armadas"
+    ],
+    "tecnologia": [
+     "ideas|gestion",
+     "Tecnología e IA",
+     "inteligencia artificial, grandes tecnológicas, redes sociales o móviles de menores como política"
+    ],
+    "otra_area": [
+     "ideas|gestion",
+     "Otra área",
+     "una política o gestión que no encaja en ninguna de las áreas anteriores"
+    ],
+    "comisiones": [
+     "corrupcion",
+     "Comisiones y contratos",
+     "mordidas, contratos amañados o adjudicaciones a cambio de dinero (Koldo, mascarillas)"
+    ],
+    "malversacion": [
+     "corrupcion",
+     "Malversación y fondos públicos",
+     "desvío o mal uso delictivo de dinero público, rescates o subvenciones irregulares (SEPI, Plus Ultra)"
+    ],
+    "financiacion": [
+     "corrupcion",
+     "Financiación ilegal",
+     "pagos en negro o financiación irregular de un partido (Gürtel, cajas B, sobres)"
+    ],
+    "enchufes": [
+     "corrupcion",
+     "Enchufes y nepotismo",
+     "colocar a familiares, amigos o afines en cargos o contratos públicos"
+    ],
+    "entorno": [
+     "corrupcion",
+     "Causas de familiares y entorno",
+     "investigaciones judiciales a la familia o el entorno de un dirigente (la mujer o el hermano de Sánchez, la pareja de Ayuso)"
+    ],
+    "otra_corrupcion": [
+     "corrupcion",
+     "Otra corrupción",
+     "otro delito o aprovechamiento del cargo, o el recorrido judicial de un caso sin detalle del delito"
+    ],
+    "instituciones": [
+     "democracia",
+     "Control de las instituciones",
+     "colocar afines en instituciones, fiscalía, RTVE, CIS o Tribunal Constitucional"
+    ],
+    "parlamento": [
+     "democracia",
+     "Gobernar sin el Parlamento",
+     "gobernar por decreto, vetar debates, eludir el control parlamentario o no presentar presupuestos"
+    ],
+    "justicia": [
+     "democracia",
+     "Ataques a jueces o politización de la justicia",
+     "lawfare, parcialidad de jueces o fiscales, choques de un partido o un gobierno con los tribunales"
+    ],
+    "prensa": [
+     "democracia",
+     "Ataques a la prensa",
+     "presiones, insultos o señalamiento de periodistas y medios"
+    ],
+    "cloacas": [
+     "democracia",
+     "Cloacas y espionaje",
+     "espionaje, dosieres, policía patriótica, Kitchen o maniobras para desacreditar a rivales"
+    ],
+    "bots": [
+     "democracia",
+     "Bots y desinformación",
+     "bots, seguidores falsos, bulos o campañas coordinadas en redes"
+    ],
+    "libertades": [
+     "democracia",
+     "Libertades civiles",
+     "censura, libertad de expresión, derecho de protesta o vigilancia"
+    ],
+    "pacto_extremos": [
+     "pactos",
+     "Pactos con extremos",
+     "acuerdos con la extrema derecha o la extrema izquierda, como PP con Vox"
+    ],
+    "pacto_nacionalistas": [
+     "pactos",
+     "Pactos con nacionalistas",
+     "acuerdos o cesiones a Junts, ERC, Bildu o PNV"
+    ],
+    "coalicion": [
+     "pactos",
+     "Tensiones en la coalición",
+     "choques entre socios del mismo gobierno"
+    ],
+    "estabilidad": [
+     "pactos",
+     "Estabilidad y votaciones perdidas",
+     "presupuestos, votaciones perdidas, mociones de censura o adelanto electoral"
+    ],
+    "insultos": [
+     "personal",
+     "Insultos y descalificaciones",
+     "insultos, motes o desprecio a una persona o a un colectivo"
+    ],
+    "mentiras": [
+     "personal",
+     "Mentiras y contradicciones",
+     "mentir, decir una cosa y la contraria, cambiar de opinión o lapsus"
+    ],
+    "hipocresia": [
+     "personal",
+     "Hipocresía y privilegios",
+     "predicar una cosa y hacer otra, gastos, sueldos, viajes o privilegios del cargo sin delito"
+    ],
+    "vida_privada": [
+     "personal",
+     "Vida privada y familia",
+     "vida personal, pareja, familia o patrimonio de un dirigente sin causa judicial"
+    ],
+    "imagen": [
+     "personal",
+     "Imagen pública y famosos",
+     "políticos con famosos, en televisión o en actos sociales, y famosos que opinan de política"
+    ],
+    "enfrentamientos": [
+     "interna",
+     "Enfrentamientos entre dirigentes",
+     "peleas entre dirigentes del mismo partido o críticas de compañeros"
+    ],
+    "crisis": [
+     "interna",
+     "Crisis, dimisiones y purgas",
+     "dimisiones, ceses, purgas, primarias, escisiones o liderazgo"
+    ],
+    "acoso": [
+     "interna",
+     "Acoso y abusos en el partido",
+     "denuncias de acoso sexual o laboral dentro de un partido o de un cargo, y su encubrimiento"
+    ],
+    "encuestas": [
+     "electoral",
+     "Encuestas",
+     "sondeos e intención de voto"
+    ],
+    "resultados": [
+     "electoral",
+     "Resultados",
+     "resultados electorales, subidas o caídas de voto"
+    ],
+    "campana": [
+     "electoral",
+     "Estrategia y campaña",
+     "campañas, candidatos, mítines, estrategia electoral"
+    ],
+    "otro": [
+     "otro",
+     "Otro",
+     "nada de lo anterior encaja"
+    ]
+   }
+  },
+  "argumento": {
+   "instrucciones": "Elige CÓMO SE ARGUMENTA la crítica, solo si es a una idea o a una gestión; si no, no_aplica.",
+   "opciones": {
+    "no_aplica": [
+     "No aplica",
+     "la crítica no es a una idea ni a una gestión (corrupción, pactos, ataques personales, vida interna, elecciones)"
+    ],
+    "descalificacion": [
+     "Descalificación",
+     "dice que está mal o que es un desastre sin dar razones"
+    ],
+    "argumento": [
+     "Argumento",
+     "explica por qué está mal o qué consecuencias tendrá, pero sin aportar datos"
+    ],
+    "hechos": [
+     "Hechos y datos",
+     "se apoya en cifras, estudios, documentos o hechos concretos y comprobables"
+    ],
+    "alternativa": [
+     "Con alternativa",
+     "critica con argumentos o datos y además propone otra medida o solución"
+    ]
+   }
+  }
+ }
+}

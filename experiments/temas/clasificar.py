@@ -28,6 +28,10 @@ INSTRUCCIONES = (
 
 def preguntas(tax):
     instr = INSTRUCCIONES + (" " + tax["reglas"] if tax.get("reglas") else "")
+    if "preguntas" in tax:  # taxonomía con varias preguntas (t5): tipo de crítica, tema y argumento
+        return {k: {"type": "choice", "instructions": f"{instr} {p['instrucciones']}",
+                    "criteria": {o: f"{v[-2]}: {v[-1]}" for o, v in p["opciones"].items()}}
+                for k, p in tax["preguntas"].items()}
     return {"tema": {"type": "choice", "instructions": instr,
                      "criteria": {k: f"{v[1]}: {v[2]}" for k, v in tax["subtemas"].items()}}}
 EFECTO = {"perjudica": "lo deja peor (crítica)", "beneficia": "lo deja mejor (defensa)",
@@ -102,11 +106,14 @@ def main():
                 return None
         status, d = llamar({"state": estado(t), "model": "jev-latest", "questions": PREGUNTAS}, key)
         tokens = (d.get("usage") or {}).get("input_tokens")
-        r = (d.get("answers") or {}).get("tema") or d.get("tema")
-        fila = {"id": t["id"], "ok": status == 200 and bool(r), "status": status, "modelo": d.get("model"),
+        resp = d.get("answers") or {}
+        r = resp.get("tema") or d.get("tema")
+        fila = {"id": t["id"], "ok": status == 200 and all(resp.get(k) for k in PREGUNTAS), "status": status, "modelo": d.get("model"),
                 "tokens_entrada": tokens, "usd": (tokens or 0) * USD_POR_TOKEN,
                 "tema": (r or {}).get("choice"), "confianza": (r or {}).get("confidence"),
                 "respuesta": r, "taxonomia": tax["version"]}
+        if len(PREGUNTAS) > 1:
+            fila["respuestas"] = {k: resp.get(k) for k in PREGUNTAS}
         with lock:
             gasto[0] += fila["usd"]
             with open(a.salida, "a") as f:
