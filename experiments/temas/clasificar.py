@@ -84,6 +84,7 @@ def main():
     ap.add_argument("--tope", type=float, default=0.10, help="gasto máximo en USD")
     ap.add_argument("--hilos", type=int, default=8)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--cascada", action="store_true", help="t5: pregunta primero el tipo y luego el tema dentro de ese tipo")
     a = ap.parse_args()
     tax = json.load(open(a.taxonomia))
     PREGUNTAS = preguntas(tax)
@@ -104,16 +105,47 @@ def main():
         with lock:
             if gasto[0] >= a.tope:
                 return None
+        if a.cascada:
+            return uno_cascada(t)
         status, d = llamar({"state": estado(t), "model": "jev-latest", "questions": PREGUNTAS}, key)
         tokens = (d.get("usage") or {}).get("input_tokens")
         resp = d.get("answers") or {}
         r = resp.get("tema") or d.get("tema")
-        fila = {"id": t["id"], "ok": status == 200 and all(resp.get(k) for k in PREGUNTAS), "status": status, "modelo": d.get("model"),
+        fila = {"id": t["id"], "ok": status == 200 and all(resp.get(k) for k in PREGUNTAS),
+                "status": status, "modelo": d.get("model"),
                 "tokens_entrada": tokens, "usd": (tokens or 0) * USD_POR_TOKEN,
                 "tema": (r or {}).get("choice"), "confianza": (r or {}).get("confidence"),
                 "respuesta": r, "taxonomia": tax["version"]}
         if len(PREGUNTAS) > 1:
             fila["respuestas"] = {k: resp.get(k) for k in PREGUNTAS}
+        return apuntar(fila)
+
+    def uno_cascada(t):
+        # Primero el tipo; después el tema solo entre los de ese tipo y, si es ideas o gestión, el argumento.
+        s1, d1 = llamar({"state": estado(t), "model": "jev-latest", "questions": {"tipo": PREGUNTAS["tipo"]}}, key)
+        tipo = ((d1.get("answers") or {}).get("tipo") or {}).get("choice")
+        resp, tokens, s2, d2 = {"tipo": (d1.get("answers") or {}).get("tipo")}, (d1.get("usage") or {}).get("input_tokens") or 0, s1, {}
+        if s1 == 200 and tipo and tipo != "otro":
+            qs = {"tema": dict(PREGUNTAS["tema"], criteria={k: v for k, v in PREGUNTAS["tema"]["criteria"].items()
+                                                            if tipo in tax["preguntas"]["tema"]["opciones"][k][0].split("|")})}
+            if tipo in ("ideas", "gestion"):
+                qs["argumento"] = dict(PREGUNTAS["argumento"], criteria={k: v for k, v in PREGUNTAS["argumento"]["criteria"].items()
+                                                                         if k != "no_aplica"})
+            st = dict(estado(t), tipo_de_critica=tax["preguntas"]["tipo"]["opciones"][tipo][0])
+            s2, d2 = llamar({"state": st, "model": "jev-latest", "questions": qs}, key)
+            resp.update(d2.get("answers") or {})
+            tokens += (d2.get("usage") or {}).get("input_tokens") or 0
+        else:
+            resp["tema"] = {"choice": "otro", "confidence": None}
+        resp.setdefault("argumento", {"choice": "no_aplica", "confidence": None})
+        ok = s1 == 200 and s2 == 200 and all(resp.get(k) for k in ("tipo", "tema", "argumento"))
+        fila = {"id": t["id"], "ok": ok, "status": s2 if s1 == 200 else s1, "modelo": d2.get("model") or d1.get("model"),
+                "tokens_entrada": tokens, "usd": tokens * USD_POR_TOKEN,
+                "tema": resp["tema"].get("choice"), "confianza": resp["tema"].get("confidence"),
+                "respuesta": resp["tema"], "respuestas": resp, "taxonomia": tax["version"] + "-cascada"}
+        return apuntar(fila)
+
+    def apuntar(fila):
         with lock:
             gasto[0] += fila["usd"]
             with open(a.salida, "a") as f:
