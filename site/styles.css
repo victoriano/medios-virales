@@ -27,11 +27,12 @@
   --aro-fill:#fffcf5; --bola-bg:#fffcf5; --bola-border:#161514;
   --lede-fg:#2c2924; --prose-fg:#2c2924;
   --foot-bg:#161514; --foot-fg:#f5efe3; --foot-muted:#b3aa9a;
-  --radio:4px; --sombra:4px 4px 0 var(--rule); --sombra-s:2px 2px 0 var(--rule);
+  --sombra-c:var(--rule);
+  --radio:4px; --sombra:4px 4px 0 var(--sombra-c); --sombra-s:2px 2px 0 var(--sombra-c);
 }
 :root[data-theme="dark"]{
   color-scheme: dark;
-  --bg:#1a1613; --panel:#231e19; --ink:#f3ecdf; --muted:#a59c8d; --line:#3d352c; --rule:#f3ecdf;
+  --bg:#1a1613; --panel:#231e19; --ink:#f3ecdf; --muted:#a59c8d; --line:#3d352c;
   --panel-soft:#201b16; --hover:#3a3220; --chip-bg:#2e2721; --track:#3a322a;
   --hl:#ffd23f; --hl-ink:#161514;
   --izq:#ff6f61; --der:#6aa6ff; --ben:#4cc9a8; --perj:#f39a5b; --neu:#a59c8d;
@@ -48,6 +49,9 @@
   --aro-fill:#231e19; --bola-bg:#231e19; --bola-border:#f3ecdf;
   --lede-fg:#d8cfbf; --prose-fg:#d8cfbf;
   --foot-bg:#0f0d0b; --foot-fg:#f3ecdf; --foot-muted:#a59c8d;
+  /* en oscuro, los bordes y las sombras no van en el color del texto (quedaban como
+     marcos blancos): un tono cálido apagado para el trazo y una sombra más oscura que el fondo. */
+  --rule:#4a4137; --sombra-c:#0b0907;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-padding-top:72px}
@@ -196,7 +200,7 @@ td.c-dec{min-width:210px}
 @media (max-width:860px){ .cont-sels{grid-template-columns:1fr 1fr} }
 .tweet{border:1.5px solid var(--rule);border-radius:var(--radio);padding:18px 20px 14px;background:var(--panel);box-shadow:var(--sombra);
   display:flex;flex-direction:column;transition:transform .12s ease, box-shadow .12s ease}
-.tweet:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--rule)}
+.tweet:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--sombra-c)}
 .tweet .head{display:flex;gap:4px 10px;align-items:baseline;flex-wrap:wrap;font:400 11.5px/1.5 var(--f-mono);color:var(--muted);margin-bottom:12px}
 .tweet .head .who{font:700 15px/1.3 var(--f-sans);color:var(--ink);letter-spacing:-.01em}
 .tweet .head .chips{flex-basis:100%;margin-top:6px}
@@ -220,7 +224,7 @@ td.c-dec{min-width:210px}
   font:600 13px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;box-shadow:var(--sombra-s);
   transition:transform .08s ease, box-shadow .08s ease, background-color .1s}
 .more:hover,.back:hover,.mapa-play:hover,.descarga:hover{background:var(--hl);color:var(--hl-ink)}
-.more:active,.back:active,.mapa-play:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--rule)}
+.more:active,.back:active,.mapa-play:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--sombra-c)}
 .more{display:block;margin:34px auto 0;padding:14px 22px}
 .back{padding:11px 16px;margin-bottom:28px}
 .medio-head{display:flex;gap:16px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin-bottom:6px;
@@ -277,7 +281,7 @@ td.c-dec{min-width:210px}
   border:1.5px solid var(--rule);border-radius:var(--radio);box-shadow:var(--sombra)}
 #mapa{display:block;width:100%;min-width:780px;height:auto;overflow:visible}
 #mapa .burbuja{cursor:pointer;transition:filter .12s}
-#mapa .burbuja:hover{filter:drop-shadow(3px 3px 0 var(--rule))}
+#mapa .burbuja:hover{filter:drop-shadow(3px 3px 0 var(--sombra-c))}
 #mapa .burbuja image{pointer-events:none}
 #mapa .burbuja .aro{fill:var(--aro-fill);stroke-width:2.75}
 #mapa .burbuja .aro.dis{stroke-dasharray:4 2.6}
@@ -575,13 +579,13 @@ button.dg-b.is-on{outline:2px solid var(--ink);outline-offset:1px}
 
 /* ---------- panel de tuits de una cuenta ---------- */
 .cajon{position:fixed;z-index:40;top:0;right:0;bottom:0;width:440px;overflow-y:auto;overscroll-behavior:contain;
-  background:var(--bg);border-left:1.5px solid var(--rule);padding:0 18px 28px;box-shadow:-4px 0 0 var(--rule)}
+  background:var(--bg);border-left:1.5px solid var(--rule);padding:0 18px 28px;box-shadow:-4px 0 0 var(--sombra-c)}
 .cajon[hidden]{display:none}
 @media (min-width:1100px){
   body.con-cajon{padding-right:440px}
 }
 @media (max-width:1099px){
-  .cajon{top:auto;left:0;width:auto;height:78svh;border-left:0;border-top:1.5px solid var(--rule);box-shadow:0 -4px 0 var(--rule);
+  .cajon{top:auto;left:0;width:auto;height:78svh;border-left:0;border-top:1.5px solid var(--rule);box-shadow:0 -4px 0 var(--sombra-c);
     border-radius:10px 10px 0 0;padding:0 14px 24px}
 }
 .cajon-cab{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:12px;padding:16px 0 12px;background:var(--bg);border-bottom:1.5px solid var(--rule)}
@@ -705,12 +709,13 @@ body[data-view="mapa"] main.wrap,body:not([data-view]) main.wrap{padding-top:6px
 /* ---------- tendencias ----------
    Ocho colores categóricos en orden fijo, uno por medio elegido; el resto va en gris.
    En oscuro, los mismos tonos ajustados a la superficie oscura. */
-:root{--td-1:#2a78d6;--td-2:#eb6834;--td-3:#1baf7a;--td-4:#eda100;--td-5:#e87ba4;--td-6:#008300;--td-7:#6250d6;--td-8:#e34948}
+:root{--td-gris:var(--neu);--td-1:#2a78d6;--td-2:#eb6834;--td-3:#1baf7a;--td-4:#eda100;--td-5:#e87ba4;--td-6:#008300;--td-7:#6250d6;--td-8:#e34948}
 :root[data-theme="dark"]{--td-1:#3987e5;--td-2:#d95926;--td-3:#199e70;--td-4:#c98500;--td-5:#d55181;--td-6:#008300;--td-7:#9085e9;--td-8:#e66767}
-.td-filtros{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:10px 14px;align-items:end;margin:0 0 14px}
+.td-filtros{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) auto;gap:10px 14px;align-items:end;margin:0 0 14px}
 .td-filtros select{width:100%;min-width:0}
 .td-filtros .ctl-v{flex-wrap:wrap;gap:8px 14px}
 .td-log{white-space:nowrap}
+@media (max-width:1100px){ .td-filtros{grid-template-columns:repeat(3,minmax(0,1fr))} }
 @media (max-width:860px){ .td-filtros{grid-template-columns:1fr 1fr} }
 @media (max-width:480px){ .td-filtros{grid-template-columns:1fr} }
 .td-medios{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}
@@ -723,6 +728,8 @@ body[data-view="mapa"] main.wrap,body:not([data-view]) main.wrap{padding-top:6px
 .td-medios select{padding:6px 10px;font-size:13px}
 .td-auto{border:0;background:none;color:var(--muted);font:500 12.5px/1 var(--f-sans);text-decoration:underline;cursor:pointer;padding:6px 2px}
 .td-auto:hover{color:var(--ink)}
+.td-masivo{display:inline-flex;flex-wrap:wrap;gap:4px 12px}
+.td-mas{font:500 13px/1 var(--f-sans);color:var(--muted)}
 #td-graf{display:block;width:100%;height:auto;overflow:visible}
 #td-graf .grid line{stroke:var(--grid-line);stroke-width:1}
 #td-graf .grid line.td-ene{stroke-dasharray:2 4}
@@ -733,11 +740,42 @@ body[data-view="mapa"] main.wrap,body:not([data-view]) main.wrap{padding-top:6px
 #td-graf .td-hit{fill:none;stroke:transparent;stroke-width:12;stroke-linejoin:round}
 #td-graf .td-trazo{fill:none;stroke-linejoin:round;stroke-linecap:round;pointer-events:none}
 #td-graf .td-color .td-trazo{stroke-width:2.25}
+#td-graf .td-gris .td-trazo{stroke-width:1.25;opacity:.55}
+#td-graf .td-gris.is-foco .td-trazo{stroke-width:2.5;opacity:1;stroke:var(--ink)}
 #td-graf .td-color.is-foco .td-trazo{stroke-width:3.5}
 #td-graf .td-color circle{stroke:var(--panel);stroke-width:2;pointer-events:none}
 #td-graf .td-rotulos{pointer-events:none}
 #td-graf .td-guia{fill:none;stroke-width:1;opacity:.6}
 #td-graf text.td-rotulo{fill:var(--ink);font:600 12px var(--f-sans)}
+#td-graf .td-ev{cursor:pointer}
+#td-graf .td-ev-raya{stroke:var(--muted);stroke-width:1;stroke-dasharray:1 3;opacity:.4}
+#td-graf .td-ev.is-grande .td-ev-raya{stroke:var(--ink);stroke-dasharray:2 3;opacity:.55}
+#td-graf .td-ev-hit{stroke:transparent;stroke-width:9}
+#td-graf .td-ev-marca{fill:var(--panel);stroke:var(--muted);stroke-width:1.5}
+#td-graf .td-ev.is-grande .td-ev-marca{fill:var(--ink);stroke:var(--panel);stroke-width:1}
+#td-graf .td-ev.is-foco .td-ev-raya{stroke:var(--ink);opacity:1;stroke-dasharray:none}
+#td-graf .td-ev.is-foco .td-ev-marca{fill:var(--hl);stroke:var(--ink);stroke-width:1.5}
+#td-graf text.td-ev-tit{font:500 11.5px var(--f-sans);fill:var(--muted)}
+.td-ev-nombre{font-weight:700;margin-top:4px}
+.td-ev-desc{margin-top:6px;font-size:13px;line-height:1.4}
+.td-imps{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.td-imp{font:600 11.5px/1 var(--f-sans);padding:3px 6px;border-radius:var(--radio);border:1px solid var(--rule)}
+.td-imp-mas{color:var(--ben)}
+.td-imp-menos{color:var(--perj)}
+.td-imp-cero{color:var(--muted)}
+.td-noticias{margin:14px 0 4px;border-top:1px solid var(--rule);padding-top:10px}
+.td-noticias summary{cursor:pointer;font-weight:700}
+.td-noticias ol{list-style:none;margin:10px 0 0;padding:0;max-height:520px;overflow:auto}
+.td-noticias li{display:grid;grid-template-columns:180px 1fr;gap:4px 14px;padding:10px 6px;border-bottom:1px solid var(--rule)}
+.td-noticias li.is-foco,.td-noticias li:hover{background:var(--hl);color:var(--hl-ink)}
+.td-noticias li.is-grande b{font-weight:800}
+.td-noticias li.is-grande time{color:var(--ink)}
+.td-noticias time{font:500 13px/1.4 var(--f-mono);color:var(--muted);white-space:nowrap}
+.td-noticias p{margin:4px 0 0;font-size:14px;line-height:1.45}
+.td-fuentes{margin-top:6px;font-size:12.5px}
+.td-ev-cat{font:500 12px var(--f-mono);color:var(--muted);margin-left:4px}
+.td-noticias li.is-foco .td-ev-cat,.td-noticias li:hover .td-ev-cat{color:inherit}
+@media (max-width:560px){ .td-noticias li{grid-template-columns:1fr} }
 #td-graf .td-cruz{stroke:var(--ink);stroke-width:1;stroke-dasharray:3 3;pointer-events:none}
 .td-wrap .tip{width:min(300px,calc(100vw - 32px))}
 .td-tf{display:flex;align-items:center;gap:8px;margin-top:6px;font-variant-numeric:tabular-nums}
