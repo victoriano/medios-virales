@@ -27,7 +27,8 @@ INSTRUCCIONES = (
 
 
 def preguntas(tax):
-    instr = INSTRUCCIONES + (" " + tax["reglas"] if tax.get("reglas") else "")
+    # t6 en adelante: una instrucción base común y las reglas de cada pregunta en su propia instrucción
+    instr = tax.get("base") or INSTRUCCIONES + (" " + tax["reglas"] if tax.get("reglas") else "")
     if "preguntas" in tax:  # taxonomía con varias preguntas (t5): tipo de crítica, tema y argumento
         return {k: {"type": "choice", "instructions": f"{instr} {p['instrucciones']}",
                     "criteria": {o: f"{v[-2]}: {v[-1]}" for o, v in p["opciones"].items()}}
