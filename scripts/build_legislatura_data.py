@@ -3,7 +3,7 @@
 
 Combina dos muestras contiguas y completamente clasificadas:
 - histórico: 2018-05-02 a 2023-08-16
-- XV Legislatura: 2023-08-17 a 2026-09-24
+- XV Legislatura: 2023-08-17 a 2026-10-27
 
 El arranque de la web solo necesita ``index.json`` y ``polarizacion.json``.
 El detalle se publica por medio y año bajo ``medios/<slug>/``.
@@ -45,12 +45,13 @@ XV_START = "2023-08-17"
 LEFT = {"PSOE", "Sumar"}
 RIGHT = {"PP", "Vox"}
 CANON = {"psoe": "PSOE", "pp": "PP", "vox": "Vox", "sumar": "Sumar", "podemos": "Sumar"}
-DOWNLOAD_COSTS = {"historico": 57.85245, "xv": 33.0213}
+DOWNLOAD_COSTS = {"historico": 57.85245, "xv": 34.07805}  # xv: +1,05678 USD de la ampliación al 27 oct 2026
 CLASSIFIED_BASENAME = os.environ.get("CLASSIFIED_BASENAME", "clasificado_contextual.jsonl")
-# Revisión contextual: la original más la de las cuentas añadidas (contextual/ en ADDED_DIR).
-CONTEXT_REVIEW_COST_USD = 1.16287 + 0.031478
-CONTEXT_REVIEW_CANDIDATES = 3813 + 88
-CONTEXT_REVIEW_CHANGES = 601 + 11
+# Revisión contextual: la original, la de las cuentas añadidas (contextual/ en ADDED_DIR) y la de
+# la ampliación al 27 oct 2026 (actualizacion_202610/contextual/, solo filas nuevas).
+CONTEXT_REVIEW_COST_USD = 1.16287 + 0.031478 + 0.013074
+CONTEXT_REVIEW_CANDIDATES = 3813 + 88 + 40
+CONTEXT_REVIEW_CHANGES = 601 + 11 + 5
 
 
 def slug(handle):

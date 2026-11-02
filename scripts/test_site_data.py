@@ -8,9 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "site" / "data"
 EXPECTED_PERIODS = ["todo", "xv", *map(str, range(2018, 2027))]
 EXPECTED_TOTALS = {
-    "muestreados": 607_571,
-    "clasificados": 157_659,
-    "gate_no": 449_912,
+    "muestreados": 614_780,
+    "clasificados": 160_293,
+    "gate_no": 454_487,
 }
 
 
@@ -25,15 +25,15 @@ class SiteDataTest(unittest.TestCase):
         for key, expected in EXPECTED_TOTALS.items():
             self.assertEqual(totals[key], expected, key)
         self.assertEqual(self.index["ventana"]["desde"][:10], "2018-05-02")
-        self.assertEqual(self.index["ventana"]["hasta"][:10], "2026-09-24")
+        self.assertEqual(self.index["ventana"]["hasta"][:10], "2026-10-27")
         self.assertEqual(
             totals["coste_clasificacion_usd"],
-            (0.0 + 52.836766 + 0.127702) + (0.0 + 28.794637 + 0.602315) + (1.16287 + 0.031478),
+            (0.0 + 52.836766 + 0.127702) + (0.0 + 29.815035 + 0.634559) + (1.16287 + 0.031478 + 0.013074),
         )
-        self.assertEqual(totals["coste_descarga_usd"], (57.85245 + 0.13065) + (33.0213 + 0.57465))
-        self.assertEqual(self.index["revision_contextual"]["candidatos"], 3_813 + 88)
-        self.assertEqual(self.index["revision_contextual"]["cambios"], 601 + 11)
-        self.assertEqual(self.index["revision_contextual"]["coste_usd"], 1.16287 + 0.031478)
+        self.assertEqual(totals["coste_descarga_usd"], (57.85245 + 0.13065) + (34.07805 + 0.6051))
+        self.assertEqual(self.index["revision_contextual"]["candidatos"], 3_813 + 88 + 40)
+        self.assertEqual(self.index["revision_contextual"]["cambios"], 601 + 11 + 5)
+        self.assertEqual(self.index["revision_contextual"]["coste_usd"], 1.16287 + 0.031478 + 0.013074)
 
     def test_party_data_adds_up_to_left_and_right(self):
         """partidos.json reparte por partido exactamente los mismos tuits que polarizacion.json."""
@@ -78,7 +78,7 @@ class SiteDataTest(unittest.TestCase):
             for part in manifest["particiones"]:
                 fila = por_handle[h][part["year"]]
                 self.assertEqual(fila["n"], part["tuits"], f"{h} {part['year']}")
-                # 30 de los 157.659 políticos llegan al detalle sin partido; tendencias los cuenta
+                # 30 de los 160.293 políticos llegan al detalle sin partido; tendencias los cuenta
                 # como no políticos porque el detalle no guarda la marca de lectura política
                 faltan = part["politicos"] - fila.get("politicos", [0])[0]
                 self.assertIn(faltan, (0, 1, 2), f"{h} {part['year']}")
@@ -96,9 +96,9 @@ class SiteDataTest(unittest.TestCase):
         full = self.polarizacion["periodos"]["todo"]
         xv = self.polarizacion["periodos"]["xv"]
         self.assertEqual(full["desde"], "2018-05-02")
-        self.assertEqual(full["hasta"], "2026-09-24")
+        self.assertEqual(full["hasta"], "2026-10-27")
         self.assertEqual(xv["desde"], "2023-08-17")
-        self.assertEqual(xv["hasta"], "2026-09-24")
+        self.assertEqual(xv["hasta"], "2026-10-27")
 
     def test_global_inclusion_fields_are_consistent(self):
         for medium in self.index["medios"]:
