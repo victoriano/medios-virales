@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<title>Medios virales</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+/* Tipografías servidas desde el propio sitio (subconjunto latino de Google Fonts, licencia OFL). */
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url(assets/fraunces-normal-400-900.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(assets/ibm-plex-mono-normal-400.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(assets/ibm-plex-mono-normal-500.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(assets/ibm-plex-mono-normal-600.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(assets/inter-tight-normal-400-800.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url(assets/source-serif-4-italic-400.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url(assets/source-serif-4-normal-400-600.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root{--f-display:"Fraunces",Georgia,serif;--f-serif:"Source Serif 4",Georgia,serif;--f-sans:"Inter Tight",sans-serif;--f-mono:"IBM Plex Mono",monospace;
+--bg:#f5efe3;--panel:#fffcf5;--ink:#161514;--muted:#6c655a;--line:#d8cfbf;--lede:#2c2924;--hl:#ffd23f;
+--izq:#d93a3a;--der:#1f5fc9;--neu:#8e887d;--ben:#14937a;--perj:#e2702a;
+--pp:#1f5fc9;--psoe:#d93a3a;--vox:#3c9a45;--sumar:#c8336f;--chip-pp:#dfe8f8;--chip-psoe:#f9e0dd;--chip-perj:#fbe5d4;
+--zona-miz:#f6dcd6;--zona-mdr:#d6e1f2}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--f-sans);-webkit-font-smoothing:antialiased}
+.sc{position:absolute;inset:0}
+.content{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;width:100%;height:100%;padding:150px 160px 110px;gap:22px}
+.kick{font:600 26px/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.h2{font:800 84px/1.05 var(--f-display);letter-spacing:-.015em;max-width:1500px}
+.lede{font:400 36px/1.4 var(--f-serif);color:var(--lede);max-width:1100px}
+.mast{position:absolute;left:0;right:0;top:0;height:92px;border-bottom:3px solid var(--ink);display:flex;align-items:center;justify-content:space-between;padding:0 160px;z-index:5;background:var(--bg)}
+.marca{display:flex;align-items:center;gap:16px;font:600 24px/1 var(--f-mono);letter-spacing:.06em}
+.marca i{width:24px;height:24px;border-radius:50%;border:2.5px solid var(--ink);background:linear-gradient(90deg,var(--izq) 0 50%,var(--der) 50% 100%)}
+.mast .r{font:500 22px/1 var(--f-mono);color:var(--muted);letter-spacing:.06em}
+.prog{position:absolute;left:0;bottom:0;height:10px;width:100%;background:var(--ink);transform-origin:left;transform:scaleX(0);z-index:5}
+</style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-start="0" data-duration="126.92" data-width="1920" data-height="1080">
+    <div class="mast" id="mast"><div class="marca"><i></i>MEDIOS VIRALES</div><div class="r">QUÉ PARTIDO BENEFICIA CADA MEDIO</div></div>
+    <div class="prog" id="prog"></div>
+    <audio id="vo-hook" src="audio/vo1.wav" data-start="0.3" data-duration="9.84" data-track-index="2" data-volume="1"></audio>
+    <div id="sc-hook" data-composition-id="hook" data-composition-src="compositions/hook.html" data-start="0" data-duration="10.84" data-track-index="1" data-width="1920" data-height="1080" style="position:absolute;inset:0;z-index:1"></div>
+    <audio id="vo-datos" src="audio/vo2.wav" data-start="11.14" data-duration="19.52" data-track-index="2" data-volume="1"></audio>
+    <div id="sc-datos" data-composition-id="datos" data-composition-src="compositions/datos.html" data-start="10.84" data-duration="20.52" data-track-index="1" data-width="1920" data-height="1080" style="position:absolute;inset:0;z-index:1"></div>
+    <audio id="vo-metodo" src="audio/vo3.wav" data-start="31.66" data-duration="18.64" data-track-index="2" data-volume="1"></audio>
+    <div id="sc-metodo" data-composition-id="metodo" data-composition-src="compositions/metodo.html" data-start="31.36" data-duration="19.64" data-track-index="1" data-width="1920" data-height="1080" style="position:absolute;inset:0;z-index:1"></div>
+    <audio id="vo-ejemplo" src="audio/vo4.wav" data-start="51.3" data-duration="15.60" data-track-index="2" data-volume="1"></audio>
+    <div id="sc-ejemplo" data-composition-id="ejemplo" data-composition-src="compositions/ejemplo.html" data-start="51" data-duration="16.6" data-track-index="1" data-width="1920" data-height="1080" style="position:absolute;inset:0;z-index:1"></div>
+    <audio id="vo-indice" src="audio/vo5.wav" data-start="67.9" data-duration="18.56" data-track-index="2" data-volume="1"></audio>
+    <div id="sc-indice" data-composition-id="indice" data-composition-src="compositions/indice.html" data-start="67.6" data-duration="19.56" data-track-index="1" data-width="1920" data-height="1080" style="position:absolute;inset:0;z-index:1"></div>
+    <audio id="vo-espectro" src="audio/vo6.wav" data-start="87.46" data-duration="16.40" data-track-index="2" data-volume="1"></audio>
+    <div id="sc-espectro" data-composition-id="espectro" data-composition-src="compositions/espectro.html" data-start="87.16" data-duration="17.4" data-track-index="1" data-width="1920" data-height="1080" style="position:absolute;inset:0;z-index:1"></div>
+    <audio id="vo-hallazgos" src="audio/vo7.wav" data-start="104.86" data-duration="12.72" data-track-index="2" data-volume="1"></audio>
+    <div id="sc-hallazgos" data-composition-id="hallazgos" data-composition-src="compositions/hallazgos.html" data-start="104.56" data-duration="13.72" data-track-index="1" data-width="1920" data-height="1080" style="position:absolute;inset:0;z-index:1"></div>
+    <audio id="vo-cierre" src="audio/vo8.wav" data-start="118.58" data-duration="6.64" data-track-index="2" data-volume="1"></audio>
+    <div id="sc-cierre" data-composition-id="cierre" data-composition-src="compositions/cierre.html" data-start="118.28" data-duration="8.64" data-track-index="1" data-width="1920" data-height="1080" style="position:absolute;inset:0;z-index:1"></div>
+  </div>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    tl.from("#mast",{y:-100,duration:.6,ease:"power3.out"},0);
+    tl.to("#prog",{scaleX:1,duration:126.92,ease:"none"},0);
+    window.__timelines["main"] = tl;
+  </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<template id="metodo-template">
+  <div data-composition-id="metodo" data-width="1920" data-height="1080" data-duration="19.64" class="sc">
+
+    <div class="content">
+      <p class="kick" id="m-k">El método</p>
+      <h2 class="h2" id="m-t">Cada tuit pasa por tres preguntas</h2>
+      <div class="steps">
+        <div class="step"><div class="n">1</div><div class="q">¿Habla de política española?</div><div class="how">Filtro de sí o no con TypeSafe. Fuera deportes, sucesos y política extranjera.</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="n">2</div><div class="q">¿Quién es quién?</div><div class="how">Gemini busca en Google a las personas y casos que aparecen y a qué partido están ligados.</div></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="n">3</div><div class="q">¿A qué partido señala, y para bien o para mal?</div><div class="how">Con esa ficha delante, Gemini decide el partido y la dirección.</div></div>
+      </div>
+    </div>
+    <style>
+
+.steps{display:flex;align-items:stretch;gap:24px;margin-top:40px}
+.step{flex:1;background:var(--panel);border:3px solid var(--ink);border-radius:6px;box-shadow:8px 8px 0 var(--ink);padding:40px 36px;display:flex;flex-direction:column;gap:20px}
+.step .n{width:64px;height:64px;border-radius:50%;background:var(--ink);color:var(--bg);font:700 34px/64px var(--f-mono);text-align:center}
+.step .q{font:700 48px/1.1 var(--f-display)}
+.step .how{font:400 28px/1.4 var(--f-serif);color:var(--lede)}
+.arrow{align-self:center;font:700 60px/1 var(--f-sans)}
+
+    </style>
+    <script>
+      (function(){
+      const tl = gsap.timeline({ paused: true }); const D=19.64;
+
+      tl.from("#m-k",{y:20,opacity:0,duration:.4,ease:"power3.out"},.15);
+      tl.from("#m-t",{y:50,opacity:0,duration:.6,ease:"expo.out"},.25);
+      const steps=document.querySelectorAll('[data-composition-id="metodo"] .step');
+      const arrows=document.querySelectorAll('[data-composition-id="metodo"] .arrow');
+      steps.forEach(function(s,i){
+        tl.from(s,{y:90,opacity:0,duration:.6,ease:"power3.out"},[1.9,4.3,8.4][i]);
+        if(arrows[i]) tl.from(arrows[i],{x:-30,opacity:0,duration:.35,ease:"power2.out"},[4.0,8.1][i]);
+      });
+      tl.to(".content",{y:-60,opacity:0,duration:.4,ease:"power2.in"},D-.45);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["metodo"] = tl;
+      })();
+    </script>
+  </div>
+</template>

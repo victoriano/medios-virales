@@ -106,6 +106,23 @@ También `scripts/build_contenidos_data.py` saca `site/data/contenidos.json`, to
 o más, que es lo que busca la sección Contenidos cuando no hay un medio elegido. Con un medio elegido,
 la web lee directamente sus ficheros por año. Tampoco necesita el taller y también hay que repetirlo.
 
+Igual `scripts/build_tendencias_data.py`, que saca `site/data/tendencias.json` (por año) y
+`site/data/tendencias_meses.json` (por mes, solo se pide al elegir ver por mes) para la sección
+Tendencias: tuits, mediana y media de retuits y de me gusta por medio, periodo y subconjunto (todos,
+políticos, izquierda, derecha y a favor o en contra de cada partido). No necesita el taller.
+
+`scripts/build_noticias_data.py` saca `site/data/noticias.json`, las noticias políticas que
+Tendencias superpone en el gráfico si el lector lo pide (selector «Noticias políticas»: los grandes
+eventos, que son elecciones y corrupción juntos o por separado, las de relevancia 5 o todas). El grupo
+de cada noticia sale de su categoría en la fuente («Elecciones/resultados» y «Corrupción/escándalo»). La fuente es `data/noticias_politicas.csv`, copiada tal cual de
+`data/eventos_2018_2026.csv` del repositorio `victoriano/barometro-cis-viz`; si se amplía allí, se vuelve
+a copiar y se repite el script. Es una selección editorial de acontecimientos, no un dato del corpus.
+
+El filtro «Cuentas» de Tendencias añade además la orientación de cada cuenta, calculada en la web
+(`ladoCuenta` en `site/app.js`) con su índice de toda la serie: izquierda por debajo de −0,2, derecha por
+encima de +0,2 y centro entre medias, solo para las cuentas incluidas. Es una lectura del propio índice,
+no una etiqueta editorial.
+
 Por último, `scripts/build_tipos_data.py` añade a `index.json` el tipo de cada cuenta (prensa
 escrita, digital, televisión, programa de televisión, radio, programa de radio o agencia), que usa
 el filtro «Medios» del mapa. La clasificación es manual y vive en `data/tipos_medio.json`: un programa
@@ -228,3 +245,9 @@ recuerdo.** Los recuentos de este documento están verificados y los puedes repr
 - Todo el texto de cara al público va **en español**.
 - **Sin guiones** en la prosa. Ni palabras compuestas con guion ni guiones como separadores.
 - Las tablas están bien en el README y en los documentos; en Telegram no, porque se rompen.
+
+## Vídeo explicativo
+
+`video/` contiene el vídeo de ~2 min que explica el proyecto (Hyperframes), con sus guiones y
+varias locuciones (voz clonada de Victoriano con ElevenLabs y con Higgs TTS 3, y una voz de
+catálogo). Se regenera desde `site/data/index.json`. Todo el proceso está en `video/README.md`.

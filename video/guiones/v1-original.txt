@@ -1,0 +1,8 @@
+¿A qué partido beneficia cada medio de comunicación? Lo hemos medido tuit a tuit, en las cuentas de X de los medios generalistas españoles.
+Seguimos sesenta y seis cuentas de medios y de programas. La serie histórica reúne más de seiscientos mil tuits, entre 2018 y 2026: una muestra de hasta cien por medio y mes. Y del último año, analizamos todos los virales: los veintiún mil cuatrocientos ochenta y nueve tuits que superaron los cien retuits.
+Cada tuit pasa por tres preguntas. Primero... ¿habla de política española? Después... ¿quién es quién? Gemini busca en Google a las personas y los casos que aparecen. Y por último... ¿a qué partido señala, y es para bien o para mal?
+Un ejemplo real. ABC publica que Adif compró piedra no homologada a la cantera que empleaba a la mujer de Koldo. Critica una decisión del Gobierno, así que cuenta como un tuit que perjudica al PSOE... y suma a la derecha.
+Con eso calculamos un índice. Beneficiar al PSOE o a Sumar, o perjudicar al PP o a Vox, suma a la izquierda. Lo contrario suma a la derecha. El índice va de menos uno, todo a la izquierda... a más uno, todo a la derecha.
+Así queda el mapa. Lo más a la izquierda son programas de tele y radio: Malas Lenguas, laSexta Columna, Hoy por Hoy o Hora 25, junto a El Plural y DiarioSabemos. En el centro, RTVE y Europa Press. Y en el extremo derecho... Periodista Digital, ESdiario y esRadio.
+En los tuits más virales del último año, el PSOE protagoniza la mitad de los que hablan de política, y el PP, casi un tercio. Y siete de cada diez son críticos con el partido al que señalan.
+Puedes explorarlo medio a medio, y tuit a tuit, en medios punto victoriano punto me.

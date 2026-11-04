@@ -28,6 +28,9 @@ const I18N = {
     lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> tuits muestreados de <strong id="n-medios">${nMedios}</strong> medios entre 2018 y 2026, clasificados según a qué partido benefician o perjudican. Cada punto es un medio: pulsa para leer sus tuits.`,
     tabMapa: 'Mapa',
     tabRanking: 'Ranking',
+    descargar: '↓ Descargar imagen',
+    descargaError: 'No se ha podido crear la imagen.',
+    descargaPie: 'medios.victoriano.me · Sesgo político de los medios españoles medido sobre sus tuits',
     tabContenidos: 'Contenidos',
     tabMetodo: 'Método',
     themeLight: 'Claro',
@@ -333,6 +336,9 @@ const I18N = {
     lede: (nVirales, nMedios) => `<strong id="n-virales">${nVirales}</strong> sampled tweets from <strong id="n-medios">${nMedios}</strong> outlets between 2018 and 2026, classified by which party they help or hurt. Each dot is an outlet: click it to read its tweets.`,
     tabMapa: 'Map',
     tabRanking: 'Ranking',
+    descargar: '↓ Download image',
+    descargaError: 'The image could not be created.',
+    descargaPie: 'medios.victoriano.me · Political bias of Spanish media measured on their tweets',
     tabContenidos: 'Content',
     tabMetodo: 'Method',
     themeLight: 'Light',
@@ -810,6 +816,140 @@ Object.assign(I18N.en, {
   contTodo: n => `Its whole sample (${n} tweets), not only those with 100 RT or more`,
   contCargando: 'Loading tweets…',
 });
+Object.assign(I18N.es, {
+  tabTendencias: 'Tendencias',
+  tdTitulo: 'Tendencias',
+  tdAria: 'Evolución de cada medio a lo largo del tiempo',
+  tdHint: (medida, sub) => `Cómo cambia, año a año o mes a mes, <strong>${medida}</strong> de cada medio, contando ${sub}. Destaca los que más crecen o más caen, o elige los medios que quieras en el desplegable o en la tabla. Pasa el ratón para ver las cifras.`,
+  tdMedida: 'Medida',
+  tdMedidaOp: k => ({ rt_mediana: 'Mediana de retuits', rt_media: 'Media de retuits', lk_mediana: 'Mediana de me gusta', n: 'Número de tuits', pct: '% de sus tuits' })[k],
+  tdMedidaFrase: k => ({ rt_mediana: 'la mediana de retuits', rt_media: 'la media de retuits', lk_mediana: 'la mediana de me gusta', n: 'el número de tuits', pct: 'el porcentaje de sus tuits' })[k],
+  tdTuits: 'Tuits',
+  tdSubOp: k => {
+    const fijos = { todos: 'Todos los tuits', politicos: 'Tuits políticos', izq: 'A favor de la izquierda', der: 'A favor de la derecha' };
+    if (fijos[k]) return fijos[k];
+    const p = k.slice(0, -1);
+    return k.endsWith('+') ? `A favor ${delP(p)}` : `En contra ${delP(p)}`;
+  },
+  tdSubFrase: k => {
+    const fijos = { todos: 'todos sus tuits', politicos: 'solo sus tuits políticos', izq: 'solo los tuits que benefician a PSOE o Sumar o perjudican a PP o Vox', der: 'solo los tuits que benefician a PP o Vox o perjudican a PSOE o Sumar' };
+    if (fijos[k]) return fijos[k];
+    const p = k.slice(0, -1);
+    return k.endsWith('+') ? `solo los tuits que benefician ${alP(p)}` : `solo los tuits que perjudican ${alP(p)}`;
+  },
+  tdGrupoLados: 'Corriente',
+  tdGrupoPartidos: 'Partido',
+  tdCuentas: 'Cuentas',
+  tdVer: 'Ver por',
+  tdAno: 'Año',
+  tdMes: 'Mes',
+  tdLog: 'Escala logarítmica',
+  tdElegidos: 'En el gráfico',
+  tdAnadir: 'Añadir medio…',
+  tdDestacar: n => `Destacar ${n}`,
+  tdDestacarOp: (k, n) => ({ altos: 'Más altos', crecen: 'Más crecen', caen: 'Más caen' })[k],
+  tdColPend: 'Tendencia',
+  tdColPendTip: 'Cuánto sube o baja cada año, según la recta que mejor se ajusta a sus valores anuales (con al menos tres años)',
+  tdTipPend: v => `Tendencia: ${v} al año`,
+  tdQuitar: nombre => `Quitar ${nombre}`,
+  tdLleno: n => `Caben ${n} medios a la vez`,
+  tdPonerTodas: (n, cuentas) => `Poner las ${n} de «${cuentas}»`,
+  tdQuitarTodas: 'Quitar todos',
+  tdGrises: n => `y ${n} más en gris`,
+  tdTipMas: n => `y ${n} más`,
+  tdGrupoLado: 'Por orientación, según su índice',
+  ladoNombre: k => ({ izquierda: 'Izquierda', centro: 'Centro', derecha: 'Derecha' })[k],
+  tdCargando: 'Cargando los datos…',
+  tdError: 'No se han podido cargar los datos de tendencias.',
+  tdSinDatos: 'Ningún medio tiene datos con estos filtros.',
+  tdSinSel: 'Elige al menos un medio en el desplegable o en la tabla.',
+  tdSinDatosSel: 'Los medios elegidos no tienen datos con estos filtros.',
+  tdNota: (min, gran) => `Es una muestra de hasta 100 tuits por medio y mes, no todo lo publicado. Las medianas y medias solo se dibujan con al menos ${min} tuits en el ${gran === 'mes' ? 'mes' : 'año'}. 2018 empieza en mayo y 2026 acaba en septiembre, así que en número de tuits esos dos años salen más bajos. Los retuits y me gusta son los que tenía cada tuit al descargarlo, en 2026. La tendencia es la pendiente de la recta que mejor se ajusta a los valores anuales de cada medio, con al menos tres años; en número de tuits no cuenta 2018 ni 2026.`,
+  tdTipN: (n, total) => `${n} de ${total} tuits muestreados`,
+  tdTipPocos: (n, min) => `${n} tuits, menos de ${min}: sin cifra`,
+  tdTipPulsa: 'Pulsa para añadirlo al gráfico',
+  tdTipQuita: 'Pulsa para quitarlo del gráfico',
+  tdNoticias: 'Noticias políticas',
+  tdNoticiasOp: k => ({ no: 'No mostrar', grandes: 'Elecciones y corrupción', elecciones: 'Solo elecciones', corrupcion: 'Solo corrupción', clave: 'Las de mayor relevancia', todas: 'Todas' })[k],
+  tdNoticiasGrandes: 'Grandes eventos',
+  tdNoticiasMas: 'Más noticias',
+  tdNoticiasGrupo: k => ({ elecciones: 'elecciones', corrupcion: 'corrupción', otras: 'otras' })[k],
+  tdNoticiasPulsa: 'Pulsa para verla en la lista',
+  tdNoticiasLista: n => `Las ${n} noticias del gráfico, por fecha`,
+  tdNoticiasFuente: 'Acontecimientos de la política española seleccionados para el proyecto <a href="https://github.com/victoriano/barometro-cis-viz" target="_blank" rel="noopener">de los barómetros del CIS</a>, con su relevancia y a quién beneficiaron o perjudicaron previsiblemente. Elecciones son las generales, autonómicas, municipales y europeas; corrupción, los casos y escándalos. Las de mayor relevancia son las que el proyecto puntúa con un 5 sobre 5. Que una noticia coincida con un cambio en la línea no demuestra que lo cause.',
+  tdTablaTitulo: 'Año a año',
+  tdTablaHint: 'Pulsa un medio para añadirlo al gráfico o quitarlo. Pulsa la cabecera de un año para ordenar.',
+  tdColMedio: 'Medio',
+  tdColMedia: 'Promedio',
+  tdColMediaTip: 'Promedio de los años con cifra',
+});
+Object.assign(I18N.en, {
+  tabTendencias: 'Trends',
+  tdTitulo: 'Trends',
+  tdAria: 'How each outlet changes over time',
+  tdHint: (medida, sub) => `How <strong>${medida}</strong> changes for each outlet, year by year or month by month, counting ${sub}. Highlight the ones rising or falling most, or pick outlets from the menu or the table. Hover to see the numbers.`,
+  tdMedida: 'Measure',
+  tdMedidaOp: k => ({ rt_mediana: 'Median retweets', rt_media: 'Mean retweets', lk_mediana: 'Median likes', n: 'Number of tweets', pct: '% of its tweets' })[k],
+  tdMedidaFrase: k => ({ rt_mediana: 'the median retweets', rt_media: 'the mean retweets', lk_mediana: 'the median likes', n: 'the number of tweets', pct: 'the share of its tweets' })[k],
+  tdTuits: 'Tweets',
+  tdSubOp: k => {
+    const fijos = { todos: 'All tweets', politicos: 'Political tweets', izq: 'For the left', der: 'For the right' };
+    if (fijos[k]) return fijos[k];
+    const p = k.slice(0, -1);
+    return k.endsWith('+') ? `For ${p}` : `Against ${p}`;
+  },
+  tdSubFrase: k => {
+    const fijos = { todos: 'all its tweets', politicos: 'only its political tweets', izq: 'only tweets that help PSOE or Sumar or hurt PP or Vox', der: 'only tweets that help PP or Vox or hurt PSOE or Sumar' };
+    if (fijos[k]) return fijos[k];
+    const p = k.slice(0, -1);
+    return k.endsWith('+') ? `only tweets that help ${p}` : `only tweets that hurt ${p}`;
+  },
+  tdGrupoLados: 'Side',
+  tdGrupoPartidos: 'Party',
+  tdCuentas: 'Accounts',
+  tdVer: 'View by',
+  tdAno: 'Year',
+  tdMes: 'Month',
+  tdLog: 'Log scale',
+  tdElegidos: 'On the chart',
+  tdAnadir: 'Add outlet…',
+  tdDestacar: n => `Highlight ${n}`,
+  tdDestacarOp: (k, n) => ({ altos: 'Highest', crecen: 'Rising most', caen: 'Falling most' })[k],
+  tdColPend: 'Trend',
+  tdColPendTip: 'How much it rises or falls per year, from the line that best fits its yearly values (at least three years)',
+  tdTipPend: v => `Trend: ${v} per year`,
+  tdQuitar: nombre => `Remove ${nombre}`,
+  tdLleno: n => `Up to ${n} outlets at once`,
+  tdPonerTodas: (n, cuentas) => `Add all ${n} in “${cuentas}”`,
+  tdQuitarTodas: 'Remove all',
+  tdGrises: n => `and ${n} more in grey`,
+  tdTipMas: n => `and ${n} more`,
+  tdGrupoLado: 'By leaning, from their index',
+  ladoNombre: k => ({ izquierda: 'Left', centro: 'Centre', derecha: 'Right' })[k],
+  tdCargando: 'Loading data…',
+  tdError: 'The trends data could not be loaded.',
+  tdSinDatos: 'No outlet has data with these filters.',
+  tdSinSel: 'Pick at least one outlet from the menu or the table.',
+  tdSinDatosSel: 'The outlets you picked have no data with these filters.',
+  tdNota: (min, gran) => `This is a sample of up to 100 tweets per outlet and month, not everything published. Medians and means are only drawn with at least ${min} tweets in the ${gran === 'mes' ? 'month' : 'year'}. 2018 starts in May and 2026 ends in September, so those two years look lower in number of tweets. Retweets and likes are what each tweet had when it was downloaded, in 2026. The trend is the slope of the line that best fits each outlet's yearly values, with at least three years; for number of tweets it leaves out 2018 and 2026.`,
+  tdTipN: (n, total) => `${n} of ${total} sampled tweets`,
+  tdTipPocos: (n, min) => `${n} tweets, fewer than ${min}: no figure`,
+  tdTipPulsa: 'Click to add it to the chart',
+  tdTipQuita: 'Click to remove it from the chart',
+  tdNoticias: 'Political news',
+  tdNoticiasOp: k => ({ no: 'Hide', grandes: 'Elections and corruption', elecciones: 'Elections only', corrupcion: 'Corruption only', clave: 'Most relevant', todas: 'All' })[k],
+  tdNoticiasGrandes: 'Major events',
+  tdNoticiasMas: 'More news',
+  tdNoticiasGrupo: k => ({ elecciones: 'elections', corrupcion: 'corruption', otras: 'other' })[k],
+  tdNoticiasPulsa: 'Click to see it in the list',
+  tdNoticiasLista: n => `The ${n} news events on the chart, by date`,
+  tdNoticiasFuente: 'Spanish political events selected for the <a href="https://github.com/victoriano/barometro-cis-viz" target="_blank" rel="noopener">CIS barometers project</a>, with their relevance and who they likely helped or hurt (text in Spanish). Elections cover general, regional, local and European votes; corruption, the cases and scandals. The most relevant are those the project scores 5 out of 5. A news event lining up with a change in a line does not prove it caused it.',
+  tdTablaTitulo: 'Year by year',
+  tdTablaHint: 'Click an outlet to add it to the chart or remove it. Click a year header to sort.',
+  tdColMedio: 'Outlet',
+  tdColMedia: 'Average',
+  tdColMediaTip: 'Average of the years with a figure',
+});
 const t = (key, ...args) => {
   const val = I18N[LANG][key];
   if (typeof val === 'function') return val(...args);
@@ -978,7 +1118,7 @@ function prefetchMedio(meta) {
 }
 
 /* ---------- navegación ---------- */
-const VIEWS = ['ranking', 'mapa', 'medio', 'contenidos', 'metodo'];
+const VIEWS = ['ranking', 'tendencias', 'mapa', 'medio', 'contenidos', 'metodo'];
 const PERIODOS_VALIDOS = ['todo', 'xv', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'];
 let currentView = 'mapa';
 let vistaPrevia = 'mapa';
@@ -991,6 +1131,12 @@ function show(v) {
   if (v !== 'mapa' && v !== 'medio') mapaTrayectoria = '';
   VIEWS.forEach(x => { $('#view-' + x).hidden = x !== v; });
   $$('.tab').forEach(el => el.classList.toggle('is-on', el.dataset.view === v));
+  // en móvil las pestañas no caben y se desplazan: la activa se deja a la vista
+  const activa = $('.tab.is-on'), barra = $('.tabs');
+  if (activa && barra && barra.scrollWidth > barra.clientWidth) {
+    const x = activa.getBoundingClientRect().left - barra.getBoundingClientRect().left + barra.scrollLeft;
+    barra.scrollLeft = Math.max(0, x - (barra.clientWidth - activa.offsetWidth) / 2);
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 $$('.tab').forEach(el => el.addEventListener('click', () => {
@@ -1024,6 +1170,7 @@ function route() {
   }
   if (ruta.startsWith('medio/')) { openMedio(ruta.slice(6)); return; }
   if (ruta === 'ranking') { show('ranking'); pintarRanking(); return; }
+  if (ruta === 'tendencias') { leeFiltrosTendencias(bruto); show('tendencias'); abrirTendencias(); return; }
   if (ruta === 'top') { history.replaceState(null, '', '#/contenidos'); }
   if (ruta === 'contenidos' || ruta === 'top') { leeFiltrosContenidos(bruto); show('contenidos'); abrirContenidos(); return; }
   if (ruta === 'metodo') { show('metodo'); return; }
@@ -1129,7 +1276,7 @@ function pintarRanking() {
     const pocos = tot < CLARO_MIN;
     const marca = pocos ? ` <span class="star" title="${t('decimosMuestraCorta')}">*</span>` : '';
     return `<tr data-h="${esc(m.handle)}">
-      <td><div class="medio-cell"><div><div><strong>${esc(m.nombre)}</strong></div><div class="h">${esc(m.handle)} · ${compact(m.seguidores)} ${t('seguidores')}</div></div></div></td>
+      <td><div class="medio-cell">${m.logo ? `<img class="rank-logo" src="${esc(m.logo)}" alt="" width="34" height="34" loading="lazy">` : ''}<div><div><strong>${esc(m.nombre)}</strong></div><div class="h">${esc(m.handle)} · ${compact(m.seguidores)} ${t('seguidores')}</div></div></div></td>
       <td class="c-dec">
         <div class="dec">
           <div class="dec-top">${tot ? `<strong>${d.texto}</strong>` : `<span class="dec-sin">${t('decimosSinLado')}</span>`}</div>
@@ -1165,6 +1312,753 @@ $('#tabla-ranking tbody').addEventListener('mouseover', e => {
   if (tr) prefetchMedio(metaDe(tr.dataset.h));
 });
 $('#q').addEventListener('input', e => { query = e.target.value; pintarRanking(); });
+
+/* ---------- tendencias ----------
+   Una línea por medio a lo largo de los años (o los meses) de la muestra. Los
+   datos salen de scripts/build_tendencias_data.py: por medio y periodo, el total
+   muestreado y, por subconjunto, [tuits, mediana RT, media RT, mediana me gusta,
+   media me gusta]. Los meses van en otro fichero y solo se piden al elegirlos. */
+const TD = { medida: 'rt_mediana', sub: 'todos', gran: 'ano', cuentas: 'todos', destacar: 'altos', noticias: 'no', log: false, sel: null, orden: 'media', dir: -1 };
+const TD_DESTACAR = ['altos', 'crecen', 'caen'];
+const TD_MEDIDAS = ['rt_mediana', 'rt_media', 'lk_mediana', 'n', 'pct'];
+const TD_SUBS = ['todos', 'politicos', 'izq', 'der', 'PSOE+', 'PSOE-', 'PP+', 'PP-', 'Vox+', 'Vox-', 'Sumar+', 'Sumar-'];
+const TD_POS = { rt_mediana: 1, rt_media: 2, lk_mediana: 3 };
+const TD_MIN = { ano: 20, mes: 5 };   // tuits mínimos para dibujar una mediana o una media
+const TD_AUTO = 5, TD_MAX = 8;        // ocho colores categóricos, en orden fijo; a partir del noveno, en gris
+const TD_TOPE = 120;                  // cuántos medios caben a la vez en el gráfico
+const TD_PARAMS = { medida: 'medida', sub: 'tuits', gran: 'ver', cuentas: 'cuentas', destacar: 'destacar', noticias: 'noticias' };
+// noticias políticas que se pueden superponer: ninguna, los grandes eventos (elecciones
+// y corrupción, juntos o por separado), las de relevancia 5 o todas
+const TD_NOTICIAS = ['no', 'grandes', 'elecciones', 'corrupcion', 'clave', 'todas'];
+const TEND = { ano: null, mes: null, noticias: null };
+let tdError = false;
+
+function leeFiltrosTendencias(cadena) {
+  if (!cadena.includes('?')) return;
+  const usp = new URLSearchParams(cadena.split('?')[1]);
+  const m = usp.get('medida'), s = usp.get('tuits'), g = usp.get('ver'), c = usp.get('cuentas'), sel = usp.get('medios');
+  if (TD_MEDIDAS.includes(m)) TD.medida = m;
+  if (TD_SUBS.includes(s)) TD.sub = s;
+  if (g === 'ano' || g === 'mes') TD.gran = g;
+  if (c) TD.cuentas = c;
+  const d = usp.get('destacar');
+  if (TD_DESTACAR.includes(d)) TD.destacar = d;
+  const nt = usp.get('noticias');
+  if (TD_NOTICIAS.includes(nt)) TD.noticias = nt;
+  TD.log = usp.get('log') === '1';
+  if (sel) TD.sel = sel.split(',').filter(Boolean).slice(0, TD_TOPE);
+}
+function escribeFiltrosTendencias() {
+  const usp = new URLSearchParams();
+  const def = { medida: 'rt_mediana', sub: 'todos', gran: 'ano', cuentas: 'todos', destacar: 'altos', noticias: 'no' };
+  for (const k in TD_PARAMS) if (TD[k] !== def[k]) usp.set(TD_PARAMS[k], TD[k]);
+  if (TD.log) usp.set('log', '1');
+  if (TD.sel) usp.set('medios', TD.sel.join(','));
+  const q = usp.toString();
+  history.replaceState(null, '', '#/tendencias' + (q ? '?' + q : ''));
+}
+async function abrirTendencias() {
+  pintarTendencias();
+  const conNoticias = TD.noticias !== 'no';
+  const falta = !TEND.ano || (TD.gran === 'mes' && !TEND.mes) || (conNoticias && !TEND.noticias);
+  if (!falta) return;
+  try {
+    if (!TEND.ano) TEND.ano = await pedirJSON('data/tendencias.json' + VER);
+    if (TD.gran === 'mes' && !TEND.mes) TEND.mes = await pedirJSON('data/tendencias_meses.json' + VER);
+    tdError = false;
+  } catch (err) { tdError = true; }
+  // las noticias van aparte: si fallan, el gráfico se dibuja igual sin ellas
+  if (conNoticias && !TEND.noticias) {
+    try { TEND.noticias = (await pedirJSON('data/noticias.json' + VER)).noticias; }
+    catch (err) { TEND.noticias = []; }
+  }
+  pintarTendencias();
+}
+// las noticias que caen dentro de la ventana de la muestra, según el filtro elegido
+function noticiasTend() {
+  if (TD.noticias === 'no' || !TEND.noticias) return [];
+  const { desde, hasta } = INDEX.ventana;
+  const pasa = {
+    todas: () => true,
+    clave: n => n.relevancia >= 5,
+    grandes: n => !!n.grupo,
+    elecciones: n => n.grupo === 'elecciones',
+    corrupcion: n => n.grupo === 'corrupcion',
+  }[TD.noticias];
+  return TEND.noticias.filter(n => n.fecha >= desde && n.fecha <= hasta && pasa(n));
+}
+const fechaLarga = f => new Date(+f.slice(0, 4), +f.slice(5, 7) - 1, +f.slice(8, 10))
+  .toLocaleDateString(LANG === 'en' ? 'en-GB' : 'es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+const impactosHTML = imps => imps.map(([p, sg]) =>
+  `<span class="td-imp td-imp-${sg === '+' ? 'mas' : sg === '-' ? 'menos' : 'cero'}">${esc(p)} ${{ '-': '−', '0': '=', '±': '±' }[sg] || '+'}</span>`).join('');
+function periodosTend(gran) {
+  const anos = [];
+  const [a0, a1] = [+INDEX.ventana.desde.slice(0, 4), +INDEX.ventana.hasta.slice(0, 4)];
+  for (let a = a0; a <= a1; a++) anos.push(String(a));
+  if (gran === 'ano') return anos;
+  const desde = INDEX.ventana.desde.slice(0, 7), hasta = INDEX.ventana.hasta.slice(0, 7);
+  return anos.flatMap(a => Array.from({ length: 12 }, (_, i) => `${a}-${String(i + 1).padStart(2, '0')}`))
+    .filter(m => m >= desde && m <= hasta);
+}
+// valor de un medio en un periodo; null si no hay tuits o la muestra es corta para una mediana
+function valorTend(fila, gran) {
+  if (!fila || !fila.n) return null;
+  const s = fila[TD.sub];
+  const n = s ? s[0] : 0;
+  if (TD.medida === 'n') return n;
+  if (TD.medida === 'pct') return 100 * n / fila.n;
+  if (n < TD_MIN[gran]) return null;
+  return s[TD_POS[TD.medida]];
+}
+const fmtTend = v => v == null ? '—' : TD.medida === 'pct' ? `${fx(v, 1)} %` : fx(v, Number.isInteger(v) ? 0 : 1);
+const mediaDe = xs => { const v = xs.filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+function seriesTend(gran) {
+  const datos = TEND[gran];
+  const periodos = periodosTend(gran);
+  const porH = new Map(datos.medios.map(m => [m.h.toLowerCase(), m.p]));
+  return INDEX.medios.filter(m => pasaCuentas(m, TD.cuentas)).map(m => {
+    const p = porH.get(m.handle.toLowerCase()) || {};
+    const valores = periodos.map(k => valorTend(p[k], gran));
+    const fila = { m, slug: slugDe(m.handle), p, valores, media: mediaDe(valores) };
+    if (gran === 'ano') fila.pendiente = pendienteTend(periodos, valores);
+    return fila;
+  });
+}
+/* Tendencia de un medio: la pendiente de la recta de mínimos cuadrados sobre sus
+   valores anuales, en unidades de la medida por año. Pide cifra en al menos tres
+   años. En número de tuits se dejan fuera 2018 y 2026, que están incompletos y
+   harían caer cualquier serie por los extremos. */
+function pendienteTend(anos, valores) {
+  const incompleto = a => (a === anos[0] && !INDEX.ventana.desde.slice(5).startsWith('01'))
+    || (a === anos[anos.length - 1] && !INDEX.ventana.hasta.slice(5).startsWith('12'));
+  const pts = anos.map((a, i) => [+a, valores[i]])
+    .filter(([a, v]) => v != null && !(TD.medida === 'n' && incompleto(String(a))));
+  if (pts.length < 3) return null;
+  const mx = pts.reduce((x, [a]) => x + a, 0) / pts.length;
+  const my = pts.reduce((x, [, v]) => x + v, 0) / pts.length;
+  const sxx = pts.reduce((x, [a]) => x + (a - mx) ** 2, 0);
+  return sxx ? pts.reduce((x, [a, v]) => x + (a - mx) * (v - my), 0) / sxx : null;
+}
+const fmtPendiente = v => {
+  if (v == null) return '—';
+  const n = Math.abs(v) < 0.05 ? 0 : v;
+  const signo = n > 0 ? '+' : n < 0 ? '−' : '';
+  return signo + fx(Math.abs(n), 1) + (TD.medida === 'pct' ? ' pt' : '');
+};
+// elegidos: los que fijó el lector o, si no fijó ninguno, los más altos con la medida actual
+function elegidosTend(anuales) {
+  if (TD.sel) {
+    const validos = new Set(anuales.map(s => s.slug));
+    return TD.sel.filter(s => validos.has(s));
+  }
+  // los automáticos piden cifra en al menos tres años, para que una cuenta recién llegada no acapare el gráfico
+  if (TD.destacar !== 'altos') {
+    const signo = TD.destacar === 'crecen' ? 1 : -1;
+    return anuales.filter(s => s.pendiente != null && signo * s.pendiente > 0)
+      .sort((a, b) => signo * (b.pendiente - a.pendiente)).slice(0, TD_AUTO).map(s => s.slug);
+  }
+  const conSerie = s => s.valores.filter(v => v != null).length >= 3;
+  return anuales.filter(s => s.media != null && conSerie(s)).sort((a, b) => b.media - a.media).slice(0, TD_AUTO).map(s => s.slug);
+}
+// el color sigue al medio mientras está elegido: el hueco de quien sale no repinta al resto
+const TD_COLOR = new Map();
+function coloresTend(elegidos) {
+  for (const k of [...TD_COLOR.keys()]) if (!elegidos.includes(k)) TD_COLOR.delete(k);
+  for (const k of elegidos) {
+    if (TD_COLOR.has(k)) continue;
+    const usados = new Set(TD_COLOR.values());
+    TD_COLOR.set(k, Array.from({ length: TD_MAX }, (_, i) => i + 1).find(i => !usados.has(i)) || 0);
+  }
+  const color = k => TD_COLOR.get(k) ? `var(--td-${TD_COLOR.get(k)})` : 'var(--td-gris)';
+  color.gris = k => !TD_COLOR.get(k);
+  return color;
+}
+function alternarTend(slug, anuales) {
+  const sel = elegidosTend(anuales);
+  const i = sel.indexOf(slug);
+  if (i >= 0) sel.splice(i, 1);
+  else if (sel.length < TD_TOPE) sel.push(slug);
+  TD.sel = sel;
+  pintarTendencias();
+}
+// poner en el gráfico todas las cuentas del filtro «Cuentas», o quitarlas todas
+function todasTend(anuales, poner) {
+  const sel = elegidosTend(anuales);
+  if (poner) {
+    // los ya elegidos conservan su color; el resto entra por orden de promedio
+    const nuevos = anuales.filter(s => s.media != null && !sel.includes(s.slug))
+      .sort((a, b) => b.media - a.media).map(s => s.slug);
+    TD.sel = [...sel, ...nuevos].slice(0, TD_TOPE);
+  } else TD.sel = [];
+  pintarTendencias();
+}
+
+function pintarTendencias() {
+  const caja = $('#td-filtros');
+  if (!caja || !INDEX) return;
+  const opSub = k => `<option value="${esc(k)}">${esc(t('tdSubOp', k))}</option>`;
+  const cuentas = ['todos', 'generalistas', 'programas'];
+  const base = { todos: 'mapaCuentasTodas', generalistas: 'mapaCuentasGen', programas: 'mapaCuentasProg' };
+  const cuenta = f => INDEX.medios.filter(m => pasaCuentas(m, f)).length;
+  if (!filtrosMapa().includes(TD.cuentas) && !LADOS_CUENTAS.includes(TD.cuentas)) TD.cuentas = 'todos';
+  caja.innerHTML = `
+    <label class="ctl"><span class="ctl-k">${t('tdMedida')}</span><select id="td-medida">
+      ${TD_MEDIDAS.map(k => `<option value="${k}">${esc(t('tdMedidaOp', k))}</option>`).join('')}
+    </select></label>
+    <label class="ctl"><span class="ctl-k">${t('tdTuits')}</span><select id="td-sub">
+      ${TD_SUBS.slice(0, 2).map(opSub).join('')}
+      <optgroup label="${esc(t('tdGrupoLados'))}">${TD_SUBS.slice(2, 4).map(opSub).join('')}</optgroup>
+      <optgroup label="${esc(t('tdGrupoPartidos'))}">${TD_SUBS.slice(4).map(opSub).join('')}</optgroup>
+    </select></label>
+    <label class="ctl"><span class="ctl-k">${t('tdCuentas')}</span><select id="td-cuentas">
+      ${cuentas.map(k => `<option value="${k}">${esc(t(base[k], cuenta(k)))}</option>`).join('')}
+      <optgroup label="${esc(t('tdGrupoLado'))}">${LADOS_CUENTAS.map(k => `<option value="${k}">${esc(t('mapaTipoOpcion', t('ladoNombre', k), cuenta(k)))}</option>`).join('')}</optgroup>
+      <optgroup label="${esc(t('mapaTipoGrupo'))}">${tiposMapa().map(k => `<option value="${k}">${esc(t('mapaTipoOpcion', t('tipoNombre', k), cuenta(k)))}</option>`).join('')}</optgroup>
+    </select></label>
+    <label class="ctl"><span class="ctl-k">${t('tdNoticias')}</span><select id="td-noticias">
+      ${TD_NOTICIAS.slice(0, 1).map(k => `<option value="${k}">${esc(t('tdNoticiasOp', k))}</option>`).join('')}
+      <optgroup label="${esc(t('tdNoticiasGrandes'))}">${TD_NOTICIAS.slice(1, 4).map(k => `<option value="${k}">${esc(t('tdNoticiasOp', k))}</option>`).join('')}</optgroup>
+      <optgroup label="${esc(t('tdNoticiasMas'))}">${TD_NOTICIAS.slice(4).map(k => `<option value="${k}">${esc(t('tdNoticiasOp', k))}</option>`).join('')}</optgroup>
+    </select></label>
+    <div class="ctl"><span class="ctl-k">${t('tdVer')}</span>
+      <div class="ctl-v"><div class="seg" id="td-gran" role="group" aria-label="${esc(t('tdVer'))}">
+        ${['ano', 'mes'].map(g => `<button type="button" data-gran="${g}" class="${TD.gran === g ? 'is-on' : ''}" aria-pressed="${TD.gran === g}">${t(g === 'ano' ? 'tdAno' : 'tdMes')}</button>`).join('')}
+      </div>
+      <label class="cj-check td-log"><input type="checkbox" id="td-log"${TD.log ? ' checked' : ''}> ${t('tdLog')}</label></div>
+    </div>`;
+  $('#td-medida').value = TD.medida;
+  $('#td-sub').value = TD.sub;
+  $('#td-cuentas').value = TD.cuentas;
+  $('#td-noticias').value = TD.noticias;
+  $('#td-hint').innerHTML = t('tdHint', t('tdMedidaFrase', TD.medida), t('tdSubFrase', TD.sub));
+  $('#td-nota').textContent = t('tdNota', TD_MIN[TD.gran], TD.gran);
+  const svg = $('#td-graf');
+  const listo = TEND.ano && (TD.gran === 'ano' || TEND.mes);
+  if (!listo) {
+    svg.innerHTML = `<text x="20" y="40" class="td-aviso">${esc(t(tdError ? 'tdError' : 'tdCargando'))}</text>`;
+    svg.setAttribute('viewBox', '0 0 600 80');
+    $('#td-medios').innerHTML = '';
+    $('#td-tabla thead').innerHTML = '';
+    $('#td-tabla tbody').innerHTML = '';
+    $('#td-noticias-lista').innerHTML = '';
+    return;
+  }
+  escribeFiltrosTendencias();
+  const anuales = seriesTend('ano');
+  const series = TD.gran === 'ano' ? anuales : seriesTend('mes');
+  const elegidos = elegidosTend(anuales);
+  const color = coloresTend(elegidos);
+  pintarElegidosTend(anuales, elegidos, color);
+  pintarGraficoTend(series, elegidos, color);
+  pintarListaNoticias();
+  pintarTablaTend(anuales, elegidos, color);
+}
+
+// el nombre de la opción de «Cuentas» elegida, sin el recuento
+function opcionCuentasTend() {
+  const op = $('#td-cuentas') && $('#td-cuentas').selectedOptions[0];
+  return op ? op.textContent.replace(/\s*\(\d+\)\s*$/, '').trim() : '';
+}
+function pintarElegidosTend(anuales, elegidos, color) {
+  const porSlug = new Map(anuales.map(s => [s.slug, s]));
+  const fuera = anuales.filter(s => !elegidos.includes(s.slug)).sort((a, b) => a.m.nombre.localeCompare(b.m.nombre, 'es'));
+  const chips = elegidos.filter(k => !color.gris(k)).map(k => {
+    const s = porSlug.get(k);
+    return `<button type="button" class="td-chip" data-quita="${esc(k)}" aria-label="${esc(t('tdQuitar', s.m.nombre))}">
+      <i style="background:${color(k)}"></i>${esc(s.m.nombre)}<span aria-hidden="true">×</span></button>`;
+  }).join('');
+  const lleno = elegidos.length >= TD_TOPE;
+  // con muchos medios solo se enseñan las fichas de los que tienen color
+  const grises = elegidos.filter(k => color.gris(k)).length;
+  const masGris = grises ? `<span class="td-mas">${esc(t('tdGrises', grises))}</span>` : '';
+  const conDatos = anuales.filter(s => s.media != null);
+  const faltan = conDatos.filter(s => !elegidos.includes(s.slug)).length;
+  const masivos = `<span class="td-masivo">
+    ${faltan ? `<button type="button" class="td-auto" data-todas="1">${esc(t('tdPonerTodas', conDatos.length, opcionCuentasTend()))}</button>` : ''}
+    ${elegidos.length ? `<button type="button" class="td-auto" data-todas="0">${esc(t('tdQuitarTodas'))}</button>` : ''}</span>`;
+  const destacar = `<div class="td-destacar"><span class="ctl-k">${t('tdDestacar', TD_AUTO)}</span>
+    <div class="seg" role="group" aria-label="${esc(t('tdDestacar', TD_AUTO))}">${TD_DESTACAR.map(k => {
+      const on = !TD.sel && TD.destacar === k;
+      return `<button type="button" data-destacar="${k}" class="${on ? 'is-on' : ''}" aria-pressed="${on}">${t('tdDestacarOp', k, TD_AUTO)}</button>`;
+    }).join('')}</div></div>`;
+  $('#td-medios').innerHTML = `${destacar}<span class="ctl-k">${t('tdElegidos')}</span>${chips}${masGris}
+    <select id="td-anadir" aria-label="${esc(t('tdAnadir'))}"${lleno ? ' disabled' : ''}>
+      <option value="">${esc(lleno ? t('tdLleno', TD_TOPE) : t('tdAnadir'))}</option>
+      ${fuera.map(s => `<option value="${esc(s.slug)}">${esc(s.m.nombre)}</option>`).join('')}
+    </select>${masivos}
+`;
+}
+
+function ticksLog(min, max) {
+  const out = [];
+  for (let e = Math.floor(Math.log10(min)); e <= Math.ceil(Math.log10(max)); e++) {
+    for (const m of [1, 2, 5]) { const v = m * 10 ** e; if (v >= min * 0.999 && v <= max * 1.001) out.push(v); }
+  }
+  return out;
+}
+let TD_GEO = null;
+function pintarGraficoTend(series, elegidos, color) {
+  const svg = $('#td-graf');
+  const periodos = periodosTend(TD.gran);
+  const ancho = Math.max(TD.gran === 'mes' ? 620 : 340, Math.round($('.td-wrap').clientWidth - 38));
+  const W = ancho, H = Math.round(Math.min(460, Math.max(320, W * 0.5)));
+  const noticias = noticiasTend();
+  const M = { t: noticias.length ? 50 : 30, r: W < 700 ? 16 : 150, b: 40, l: 58 };
+  // solo se dibujan los elegidos, y la escala se ajusta a ellos
+  const enSel = new Set(elegidos);
+  const todos = series.filter(s => enSel.has(s.slug)).flatMap(s => s.valores).filter(v => v != null);
+  if (!todos.length) {
+    svg.setAttribute('viewBox', `0 0 ${W} 80`);
+    svg.innerHTML = `<text x="20" y="40" class="td-aviso">${esc(t(elegidos.length ? 'tdSinDatosSel' : 'tdSinSel'))}</text>`;
+    TD_GEO = null;
+    return;
+  }
+  const log = TD.log && todos.some(v => v > 0);
+  const positivos = todos.filter(v => v > 0);
+  let py, ticks;
+  const alto = H - M.t - M.b;
+  if (log) {
+    const lo = Math.max(0.5, Math.min(...positivos)), hi = Math.max(...positivos);
+    const a = Math.log10(lo), b = Math.log10(hi) + 0.02;
+    py = v => v > 0 ? H - M.b - (Math.log10(Math.max(lo, v)) - a) / (b - a || 1) * alto : null;
+    ticks = ticksLog(lo, hi);
+  } else {
+    const esc_ = escalaY(Math.max(...todos));
+    py = v => H - M.b - v / esc_.tope * alto;
+    ticks = Array.from({ length: esc_.tramos + 1 }, (_, i) => +(esc_.paso * i).toPrecision(12));
+  }
+  const n = periodos.length;
+  const px = i => M.l + (n === 1 ? 0.5 : i / (n - 1)) * (W - M.l - M.r);
+  let g = '';
+  ticks.forEach(v => {
+    const y = py(v).toFixed(1);
+    g += `<line x1="${M.l}" x2="${W - M.r}" y1="${y}" y2="${y}"></line>`;
+    g += `<text x="${M.l - 9}" y="${(+y + 4).toFixed(1)}" text-anchor="end">${TD.medida === 'pct' ? fx(v, v < 10 && !Number.isInteger(v) ? 1 : 0) + ' %' : compact(v)}</text>`;
+  });
+  periodos.forEach((k, i) => {
+    if (TD.gran === 'mes' && !k.endsWith('-01') && i) return;
+    const x = px(i).toFixed(1);
+    if (TD.gran === 'mes') g += `<line class="td-ene" x1="${x}" x2="${x}" y1="${M.t}" y2="${H - M.b}"></line>`;
+    const etiqueta = k.slice(0, 4);
+    const mostrar = W >= (TD.gran === 'ano' ? 520 : 760) || +etiqueta % 2 === 0;
+    if (mostrar) g += `<text x="${x}" y="${H - M.b + 22}" text-anchor="${TD.gran === 'mes' ? 'start' : 'middle'}">${etiqueta}</text>`;
+  });
+  g += `<text class="tit" x="${M.l}" y="14">${esc(t('tdMedidaOp', TD.medida))} · ${esc(t('tdSubOp', TD.sub))}</text>`;
+  const camino = vals => {
+    let d = '', abierto = false;
+    vals.forEach((v, i) => {
+      const y = v == null ? null : py(v);
+      if (y == null) { abierto = false; return; }
+      d += `${abierto ? 'L' : 'M'}${px(i).toFixed(1)} ${y.toFixed(1)}`;
+      abierto = true;
+    });
+    return d;
+  };
+  // noticias: una raya por fecha bajo las líneas, con su marca encima del gráfico.
+  // En los años, el punto de cada año está a mitad de año y la fecha se coloca
+  // en proporción entre puntos; en los meses, dentro de su mes.
+  const posNoticia = f => {
+    let i;
+    if (TD.gran === 'mes') {
+      i = periodos.indexOf(f.slice(0, 7));
+      if (i < 0) return null;
+      const dias = new Date(+f.slice(0, 4), +f.slice(5, 7), 0).getDate();
+      i += (+f.slice(8, 10) - 1) / dias;
+    } else {
+      i = periodos.indexOf(f.slice(0, 4));
+      if (i < 0) return null;
+      const ini = Date.UTC(+f.slice(0, 4), 0, 1), fin = Date.UTC(+f.slice(0, 4) + 1, 0, 1);
+      i += (Date.UTC(+f.slice(0, 4), +f.slice(5, 7) - 1, +f.slice(8, 10)) - ini) / (fin - ini) - 0.5;
+    }
+    return px(Math.max(0, Math.min(n - 1, i)));
+  };
+  const marcas = noticias.map((nt, j) => {
+    const x = posNoticia(nt.fecha);
+    if (x == null) return '';
+    const xs = x.toFixed(1), ym = M.t - 12;
+    return `<g class="td-ev${nt.grupo ? ' is-grande' : ''}" data-ev="${j}">
+      <line class="td-ev-raya" x1="${xs}" x2="${xs}" y1="${ym}" y2="${H - M.b}"></line>
+      <line class="td-ev-hit" x1="${xs}" x2="${xs}" y1="${ym - 7}" y2="${H - M.b}"></line>
+      <path class="td-ev-marca" d="${formaNoticia(nt.grupo, x, ym)}"></path></g>`;
+  }).join('');
+  if (noticias.length) {
+    // la leyenda solo nombra las formas que hay en el gráfico
+    const hay = k => noticias.some(nt => (nt.grupo || 'otras') === k);
+    const leyenda = ['elecciones', 'corrupcion', 'otras'].filter(hay)
+      .map(k => `${{ elecciones: '◆', corrupcion: '■', otras: '◇' }[k]} ${t('tdNoticiasGrupo', k)}`).join('   ');
+    g += `<text class="td-ev-tit" x="${W - M.r}" y="14" text-anchor="end" xml:space="preserve">${esc(leyenda)}</text>`;
+  }
+  const porSlug = new Map(series.map(s => [s.slug, s]));
+  const etiquetas = [];
+  const enOrden = [...elegidos].sort((a, b) => color.gris(b) - color.gris(a));
+  const color_ = enOrden.map(k => {
+    const s = porSlug.get(k);
+    if (!s) return '';
+    const d = camino(s.valores);
+    const c = color(k);
+    if (color.gris(k)) return `<g class="td-linea td-gris" data-h="${esc(k)}"><path class="td-hit" d="${d}"></path><path class="td-trazo" d="${d}" stroke="${c}"></path></g>`;
+    // en los años, un punto por valor; un punto suelto entre huecos también se ve en los meses
+    const puntos = s.valores.map((v, i) => {
+      if (v == null || py(v) == null) return '';
+      const solo = s.valores[i - 1] == null && s.valores[i + 1] == null;
+      return TD.gran === 'ano' || solo ? `<circle cx="${px(i).toFixed(1)}" cy="${py(v).toFixed(1)}" r="4" fill="${c}"></circle>` : '';
+    }).join('');
+    const ult = s.valores.map((v, i) => [v, i]).filter(([v]) => v != null && py(v) != null).pop();
+    if (ult) etiquetas.push({ k, nombre: s.m.nombre, x: px(ult[1]), y: py(ult[0]), c });
+    return `<g class="td-linea td-color" data-h="${esc(k)}"><path class="td-hit" d="${d}"></path><path class="td-trazo" d="${d}" stroke="${c}"></path>${puntos}</g>`;
+  }).join('');
+  // etiquetas a la derecha del último punto, separadas para que no se pisen
+  let rotulos = '';
+  if (M.r > 100) {
+    etiquetas.sort((a, b) => a.y - b.y);
+    const SEP = 15;
+    etiquetas.forEach((e, i) => { e.ly = Math.max(e.y, i ? etiquetas[i - 1].ly + SEP : M.t); });
+    for (let i = etiquetas.length - 1; i >= 0; i--) {
+      const tope = i === etiquetas.length - 1 ? H - M.b : etiquetas[i + 1].ly - SEP;
+      etiquetas[i].ly = Math.min(etiquetas[i].ly, tope);
+    }
+    rotulos = etiquetas.map(e => {
+      const x0 = W - M.r + 8;
+      const nombre = e.nombre.length > 18 ? e.nombre.slice(0, 17) + '…' : e.nombre;
+      return `<path class="td-guia" d="M${(e.x + 5).toFixed(1)} ${e.y.toFixed(1)} L${(x0 - 3).toFixed(1)} ${e.ly.toFixed(1)}" stroke="${e.c}"></path>
+        <text class="td-rotulo" x="${x0}" y="${(e.ly + 4).toFixed(1)}">${esc(nombre)}</text>`;
+    }).join('');
+  }
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.style.minWidth = W + 'px';
+  svg.innerHTML = `<g class="grid">${g}</g><g class="td-evs">${marcas}</g><g>${color_}</g><g class="td-rotulos">${rotulos}</g>
+    <line class="td-cruz" x1="0" x2="0" y1="${M.t}" y2="${H - M.b}" visibility="hidden"></line>`;
+  TD_GEO = { periodos, px, W, M, series: porSlug, elegidos, color, noticias };
+}
+
+function tipTend(ev) {
+  const tip = $('#td-tip'), svg = $('#td-graf');
+  if (!TD_GEO) return;
+  const r = svg.getBoundingClientRect();
+  const escala = TD_GEO.W / r.width;
+  const x = (ev.clientX - r.left) * escala;
+  const { periodos, px, M } = TD_GEO;
+  if (x < M.l - 10 || x > TD_GEO.W - M.r + 10) { ocultarTipTend(); return; }
+  const marca = ev.target.closest && ev.target.closest('.td-ev');
+  if (marca) { tipNoticia(ev, TD_GEO.noticias[+marca.dataset.ev], marca); return; }
+  let i = 0, mejor = Infinity;
+  periodos.forEach((_, j) => { const d = Math.abs(px(j) - x); if (d < mejor) { mejor = d; i = j; } });
+  const cruz = svg.querySelector('.td-cruz');
+  cruz.setAttribute('x1', px(i)); cruz.setAttribute('x2', px(i)); cruz.setAttribute('visibility', 'visible');
+  const k = periodos[i];
+  const etiqueta = TD.gran === 'mes' ? new Date(+k.slice(0, 4), +k.slice(5) - 1, 1).toLocaleDateString(LANG === 'en' ? 'en-GB' : 'es-ES', { month: 'long', year: 'numeric' }) : k;
+  const linea = ev.target.closest && ev.target.closest('.td-linea');
+  const fila = (s, c) => {
+    const f = s.p[k], v = s.valores[i];
+    const nSub = f && f[TD.sub] ? f[TD.sub][0] : 0;
+    const det = !f || !f.n ? '' : v == null && !['n', 'pct'].includes(TD.medida) ? t('tdTipPocos', nf(nSub), TD_MIN[TD.gran]) : t('tdTipN', nf(nSub), nf(f.n));
+    return `<div class="td-tf"><i style="background:${c || 'var(--muted)'}"></i><b>${esc(s.m.nombre)}</b><span>${fmtTend(v)}</span></div>${det ? `<div class="tm">${det}</div>` : ''}`;
+  };
+  let cuerpo;
+  $$('#td-graf .td-linea.is-foco').forEach(el => el.classList.remove('is-foco'));
+  if (linea) {
+    linea.classList.add('is-foco');
+    const s = TD_GEO.series.get(linea.dataset.h);
+    const elegido = TD_GEO.elegidos.includes(linea.dataset.h);
+    const pend = s.pendiente != null ? `<div class="tm">${t('tdTipPend', fmtPendiente(s.pendiente))}</div>` : '';
+    cuerpo = fila(s, elegido ? TD_GEO.color(linea.dataset.h) : null) + pend + `<div class="tm">${t(elegido ? 'tdTipQuita' : 'tdTipPulsa')}</div>`;
+  } else {
+    const filas = TD_GEO.elegidos.map(h => TD_GEO.series.get(h)).filter(Boolean)
+      .sort((a, b) => (b.valores[i] ?? -1) - (a.valores[i] ?? -1));
+    if (!filas.length) { ocultarTipTend(); return; }
+    const MAXF = 10;
+    cuerpo = filas.slice(0, MAXF).map(s => fila(s, TD_GEO.color(s.slug))).join('')
+      + (filas.length > MAXF ? `<div class="tm">${t('tdTipMas', filas.length - MAXF)}</div>` : '');
+  }
+  tip.innerHTML = `<div class="tt">${esc(etiqueta)}</div>${cuerpo}`;
+  colocarTipTend(ev);
+}
+function colocarTipTend(ev) {
+  const tip = $('#td-tip');
+  tip.hidden = false;
+  const wrap = $('.td-wrap').getBoundingClientRect();
+  const left = ev.clientX - wrap.left + $('.td-wrap').scrollLeft;
+  const ancho = tip.offsetWidth;
+  const derecha = left + 16 + ancho <= $('.td-wrap').scrollLeft + wrap.width;
+  tip.style.left = Math.max(8, derecha ? left + 16 : left - ancho - 16) + 'px';
+  tip.style.top = Math.max(8, ev.clientY - wrap.top - 20) + 'px';
+}
+function tipNoticia(ev, nt, marca) {
+  if (!nt) return;
+  ocultarTipTend();
+  marca.classList.add('is-foco');
+  $('#td-tip').innerHTML = `<div class="tt">${esc(fechaLarga(nt.fecha))}</div>
+    <div class="td-ev-nombre">${esc(nt.nombre)}</div>
+    <div class="tm">${esc(nt.categoria)} · ${esc(nt.ambito)}</div>
+    <div class="td-ev-desc">${esc(nt.descripcion)}</div>
+    ${nt.impactos.length ? `<div class="td-imps">${impactosHTML(nt.impactos)}</div>` : ''}
+    <div class="tm">${t('tdNoticiasPulsa')}</div>`;
+  colocarTipTend(ev);
+}
+function ocultarTipTend() {
+  $$('#td-graf .td-ev.is-foco').forEach(el => el.classList.remove('is-foco'));
+  const tip = $('#td-tip');
+  if (tip) tip.hidden = true;
+  const cruz = $('#td-graf .td-cruz');
+  if (cruz) cruz.setAttribute('visibility', 'hidden');
+  $$('#td-graf .td-linea.is-foco').forEach(el => el.classList.remove('is-foco'));
+}
+
+// elecciones con rombo, corrupción con cuadrado y el resto con rombo hueco
+function formaNoticia(grupo, x, y) {
+  if (grupo === 'corrupcion') return `M${(x - 4.5).toFixed(1)} ${y - 4.5}h9v9h-9Z`;
+  const r = grupo ? 6 : 5;
+  return `M${x.toFixed(1)} ${y - r}L${(x + r).toFixed(1)} ${y}L${x.toFixed(1)} ${y + r}L${(x - r).toFixed(1)} ${y}Z`;
+}
+// la lista que acompaña al gráfico cuando hay noticias: para consultar cuándo fue cada una
+function pintarListaNoticias() {
+  const caja = $('#td-noticias-lista');
+  const noticias = noticiasTend();
+  if (!noticias.length) { caja.innerHTML = ''; return; }
+  const dominio = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return u; } };
+  caja.innerHTML = `<details class="td-noticias"${TD_LISTA_ABIERTA ? ' open' : ''}>
+    <summary>${esc(t('tdNoticiasLista', noticias.length))}</summary>
+    <p class="hint">${t('tdNoticiasFuente')}</p>
+    <ol>${noticias.map((nt, j) => `<li data-ev="${j}"${nt.grupo ? ` class="is-grande td-g-${nt.grupo}"` : ''}>
+      <time datetime="${nt.fecha}">${esc(fechaLarga(nt.fecha))}</time>
+      <div><b>${esc(nt.nombre)}</b> <span class="td-ev-cat">${esc(nt.categoria)}</span>
+        <p>${esc(nt.descripcion)}</p>
+        ${nt.impactos.length ? `<div class="td-imps">${impactosHTML(nt.impactos)}</div>` : ''}
+        ${nt.fuentes.length ? `<div class="td-fuentes">${nt.fuentes.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(dominio(u))}</a>`).join(' · ')}</div>` : ''}
+      </div></li>`).join('')}</ol></details>`;
+}
+let TD_LISTA_ABIERTA = false;
+
+function pintarTablaTend(anuales, elegidos, color) {
+  const anos = periodosTend('ano');
+  const col = anos.indexOf(TD.orden);
+  const clave = s => TD.orden === 'pendiente' ? s.pendiente : col < 0 ? s.media : s.valores[col];
+  const filas = anuales.filter(s => s.media != null).sort((a, b) => {
+    const x = clave(a), y = clave(b);
+    if (x == null && y == null) return a.m.nombre.localeCompare(b.m.nombre, 'es');
+    if (x == null) return 1;
+    if (y == null) return -1;
+    return TD.dir * (x - y);
+  });
+  const maximo = Math.max(1e-9, ...anuales.flatMap(s => s.valores).filter(v => v != null));
+  const flecha = k => TD.orden === k ? (TD.dir < 0 ? ' ▼' : ' ▲') : '';
+  $('#td-tabla thead').innerHTML = `<tr><th class="c-medio">${t('tdColMedio')}</th>
+    ${anos.map(a => `<th class="num${TD.orden === a ? ' sel' : ''}" data-td-orden="${a}">${a}${flecha(a)}</th>`).join('')}
+    <th class="num${TD.orden === 'media' ? ' sel' : ''}" data-td-orden="media" title="${esc(t('tdColMediaTip'))}">${t('tdColMedia')}${flecha('media')}</th>
+    <th class="num${TD.orden === 'pendiente' ? ' sel' : ''}" data-td-orden="pendiente" title="${esc(t('tdColPendTip'))}">${t('tdColPend')}${flecha('pendiente')}</th></tr>`;
+  const celda = v => {
+    if (v == null) return `<td class="num td-vacia">—</td>`;
+    const fuerza = TD.log && v > 0 ? Math.log10(1 + v) / Math.log10(1 + maximo) : v / maximo;
+    return `<td class="num" style="--td-calor:${Math.round(3 + 22 * Math.max(0, fuerza))}%">${fmtTend(v)}</td>`;
+  };
+  const celdaPend = v => {
+    const cls = v == null || Math.abs(v) < 0.05 ? '' : v > 0 ? ' td-sube' : ' td-baja';
+    return `<td class="num td-pend${cls}">${v == null || Math.abs(v) < 0.05 ? '' : v > 0 ? '▲ ' : '▼ '}${fmtPendiente(v)}</td>`;
+  };
+  $('#td-tabla tbody').innerHTML = filas.map(s => {
+    const on = elegidos.includes(s.slug);
+    return `<tr data-td="${esc(s.slug)}" class="${on ? 'is-sel' : ''}">
+      <td class="c-medio"><span class="td-nombre"><i style="background:${on ? color(s.slug) : 'transparent'}"></i>${esc(s.m.nombre)}</span></td>
+      ${s.valores.map(celda).join('')}${celda(s.media)}${celdaPend(s.pendiente)}</tr>`;
+  }).join('') || `<tr><td colspan="${anos.length + 3}" class="empty">${t('tdSinDatos')}</td></tr>`;
+}
+
+// ---------- descargar como imagen ----------
+// html-to-image solo se pide la primera vez que alguien descarga algo
+let HTI = null;
+const ANCHO_DESCARGA = 3840;
+function cargarHTI() {
+  if (!HTI) HTI = new Promise((ok, ko) => {
+    const s = document.createElement('script');
+    s.src = 'vendor/html-to-image.js?v=1.11.11';
+    s.onload = () => window.htmlToImage ? ok(window.htmlToImage) : ko(new Error('html-to-image'));
+    s.onerror = () => { HTI = null; ko(new Error('html-to-image')); };
+    document.head.appendChild(s);
+  });
+  return HTI;
+}
+
+// cortar un texto en líneas que quepan en un ancho
+function lineasTexto(ctx, texto, ancho) {
+  const lineas = [];
+  let actual = '';
+  for (const palabra of String(texto || '').split(/\s+/).filter(Boolean)) {
+    const prueba = actual ? actual + ' ' + palabra : palabra;
+    if (actual && ctx.measureText(prueba).width > ancho) { lineas.push(actual); actual = palabra; }
+    else actual = prueba;
+  }
+  if (actual) lineas.push(actual);
+  return lineas;
+}
+
+async function descargarImagen(nodo, nombre, titulo, subtitulo, altoFijo) {
+  const lib = await cargarHTI();
+  const css = getComputedStyle(document.documentElement);
+  const v = k => css.getPropertyValue(k).trim();
+  const fondo = v('--panel') || '#fff';
+  const ancho = nodo.scrollWidth, alto = altoFijo || nodo.scrollHeight;
+  // 4K de ancho por defecto, sin pasar del lienzo más grande que admiten los navegadores
+  const pad = 28;
+  const escala = Math.min(ANCHO_DESCARGA / (ancho + pad * 2), 32000 / (alto + 300), Math.sqrt(2.4e8 / ((ancho + pad * 2) * (alto + 300))));
+  const img = await lib.toCanvas(nodo, {
+    backgroundColor: fondo, pixelRatio: escala, width: ancho, height: alto,
+    style: { margin: '0', boxShadow: 'none', overflow: 'visible', maxHeight: 'none', minHeight: '0', height: alto + 'px', flex: 'none' },
+    filter: n => !(n.classList && (n.classList.contains('tip') || n.classList.contains('descarga'))),
+  });
+  // la imagen lleva título arriba y la procedencia abajo, para que se entienda fuera de la web
+  const anchoTexto = ancho;
+  const medir = document.createElement('canvas').getContext('2d');
+  const fTit = `800 26px ${v('--f-display')}`, fSub = `400 15px ${v('--f-sans')}`, fPie = `500 12px ${v('--f-mono')}`;
+  medir.font = fTit; const lTit = lineasTexto(medir, titulo, anchoTexto);
+  medir.font = fSub; const lSub = lineasTexto(medir, subtitulo, anchoTexto);
+  const altoCab = lTit.length * 32 + (lSub.length ? 8 + lSub.length * 21 : 0) + 18;
+  const altoPie = 40;
+  const lienzo = document.createElement('canvas');
+  lienzo.width = Math.round((ancho + pad * 2) * escala);
+  lienzo.height = Math.round((pad + altoCab + alto + altoPie + pad / 2) * escala);
+  const ctx = lienzo.getContext('2d');
+  ctx.scale(escala, escala);
+  ctx.fillStyle = fondo;
+  ctx.fillRect(0, 0, ancho + pad * 2, lienzo.height / escala);
+  ctx.textBaseline = 'top';
+  let y = pad;
+  ctx.fillStyle = v('--ink'); ctx.font = fTit;
+  lTit.forEach(l => { ctx.fillText(l, pad, y); y += 32; });
+  if (lSub.length) {
+    y += 8; ctx.fillStyle = v('--muted'); ctx.font = fSub;
+    lSub.forEach(l => { ctx.fillText(l, pad, y); y += 21; });
+  }
+  y += 18;
+  ctx.drawImage(img, pad, y, ancho, alto);
+  y += alto + 16;
+  ctx.strokeStyle = v('--line'); ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(pad + ancho, y); ctx.stroke();
+  ctx.fillStyle = v('--muted'); ctx.font = fPie;
+  ctx.fillText(t('descargaPie'), pad, y + 10);
+  const blob = await new Promise(ok => lienzo.toBlob(ok, 'image/png'));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = nombre;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+// qué se fotografía con cada botón, con qué título y con qué nombre de fichero
+function objetivoDescarga(clave) {
+  const opcion = sel => { const s = $(sel); return s && s.selectedOptions[0] ? s.selectedOptions[0].textContent.trim() : ''; };
+  const tdTit = () => `${t('tdMedidaOp', TD.medida)} · ${t('tdSubOp', TD.sub)} · ${t('tdVer')} ${t(TD.gran === 'mes' ? 'tdMes' : 'tdAno').toLowerCase()}`;
+  const limpio = x => String(x).toLowerCase().replace('+', 'a-favor').replace(/-$/, '-en-contra').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  if (clave === 'ranking') return { nodo: $('#tabla-ranking'), nombre: 'medios-ranking.png', titulo: t('rankingTitle'), sub: '' };
+  if (clave === 'mapa') {
+    // en la historia el recuadro del mapa se estira para llenar la pantalla: se recorta a lo que ocupa el dibujo
+    const nodo = $('.panel-mapa .chart-wrap'), svg = $('#mapa');
+    const alto = Math.ceil(svg.getBoundingClientRect().bottom - nodo.getBoundingClientRect().top + parseFloat(getComputedStyle(nodo).paddingBottom) + 2);
+    return { nodo, alto, nombre: `medios-mapa-${limpio(mapaPeriodo)}.png`, titulo: `${t('tabMapa')} · ${opcion('#mapa-periodo')}`, sub: ($('#mapa-resumen') || {}).textContent || '' };
+  }
+  if (clave === 'tendencias') return { nodo: $('.td-wrap'), nombre: `medios-tendencias-${limpio(TD.medida)}-${limpio(TD.sub)}-${TD.gran}.png`, titulo: t('tdTitulo'), sub: tdTit() };
+  if (clave === 'td-tabla') return { nodo: $('#td-tabla'), nombre: `medios-tendencias-tabla-${limpio(TD.medida)}-${limpio(TD.sub)}.png`, titulo: `${t('tdTitulo')} · ${t('tdTablaTitulo')}`, sub: tdTit() };
+  return null;
+}
+
+function iniciarDescargas() {
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('[data-descarga]');
+    if (!b || b.getAttribute('aria-busy') === 'true') return;
+    b.setAttribute('aria-busy', 'true');
+    try {
+      const o = objetivoDescarga(b.dataset.descarga);
+      if (o && o.nodo) await descargarImagen(o.nodo, o.nombre, o.titulo, o.sub.trim(), o.alto);
+    }
+    catch (err) { console.error(err); alert(t('descargaError')); }
+    finally { b.removeAttribute('aria-busy'); }
+  });
+}
+
+function iniciarTendencias() {
+  const caja = $('#td-filtros');
+  caja.addEventListener('change', e => {
+    const id = e.target.id;
+    if (id === 'td-medida') TD.medida = e.target.value;
+    else if (id === 'td-sub') TD.sub = e.target.value;
+    else if (id === 'td-cuentas') TD.cuentas = e.target.value;
+    else if (id === 'td-log') TD.log = e.target.checked;
+    else if (id === 'td-noticias') { TD.noticias = e.target.value; abrirTendencias(); return; }
+    else return;
+    pintarTendencias();
+  });
+  caja.addEventListener('click', e => {
+    const b = e.target.closest('[data-gran]');
+    if (!b || b.dataset.gran === TD.gran) return;
+    TD.gran = b.dataset.gran;
+    abrirTendencias();
+  });
+  const anuales = () => seriesTend('ano');
+  $('#td-medios').addEventListener('click', e => {
+    const q = e.target.closest('[data-quita]');
+    if (q) { alternarTend(q.dataset.quita, anuales()); return; }
+    const td = e.target.closest('[data-todas]');
+    if (td) { todasTend(anuales(), td.dataset.todas === '1'); return; }
+    const d = e.target.closest('[data-destacar]');
+    if (d) {
+      TD.destacar = d.dataset.destacar;
+      TD.sel = null;
+      // la tabla acompaña: por tendencia al buscar quién crece o cae, por promedio si no
+      if (TD.destacar === 'altos') { TD.orden = 'media'; TD.dir = -1; }
+      else { TD.orden = 'pendiente'; TD.dir = TD.destacar === 'crecen' ? -1 : 1; }
+      pintarTendencias();
+    }
+  });
+  $('#td-medios').addEventListener('change', e => {
+    if (e.target.id === 'td-anadir' && e.target.value) alternarTend(e.target.value, anuales());
+  });
+  const svg = $('#td-graf');
+  svg.addEventListener('mousemove', tipTend);
+  svg.addEventListener('mouseleave', ocultarTipTend);
+  // al pasar por una noticia de la lista, su marca se ilumina en el gráfico
+  const lista = $('#td-noticias-lista');
+  lista.addEventListener('toggle', e => { TD_LISTA_ABIERTA = e.target.open; }, true);
+  lista.addEventListener('mouseover', e => {
+    const li = e.target.closest('li[data-ev]');
+    $$('#td-graf .td-ev.is-foco').forEach(el => el.classList.remove('is-foco'));
+    if (li) { const m = $(`#td-graf .td-ev[data-ev="${li.dataset.ev}"]`); if (m) m.classList.add('is-foco'); }
+  });
+  lista.addEventListener('mouseleave', () => $$('#td-graf .td-ev.is-foco').forEach(el => el.classList.remove('is-foco')));
+  svg.addEventListener('click', e => {
+    const m = e.target.closest('.td-ev');
+    if (m) {
+      // pulsar una marca abre la lista y lleva a esa noticia
+      const det = $('#td-noticias-lista details'), li = $(`#td-noticias-lista li[data-ev="${m.dataset.ev}"]`);
+      if (det && li) {
+        det.open = true;
+        $$('#td-noticias-lista li.is-foco').forEach(el => el.classList.remove('is-foco'));
+        li.classList.add('is-foco');
+        li.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+    const l = e.target.closest('.td-linea');
+    if (l) { ocultarTipTend(); alternarTend(l.dataset.h, anuales()); }
+  });
+  $('#td-tabla thead').addEventListener('click', e => {
+    const th = e.target.closest('[data-td-orden]');
+    if (!th) return;
+    const k = th.dataset.tdOrden;
+    if (k === TD.orden) TD.dir *= -1; else { TD.orden = k; TD.dir = -1; }
+    pintarTendencias();
+  });
+  $('#td-tabla tbody').addEventListener('click', e => {
+    const tr = e.target.closest('tr[data-td]');
+    if (tr) alternarTend(tr.dataset.td, anuales());
+  });
+  let espera = 0;
+  window.addEventListener('resize', () => {
+    if (currentView !== 'tendencias') return;
+    clearTimeout(espera);
+    espera = setTimeout(pintarTendencias, 150);
+  });
+}
 
 /* ---------- ficha de un medio ---------- */
 let MEDIO = null, mSort = 'rt', mParty = '', mDir = '', mText = '', mShown = PAGE;
@@ -1688,7 +2582,18 @@ const tiposMapa = () => Object.keys((INDEX && INDEX.tipos) || {});
 const filtrosMapa = () => ['todos', 'generalistas', 'programas', ...tiposMapa()];
 const tipoFiltro = () => tiposMapa().includes(mapaFiltro) ? mapaFiltro : '';
 const esPrograma = m => String((m && m.tipo) || '').startsWith('programa');
+/* Orientación de cada cuenta según su índice publicado en toda la serie (de −1,
+   todo a la izquierda, a +1, todo a la derecha): izquierda por debajo de −0,2,
+   derecha por encima de +0,2 y centro entre medias. Solo las cuentas que superan
+   el corte de inclusión; el resto no entra en ninguna de las tres. */
+const LADOS_CUENTAS = ['izquierda', 'centro', 'derecha'];
+const LADO_CORTE = 0.2;
+function ladoCuenta(m) {
+  if (!m || !m.incluido || m.indice == null) return null;
+  return m.indice < -LADO_CORTE ? 'izquierda' : m.indice > LADO_CORTE ? 'derecha' : 'centro';
+}
 function pasaCuentas(m, filtro = mapaFiltro) {
+  if (LADOS_CUENTAS.includes(filtro)) return ladoCuenta(m) === filtro;
   if (filtro === 'generalistas') return !esPrograma(m);
   if (filtro === 'programas') return esPrograma(m);
   if (tiposMapa().includes(filtro)) return m.tipo === filtro;
@@ -2761,6 +3666,7 @@ function reRenderCurrent() {
   pintarRanking();
   if (currentView === 'medio' && currentMedioMeta && MEDIO) pintarMedio(currentMedioMeta);
   if (currentView === 'contenidos') pintarContenidos();
+  if (currentView === 'tendencias') pintarTendencias();
   renderMapa();
   pintarHistoria();
   pintarRelato();
@@ -2922,6 +3828,8 @@ function watchSystemTheme() {
   iniciarRelato();
   iniciarCajon();
   iniciarContenidos();
+  iniciarTendencias();
+  iniciarDescargas();
   route();
   // en pantallas estrechas el mapa se desplaza en horizontal: se abre centrado en el equilibrio
   const cw = $('.chart-wrap');
