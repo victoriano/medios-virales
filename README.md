@@ -24,8 +24,8 @@ Conviene no confundirlas: miden cosas distintas, se descargaron con proveedores 
 | | Censo viral | Serie histórica |
 | --- | --- | --- |
 | Qué es | Todos los tuits con 100 retuits o más | Muestra de hasta 100 tuits por medio y mes |
-| Ventana | 19 sep 2025 a 19 sep 2026 | 2 may 2018 a 24 sep 2026 |
-| Filas | 21.489 | 607.571 |
+| Ventana | 19 sep 2025 a 19 sep 2026 | 2 may 2018 a 27 oct 2026 |
+| Filas | 21.489 | 614.780 |
 | Tuits políticos | 13.412 | 157.659 |
 | Descarga | Apify | twitterapi.io |
 

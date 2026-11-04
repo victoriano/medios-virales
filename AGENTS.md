@@ -23,7 +23,7 @@ cosas diferentes, se descargaron con proveedores diferentes y no son intercambia
 | Corpus | Qué es | Ventana | Filas | Políticos | Fuente de descarga |
 | --- | --- | --- | --- | --- | --- |
 | **Censo viral** | Todos los tuits con **100 retuits o más** | 19 sep 2025 a 19 sep 2026 | 21.489 | 13.412 | Apify |
-| **Serie histórica** | **Muestra** de hasta 100 tuits por medio y mes | 2 may 2018 a 24 sep 2026 | 607.571 | 157.659 | twitterapi.io |
+| **Serie histórica** | **Muestra** de hasta 100 tuits por medio y mes | 2 may 2018 a 27 oct 2026 | 614.780 | 160.293 | twitterapi.io |
 
 La primera es un **censo**: está todo lo que superó el corte. La segunda es una **muestra**: sirve
 para comparar medios entre sí y a lo largo del tiempo, pero **no es el total publicado**.
@@ -174,7 +174,7 @@ Están comprobados y conviene tenerlos presentes antes de presentar cualquier re
 - **Hay un hueco de cobertura sin explicar** en `DiarioSabemos` con twitterapi.io: recuperó 637
   tuits frente a 2.538 con Apify. Antes de extrapolar a 2018 hay que explicarlo.
 - **No es un censo.** La serie histórica son hasta 100 tuits por medio y mes. 100 meses así son
-  607.571 filas, no los nueve años de producción real de 68 medios.
+  614.780 filas, no los nueve años de producción real de 68 medios.
 
 ## Lo que está pendiente
 
@@ -233,7 +233,7 @@ python3 -B scripts/test_site_data.py
 # La web contra el sitio publicado, en un navegador real
 uv run --with playwright python3 scripts/check_site.py
 
-# El recuento de los corpus, que debe dar 602.906 + 4.665 = 607.571 filas y 157.659 políticos
+# El recuento de los corpus, que debe dar 602.906 + 4.665 + 7.209 = 614.780 filas y 160.293 políticos
 wc -l ~/typesafe-lab/politica/medios/polarizacion/{*,nuevas_cuentas_202610/*}/clasificado_contextual.jsonl
 ```
 
