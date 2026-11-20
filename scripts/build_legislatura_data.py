@@ -3,7 +3,7 @@
 
 Combina dos muestras contiguas y completamente clasificadas:
 - histórico: 2018-05-02 a 2023-08-16
-- XV Legislatura: 2023-08-17 a 2026-10-27
+- XV Legislatura: 2023-08-17 a 2026-11-18
 
 El arranque de la web solo necesita ``index.json`` y ``polarizacion.json``.
 El detalle se publica por medio y año bajo ``medios/<slug>/``.
@@ -25,14 +25,23 @@ XV_ROOT = Path(os.environ.get(
     "LEGISLATURA_ROOT",
     "~/typesafe-lab/politica/medios/polarizacion/legislatura_xv_io_100",
 )).expanduser()
-# Cuentas añadidas en octubre de 2026 (@EnBocaDe_Todos y @HorizonteCuatro). Se descargaron y
-# clasificaron aparte, con el mismo método, y se leen desde sus propias raíces para no reescribir
-# los corpus publicados. Cada raíz trae su resumen.json (descarga) y clasificar_estado.json.
-ADDED_DIR = Path(os.environ.get(
-    "ADDED_DIR", "~/typesafe-lab/politica/medios/polarizacion/nuevas_cuentas_202610",
-)).expanduser()
-ADDED_ROOTS = {"historico": ADDED_DIR / "historico", "xv": ADDED_DIR / "legislatura_xv"}
-ADDED_MEMBERS = ADDED_DIR / "members_nuevas.json"
+# Cuentas añadidas aparte, con el mismo método, cada tanda en su carpeta para no reescribir los
+# corpus publicados: nuevas_cuentas_202610 (@EnBocaDe_Todos y @HorizonteCuatro) y
+# nuevas_cuentas_202611 (@la_septima_tv). Cada carpeta trae members_nuevas.json y, por muestra,
+# una raíz (historico/ o legislatura_xv/) con su resumen.json (descarga) y clasificar_estado.json.
+# Si una raíz trae muestra_comparable.json (descarga completa, no muestreada), solo se publican
+# esos ids: como mucho 20 por tramo, con los mismos tramos que el resto de medios.
+ADDED_DIRS = [Path(item).expanduser() for item in os.environ.get(
+    "ADDED_DIRS",
+    "~/typesafe-lab/politica/medios/polarizacion/nuevas_cuentas_202610:"
+    "~/typesafe-lab/politica/medios/polarizacion/nuevas_cuentas_202611",
+).split(":") if item]
+ADDED_ROOTS = {
+    name: [each / sub for each in ADDED_DIRS if (each / sub).exists()]
+    for name, sub in (("historico", "historico"), ("xv", "legislatura_xv"))
+}
+ADDED_MEMBERS = [each / "members_nuevas.json" for each in ADDED_DIRS]
+SAMPLE_BASENAME = "muestra_comparable.json"
 SITE = Path(os.environ.get("SITE_DIR", "~/Code/medios-virales/site")).expanduser()
 DATA = SITE / "data"
 DETAIL = DATA / "medios"
@@ -45,13 +54,15 @@ XV_START = "2023-08-17"
 LEFT = {"PSOE", "Sumar"}
 RIGHT = {"PP", "Vox"}
 CANON = {"psoe": "PSOE", "pp": "PP", "vox": "Vox", "sumar": "Sumar", "podemos": "Sumar"}
-DOWNLOAD_COSTS = {"historico": 57.85245, "xv": 34.07805}  # xv: +1,05678 USD de la ampliación al 27 oct 2026
+DOWNLOAD_COSTS = {"historico": 57.85245, "xv": 35.28015}  # xv: +1,05678 USD (al 27 oct) y +1,2021 USD (al 20 nov 2026)
 CLASSIFIED_BASENAME = os.environ.get("CLASSIFIED_BASENAME", "clasificado_contextual.jsonl")
-# Revisión contextual: la original, la de las cuentas añadidas (contextual/ en ADDED_DIR) y la de
-# la ampliación al 27 oct 2026 (actualizacion_202610/contextual/, solo filas nuevas).
-CONTEXT_REVIEW_COST_USD = 1.16287 + 0.031478 + 0.013074
-CONTEXT_REVIEW_CANDIDATES = 3813 + 88 + 40
-CONTEXT_REVIEW_CHANGES = 601 + 11 + 5
+# Revisión contextual: la original, la de las cuentas añadidas en octubre (nuevas_cuentas_202610/contextual/),
+# la de la ampliación al 27 oct 2026 (actualizacion_202610/contextual/, solo filas nuevas), la de la
+# ampliación al 20 nov 2026 (actualizacion_202611/contextual/) y la de @la_septima_tv
+# (nuevas_cuentas_202611/contextual/, sobre su descarga completa).
+CONTEXT_REVIEW_COST_USD = 1.16287 + 0.031478 + 0.013074 + 0.021069 + 0.001698
+CONTEXT_REVIEW_CANDIDATES = 3813 + 88 + 40 + 63 + 4
+CONTEXT_REVIEW_CHANGES = 601 + 11 + 5 + 12 + 2
 
 
 def slug(handle):
@@ -139,8 +150,9 @@ def map_row(handle, rows):
 def load_metadata():
     metadata = {}
     members = json.loads(MEMBERS.read_text()) if MEMBERS.exists() else []
-    if ADDED_MEMBERS.exists():
-        members += json.loads(ADDED_MEMBERS.read_text())
+    for path in ADDED_MEMBERS:
+        if path.exists():
+            members += json.loads(path.read_text())
     if members:
         for member in members:
             handle = "@" + member["handle"].lstrip("@")
@@ -178,19 +190,27 @@ def load_classified(root):
 
 
 def load_source(name, root):
-    roots = [root] + [extra for extra in [ADDED_ROOTS.get(name)] if extra and extra.exists()]
+    roots = [root] + ADDED_ROOTS.get(name, [])
     classified = {}
+    sample = {}
     for each in roots:
         added = load_classified(each)
+        sample_path = each / SAMPLE_BASENAME
+        if sample_path.exists():
+            wanted = {str(item["id"]) for item in json.loads(sample_path.read_text())["ids"]}
+            added = {key: value for key, value in added.items() if key in wanted}
+            sample[each] = wanted
         if classified.keys() & added.keys():
             raise SystemExit(f"Ids repetidos entre {root} y {each}")
         classified.update(added)
     rows = []
     raw_ids = set()
-    paths = sorted(path for each in roots for path in (each / "tweets").glob("*/*.json"))
-    for path in paths:
+    paths = sorted((path, each) for each in roots for path in (each / "tweets").glob("*/*.json"))
+    for path, each in paths:
         for tweet in json.loads(path.read_text()):
             tweet_id = str(tweet.get("id") or "")
+            if each in sample and tweet_id not in sample[each]:
+                continue
             raw_ids.add(tweet_id)
             judgement = classified.get(tweet_id)
             if judgement is None:
@@ -222,11 +242,12 @@ def load_source(name, root):
 
 
 def download_cost(name):
-    """Coste de descarga de la muestra publicada más el de su raíz añadida, si existe."""
+    """Coste de descarga de la muestra publicada más el de sus raíces añadidas."""
     cost = DOWNLOAD_COSTS[name]
-    summary = ADDED_ROOTS[name] / "resumen.json"
-    if summary.exists():
-        cost += float(json.loads(summary.read_text())["cost_usd"])
+    for each in ADDED_ROOTS[name]:
+        summary = each / "resumen.json"
+        if summary.exists():
+            cost += float(json.loads(summary.read_text())["cost_usd"])
     return cost
 
 

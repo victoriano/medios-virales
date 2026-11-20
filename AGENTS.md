@@ -23,7 +23,7 @@ cosas diferentes, se descargaron con proveedores diferentes y no son intercambia
 | Corpus | Qué es | Ventana | Filas | Políticos | Fuente de descarga |
 | --- | --- | --- | --- | --- | --- |
 | **Censo viral** | Todos los tuits con **100 retuits o más** | 19 sep 2025 a 19 sep 2026 | 21.489 | 13.412 | Apify |
-| **Serie histórica** | **Muestra** de hasta 100 tuits por medio y mes | 2 may 2018 a 27 oct 2026 | 614.780 | 160.293 | twitterapi.io |
+| **Serie histórica** | **Muestra** de hasta 100 tuits por medio y mes | 2 may 2018 a 20 nov 2026 | 623.293 | 163.778 | twitterapi.io |
 
 La primera es un **censo**: está todo lo que superó el corte. La segunda es una **muestra**: sirve
 para comparar medios entre sí y a lo largo del tiempo, pero **no es el total publicado**.
@@ -63,6 +63,13 @@ pasaron por la misma capa contextual. Sus metadatos están en `members_nuevas.js
 no en `members.json`. `scripts/build_legislatura_data.py` lee todo por ruta absoluta y suma esas
 raíces a cada muestra. Si trabajas en otra máquina, o esos ficheros no están, o el script falla.
 Para añadir otra cuenta, sigue el `NOTAS.md` y el `lanzar.sh` de esa carpeta.
+
+El 18 de noviembre de 2026 se añadió `@la_septima_tv` (La Séptima, televisión) en
+`nuevas_cuentas_202611/legislatura_xv/`. Esa cuenta se descargó **completa** (932 tuits del 7 jul al
+20 nov 2026), no muestreada, y se clasificó entera con el mismo prompt y la capa contextual. Para que
+sea comparable, la web solo publica los ids de `muestra_comparable.json` (270): los 20 más recientes
+de cada tramo, con los mismos tramos que el resto (`marcar_muestra.py`). `ADDED_DIRS` en
+`build_legislatura_data.py` lista las carpetas de cuentas añadidas, separadas por dos puntos.
 
 ## Cómo está montado el flujo
 
@@ -174,7 +181,7 @@ Están comprobados y conviene tenerlos presentes antes de presentar cualquier re
 - **Hay un hueco de cobertura sin explicar** en `DiarioSabemos` con twitterapi.io: recuperó 637
   tuits frente a 2.538 con Apify. Antes de extrapolar a 2018 hay que explicarlo.
 - **No es un censo.** La serie histórica son hasta 100 tuits por medio y mes. 100 meses así son
-  614.780 filas, no los nueve años de producción real de 68 medios.
+  623.293 filas, no los nueve años de producción real de 69 medios.
 
 ## Lo que está pendiente
 
@@ -233,8 +240,10 @@ python3 -B scripts/test_site_data.py
 # La web contra el sitio publicado, en un navegador real
 uv run --with playwright python3 scripts/check_site.py
 
-# El recuento de los corpus, que debe dar 602.906 + 4.665 + 7.209 = 614.780 filas y 160.293 políticos
+# El recuento de los corpus: 602.906 + 4.665 + 7.209 + 8.243 = 623.023 filas en estos ficheros, más las
+# 270 de @la_septima_tv que entran en su muestra (de 932 descargadas): 623.293 filas y 163.778 políticos
 wc -l ~/typesafe-lab/politica/medios/polarizacion/{*,nuevas_cuentas_202610/*}/clasificado_contextual.jsonl
+python3 -c "import json;print(len(json.load(open('$HOME/typesafe-lab/politica/medios/polarizacion/nuevas_cuentas_202611/legislatura_xv/muestra_comparable.json'))['ids']))"
 ```
 
 Y la regla que resume todo: **una cifra que no has leído de un fichero no es una cifra, es un
