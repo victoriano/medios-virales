@@ -212,9 +212,9 @@ async def main():
 
         # la columna «de cada 10 con lado claro» tiene que decir lo mismo que index.json, fila a fila
         idx = await pg.evaluate("fetch('data/index.json').then(r => r.json())")
-        admitidos = {m["handle"].lower() for m in idx["medios"] if m["izq"] + m["der"] > 50}
+        admitidos = {m["handle"].lower() for m in idx["medios"] if m["izq"] + m["der"] >= 40}
         if filas != len(admitidos):
-            errores.append(f"[check] ranking: {filas} filas != {len(admitidos)} medios con más de 50 tuits significados")
+            errores.append(f"[check] ranking: {filas} filas != {len(admitidos)} medios con al menos 40 tuits significados")
         texto_filas = await pg.eval_on_selector_all(
             "#tabla-ranking tbody tr",
             "e => e.map(r => [r.dataset.h, r.children[1].innerText.replace(/\\s+/g, ' ').trim()])")
@@ -240,7 +240,7 @@ async def main():
             errores.append(f"[check] marcas de muestra corta: {estrellas} != {esperadas_estrellas}")
         aviso = " ".join((await pg.locator("#rank-aviso").inner_text()).split())
         for trozo in ["El corte de inclusión usa únicamente los tuits con lado claro",
-                      "izquierda más derecha debe superar 50",
+                      "izquierda más derecha debe sumar al menos 40",
                       "El porcentaje político usa todos los tuits clasificados como políticos"]:
             if trozo not in aviso:
                 errores.append("[check] falta en la nota del ranking: " + trozo)
@@ -778,17 +778,17 @@ async def main():
         await pg.goto(URL + "#/metodo", wait_until="networkidle")
         await pg.wait_for_timeout(400)
         metodo = " ".join((await pg.locator("#view-metodo").inner_text()).split())
-        for trozo in ["614.780 tuits únicos", "del 02/05/2018 al 27/10/2026",
-                      "más de 50 tuits durante toda la muestra",
+        for trozo in ["623.293 tuits únicos", "del 02/05/2018 al 20/11/2026",
+                      "al menos 40 tuits durante toda la muestra",
                       "Porcentaje de tuits políticos", "Cómo leer el mapa"]:
             if trozo not in metodo:
                 errores.append(f"[check] falta en metodología: {trozo}")
-        if "160.293 tuits políticos y 454.487 sin lectura política" not in metodo:
+        if "163.778 tuits políticos y 459.515 sin lectura política" not in metodo:
             errores.append("[check] el recuento combinado de lectura política de la metodología no cuadra")
-        for trozo in ["3.941 tuits", "617 correcciones"]:
+        for trozo in ["4.008 tuits", "631 correcciones"]:
             if trozo not in metodo:
                 errores.append(f"[check] falta la revisión contextual en metodología: {trozo}")
-        for coste in ["84,621484", "92,66625"]:
+        for coste in ["86,133758", "94,11255"]:
             if coste not in metodo:
                 errores.append(f"[check] falta el coste combinado {coste} en metodología")
         await pg.screenshot(path=f"{OUT}/6-metodo.png", full_page=True)
@@ -876,7 +876,7 @@ async def main():
         await pg.goto(URL + "#/metodo", wait_until="networkidle")
         await pg.wait_for_timeout(500)
         met_en = " ".join((await pg.locator("#view-metodo").inner_text()).split())
-        for esperado in ["How it was done", "614,780 unique tweets", "May 2, 2018", "October 27, 2026"]:
+        for esperado in ["How it was done", "623,293 unique tweets", "May 2, 2018", "November 20, 2026"]:
             if esperado not in met_en:
                 errores.append(f"[check] metodo sin traducir ({esperado}): {met_en[:200]!r}")
         # persistencia tras recargar

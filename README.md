@@ -24,8 +24,8 @@ Conviene no confundirlas: miden cosas distintas, se descargaron con proveedores 
 | | Censo viral | Serie histórica |
 | --- | --- | --- |
 | Qué es | Todos los tuits con 100 retuits o más | Muestra de hasta 100 tuits por medio y mes |
-| Ventana | 19 sep 2025 a 19 sep 2026 | 2 may 2018 a 27 oct 2026 |
-| Filas | 21.489 | 614.780 |
+| Ventana | 19 sep 2025 a 19 sep 2026 | 2 may 2018 a 20 nov 2026 |
+| Filas | 21.489 | 623.293 |
 | Tuits políticos | 13.412 | 157.659 |
 | Descarga | Apify | twitterapi.io |
 
@@ -111,7 +111,7 @@ El control de retuits tiene tres posiciones: **Todos los tuits**, **100 RT o má
 
 El selector de periodo permite ver la **serie completa**, la **XV Legislatura** o cada **año** por separado, con animación de la evolución 2018–2026.
 
-El corte global de inclusión exige **más de 50 tuits con lado claro** en toda la muestra para que un medio entre en el mapa y el ranking. Un filtro visual adicional (muestra de 5, 15 o 30) oculta los medios con menos tuits en la serie visible, sin quitarlos del universo comparado.
+El corte global de inclusión exige **al menos 40 tuits con lado claro** en toda la muestra para que un medio entre en el mapa y el ranking. Un filtro visual adicional (muestra de 5, 15 o 30) oculta los medios con menos tuits en la serie visible, sin quitarlos del universo comparado.
 
 - `site/data/polarizacion.json`: todos los tuits y el subconjunto de 100 RT o más de cada medio, con la posición de las dos series, la brecha entre ellas y el desglose por meses.
 - `site/data/index.json`: agregados por medio y totales globales.

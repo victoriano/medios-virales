@@ -18,9 +18,9 @@ const elP = p => conArticulo(p) ? `el ${p}` : p;
 const I18N = {
   es: {
     title: 'Sesgo y viralidad de los medios españoles · victoriano.me',
-    description: 'Mapa histórico de 614.780 tuits de 68 medios españoles entre 2018 y 2026: posición de lo publicado frente a lo viral.',
+    description: 'Mapa histórico de 623.293 tuits de 69 medios españoles entre 2018 y 2026: posición de lo publicado frente a lo viral.',
     ogTitle: 'Sesgo y viralidad de los medios españoles',
-    ogDescription: '614.780 tuits de 68 medios entre 2018 y 2026, clasificados por partido y dirección, con comparación entre lo publicado y lo viral.',
+    ogDescription: '623.293 tuits de 69 medios entre 2018 y 2026, clasificados por partido y dirección, con comparación entre lo publicado y lo viral.',
     kicker: 'Un análisis de datos',
     headline: '¿Cuál es el <span class="t-mix">sesgo</span> de los medios españoles en redes?',
     byline: 'Por <strong>Victoriano Izquierdo</strong> · Datos de X, 2018 a 2026',
@@ -40,7 +40,7 @@ const I18N = {
     ariaTheme: 'Tema',
     rankingTitle: 'Ranking de medios',
     searchPlaceholder: 'Buscar medio…',
-    rankingHint: 'Solo aparecen medios que se han significado a favor o en contra en más de 50 tuits durante toda la muestra. <strong>De cada 10 con lado claro</strong> indica cuántos van a la izquierda y cuántos a la derecha. <strong>% políticos</strong> muestra qué parte de todos los tuits muestreados fue clasificada como política. Pulsa una fila para leer sus tuits.',
+    rankingHint: 'Solo aparecen medios que se han significado a favor o en contra en al menos 40 tuits durante toda la muestra. <strong>De cada 10 con lado claro</strong> indica cuántos van a la izquierda y cuántos a la derecha. <strong>% políticos</strong> muestra qué parte de todos los tuits muestreados fue clasificada como política. Pulsa una fila para leer sus tuits.',
     colMedio: 'Medio',
     colDecimos: 'De cada 10 con lado claro',
     colIndice: 'Índice',
@@ -49,8 +49,8 @@ const I18N = {
     colIzq: 'Izq.',
     colDer: 'Der.',
     colPctPol: '% políticos',
-    rankAviso: 'El corte de inclusión usa únicamente los tuits con lado claro: izquierda más derecha debe superar 50. El porcentaje político usa todos los tuits clasificados como políticos, incluidos los que informan sin tomar partido.',
-    rankNoteTemplate: (n, desde, hasta) => `${n} medios incluidos: cada uno se ha significado a favor o en contra más de 50 veces en toda la muestra. Periodo del ${desde} al ${hasta}.`,
+    rankAviso: 'El corte de inclusión usa únicamente los tuits con lado claro: izquierda más derecha debe sumar al menos 40. El porcentaje político usa todos los tuits clasificados como políticos, incluidos los que informan sin tomar partido.',
+    rankNoteTemplate: (n, desde, hasta) => `${n} medios incluidos: cada uno se ha significado a favor o en contra al menos 40 veces en toda la muestra. Periodo del ${desde} al ${hasta}.`,
     noMatchRanking: 'Ningún medio coincide con esa búsqueda.',
     seguidores: 'seguidores',
     cardMuestreados: 'Tuits muestreados',
@@ -197,7 +197,7 @@ const I18N = {
     mapaPieAlturaDesc: 'número de tuits clasificados que benefician o perjudican claramente a un partido.',
     mapaPieTamDesc: 'mediana de retuits de los tuits con lado claro.',
     mapaPieCorte: 'Corte de inclusión',
-    mapaPieCorteDesc: 'más de 50 tuits significados a favor o en contra en toda la muestra.',
+    mapaPieCorteDesc: 'al menos 40 tuits significados a favor o en contra en toda la muestra.',
     mapaPieFiltroN: (n) => `Solo se dibujan los medios con ${n} o más tuits con lado claro en cada serie.`,
     mapaPieFiltro0: 'Se dibujan todos los medios con muestra en la serie elegida.',
     mapaPieFuera: (n) => `${n} ${n === 1 ? 'medio incluido queda fuera' : 'medios incluidos quedan fuera'} con este filtro de visualización.`,
@@ -271,13 +271,13 @@ const I18N = {
     ],
     metodoClasif: 'Clasificación',
     metodoClasifP: (n) => `Los ${n} tuits fueron clasificados con Gemini 3.7 Flash. Los nombres de los partidos se normalizan a PSOE, PP, Vox y Sumar antes de calcular recuentos y filtros.`,
-    metodoRevisionP: 'Después se revisaron contextualmente <strong>3.941 tuits</strong> que mencionaban a Aldama, González, García Page, Page o Alfonso Guerra. La revisión distingue la persona mencionada, su papel político en la fecha del tuit y el efecto final sobre el PSOE. Se aplicaron <strong>617 correcciones</strong>; los casos referidos a otras personas, con confianza baja o efecto incierto conservaron su clasificación anterior.',
+    metodoRevisionP: 'Después se revisaron contextualmente <strong>4.008 tuits</strong> que mencionaban a Aldama, González, García Page, Page o Alfonso Guerra. La revisión distingue la persona mencionada, su papel político en la fecha del tuit y el efecto final sobre el PSOE. Se aplicaron <strong>631 correcciones</strong>; los casos referidos a otras personas, con confianza baja o efecto incierto conservaron su clasificación anterior.',
     metodoGate: (clasificados, restantes) => `${clasificados} tuits políticos y ${restantes} sin lectura política`,
     metodoLectura: 'Lectura política:',
     metodoPartido: 'Partido afectado:',
     metodoDireccion: 'Dirección:',
     metodoQueEntran: 'Qué medios entran en el análisis',
-    metodoQueEntranP1: 'El ranking y el mapa muestran únicamente los medios que se han significado a favor o en contra en <strong>más de 50 tuits durante toda la muestra</strong>. Para este corte se suman los tuits situados a la izquierda y a la derecha. Los tuits políticos que informan sin tomar partido no cuentan para alcanzar el umbral.',
+    metodoQueEntranP1: 'El ranking y el mapa muestran únicamente los medios que se han significado a favor o en contra en <strong>al menos 40 tuits durante toda la muestra</strong>. Para este corte se suman los tuits situados a la izquierda y a la derecha. Los tuits políticos que informan sin tomar partido no cuentan para alcanzar el umbral.',
     metodoQueEntranP2: (n, total) => `Superan el corte <strong>${n} de los ${total} medios</strong>. La selección se calcula una sola vez sobre toda la muestra y se mantiene al consultar cada año, para no cambiar arbitrariamente el universo comparado. En el mapa se exige además un mínimo de cinco tuits con lado claro en cada serie visible. Cuando se comparan Publicado y Viral, ambas series deben superar ese mínimo.`,
     metodoPct: 'Porcentaje de tuits políticos',
     metodoPctP: 'La columna <strong>% políticos</strong> del ranking se calcula como el número de tuits clasificados con lectura política dividido por todos los tuits muestreados del medio. Incluye tanto los tuits que toman partido como los que informan sobre política sin favorecer ni perjudicar a un lado.',
@@ -326,9 +326,9 @@ const I18N = {
   },
   en: {
     title: 'Bias and virality of Spanish media · victoriano.me',
-    description: 'Historical map of 614,780 tweets from 68 Spanish media outlets between 2018 and 2026: published position vs viral position.',
+    description: 'Historical map of 623,293 tweets from 69 Spanish media outlets between 2018 and 2026: published position vs viral position.',
     ogTitle: 'Bias and virality of Spanish media',
-    ogDescription: '614,780 tweets from 68 outlets between 2018 and 2026, classified by party and direction, comparing published and viral.',
+    ogDescription: '623,293 tweets from 69 outlets between 2018 and 2026, classified by party and direction, comparing published and viral.',
     kicker: 'A data analysis',
     headline: 'What is the <span class="t-mix">bias</span> of Spanish media on social media?',
     byline: 'By <strong>Victoriano Izquierdo</strong> · X data, 2018 to 2026',
@@ -348,7 +348,7 @@ const I18N = {
     ariaTheme: 'Theme',
     rankingTitle: 'Media ranking',
     searchPlaceholder: 'Search outlet…',
-    rankingHint: 'Only outlets with more than 50 left- or right-leaning tweets over the entire sample appear. <strong>Out of every 10 with clear side</strong> shows how many go left vs right. <strong>% political</strong> shows what portion of all sampled tweets was classified as political. Click a row to read its tweets.',
+    rankingHint: 'Only outlets with at least 40 left- or right-leaning tweets over the entire sample appear. <strong>Out of every 10 with clear side</strong> shows how many go left vs right. <strong>% political</strong> shows what portion of all sampled tweets was classified as political. Click a row to read its tweets.',
     colMedio: 'Outlet',
     colDecimos: 'Out of every 10 with clear side',
     colIndice: 'Index',
@@ -357,8 +357,8 @@ const I18N = {
     colIzq: 'Left',
     colDer: 'Right',
     colPctPol: '% political',
-    rankAviso: 'The inclusion threshold uses only tweets with a clear side: left plus right must exceed 50. The political percentage uses all tweets classified as political, including those that report without taking sides.',
-    rankNoteTemplate: (n, desde, hasta) => `${n} outlets included: each has taken sides more than 50 times in the full sample. Period from ${desde} to ${hasta}.`,
+    rankAviso: 'The inclusion threshold uses only tweets with a clear side: left plus right must add up to at least 40. The political percentage uses all tweets classified as political, including those that report without taking sides.',
+    rankNoteTemplate: (n, desde, hasta) => `${n} outlets included: each has taken sides at least 40 times in the full sample. Period from ${desde} to ${hasta}.`,
     noMatchRanking: 'No outlet matches that search.',
     seguidores: 'followers',
     cardMuestreados: 'Sampled tweets',
@@ -505,7 +505,7 @@ const I18N = {
     mapaPieAlturaDesc: 'number of classified tweets that clearly benefit or harm a party.',
     mapaPieTamDesc: 'median retweets among tweets with a clear side.',
     mapaPieCorte: 'Inclusion threshold',
-    mapaPieCorteDesc: 'more than 50 tweets taking sides in the full sample.',
+    mapaPieCorteDesc: 'at least 40 tweets taking sides in the full sample.',
     mapaPieFiltroN: (n) => `Only outlets with ${n} or more tweets with clear side in each series are drawn.`,
     mapaPieFiltro0: 'All outlets with sample in the chosen series are drawn.',
     mapaPieFuera: (n) => `${n} included outlet${n === 1 ? ' is' : 's are'} filtered out with this display filter.`,
@@ -579,13 +579,13 @@ const I18N = {
     ],
     metodoClasif: 'Classification',
     metodoClasifP: (n) => `All ${n} tweets were classified with Gemini 3.7 Flash. Party names are normalized to PSOE, PP, Vox and Sumar before counts and filters are calculated.`,
-    metodoRevisionP: 'A contextual review was then performed on <strong>3,941 tweets</strong> mentioning Aldama, González, García Page, Page or Alfonso Guerra. The review distinguishes the person mentioned, their political role on the tweet date and the final effect on PSOE. <strong>617 corrections</strong> were applied; cases referring to other people, with low confidence or uncertain effect kept their previous classification.',
+    metodoRevisionP: 'A contextual review was then performed on <strong>4,008 tweets</strong> mentioning Aldama, González, García Page, Page or Alfonso Guerra. The review distinguishes the person mentioned, their political role on the tweet date and the final effect on PSOE. <strong>631 corrections</strong> were applied; cases referring to other people, with low confidence or uncertain effect kept their previous classification.',
     metodoGate: (clasificados, restantes) => `${clasificados} political tweets and ${restantes} without political reading`,
     metodoLectura: 'Political reading:',
     metodoPartido: 'Affected party:',
     metodoDireccion: 'Direction:',
     metodoQueEntran: 'Which outlets are included',
-    metodoQueEntranP1: 'The ranking and map show only outlets that have taken sides in <strong>more than 50 tweets over the entire sample</strong>. For this threshold, left-leaning and right-leaning tweets are summed. Political tweets that report without taking sides do not count toward the threshold.',
+    metodoQueEntranP1: 'The ranking and map show only outlets that have taken sides in <strong>at least 40 tweets over the entire sample</strong>. For this threshold, left-leaning and right-leaning tweets are summed. Political tweets that report without taking sides do not count toward the threshold.',
     metodoQueEntranP2: (n, total) => `<strong>${n} of the ${total} outlets</strong> exceed the threshold. The selection is calculated once on the full sample and maintained when viewing each year, to avoid arbitrarily changing the compared universe. The map also requires at least five tweets with a clear side in each visible series. When comparing Published and Viral, both series must exceed that minimum.`,
     metodoPct: 'Political tweet percentage',
     metodoPctP: 'The <strong>% political</strong> column in the ranking is calculated as the number of tweets classified with political reading divided by all sampled tweets from the outlet. It includes both tweets that take sides and those that report on politics without favoring or harming a side.',
@@ -864,7 +864,7 @@ Object.assign(I18N.es, {
   tdSinDatos: 'Ningún medio tiene datos con estos filtros.',
   tdSinSel: 'Elige al menos un medio en el desplegable o en la tabla.',
   tdSinDatosSel: 'Los medios elegidos no tienen datos con estos filtros.',
-  tdNota: (min, gran) => `Es una muestra de hasta 100 tuits por medio y mes, no todo lo publicado. Las medianas y medias solo se dibujan con al menos ${min} tuits en el ${gran === 'mes' ? 'mes' : 'año'}. 2018 empieza en mayo y 2026 acaba el 27 de octubre, así que en número de tuits esos dos años salen más bajos. Los retuits y me gusta son los que tenía cada tuit al descargarlo, en 2026. La tendencia es la pendiente de la recta que mejor se ajusta a los valores anuales de cada medio, con al menos tres años; en número de tuits no cuenta 2018 ni 2026.`,
+  tdNota: (min, gran) => `Es una muestra de hasta 100 tuits por medio y mes, no todo lo publicado. Las medianas y medias solo se dibujan con al menos ${min} tuits en el ${gran === 'mes' ? 'mes' : 'año'}. 2018 empieza en mayo y 2026 acaba el 20 de noviembre, así que en número de tuits esos dos años salen más bajos. Los retuits y me gusta son los que tenía cada tuit al descargarlo, en 2026. La tendencia es la pendiente de la recta que mejor se ajusta a los valores anuales de cada medio, con al menos tres años; en número de tuits no cuenta 2018 ni 2026.`,
   tdTipN: (n, total) => `${n} de ${total} tuits muestreados`,
   tdTipPocos: (n, min) => `${n} tuits, menos de ${min}: sin cifra`,
   tdTipPulsa: 'Pulsa para añadirlo al gráfico',
@@ -931,7 +931,7 @@ Object.assign(I18N.en, {
   tdSinDatos: 'No outlet has data with these filters.',
   tdSinSel: 'Pick at least one outlet from the menu or the table.',
   tdSinDatosSel: 'The outlets you picked have no data with these filters.',
-  tdNota: (min, gran) => `This is a sample of up to 100 tweets per outlet and month, not everything published. Medians and means are only drawn with at least ${min} tweets in the ${gran === 'mes' ? 'month' : 'year'}. 2018 starts in May and 2026 ends on October 27, so those two years look lower in number of tweets. Retweets and likes are what each tweet had when it was downloaded, in 2026. The trend is the slope of the line that best fits each outlet's yearly values, with at least three years; for number of tweets it leaves out 2018 and 2026.`,
+  tdNota: (min, gran) => `This is a sample of up to 100 tweets per outlet and month, not everything published. Medians and means are only drawn with at least ${min} tweets in the ${gran === 'mes' ? 'month' : 'year'}. 2018 starts in May and 2026 ends on November 20, so those two years look lower in number of tweets. Retweets and likes are what each tweet had when it was downloaded, in 2026. The trend is the slope of the line that best fits each outlet's yearly values, with at least three years; for number of tweets it leaves out 2018 and 2026.`,
   tdTipN: (n, total) => `${n} of ${total} sampled tweets`,
   tdTipPocos: (n, min) => `${n} tweets, fewer than ${min}: no figure`,
   tdTipPulsa: 'Click to add it to the chart',
@@ -979,7 +979,7 @@ const decsep = n => n.toFixed(1).replace('.', t('decimalSep'));
    claro  = tuits que señalan a un partido con lado (izq + der): el denominador de la web.
    politicos = todos los tuits con lectura política, incluidos los que informan sin lado. */
 const CLARO_MIN = 15;
-const SIGNIFICADOS_MIN = 50;
+const SIGNIFICADOS_MIN = 40;
 
 function decimos(m) {
   const claro = (m.izq || 0) + (m.der || 0);
@@ -1188,7 +1188,7 @@ function pintarTotales() {
   $('#m-partido').textContent = PARTIDOS.filter(p => tot.por_partido[p]).map(p => `${p} ${nf(tot.por_partido[p])}`).join(' · ');
   const dirtxt = DIRTXT();
   $('#m-dir').textContent = Object.entries(tot.por_direccion).map(([k, v]) => `${dirtxt[k] || k} ${nf(v)}`).join(' · ');
-  const incluidos = INDEX.medios.filter(m => (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN).length;
+  const incluidos = INDEX.medios.filter(m => (m.izq || 0) + (m.der || 0) >= SIGNIFICADOS_MIN).length;
   $('#rank-note').textContent = t('rankNoteTemplate', incluidos, fecha(INDEX.ventana.desde), fecha(INDEX.ventana.hasta));
 
   // Método: lista de universo, párrafo de clasificación, párrafo de "qué entran", límites, fuente
@@ -1257,7 +1257,7 @@ let sortKey = 'indice', sortDir = 1, query = '';
 function pintarRanking() {
   const q = query.trim().toLowerCase();
   let rows = INDEX.medios
-    .filter(m => (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN)
+    .filter(m => (m.izq || 0) + (m.der || 0) >= SIGNIFICADOS_MIN)
     .map(m => ({ ...m, pct_politicos: m.muestreados ? 100 * m.politicos / m.muestreados : 0 }))
     .filter(m => !q || m.nombre.toLowerCase().includes(q) || m.handle.toLowerCase().includes(q));
   rows = rows.slice().sort((a, b) => {
@@ -2599,7 +2599,7 @@ function pasaCuentas(m, filtro = mapaFiltro) {
   if (tiposMapa().includes(filtro)) return m.tipo === filtro;
   return true;
 }
-const admitidosMapa = () => INDEX.medios.filter(m => (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN);
+const admitidosMapa = () => INDEX.medios.filter(m => (m.izq || 0) + (m.der || 0) >= SIGNIFICADOS_MIN);
 function etiquetasTipo() {
   const sel = $('#mapa-filtro');
   if (!sel) return;
@@ -2732,7 +2732,7 @@ function filasMapa() {
   for (const r of mediosPeriodo()) {
     const m = metas.get(r.handle.toLowerCase());
     if (!m) continue;
-    if ((m.izq || 0) + (m.der || 0) <= SIGNIFICADOS_MIN) continue;
+    if ((m.izq || 0) + (m.der || 0) < SIGNIFICADOS_MIN) continue;
     if (!pasaCuentas(m)) continue;
     const pub = r.publicado, vir = r.viral;
     const okPub = pasaFiltro(pub);
@@ -2796,7 +2796,7 @@ function renderMapa() {
   const parejas = tray ? [] : filas.parejas;
   const totalUniverso = mediosPeriodo().length;
   const admitidos = new Set(INDEX.medios
-    .filter(m => (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN)
+    .filter(m => (m.izq || 0) + (m.der || 0) >= SIGNIFICADOS_MIN)
     .map(m => m.handle.toLowerCase()));
   const total = mediosPeriodo().filter(r => admitidos.has(r.handle.toLowerCase())).length;
   const dibujados = new Set(nodos.map(n => n.m.handle)).size;
@@ -3118,7 +3118,7 @@ function datosHistoria() {
 
   const enMapa = todo.filter(r => {
     const m = metas.get(r.handle.toLowerCase());
-    return m && (m.izq || 0) + (m.der || 0) > SIGNIFICADOS_MIN && conPos(r) && r.publicado.con_lado >= 5;
+    return m && (m.izq || 0) + (m.der || 0) >= SIGNIFICADOS_MIN && conPos(r) && r.publicado.con_lado >= 5;
   });
   const lados = { izq: 0, der: 0, neu: 0 };
   enMapa.forEach(r => { lados[ladoDe(r.publicado.posicion)]++; });
