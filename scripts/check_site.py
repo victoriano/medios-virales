@@ -212,9 +212,9 @@ async def main():
 
         # la columna «de cada 10 con lado claro» tiene que decir lo mismo que index.json, fila a fila
         idx = await pg.evaluate("fetch('data/index.json').then(r => r.json())")
-        admitidos = {m["handle"].lower() for m in idx["medios"] if m["izq"] + m["der"] > 50}
+        admitidos = {m["handle"].lower() for m in idx["medios"] if m["izq"] + m["der"] >= 40}
         if filas != len(admitidos):
-            errores.append(f"[check] ranking: {filas} filas != {len(admitidos)} medios con más de 50 tuits significados")
+            errores.append(f"[check] ranking: {filas} filas != {len(admitidos)} medios con al menos 40 tuits significados")
         texto_filas = await pg.eval_on_selector_all(
             "#tabla-ranking tbody tr",
             "e => e.map(r => [r.dataset.h, r.children[1].innerText.replace(/\\s+/g, ' ').trim()])")
@@ -240,7 +240,7 @@ async def main():
             errores.append(f"[check] marcas de muestra corta: {estrellas} != {esperadas_estrellas}")
         aviso = " ".join((await pg.locator("#rank-aviso").inner_text()).split())
         for trozo in ["El corte de inclusión usa únicamente los tuits con lado claro",
-                      "izquierda más derecha debe superar 50",
+                      "izquierda más derecha debe sumar al menos 40",
                       "El porcentaje político usa todos los tuits clasificados como políticos"]:
             if trozo not in aviso:
                 errores.append("[check] falta en la nota del ranking: " + trozo)
@@ -779,7 +779,7 @@ async def main():
         await pg.wait_for_timeout(400)
         metodo = " ".join((await pg.locator("#view-metodo").inner_text()).split())
         for trozo in ["623.293 tuits únicos", "del 02/05/2018 al 20/11/2026",
-                      "más de 50 tuits durante toda la muestra",
+                      "al menos 40 tuits durante toda la muestra",
                       "Porcentaje de tuits políticos", "Cómo leer el mapa"]:
             if trozo not in metodo:
                 errores.append(f"[check] falta en metodología: {trozo}")

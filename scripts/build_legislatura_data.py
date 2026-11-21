@@ -352,7 +352,7 @@ def main():
             "pct_politicos": 100 * len(political) / len(handle_rows) if handle_rows else 0,
             "izq": published["izq"], "der": published["der"], "neutro": published["neutro"],
             "indice": published["indice"] or 0,
-            "incluido": clear > 50,
+            "incluido": clear >= 40,
             "partidos": dict(parties.most_common()),
             "direccion": dict(directions.most_common()),
             "meses": dict(sorted(Counter(row["fecha"][:7] for row in political).items())),

@@ -103,7 +103,7 @@ class SiteDataTest(unittest.TestCase):
     def test_global_inclusion_fields_are_consistent(self):
         for medium in self.index["medios"]:
             self.assertEqual(
-                medium["incluido"], medium["izq"] + medium["der"] > 50,
+                medium["incluido"], medium["izq"] + medium["der"] >= 40,
                 medium["handle"],
             )
             expected = (
