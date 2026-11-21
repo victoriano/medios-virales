@@ -71,6 +71,13 @@ sea comparable, la web solo publica los ids de `muestra_comparable.json` (270): 
 de cada tramo, con los mismos tramos que el resto (`marcar_muestra.py`). `ADDED_DIRS` en
 `build_legislatura_data.py` lista las carpetas de cuentas añadidas, separadas por dos puntos.
 
+El 21 de noviembre de 2026 se revisaron a mano, con contexto, los 377 tuits políticos de La Séptima
+con PSOE, varios o dirección no neutra: 57 cambian (promos y noticias sin juicio pasan a neutro, la
+violencia policial en la huelga a Ninguno/neutro y las revelaciones de Koldo sobre Inda/OKdiario a
+PSOE/beneficia). La capa está en `nuevas_cuentas_202611/contextual/revision_manual_20261121.jsonl` y
+la aplica `aplicar_revision_manual.py` sobre `clasificado_contextual.jsonl`; si se rehace la capa
+contextual de esa carpeta, hay que volver a ejecutarlo.
+
 ## Cómo está montado el flujo
 
 Cuatro etapas. Cada una se puede repetir sin rehacer las anteriores, porque todo es reanudable.
