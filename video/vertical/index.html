@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>Cómo critican los medios</title>
+<link rel="stylesheet" href="../fonts.css" />
+<script src="../assets/gsap.min.js"></script>
+<style>
+:root{--f-display:"Fraunces",Georgia,serif;--f-serif:"Source Serif 4",Georgia,serif;--f-sans:"Inter Tight",sans-serif;--f-mono:"IBM Plex Mono",monospace;
+--bg:#f5efe3;--panel:#fffcf5;--ink:#161514;--muted:#6c655a;--line:#d8cfbf;--lede:#2c2924;--hl:#ffd23f;
+--izq:#d93a3a;--der:#1f5fc9;--ben:#14937a;--perj:#e2702a;
+--r1:#14937a;--r2:#5aa65f;--r3:#a8b545;--r4:#e0a530;--r5:#e2802a;--r6:#d9582f;--r7:#c0392b;
+--chip-pp:#dfe8f8;--chip-psoe:#f9e0dd}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--f-sans);-webkit-font-smoothing:antialiased}
+.mast{position:absolute;left:0;right:0;top:0;height:110px;border-bottom:3px solid var(--ink);display:flex;align-items:center;justify-content:space-between;padding:0 64px;z-index:5;background:var(--bg)}
+.marca{display:flex;align-items:center;gap:16px;font:600 28px/1 var(--f-mono);letter-spacing:.06em}
+.marca i{width:28px;height:28px;border-radius:50%;border:3px solid var(--ink);background:linear-gradient(90deg,var(--izq) 0 50%,var(--der) 50% 100%)}
+.mast .r{font:500 22px/1 var(--f-mono);color:var(--muted);letter-spacing:.06em}
+.prog{position:absolute;left:0;top:110px;height:8px;width:100%;background:var(--ink);transform-origin:left;transform:scaleX(0);z-index:6}
+.sc{position:absolute;left:0;right:0;top:110px;height:1260px;padding:80px 64px 0;display:flex;flex-direction:column;gap:28px;opacity:0}
+.kick{font:600 28px/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.h1{font:800 96px/1.02 var(--f-display);letter-spacing:-.02em}
+.h2{font:800 72px/1.05 var(--f-display);letter-spacing:-.015em}
+.foot{font:500 22px/1.4 var(--f-mono);color:var(--muted)}
+.mark{background:linear-gradient(var(--hl),var(--hl)) no-repeat 0 88%/0% 40%;padding:0 6px;margin:0 -6px}
+/* subtítulos */
+.cap{position:absolute;left:64px;right:64px;top:1400px;min-height:260px;display:flex;align-items:flex-start;z-index:4}
+.cap p{position:absolute;left:0;right:0;font:700 56px/1.18 var(--f-sans);letter-spacing:-.01em;opacity:0}
+.cap b{background:var(--hl);padding:0 8px;margin:0 -4px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+/* tuit */
+.tw{background:var(--panel);border:3px solid var(--ink);border-radius:12px;box-shadow:10px 10px 0 var(--ink);padding:34px 38px;display:flex;flex-direction:column;gap:20px;position:relative}
+.who{display:flex;gap:18px;align-items:center}
+.who img,.who .av{width:72px;height:72px;border-radius:50%;border:2px solid var(--ink);flex:none}
+.who .av{display:flex;align-items:center;justify-content:center;font:800 30px/1 var(--f-display);background:var(--hl)}
+.who b{display:block;font:700 32px/1.2 var(--f-sans)} .who span{font:500 22px/1.2 var(--f-mono);color:var(--muted)}
+.tw .txt{font:500 40px/1.28 var(--f-serif)}
+.tw .met{display:flex;justify-content:space-between;align-items:center;font:600 30px/1 var(--f-mono)}
+.tag{font:700 26px/1 var(--f-mono);padding:12px 18px;border:3px solid var(--ink);border-radius:6px;background:var(--panel)}
+.rt{font:800 64px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.rt small{font:600 26px/1 var(--f-mono);color:var(--muted);margin-left:8px}
+.win{position:absolute;right:-18px;top:-30px;background:var(--hl);border:3px solid var(--ink);border-radius:6px;font:800 34px/1 var(--f-sans);padding:14px 20px;transform:rotate(4deg);box-shadow:5px 5px 0 var(--ink)}
+/* escalera */
+.lad{display:flex;flex-direction:column;gap:14px;margin-top:10px}
+.rung{display:flex;align-items:center;gap:22px;border:3px solid var(--ink);border-radius:8px;background:var(--panel);box-shadow:6px 6px 0 var(--ink);padding:18px 24px;position:relative;overflow:hidden}
+.rung .n{width:62px;height:62px;border-radius:50%;color:#fff;font:700 32px/62px var(--f-mono);text-align:center;flex:none;border:3px solid var(--ink)}
+.rung .t{font:800 42px/1.05 var(--f-display)} .rung .s{font:500 26px/1.25 var(--f-serif);color:var(--lede);margin-top:4px}
+.rung .pct{margin-left:auto;font:700 40px/1 var(--f-mono)}
+.rung .fill{position:absolute;left:0;top:0;bottom:0;z-index:0;opacity:.22;width:0}
+.rung > *:not(.fill){position:relative;z-index:1}
+/* barras viralidad */
+.bars{display:flex;align-items:flex-end;gap:34px;height:720px;margin-top:20px;border-bottom:4px solid var(--ink);padding:0 10px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.bar .v{font:800 64px/1 var(--f-display);margin-bottom:14px}
+.bar .b{width:100%;background:var(--r4);border:3px solid var(--ink);border-bottom:0;border-radius:8px 8px 0 0;box-shadow:6px 0 0 var(--ink)}
+.blab{display:flex;gap:34px;padding:0 10px}
+.blab div{flex:1;text-align:center;font:600 26px/1.25 var(--f-mono)}
+/* giro */
+.big2{display:flex;align-items:center;justify-content:center;gap:40px;margin-top:80px}
+.circ{width:380px;height:380px;border-radius:50%;border:4px solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--panel);box-shadow:10px 10px 0 var(--ink)}
+.circ .v{font:800 120px/1 var(--f-display)} .circ .l{font:600 26px/1.2 var(--f-mono);text-align:center;color:var(--muted);margin-top:10px}
+.circ.hi{background:var(--hl)} .circ.hi .l{color:var(--ink)}
+.arr{font:800 90px/1 var(--f-sans)}
+/* funciones */
+.fn{border:3px solid var(--ink);border-radius:10px;background:var(--panel);box-shadow:8px 8px 0 var(--ink);padding:28px 32px;display:flex;flex-direction:column;gap:12px}
+.fn .h{display:flex;align-items:center;gap:18px;font:800 50px/1 var(--f-display)}
+.fn .h i{width:22px;height:22px;border-radius:50%;border:3px solid var(--ink)}
+.fn .d{font:500 30px/1.3 var(--f-serif);color:var(--lede)}
+.fn .who2{display:flex;gap:14px;flex-wrap:wrap}
+.pill{font:600 24px/1 var(--f-mono);border:2px solid var(--ink);border-radius:30px;padding:10px 16px}
+.pill.l{background:var(--chip-psoe)} .pill.r{background:var(--chip-pp)}
+.fn.empty{border-style:dashed;background:transparent;box-shadow:none}
+/* espejo */
+.mirror{display:grid;grid-template-columns:1fr 300px 300px;border:3px solid var(--ink);border-radius:10px;background:var(--panel);box-shadow:10px 10px 0 var(--ink);overflow:hidden}
+.mirror > div{padding:22px 22px;border-top:2px solid var(--line);font:500 30px/1.2 var(--f-sans);display:flex;align-items:center}
+.mirror .hd{border-top:0;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;font:700 30px/1.1 var(--f-sans);padding:26px 14px}
+.mirror .hd img,.mirror .hd .av{width:96px;height:96px;border-radius:50%;border:3px solid var(--ink)}
+.mirror .hd .av{display:flex;align-items:center;justify-content:center;font:800 40px/1 var(--f-display);background:var(--chip-pp)}
+.mirror .hd small{font:500 20px/1.2 var(--f-mono);color:var(--muted)}
+.mirror .num{justify-content:center;font:800 56px/1 var(--f-display)}
+.mirror .num.bad{background:#fbe0d6}
+.mirror .num.bad::after{content:"";}
+.mirror .lab{font:600 28px/1.2 var(--f-sans)}
+/* ideas por medio */
+.ib{display:flex;flex-direction:column;gap:16px}
+.ir{display:grid;grid-template-columns:300px 1fr 110px;align-items:center;gap:20px;font:600 30px/1 var(--f-sans)}
+.ir .tr{height:44px;border:3px solid var(--ink);border-radius:6px;background:var(--panel);position:relative;overflow:hidden}
+.ir .tr i{position:absolute;left:0;top:0;bottom:0;background:var(--r1);width:0}
+.ir .tr .cap50{position:absolute;top:-6px;bottom:-6px;border-left:3px dashed var(--ink)}
+.ir .p{font:700 34px/1 var(--f-mono);text-align:right}
+/* cierre */
+.url{font:700 46px/1 var(--f-mono);border:3px solid var(--ink);background:var(--hl);padding:24px 30px;border-radius:8px;box-shadow:8px 8px 0 var(--ink);align-self:flex-start}
+</style>
+</head>
+<body>
+<div class="mast" id="mast"><div class="marca"><i></i>MEDIOS VIRALES</div><div class="r">CAPÍTULO 2 · CÓMO CRITICAN</div></div>
+<div class="prog" id="prog"></div>
+
+<!-- S1 gancho -->
+<div class="sc" id="s1">
+  <p class="kick">Mismo medio · mismo político · un día de diferencia</p>
+  <div class="tw" id="tA">
+    <div class="who"><img src="../logos/okdiario.webp"><div><b>okdiario.com</b><span>@okdiario · 20 may 2026</span></div></div>
+    <p class="txt">Zapatero hizo perder 14.500 millones a España al vender un tercio del oro del Banco de España en 2007.</p>
+    <div class="met"><span class="tag" id="gA">Gestión · con datos</span><span class="rt"><span id="rA">?</span><small>RT</small></span></div>
+  </div>
+  <div class="tw" id="tB">
+    <div class="who"><img src="../logos/okdiario.webp"><div><b>okdiario.com</b><span>@okdiario · 19 may 2026</span></div></div>
+    <p class="txt">Escándalo mundial: las imágenes de la policía registrando el despacho de Zapatero, primer ex presidente de España imputado.</p>
+    <div class="met"><span class="tag" id="gB" style="background:#f6d9a6">Corrupción</span><span class="rt"><span id="rB">?</span><small>RT</small></span></div>
+    <div class="win" id="win">×1,9</div>
+  </div>
+</div>
+
+<!-- S2 pregunta -->
+<div class="sc" id="s2" style="justify-content:center;padding-bottom:120px">
+  <p class="kick">Capítulo 2</p>
+  <h1 class="h1">Ya sabemos <span style="color:var(--muted)">a quién</span> critica cada medio.</h1>
+  <h1 class="h1">Ahora, <span class="mark" id="m2">cómo</span>.</h1>
+</div>
+
+<!-- S3 escalera -->
+<div class="sc" id="s3">
+  <p class="kick">La escalera de la crítica</p>
+  <div class="lad" id="lad">
+    <div class="rung"><div class="fill" style="background:var(--r1)"></div><div class="n" style="background:var(--r1)">1</div><div><div class="t">Ideas y propuestas</div><div class="s">qué haría con el país</div></div><div class="pct"></div></div>
+    <div class="rung"><div class="fill" style="background:var(--r2)"></div><div class="n" style="background:var(--r2)">2</div><div><div class="t">Gestión</div><div class="s">cómo lo hizo: trenes, hospitales</div></div><div class="pct"></div></div>
+    <div class="rung"><div class="fill" style="background:var(--r3)"></div><div class="n" style="background:var(--r3)">3</div><div><div class="t">Reglas del juego</div><div class="s">Parlamento, jueces, prensa</div></div><div class="pct"></div></div>
+    <div class="rung"><div class="fill" style="background:var(--r4)"></div><div class="n" style="background:var(--r4)">4</div><div><div class="t">Corrupción</div><div class="s">comisiones, malversación</div></div><div class="pct"></div></div>
+    <div class="rung"><div class="fill" style="background:var(--r5)"></div><div class="n" style="background:var(--r5)">5</div><div><div class="t">Pactos y alianzas</div><div class="s">con quién se junta</div></div><div class="pct"></div></div>
+    <div class="rung"><div class="fill" style="background:var(--r6)"></div><div class="n" style="background:var(--r6)">6</div><div><div class="t">Partido y elecciones</div><div class="s">peleas internas, encuestas</div></div><div class="pct"></div></div>
+    <div class="rung"><div class="fill" style="background:var(--r7)"></div><div class="n" style="background:var(--r7)">7</div><div><div class="t">Ataques personales</div><div class="s">la persona, no sus actos</div></div><div class="pct"></div></div>
+  </div>
+</div>
+
+<!-- S4 cuanto más viral -->
+<div class="sc" id="s4">
+  <p class="kick">Peso de la corrupción en las críticas</p>
+  <h2 class="h2">Cuanto más viral, más corrupción</h2>
+  <div class="bars">
+    <div class="bar"><div class="v" data-to="22">0</div><div class="b" style="height:0" data-h="22"></div></div>
+    <div class="bar"><div class="v" data-to="29">0</div><div class="b" style="height:0" data-h="29"></div></div>
+    <div class="bar"><div class="v" data-to="37">0</div><div class="b" style="height:0" data-h="37"></div></div>
+    <div class="bar"><div class="v" data-to="50">0</div><div class="b" style="height:0;background:var(--r6)" data-h="50"></div></div>
+  </div>
+  <div class="blab"><div>menos de 100 RT</div><div>100 a 300</div><div>300 a 1.000</div><div>más de 1.000</div></div>
+  <p class="foot" style="margin-top:6px">1.000 críticas virales frente a otras tantas no virales del mismo medio y partido · sep 2025–sep 2026 · clasificación automática, sin revisión humana</p>
+</div>
+
+<!-- S5 giro -->
+<div class="sc" id="s5">
+  <p class="kick">¿Castigamos los datos?</p>
+  <h2 class="h2">Críticas de ideas y gestión que traen cifras o hechos</h2>
+  <div class="big2">
+    <div class="circ"><div class="v"><span data-to="43">0</span>%</div><div class="l">no virales</div></div>
+    <div class="arr">→</div>
+    <div class="circ hi"><div class="v"><span data-to="53">0</span>%</div><div class="l">virales</div></div>
+  </div>
+</div>
+
+<!-- S6 funciones -->
+<div class="sc" id="s6">
+  <p class="kick">Un ecosistema, varias funciones</p>
+  <div class="fn" id="f1"><div class="h"><i style="background:var(--r4)"></i>Destapar</div><div class="d">Exclusivas propias de corrupción. EL ESPAÑOL firma 56 en un año.</div><div class="who2"><span class="pill r">EL ESPAÑOL</span><span class="pill r">Vozpópuli</span><span class="pill l">El Plural</span></div></div>
+  <div class="fn" id="f2"><div class="h"><i style="background:var(--r2)"></i>Vigilar la gestión</div><div class="d">Cribados de cáncer sin hacer, trenes que no caben por los túneles.</div><div class="who2"><span class="pill l">El Plural</span><span class="pill r">EL MUNDO</span><span class="pill r">okdiario</span></div></div>
+  <div class="fn empty" id="f3"><div class="h"><i style="background:var(--r1)"></i>Debatir ideas</div><div class="d">Qué haría cada partido con el país, discutido con datos y alternativas.</div><div class="who2"><span class="pill" id="f3q">¿quién?</span></div></div>
+</div>
+
+<!-- S7 misma vara -->
+<div class="sc" id="s7">
+  <p class="kick">La misma vara a los dos lados</p>
+  <div class="mirror" id="mir">
+    <div class="hd" style="align-items:flex-start;text-align:left;font:600 24px/1.3 var(--f-mono);color:var(--muted)">Críticas políticas<br>feb–jul 2026</div>
+    <div class="hd"><img src="../logos/malaslenguas_tv.webp">Malas Lenguas<small>tele pública · RTVE</small></div>
+    <div class="hd"><div class="av">H</div>Horizonte<small>tele privada · Cuatro</small></div>
+    <div class="lab">Van contra un solo bloque</div><div class="num">77%</div><div class="num bad">93%</div>
+    <div class="lab">Ataques personales</div><div class="num bad">14%</div><div class="num">6%</div>
+    <div class="lab">Descalifican sin argumentar*</div><div class="num">12%</div><div class="num bad">24%</div>
+    <div class="lab">Aportan cifras o hechos*</div><div class="num bad">39%</div><div class="num">54%</div>
+  </div>
+  <p class="foot">* dentro de sus críticas a ideas y gestión (41 y 49 tuits). Serie histórica, misma ventana para los dos.</p>
+</div>
+
+<!-- S8 peldaño vacío -->
+<div class="sc" id="s8">
+  <p class="kick">Críticas virales dedicadas a ideas</p>
+  <h2 class="h2">El peldaño de arriba, casi vacío</h2>
+  <div class="ib" style="margin-top:30px">
+    <div class="ir"><span>Malas Lenguas</span><div class="tr"><i data-w="12"></i></div><span class="p">12%</span></div>
+    <div class="ir"><span>okdiario</span><div class="tr"><i data-w="12"></i></div><span class="p">12%</span></div>
+    <div class="ir"><span>Vozpópuli</span><div class="tr"><i data-w="11"></i></div><span class="p">11%</span></div>
+    <div class="ir"><span>EL ESPAÑOL</span><div class="tr"><i data-w="10"></i></div><span class="p">10%</span></div>
+    <div class="ir"><span>El Plural</span><div class="tr"><i data-w="7"></i></div><span class="p">7%</span></div>
+    <div class="ir"><span>Mañaneros 360</span><div class="tr"><i data-w="7"></i></div><span class="p">7%</span></div>
+  </div>
+  <p class="foot">Escala hasta el 50 %. Todos sus tuits políticos con 100 RT o más, sep 2025–sep 2026.</p>
+</div>
+
+<!-- S9 cierre -->
+<div class="sc" id="s9" style="justify-content:center;padding-bottom:120px">
+  <h1 class="h1" style="font-size:88px">La escalera la subimos o la bajamos <span class="mark" id="m9">con cada retuit</span>.</h1>
+  <div class="url">medios.victoriano.me</div>
+  <p class="foot">Prototipo · cifras provisionales, clasificación automática sin revisión humana</p>
+</div>
+
+<div class="cap" id="cap"></div>
+
+<script>
+// [inicio, fin, texto] — los subtítulos hacen de locución
+const CAPS = [
+ [0.4, 4.6, "¿Cuál de estos dos tuits crees que <b>se compartió más</b>?"],
+ [4.8, 8.6, "El de la gestión trae datos. El otro, un escándalo."],
+ [8.8, 12.4, "Ganó el escándalo: <b>casi el doble</b> de retuits."],
+ [12.8, 18.4, "Hemos clasificado miles de críticas políticas de los medios en X según <b>qué se le reprocha</b> al partido."],
+ [18.8, 24.4, "Y las hemos ordenado en una escalera: de lo que más ayuda a decidir tu voto…"],
+ [24.6, 28.4, "…a lo que menos."],
+ [28.6, 34.0, "No dice qué críticas son justas. Dice cuáles hablan de <b>cómo gobernaría</b> cada uno."],
+ [34.4, 39.6, "En lo que publican los medios, <b>una de cada cinco</b> críticas es de corrupción."],
+ [39.8, 45.0, "En los tuits que pasan de mil retuits, <b>la mitad</b>."],
+ [45.4, 50.4, "¿Es que castigamos los argumentos? No."],
+ [50.6, 56.2, "Las críticas de ideas o gestión que se hacen virales traen <b>más datos</b>, no menos. Lo que premiamos es el escándalo."],
+ [56.6, 61.6, "Y no todos los medios hacen lo mismo. Unos destapan, otros vigilan la gestión. <b>Las dos funciones hacen falta.</b>"],
+ [61.8, 66.0, "Pero falta una: la de <b>debatir ideas</b>."],
+ [66.4, 71.6, "Las malas prácticas también se miden, y <b>con la misma vara</b> a los dos lados."],
+ [71.8, 77.8, "Malas Lenguas, de la tele pública, ataca más a personas. Horizonte, de Cuatro, va casi solo contra un partido y descalifica más."],
+ [78.2, 84.4, "Y ninguno de los medios más virales dedica más del <b>12 %</b> de sus críticas a ideas."],
+ [84.8, 89.6, "Ese es el hueco: medios que discutan ideas y gestión con un tono justo."],
+ [90.0, 96.0, ""]
+];
+const SC = [["s1",0,12.6],["s2",12.6,18.6],["s3",18.6,34.2],["s4",34.2,45.2],["s5",45.2,56.4],["s6",56.4,66.2],["s7",66.2,78.0],["s8",78.0,89.8],["s9",89.8,96]];
+const TOTAL = 96;
+const tl = gsap.timeline({paused:true});
+const q = s => document.querySelector(s), qa = s => Array.from(document.querySelectorAll(s));
+function fmt(n){n=Math.round(n);return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,".");}
+function count(el,to,t,d){const o={v:0};tl.to(o,{v:to,duration:d||1.2,ease:"power2.out",onUpdate:()=>{el.textContent=fmt(o.v)}},t);}
+tl.from("#mast",{y:-110,duration:.6,ease:"power3.out"},0);
+tl.to("#prog",{scaleX:1,duration:TOTAL,ease:"none"},0);
+SC.forEach(([id,a,b])=>{ tl.to("#"+id,{opacity:1,duration:.35},a); if(b<TOTAL) tl.to("#"+id,{opacity:0,y:-40,duration:.35,ease:"power2.in"},b-.35); });
+const cap=q("#cap");
+CAPS.forEach(([a,b,t])=>{ if(!t) return; const p=document.createElement("p"); p.innerHTML=t; cap.appendChild(p);
+  tl.fromTo(p,{opacity:0,y:24},{opacity:1,y:0,duration:.3,ease:"power2.out"},a); tl.to(p,{opacity:0,duration:.2},b-.2); });
+
+// S1
+tl.from("#tA",{x:-200,opacity:0,duration:.6,ease:"expo.out"},.3);
+tl.from("#tB",{x:200,opacity:0,duration:.6,ease:"expo.out"},.7);
+tl.from("#gA",{scale:1.8,opacity:0,duration:.4,ease:"back.out(2)"},5.0);
+tl.from("#gB",{scale:1.8,opacity:0,duration:.4,ease:"back.out(2)"},6.2);
+count(q("#rA"),3625,8.8,1.4); count(q("#rB"),6732,8.8,2.2);
+tl.from("#win",{scale:0,rotation:-30,opacity:0,duration:.5,ease:"back.out(2.5)"},11.0);
+// S2
+tl.to("#m2",{backgroundSize:"100% 40%",duration:.6,ease:"power2.inOut"},15.2);
+tl.from("#s2 .h1",{y:60,opacity:0,duration:.6,stagger:.8,ease:"expo.out"},12.8);
+// S3
+const rungs=qa("#s3 .rung");
+rungs.forEach((r,i)=>tl.from(r,{x:i%2?160:-160,opacity:0,duration:.45,ease:"power3.out"},19.0+i*.75));
+tl.to(rungs.slice(0,2),{boxShadow:"6px 6px 0 #14937a",borderColor:"#14937a",duration:.4},22.6);
+tl.to(rungs.slice(5),{opacity:.75,duration:.4},25.0);
+// S4
+qa("#s4 .bar").forEach((b,i)=>{const bb=b.querySelector(".b"),v=b.querySelector(".v");
+  const t = i==0?35.2:(i==3?40.2:37.4+i*.6);
+  tl.to(bb,{height:(+bb.dataset.h*12)+"px",duration:.9,ease:"power3.out"},t);
+  const o={v:0}; tl.to(o,{v:+v.dataset.to,duration:.9,ease:"power3.out",onUpdate:()=>{v.textContent=Math.round(o.v)+"%"}},t);});
+// S5
+qa("#s5 [data-to]").forEach((el,i)=>{const o={v:0};tl.to(o,{v:+el.dataset.to,duration:1.1,ease:"power2.out",onUpdate:()=>{el.textContent=Math.round(o.v)}},[47.0,51.0][i]);});
+tl.from("#s5 .circ",{scale:.4,opacity:0,duration:.6,stagger:4,ease:"back.out(1.7)"},46.6);
+tl.from("#s5 .arr",{x:-40,opacity:0,duration:.4},50.4);
+// S6
+tl.from("#f1",{y:80,opacity:0,duration:.5,ease:"power3.out"},57.0);
+tl.from("#f2",{y:80,opacity:0,duration:.5,ease:"power3.out"},58.6);
+tl.from("#f3",{y:80,opacity:0,duration:.5,ease:"power3.out"},61.8);
+tl.fromTo("#f3q",{scale:1},{scale:1.25,yoyo:true,repeat:3,duration:.35},63.0);
+// S7
+tl.from("#mir > div",{opacity:0,y:20,duration:.3,stagger:.12},66.6);
+tl.from("#mir .num.bad",{backgroundColor:"rgba(0,0,0,0)",duration:.5,stagger:.3},72.0);
+// S8
+qa("#s8 .tr i").forEach((el,i)=>tl.to(el,{width:(+el.dataset.w*2)+"%",duration:.8,ease:"power3.out"},79.0+i*.25));
+qa("#s8 .ir").forEach((el,i)=>tl.from(el,{opacity:0,x:-60,duration:.4},78.6+i*.25));
+// S9
+tl.from("#s9 .h1",{y:60,opacity:0,duration:.7,ease:"expo.out"},90.0);
+tl.to("#m9",{backgroundSize:"100% 40%",duration:.7,ease:"power2.inOut"},91.4);
+tl.from("#s9 .url",{scale:.6,opacity:0,duration:.5,ease:"back.out(2)"},92.6);
+tl.from("#s9 .foot",{opacity:0,duration:.4},93.2);
+window.TL=tl; window.TOTAL=TOTAL;
+</script>
+</body>
+</html>
