@@ -54,15 +54,15 @@ XV_START = "2023-08-17"
 LEFT = {"PSOE", "Sumar"}
 RIGHT = {"PP", "Vox"}
 CANON = {"psoe": "PSOE", "pp": "PP", "vox": "Vox", "sumar": "Sumar", "podemos": "Sumar"}
-DOWNLOAD_COSTS = {"historico": 57.85245, "xv": 35.28015}  # xv: +1,05678 USD (al 27 oct) y +1,2021 USD (al 20 nov 2026)
+DOWNLOAD_COSTS = {"historico": 57.85245, "xv": 35.44485}  # xv: +1,05678 USD (al 27 oct), +1,2021 USD (al 20 nov) y +0,1647 USD (al 27 nov 2026)
 CLASSIFIED_BASENAME = os.environ.get("CLASSIFIED_BASENAME", "clasificado_contextual.jsonl")
 # Revisión contextual: la original, la de las cuentas añadidas en octubre (nuevas_cuentas_202610/contextual/),
 # la de la ampliación al 27 oct 2026 (actualizacion_202610/contextual/, solo filas nuevas), la de la
 # ampliación al 20 nov 2026 (actualizacion_202611/contextual/) y la de @la_septima_tv
 # (nuevas_cuentas_202611/contextual/, sobre su descarga completa).
-CONTEXT_REVIEW_COST_USD = 1.16287 + 0.031478 + 0.013074 + 0.021069 + 0.001698
-CONTEXT_REVIEW_CANDIDATES = 3813 + 88 + 40 + 63 + 4
-CONTEXT_REVIEW_CHANGES = 601 + 11 + 5 + 12 + 2
+CONTEXT_REVIEW_COST_USD = 1.16287 + 0.031478 + 0.013074 + 0.021069 + 0.001698 + 0.004852 + 0.001976
+CONTEXT_REVIEW_CANDIDATES = 3813 + 88 + 40 + 63 + 4 + 13 + 5
+CONTEXT_REVIEW_CHANGES = 601 + 11 + 5 + 12 + 2 + 5 + 3
 
 
 def slug(handle):
