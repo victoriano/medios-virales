@@ -23,7 +23,7 @@ cosas diferentes, se descargaron con proveedores diferentes y no son intercambia
 | Corpus | Qué es | Ventana | Filas | Políticos | Fuente de descarga |
 | --- | --- | --- | --- | --- | --- |
 | **Censo viral** | Todos los tuits con **100 retuits o más** | 19 sep 2025 a 19 sep 2026 | 21.489 | 13.412 | Apify |
-| **Serie histórica** | **Muestra** de hasta 100 tuits por medio y mes | 2 may 2018 a 20 nov 2026 | 623.293 | 163.778 | twitterapi.io |
+| **Serie histórica** | **Muestra** de hasta 100 tuits por medio y mes | 2 may 2018 a 27 nov 2026 | 624.440 | 164.340 | twitterapi.io |
 
 La primera es un **censo**: está todo lo que superó el corte. La segunda es una **muestra**: sirve
 para comparar medios entre sí y a lo largo del tiempo, pero **no es el total publicado**.
@@ -65,9 +65,9 @@ raíces a cada muestra. Si trabajas en otra máquina, o esos ficheros no están,
 Para añadir otra cuenta, sigue el `NOTAS.md` y el `lanzar.sh` de esa carpeta.
 
 El 18 de noviembre de 2026 se añadió `@la_septima_tv` (La Séptima, televisión) en
-`nuevas_cuentas_202611/legislatura_xv/`. Esa cuenta se descargó **completa** (932 tuits del 7 jul al
-20 nov 2026), no muestreada, y se clasificó entera con el mismo prompt y la capa contextual. Para que
-sea comparable, la web solo publica los ids de `muestra_comparable.json` (270): los 20 más recientes
+`nuevas_cuentas_202611/legislatura_xv/`. Esa cuenta se descargó **completa** (1.212 tuits del 7 jul al
+27 nov 2026), no muestreada, y se clasificó entera con el mismo prompt y la capa contextual. Para que
+sea comparable, la web solo publica los ids de `muestra_comparable.json` (290): los 20 más recientes
 de cada tramo, con los mismos tramos que el resto (`marcar_muestra.py`). `ADDED_DIRS` en
 `build_legislatura_data.py` lista las carpetas de cuentas añadidas, separadas por dos puntos.
 
@@ -77,6 +77,11 @@ violencia policial en la huelga a Ninguno/neutro y las revelaciones de Koldo sob
 PSOE/beneficia). La capa está en `nuevas_cuentas_202611/contextual/revision_manual_20261121.jsonl` y
 la aplica `aplicar_revision_manual.py` sobre `clasificado_contextual.jsonl`; si se rehace la capa
 contextual de esa carpeta, hay que volver a ejecutarlo.
+
+El 27 de noviembre de 2026 se revisaron igual los 240 tuits políticos de La Séptima que no entraban en
+esa lista (los nuevos hasta el 27 de noviembre y los recuperados de días incompletos): 22 cambian. La
+capa está en `contextual/revision_manual_20261127.jsonl` y la aplica
+`aplicar_revision_manual_20261127.py`, que se ejecuta después de `aplicar_revision_manual.py`.
 
 ## Cómo está montado el flujo
 
@@ -188,7 +193,7 @@ Están comprobados y conviene tenerlos presentes antes de presentar cualquier re
 - **Hay un hueco de cobertura sin explicar** en `DiarioSabemos` con twitterapi.io: recuperó 637
   tuits frente a 2.538 con Apify. Antes de extrapolar a 2018 hay que explicarlo.
 - **No es un censo.** La serie histórica son hasta 100 tuits por medio y mes. 100 meses así son
-  623.293 filas, no los nueve años de producción real de 69 medios.
+  624.440 filas, no los nueve años de producción real de 69 medios.
 
 ## Lo que está pendiente
 
@@ -247,8 +252,8 @@ python3 -B scripts/test_site_data.py
 # La web contra el sitio publicado, en un navegador real
 uv run --with playwright python3 scripts/check_site.py
 
-# El recuento de los corpus: 602.906 + 4.665 + 7.209 + 8.243 = 623.023 filas en estos ficheros, más las
-# 270 de @la_septima_tv que entran en su muestra (de 932 descargadas): 623.293 filas y 163.778 políticos
+# El recuento de los corpus: 602.906 + 4.705 + 7.209 + 9.330 = 624.150 filas en estos ficheros, más las
+# 290 de @la_septima_tv que entran en su muestra (de 1.212 descargadas): 624.440 filas y 164.340 políticos
 wc -l ~/typesafe-lab/politica/medios/polarizacion/{*,nuevas_cuentas_202610/*}/clasificado_contextual.jsonl
 python3 -c "import json;print(len(json.load(open('$HOME/typesafe-lab/politica/medios/polarizacion/nuevas_cuentas_202611/legislatura_xv/muestra_comparable.json'))['ids']))"
 ```
